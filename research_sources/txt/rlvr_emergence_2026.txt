@@ -1,0 +1,1184 @@
+
+
+===== PAGE 1 =====
+New Skills or Sharper Primitives? A Probabilistic Perspective on the Emergence
+of Reasoning in RLVR
+Zhilin Wang 1 2 Yafu Li2 3 Shunkai Zhang 4 Zhi Wang 5 Xiaoye Qu 2 Haoran Zhang 2 6 Yu Cheng3
+Abstract
+Whether Reinforcement Learning with Verifiable
+Rewards (RLVR) endows Large Language Mod-
+els (LLMs) with new capabilities or merely elicits
+latent traces remains a central debate. In this work,
+we align with the former view, proposing a proba-
+bilistic framework where capability is defined by
+instance-level solvability. We hypothesize that the
+emergence of complex reasoning can be driven
+by sharpening atomic step probabilities, which en-
+ables models to overcome the exponential decay
+of success rates inherent in multi-step reasoning
+chains. Utilizing the Algebrarium framework, we
+train models exclusively on single-step operations
+and evaluate their performance on unseen multi-
+step tasks. Our empirical results confirm that:
+(1) RLVR incentivizes the exploration of previ-
+ously inaccessible solution paths by amplifying
+the model’s existing skills; (2) composite perfor-
+mance is strictly governed by the joint probability
+of atomic steps, evidenced by high Pearson cor-
+relation coefficients ( ρ∈[0.69,0.96] ); and (3)
+RLVR, acting as a global optimizer, can cause
+specific skills to be sacrificed to maximize aggre-
+gate reward. Our work offers a novel explanation
+for emergent abilities in RLVR, suggesting that
+the iterative optimization of solvable problems en-
+ables models to develop the capabilities to tackle
+previously unsolvable scenarios.
+1. Introduction
+While the Reinforcement Learning with Verifiable Rewards
+(RLVR, Shao et al., 2024) paradigm has achieved impres-
+sive success (OpenAI et al., 2019; DeepMind, 2025), a cen-
+1University of Science and Technology of China 2Shanghai
+AI Laboratory 3The Chinese University of Hong Kong 4Peking
+University 5Nanjing University 6Shanghai Jiao Tong University.
+Correspondence to: Yafu Li <yafuly@gmail.com>, Yu Cheng
+<chengyu@cse.cuhk.edu.hk>.
+tral question is whether it endows Large Language Models
+(LLMs) with genuinely new capabilities or merely elicits
+traces already latent within the models themselves. This
+question stands at the forefront of current research. Some
+studies argue for the former, positing that RLVR implants
+new compositional skills absent in the base model (Yuan
+et al., 2025; Cheng et al., 2025); conversely, other works
+maintain the latter, suggesting that RLVR acts primarily as
+a mechanism to unlock pre-existing potentials (Yue et al.,
+2025; Gandhi et al., 2025; Liu et al., 2025; Zhao et al.,
+2025).
+In this work, we align with the former perspective, anchor-
+ing our argument in a rigorous probabilistic definition of
+capability: if a model fails to produce a solution despite
+exhaustive sampling, it is fundamentally devoid of the cor-
+responding capability. Such complex problems often neces-
+sitate sequential reasoning, where success hinges on the cor-
+rectness of each intermediate step (Wei et al., 2023). While
+the base model may possess the competence to solve indi-
+vidual atomic steps, the cumulative probability of executing
+a perfect chain is negligible, rendering the complex task
+practically unsolvable (Dziri et al., 2023). By significantly
+improving the accuracy of each individual step, RLVR pre-
+vents errors from accumulating in long chains. This allows
+the model to reliably complete complex reasoning paths
+that were previously too unlikely to succeed. Thus, while
+RLVR may not impart novel knowledge (Zhou et al., 2023),
+it nonetheless unlocks a genuinely new capability through
+reliable composition.
+Our work begins with a comprehensive theoretical analysis
+ofPass@kacross the entire dataset, decomposing aggregate
+metrics to extract the specific success rate for each individ-
+ual problem. We propose using this instance-level solvabil-
+ity as the intrinsic measure of capability. By scrutinizing
+the success rates of complex tasks, we uncover a theoreti-
+cal bottleneck: theMultiplicative Barrier. We demonstrate
+that the vanishing solvability for reasoning-heavy problems
+is a mathematically inevitable consequence of exponential
+decay, where the joint probability of a solution collapses
+as the product of atomic step probabilities. Consequently,
+we frame RLVR-induced emergence as a phase transition
+where the sharpening of atomic probabilities enables the
+1
+arXiv:2602.08281v1  [cs.CL]  9 Feb 2026
+
+
+===== PAGE 2 =====
+model to pierce through this multiplicative ceiling. Further-
+more, we characterizeCapability Erosionas a side effect
+of optimizing for expected utility. Since the RLVR ob-
+jective optimizes from a global distributional perspective,
+the resulting gradient updates do not inherently preserve
+instance-level stability, potentially leading to performance
+degradation on specific instances.
+To rigorously validate these theoretical assumptions, we con-
+duct a controlled experimental study using the Algebrarium
+framework. We design a strict “Atomic-Composite Split”
+protocol to isolate the mechanism of emergence: models are
+trained exclusively on decoupled atomic primitives but eval-
+uated on their ability to solve unseen composite problems.
+Our empirical analysis yields four critical insights into the
+nature of capability emergence:
+• Validation ofPass@kDynamics:We derivePass@k
+as an explicit function of per-instance correctness prob-
+abilities and show that the resulting curves closely
+match empirical measurements.
+• Operational definition of emergence:Using instance-
+level solvability thresholds, we visualize a phase tran-
+sition in which RLVR moves problems from theNull
+Setto theFeasible Set.
+• Mechanism via the multiplicative barrier:We verify
+that multi-step reasoning success decays exponentially
+with reasoning depth (P∝p N ) and that composite per-
+formance is strongly predicted by the joint probability
+of atomic steps (Pearsonρ∈[0.69,0.96]).
+• Trade-off via capability erosion:We document that
+optimizing expected reward can improve aggregate per-
+formance while degrading specific (including atomic)
+instances, highlighting a redistribution of capability
+rather than uniform gains.
+In conclusion, our work offers a novel explanation for emer-
+gent abilities in RLVR, suggesting that the iterative opti-
+mization of solvable problems enables models to develop
+the capabilities to tackle previously unsolvable scenarios.
+2. Related Work
+Reinforcement Learning with Verifiable Rewards
+(RLVR).The RLVR paradigm has become pivotal for
+enhancing LLM reasoning abilities (OpenAI, 2024; Deep-
+Mind, 2025). These algorithms update the policy based on
+the relative advantage of sampled paths, reinforcing trajec-
+tories that outperform the group advantage (DeepSeek-AI
+et al., 2025; Shao et al., 2024; Yu et al., 2025; Zheng et al.,
+2025). However, the efficacy of this sampling-based op-
+timization has sparked a fundamental debate: does this
+process merely surface latent traces, or does it genuinely
+endow the model with new capabilities (Yue et al., 2025)?
+Perspective I: RLVR merely elicits latent traces.A
+growing body of research suggests that RLVR amplifies
+existing competencies rather than injecting new capabil-
+ities (Zhao et al., 2025; Wen et al., 2025). Empirically,
+RLVR training is observed to reduce entropy (Cui et al.,
+2025; Wang et al., 2025; Jiang et al., 2025; Yan et al., 2025)
+and often degradePass@kperformance compared to base-
+lines, indicating a contraction of exploration space rather
+than capability expansion (Yue et al., 2025; Zhu et al., 2025;
+He et al., 2025). Theoretically, this limitation stems from
+the dependence of on-policy algorithms on spontaneous gen-
+eration: if a correct solution cannot be sampled, the model
+receives no reward signals (Zhan et al., 2025). Thus, RLVR
+is viewed merely as a mechanism to elicit latent potentials
+already encoded during pre-training.
+Perspective II: RLVR implants new capabilities.Con-
+versely, some recent studies challenge the elicitation hypoth-
+esis, arguing that RLVR can induce novel, complex compos-
+ite capabilities (Yuan et al., 2025; Cheng et al., 2025). To
+control for confounding environmental factors, researchers
+employ synthetic tasks such as the Countdown problem or
+design specific environments to disentangle atomic skills
+from composite reasoning (Park et al., 2025). Contrary to
+the first perspective, these works observe a substantial im-
+provement inPass@kafter training, suggesting that RLVR
+facilitates the induction of novel reasoning paths rather than
+the mere elicitation of latent ones. However, the underlying
+mechanism driving this emergence remains underexplored.
+Our work provides both theoretical and experimental sup-
+port for the second perspective, demonstrating that RLVR
+induces novel capabilities by optimizing solvable atomic
+sub-tasks to construct complex reasoning paths previously
+absent from the base model.
+3. Understanding thePass@kCurve
+3.1. Theoretical Analysis
+Given a dataset D={q i}N
+i=1 consisting of N problems, the
+Pass@kmetric measures the proportion of problems suc-
+cessfully solved by at least one solution when k candidate
+solutions are generated per problem:
+Pass@k= 1
+|D|
+|D|X
+i=1
+I(solvedi ≥1),(1)
+where I(·) is the indicator function, and solvedi ∈
+{0,1, . . . , k} represents the count of successful samples
+for thei-th problem out ofkindependent generations.
+2
+
+
+===== PAGE 3 =====
+1 2 4 8 16 32 64 128
+Number of samples k
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+Pass@k
+(a) Single Problem (|D|= 1)
+Success Prob.
+P = 0.80
+P = 0.40
+P = 0.20
+P = 0.10
+P = 0.05
+P = 0.01
+1 2 4 8 16 32 64 128
+Number of samples k
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+Average Pass@k
+(b) Dataset Average Case 1 (|D|= 2)
+Composition
+Avg({0.20,0.40})
+Avg({0.01,0.05})
+1 2 4 8 16 32 64 128
+Number of samples k
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+Average Pass@k
+(c) Dataset Average Case 2 (|D|= 2)
+Composition
+Avg({0.10,0.20})
+Avg({0.05,0.40})
+Figure 1. Theoretical visualization of P ass@k. (a) Functional curves for a single problem under varying correctness probabilities. (b)
+and (c) Composite average curves for a simplified dataset (|D|= 2 ), showing the aggregation from instances to the dataset-level metric.
+To formalize this, let πθ(y|q) denote the policy of the model
+generating a solution y for a query q∈ Q . Let V(y, q)∈
+{0,1} be the correctness verification function. The success
+probability for a specific task q is defined as the expectation
+of correctness over the model’s generation distribution:
+Pθ(q) =E y∼πθ(·|q) [V(y, q)](2)
+First, consider a single problem q. Assuming k samples are
+generated independently, the probability that all k samples
+fail is (1−P θ(q))k. Consequently, the expectedPass@k
+for this single instance is:
+E[Pass@k(q)] = 1−(1−P θ(q))k (3)
+Generalizing this to the entire datasetD, the overall pass@k
+is defined as the arithmetic mean of the expected pass rates
+across allNinstances:
+E[Pass@k] = 1
+N
+NX
+i=1
+
+1−(1−P θ(qi))k
+(4)
+By analyzing the behavior of thePass@kmetric, we can
+disentangle distinct dimensions of model performance.
+3.2. From Theory to Estimation
+To intuitively illustrate this theoretical framework, Figure 1
+presents two complementary views. Figure 1(a) plots the
+functional curves for a single problem under varying cor-
+rectness probabilities, demonstrating how the curve’s shape
+is strictly determined by the specific correctness rate. In
+contrast, Figure 1(b) and (c) consider simplified datasets
+where |D|= 2 . They visualize the composite average curve
+formed by aggregating two distinct problem instances, high-
+lighting the theoretical composition process from individual
+problems to the dataset-level metric.
+Post-RLVR Degradation in High-k Sampling.The phe-
+nomenon of decreasingPass@kafter RLVR, as noted in
+prior work (Yue et al., 2025), can be explained using Fig-
+ure 1. Specifically, post-RLVR models in their work tend to
+increasePass@kat low k values while decreasing it at high
+k. This suggests that RLVR polarizes their model’s success
+probabilities across the task distribution. It drives the cor-
+rectness probability of certain problems towards certainty,
+while inadvertently reducing the probability of solving oth-
+ers. Consequently, this polarization improvesPass@1, but
+harms the broader coverage measured by high-kmetrics.
+4. Capability as Probabilistic States
+To rigorously quantify model capability, we move beyond
+aggregate metrics and analyze the pointwise convergence of
+Pθ(q). We posit that for a given model πθ, the task space Q
+can be partitioned based on the solvability of tasks under a
+computational budget constraint.
+Based on the magnitude ofPθ(q), we partition the task space
+Q into distinct capability regions. We introduce two critical
+thresholds: an infinitesimal bound ϵ→0 + representing
+statistical impossibility, and a feasibility lower bound δ∈
+(0,1]representing reliable solvability.
+Definition 1: The Null Set ( ϵ-Incapability).A task q
+belongs to theNull Set N ϵ
+θ if the probability of generating
+a correct solution is asymptotically negligible. This state
+represents a topological disconnection between the problem
+and the model’s reachable hypothesis space. Formally:
+N ϵ
+θ ={q∈ Q |P θ(q)< ϵ}(5)
+Empirically, we determine ϵ using the statisticalRule of
+Three. If zero successes are observed in a large-sample
+regime (e.g., Klarge = 128 ), the upper bound of the 95%
+confidence interval for the true success rate is approximately
+3/Klarge. Thus, we set ϵ≈0.023 . A task in this set implies
+3
+
+
+===== PAGE 4 =====
+that correctness is effectively a zero-probability event under
+the current model parameters.
+Definition 2: The Feasible Set ( δ-Capability).Con-
+versely, a task is consideredFeasibleif the success proba-
+bility is bounded away from zero by a sufficient margin δ.
+This ensures that the task can be solved reliably within a
+finite compute budget. We define the Feasible SetF δ
+θ as:
+F δ
+θ ={q∈ Q |P θ(q)≥δ}(6)
+Here, δ is calibrated to a minimum compute budget Kmin
+(e.g., standard parallel inference where Kmin = 8). By set-
+ting δ= 1/K min = 0.125, we guarantee that the expected
+number of correct solutions is at least 1:
+Kmin ·P θ(q)≥1(7)
+This condition distinguishes stable capability from stochas-
+tic outliers (“lucky guesses”), ensuring that the model pos-
+sesses the intrinsic features required to solveq.
+The Stochastic Gap.Tasks falling in the interval Q \
+(N ϵ
+θ ∪ F δ
+θ ), where ϵ≤P θ(q)< δ , are classified asTran-
+sitional States. These tasks exhibit high variance and rep-
+resent the frontier of the model’s learning process. For the
+purpose of robust capability analysis, we focus our subse-
+quent discussion on the phase transition between the limit of
+impossibility (N ϵ
+θ ) and the state of reliable capability (F δ
+θ ).
+5. Gain and Loss of Capability
+In this section, we analyze the dual impact of RLVR opti-
+mization on model capabilities, exploring two simultaneous
+phenomena driven by the model’s finite capacity. First, we
+defineCompositional Emergence, illustrating how the linear
+amplification of atomic steps triggers a geometric phase
+transition, rendering previously intractable complex tasks
+solvable. Then, we examineCapability Erosion, demon-
+strating that RLVR optimization for global rewards can
+inadvertently degrade specific skills.
+5.1. The Multiplicative Barrier in Complex Reasoning
+Consider a complex problem q that can be decomposed
+into a sequence of M sub-problems, denoted as S=
+{s1, s2, . . . , sM }. For the model to successfully solve q,
+it must correctly execute each sub-problems j in the chain.
+Under the assumption that the correctness of each step is
+independent, the overall success probability Pθ(q) is the
+product of the success probabilities of the individual sub-
+problems:
+Pθ(q)≈
+MY
+j=1
+Pθ(sj)(8)
+This multiplicative nature creates a severe barrier for deep
+reasoning. Even if the model exhibits reliable capability for
+every atomic sub-problem (e.g., Pθ(sj) = 0.3 ), the joint
+probability decays exponentially with the chain lengthM.
+For a problem requiring M= 5 such steps, the cumulative
+success rate collapses to:
+Pθ(q)≈0.3 5 ≈0.0024
+Crucially, this value falls an order of magnitude below the
+statistical existence thresholdϵ≈0.023 (the Null Set bound-
+ary). Then, while the model is locally capable of every step,
+it appears globally incapable of solving the whole problemq.
+Empirically, this results in zero successes (P ass@128 = 0),
+masking the model’s underlying potential.
+5.2. Emergence through Probability Amplification
+RL can operate by optimizing these atomic primitives where
+reward signals are dense. By sufficiently “sharpening” the
+atomic probabilities, RLVR triggers a multiplicative phase
+transition at the compositional level. We formalize this
+emergence as the crossing of the feasibility boundary:
+0.35 ≈0.0024| {z }
+Null State
+(Pθ(q)<ϵ)
+RL
+− − − − − − →
+Sharpening
+0.75 ≈0.168| {z }
+Feasible State
+(Pθ(q)≥δ)
+Here, the new capability to solve Qcomp emerges not from
+learning the complex task logic directly, but from the satu-
+ration of prerequisite atomic competencies. This resolves
+the central paradox: RLVR acts as an amplifier at the micro-
+level, which mathematically necessitates its appearance as a
+creator at the macro-level.
+5.3. Capability Erosion under RLVR Optimization
+While RLVR acts as an amplifier for emergence, this opti-
+mization is not a monotonic improvement across the entire
+task domain. Instead, it often triggersCapability Erosion, a
+phenomenon where the mastery of certain problem instances
+comes at the expense of others.
+The RLVR objective is defined by the maximization of the
+expected reward over the task distributionD:
+max
+θ
+J(θ) = 1
+N
+NX
+i=1
+Ex∼πθ(·|qi)[R(x)](9)
+By maximizing mean reward, RLVR prioritizes the majority
+over the specific. This creates an inherent conflict: to master
+dominant tasks, the model may overwrite representations
+required for minority cases. As a result, training does not
+yield a uniform improvement; rather, it triggers a redistribu-
+tive trade-off. Ultimately, the erosion of minority skills is
+the price of global improvement, showing that RL reshapes
+through destruction rather than simple accumulation.
+4
+
+
+===== PAGE 5 =====
+Table 1. Dataset Statistics and Domain Properties.We evaluate four algebraic systems varying in cardinality and commutativity. The
+training set consists exclusively of atomic examples to enforce rule learning, while the test set comprises 800 samples stratified by
+reasoning depth (2–5 operations) to assess generalization.
+Domain Group Properties Underlying Structure Train Test (Stratified by Depth) Total
+Card. Comm. 1-Ops 2-Ops 3-Ops 4-Ops 5-Ops
+Encrypted History ∞Yes Integers (Z) 3,200 50 50 50 50 200
+Enigma System Finite Yes Modular Product (Z3
+26) 3,200 50 50 50 50 200
+Knitting System ∞No Free Group 3,200 50 50 50 50 200
+Rubik’s Cube Finite No Permutation Group 3,200 50 50 50 50 200
+Total 4 Distinct Algebraic Systems 12,800 200 200 200 200 800
+6. Experiment Setup
+To isolate genuine logical deduction from memorized knowl-
+edge, we employ Algebrarium to generate synthetic sym-
+bolic reasoning tasks. This framework mitigates contamina-
+tion by instantiating non-standard algebraic structures that
+do not exist in pre-training corpora. It provides a clean envi-
+ronment characterized by tunable complexity, deterministic
+answers, and a modular design that makes the reasoning pro-
+cess highly analyzable. By decoupling abstract definitions
+from concrete instances, Algebrarium ensures that perfor-
+mance reflects pure symbolic proficiency rather than data
+leakage. (Detailed in Appendix A.)
+Domains and Task Formulation.The core task isAlge-
+braic Expression Calculation. Given two elements e1, e2 ∈
+G from a specific group, the model must compute the canon-
+ical result of e1 ⊕e 2 by applying group axioms (e.g., asso-
+ciativity, identity, inverse). To test robustness across diverse
+algebraic properties, we configure four distinct domains
+defined by two axes: Cardinality (Finite vs. Infinite) and
+Commutativity (Abelian vs. Non-Abelian).
+Table 2. Evaluation Framework.The framework distinguishes
+between direct inference and decomposed binary operations. Note
+that all intermediate steps dj are defined as ground truth labels to
+allow for independent assessment of atomic operations (Pθ(sj)).
+Mode Structure (Binary Ops) Metric
+Directq
+Infer
+− − →ResultP θ(q)
+DecomposedSequential Chain
+Step 1s 1 :e 1 ⊕e 2 →d 1 Pθ(s1)
+. . . . . . . . .
+Stepj s j :e k ⊕d j−1 →d j Pθ(sj)
+StepN s N :e f inal ⊕d N−1 →ResP θ(sN)
+Definitions•Atomic:P θ(sj)•Result:P θ(q)
+•Joint: QN
+j=1 Pθ(sj)
+Measurement and Decomposition.As shown in Table 2,
+We quantify difficulty by operation countN and compare
+direct inference Pθ(q) with decomposed binary steps sj.
+Our analysis relates instance accuracy Pθ(q) to atomic step
+accuracyP θ(sj)and the joint probability QN
+j=1 Pθ(sj).
+Dataset Construction.Our data split is designed to de-
+couple rule acquisition from compositional reasoning.
+• Training:The training set is strictly limited toatomic
+operations (1-hop reasoning). This forces the model to
+internalize the fundamental axioms of each group.
+• Testing:The test set evaluates the model’s ability to
+chain these axioms. It is stratified into four difficulty
+levels based on operation depth (2 to 5 ops), with 200
+balanced samples per level across all domains.
+Table 1 summarizes our dataset configuration. Further de-
+tails for each task are provided in Appendix C.
+Implementation Details.We benchmark three model
+families: LLAMA, QWEN, and GEMMA. Training employs
+Group Relative Policy Optimization (GRPO, Shao et al.,
+2024) for 100 steps. Performance is measured via exact
+match accuracy of the final boxed output. Further details
+are provided in Appendix B.
+7. Empirical Validation of the Theory
+To validate the theory in Section 3.1, we evaluate LLAMA,
+QWEN, and GEMMAmodels across several dimensions. Our
+experiments trace a causal chain fromPass@k Curve Dy-
+namicsto theMultiplicative Barrierof complex reasoning,
+showing how these driveCompositional Emergenceand,
+ultimately,Capability Erosion.
+7.1. Validation of TheoreticalPass@kDynamics
+First, we examine the fidelity of our theoretical model in
+capturing the empirical behavior of thePass@kmetric. To
+construct the theoretical curves, we necessitate an estimate
+of the intrinsic correctness probability Pθ(q) for each prob-
+lem. We approximate this parameter by computing the av-
+5
+
+
+===== PAGE 6 =====
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+Pass@k
+∆ ≈ +15.8%
+Qwen3-4B
+MSE (Base): 7 .5 × 10−5
+MSE (RL): 5 .6 × 10−5
+Qwen Family
+∆ ≈ +36.4%
+Llama-3.1-8B-Instruct
+MSE (Base): 3 .3 × 10−4
+MSE (RL): 4 .5 × 10−5
+Llama Family
+∆ ≈ +21.0%
+gemma-3-12b-it
+MSE (Base): 3 .1 × 10−4
+MSE (RL): 1 .9 × 10−5
+Gemma Family
+1 2 4 8 16 32 64 128
+Number of samples k
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+Pass@k
+∆ ≈ +2.3%
+Qwen3-4B-Instruct-2507
+MSE (Base): 1 .4 × 10−4
+MSE (RL): 8 .8 × 10−6
+1 2 4 8 16 32 64 128
+Number of samples k
+∆ ≈ +23.5%
+Llama-3.2-3B-Instruct
+MSE (Base): 3 .9 × 10−5
+MSE (RL): 2 .1 × 10−4
+1 2 4 8 16 32 64 128
+Number of samples k
+∆ ≈ +16.0%
+gemma-3-4b-it
+MSE (Base): 5 .8 × 10−4
+MSE (RL): 7 .5 × 10−5
+Base Model (Pre-RL) RL Model (Post-RL) Empirical Result Theoretical Fit
+Figure 2. Comparison of theoretical and empiricalPass@kcurves.The figure illustrates that the theoretical and empirical curves align
+remarkably well, consistently yielding a Mean Squared Error (MSE) magnitude less than 10−4. Furthermore, the RL models demonstrate
+substantial performance improvements over the Base models across the sampling spectrum.
+erage correctness rate over 128 sampled responses for each
+instance (i.e., Pθ(q)≈Avg@128(Q) , using Eq. 2). The
+comparison between these theoretically projected curves
+and the actual empirical results is presented in Figure 2.
+As shown in Figure 2, empirical results align with our theory
+with high precision, confirming the Section 3.1 formulation.
+Significant improvements inPass@ksuggest that RLVR
+enables the model to solve previously intractable problems,
+signaling the emergence of new capabilities.
+7.2. Transitions from the Null Regime
+Building on the probabilistic definitions established in Sec-
+tion 4, we investigate the mechanism of emergence. We rig-
+orously isolate the subset of tasks initially classified within
+The Null Setfor the base models. To ensure evaluation ro-
+bustness, we define the acquisition of capability strictly as
+the transition intoThe Feasible Set.
+As illustrated in Figure 3, RLVR effectively unlocks 22.6%
+of tasks from the Null Set, elevating the mean success rate of
+this activated subset from 0 to 0.60. This shift substantiates
+that emergence arises when optimized atomic probabilities
+surmount the multiplicative barrier, rendering previously
+intractable tasks reliably solvable.
+7.3. Validating the Multiplicative Barrier Hypothesis
+Section 5 attributes the difficulty of complex tasks to the
+exponential decay of joint probabilities ( Q Pθ(sj)). We
+empirically validate thisMultiplicative Barrierempirically
+77.4%
+22.6%
+2567
+Impossible
+Tasks
+Aggregate Resurrection Rate
+Still Failed Resurrected 0.0 0.2 0.4 0.6 0.8 1.0
+Avg@128 (Resurrected Tasks)
+0
+10
+20
+30
+40
+50
+60Count
+Score Distribution
+Avg: 0.60
+Figure 3. Analysis of Capability Emergence.We analyze the
+subset of tasks initially classified as Null State ( Avg@128= 0 )
+in the Base model.Left:The recovery rate, indicating the pro-
+portion of these impossible tasks that successfully transitioned to
+the Feasible State (Avg@128≥0.125 ) after RL training.Right:
+Post-emergence accuracy distribution. The significant skew toward
+high performance (mean ≈0.60 ) indicates that emergence occurs
+as a sharp phase transition.
+through two complementary analyses.
+Existence of the Exponential Barrier.Figure 4 delin-
+eates a distinct performance boundary, effectively acting
+as a “soft wall” for model capabilities. We observe that
+accuracy undergoes a geometric decay relative to task com-
+plexity, closely following the function y≈p x. This trajec-
+tory provides empirical confirmation that reasoning errors
+accumulate multiplicatively: the joint probability of success
+6
+
+
+===== PAGE 7 =====
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+yyy ≈≈≈ 000...888555xxx
+yyy ≈≈≈ 000...888999xxx
+Qwen Family
+Qwen3-4B-Instruct-2507
+yyy ≈≈≈ 000...000444xxx
+yyy ≈≈≈ 000...777000xxx
+Llama Family
+Llama-3.1-8B-Instruct
+yyy ≈≈≈ 000...444333xxx
+yyy ≈≈≈ 000...888111xxx
+Gemma Family
+gemma-3-12b-it
+0 1 2 3 4 5
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+yyy ≈≈≈ 000...888333xxx
+yyy ≈≈≈ 000...888777xxx
+Qwen3-4B
+0 1 2 3 4 5
+yyy ≈≈≈ 000...000111xxx
+yyy ≈≈≈ 000...444000xxx
+Llama-3.2-3B-Instruct
+0 1 2 3 4 5
+yyy ≈≈≈ 000...000777xxx
+yyy ≈≈≈ 000...555111xxx
+gemma-3-4b-it
+Accuracy
+# Operations (Complexity)
+Base Model RL Model
+Figure 4.Verification of Exponential Decay.The figure validates theMultiplicative Barrierhypothesis (P∝p N ).
+0.0 0.2 0.4 0.6 0.8 1.0
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+Outcome Accuracy ↑
+Qwen3-4B-Instruct-2507
+ρρρbase = 0.94
+ρρρrl = 0.90
+Qwen Family
+0.0 0.2 0.4 0.6 0.8 1.0
+Llama-3.1-8B-Instruct
+ρρρbase = 0.17
+ρρρrl = 0.94
+Llama Family
+0.0 0.2 0.4 0.6 0.8 1.0
+gemma-3-12b-it
+ρρρbase = 0.75
+ρρρrl = 0.87
+Gemma Family
+0.0 0.2 0.4 0.6 0.8 1.0
+Joint Step Accuracy
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+Outcome Accuracy ↑
+Qwen3-4B
+ρρρbase = 0.95
+ρρρrl = 0.91
+0.0 0.2 0.4 0.6 0.8 1.0
+Joint Step Accuracy
+Llama-3.2-3B-Instruct
+ρρρbase = −0.01
+ρρρrl = 0.96
+0.0 0.2 0.4 0.6 0.8 1.0
+Joint Step Accuracy
+gemma-3-4b-it
+ρρρbase = 0.21
+ρρρrl = 0.69
+Base Model (Pre-RL) RL Model (Post-RL) Identity Line (y = x)
+Figure 5. Process vs. Outcome Correlation Analysis.Scatter plots correlating joint step accuracy ( Q Pθ(sj)) with Outcome Accuracy
+(Q Pθ(q)). Selected base models from the Llama and Gemma families cluster in the “Null Regime” near the origin, indicating that a
+breakdown in the joint reasoning chain leads to task failure. In contrast, Qwen models and RL-tuned models exhibit a high correlation.
+is the product of individual atomic probabilities. Conse-
+quently, even with high atomic accuracy, the likelihood of a
+correct final outcome diminishes exponentially as the rea-
+soning horizon extends, rendering highly complex tasks
+rapidly intractable.
+Correlation as the Mechanism of Emergence.To un-
+cover the mechanism behind the “Zero-to-One” emergence
+phenomenon observed in Section 7.2, Figure 5 analyzes the
+correlation between joint step accuracy and final answer
+correctness. The data reveal that the emergence of complex
+capabilities is structurally bound by this correlation.
+Prior to RLVR, Gemma and Llama models exhibit a “broken
+link” between process and outcome, clustering near the
+origin. Without sufficient atomic accuracy, the probabilistic
+chain collapses, preventing the capability from manifesting.
+The transition to RLVR restores the linear coupling between
+7
+
+
+===== PAGE 8 =====
+−1.00
+−0.75
+−0.50
+−0.25
+0.00
+0.25
+0.50
+0.75
+1.00
+ Qwen3-4B-Instruct-2507
+Qwen Family
+Llama-3.2-3B-Instruct
+Llama Family
+gemma-3-4b-it
+Gemma Family
+0.0 0.2 0.4 0.6 0.8 1.0
+−1.00
+−0.75
+−0.50
+−0.25
+0.00
+0.25
+0.50
+0.75
+1.00
+ Qwen3-4B
+0.0 0.2 0.4 0.6 0.8 1.0
+Llama-3.1-8B-Instruct
+0.0 0.2 0.4 0.6 0.8 1.0
+gemma-3-12b-it
+← Performance Loss No Change Performance Gain →
+Magnitude of Change ∆
+Initial Atomic Accuracy (Base Model)
+Performance Change (∆ = RL − Base)
+Figure 6. Analysis of Atomic Performance Shifts.Visualization of performance change (∆ =RL−Base ) versus initial atomic accuracy.
+All model families achieve substantial performance gains across most atomic skills. However, Qwen demonstrates high robustness,
+achieving consistent gains with minimal regression in mastered skills. Conversely, Llama and Gemma exhibit a more extreme behavior.
+While they often achieve higher magnitude gains in weak areas, this often leads to a noticeable regression in previously acquired skills.
+atomic steps and final results. The high correlation coeffi-
+cients (ρ∈[0.69,0.96] ) confirm that emergence is the di-
+rect mathematical consequence of pushing the joint process
+probability across the multiplicative barrier. Most critically,
+this indicates that complex capabilities introduced by RLVR
+are reducible to the mastery of constituent atomic tasks,
+suggesting a clear pathway for their acquisition.
+7.4. Capability Erosion under Atomic-Only RL
+While RLVR fosters capability emergence, it can also induce
+performance erosion. As theorized in Section 5.3, its global
+optimization objective may sacrifice specialized skills to
+maximize aggregate rewards.
+We examine the optimization dynamics in Figure 6 by plot-
+ting the performance change (∆) against the initial accuracy
+for each atomic skill. As the initial mastery of a skill in-
+creases, the difficulty of further improvement rises, and the
+risk of regression emerges. However, the severity of this
+trade-off varies significantly.
+Llama & Gemma (High Severity).These families show an
+extreme exchange. While they achieve substantial gains on
+initially weak skills, they pay a visible price in stability. The
+scatter plots reveal distinct clusters of negative values, indi-
+cating that the acquisition of new capabilities often comes
+at the expense of eroding previously mastered skills.
+Qwen (Mitigated Severity).Qwen manages this trade-off
+more effectively. While it also faces diminishing returns
+on high-accuracy skills, it avoids the catastrophic drops
+seen in others. This stability reflects that Qwen samples
+responses with stronger logical consistency. This internal
+consistency acts as a buffer, allowing Qwen to navigate
+the RLVR process and improve weak areas without largely
+sacrificing the integrity of its existing skills.
+8. Conclusion
+In this paper, we explain how RLVR enables the emergence
+of new capabilities. We reveal that instance-level correct-
+ness is the true driver ofPass@kperformance. We identify
+theMultiplicative Barrierin complex reasoning, where the
+probability of success decays exponentially as reasoning
+chains lengthen. Then, we demonstrate that models over-
+come this by optimizing their existing capabilities. This
+optimization allows the model to discover valid reasoning
+paths that were previously inaccessible. Overall, our work
+contributes a novel explanation to the current discussion on
+emergent abilities in RLVR, suggesting that the iterative op-
+timization of solvable problems enables models to develop
+the capabilities to tackle previously unsolvable scenarios.
+8
+
+
+===== PAGE 9 =====
+Impact Statement
+This paper advances the understanding of how reinforce-
+ment learning facilitates complex reasoning in LLMs. By
+theoretically modeling the ”Multiplicative Barrier” and clar-
+ifying the true drivers of performance beyondPass@k,
+we provide actionable insights for improving model effi-
+ciency and correctness. These findings are instrumental for
+the research community to develop more effective training
+paradigms, ultimately leading to AI assistants that are ca-
+pable of solving intricate problems with higher verifiable
+accuracy, benefiting fields ranging from automated coding
+to formal logic.
+References
+Cheng, S., Yin, X., Zhou, R., Li, Y ., Wang, X., Pan, L.,
+Wang, W. Y ., and Zhong, V . From atomic to composite:
+Reinforcement learning enables generalization in com-
+plementary reasoning, 2025. URL https://arxiv.
+org/abs/2512.01970.
+Cui, G., Zhang, Y ., Chen, J., Yuan, L., Wang, Z., Zuo, Y .,
+Li, H., Fan, Y ., Chen, H., Chen, W., Liu, Z., Peng, H.,
+Bai, L., Ouyang, W., Cheng, Y ., Zhou, B., and Ding,
+N. The entropy mechanism of reinforcement learning
+for reasoning language models, 2025. URL https:
+//arxiv.org/abs/2505.22617.
+DeepMind, G. Gemini 2.5: Pushing the frontier with ad-
+vanced reasoning, multimodality, long context, and next
+generation agentic capabilities.ArXiv, abs/2507.06261,
+2025.
+DeepSeek-AI, Guo, D., Yang, D., Zhang, H., Song, J.-M.,
+Zhang, R., Xu, R., Zhu, Q., Ma, S., Wang, P., Bi, X.,
+Zhang, X., Yu, X., Wu, Y ., Wu, Z. F., Gou, Z., Shao, Z.,
+Li, Z., Gao, Z., Liu, A., Xue, B., Wang, B.-L., Wu, B.,
+Feng, B., Lu, C., Zhao, C., Deng, C., Zhang, C., Ruan,
+C., Dai, D., Chen, D., Ji, D.-L., Li, E., Lin, F., Dai, F.,
+Luo, F., Hao, G., Chen, G., Li, G., Zhang, H., Bao, H.,
+Xu, H., Wang, H., Ding, H., Xin, H., Gao, H., Qu, H.,
+Li, H., Guo, J., Li, J., Wang, J., Chen, J., Yuan, J., Qiu,
+J., Li, J., Cai, J., Ni, J., Liang, J., Chen, J., Dong, K.,
+Hu, K., Gao, K., Guan, K., Huang, K., Yu, K., Wang, L.,
+Zhang, L., Zhao, L., Wang, L., Zhang, L., Xu, L., Xia,
+L., Zhang, M., Zhang, M., Tang, M., Li, M., Wang, M.,
+Li, M., Tian, N., Huang, P., Zhang, P., Wang, Q., Chen,
+Q., Du, Q., Ge, R., Zhang, R., Pan, R., Wang, R., Chen,
+R. J., Jin, R., Chen, R., Lu, S., Zhou, S., Chen, S., Ye, S.,
+Wang, S., Yu, S., Zhou, S., Pan, S., Li, S. S., Zhou, S.,
+Wu, S.-K., Yun, T., Pei, T., Sun, T., Wang, T., Zeng, W.,
+Zhao, W., Liu, W., Liang, W., Gao, W., Yu, W.-X., Zhang,
+W., Xiao, W., An, W., Liu, X., Wang, X., aokang Chen,
+X., Nie, X., Cheng, X., Liu, X., Xie, X., Liu, X., Yang,
+X., Li, X., Su, X., Lin, X., Li, X. Q., Jin, X., Shen, X.-C.,
+Chen, X., Sun, X., Wang, X., Song, X., Zhou, X., Wang,
+X., Shan, X., Li, Y . K., Wang, Y . Q., Wei, Y . X., Zhang,
+Y ., Xu, Y ., Li, Y ., Zhao, Y ., Sun, Y ., Wang, Y ., Yu, Y .,
+Zhang, Y ., Shi, Y ., Xiong, Y ., He, Y ., Piao, Y ., Wang, Y .,
+Tan, Y ., Ma, Y ., Liu, Y ., Guo, Y ., Ou, Y ., Wang, Y ., Gong,
+Y ., Zou, Y .-J., He, Y ., Xiong, Y ., Luo, Y .-W., mei You, Y .,
+Liu, Y ., Zhou, Y ., Zhu, Y . X., Huang, Y ., Li, Y ., Zheng,
+Y ., Zhu, Y ., Ma, Y ., Tang, Y ., Zha, Y ., Yan, Y ., Ren, Z.,
+Ren, Z., Sha, Z., Fu, Z., Xu, Z., Xie, Z., guo Zhang, Z.,
+Hao, Z., Ma, Z., Yan, Z., Wu, Z., Gu, Z., Zhu, Z., Liu,
+Z., Li, Z.-A., Xie, Z., Song, Z., Pan, Z., Huang, Z., Xu,
+Z., Zhang, Z., and Zhang, Z. Deepseek-r1: Incentivizing
+reasoning capability in llms via reinforcement learning.
+Nature, 645, 2025.
+9
+
+
+===== PAGE 10 =====
+Dziri, N., Lu, X., Sclar, M., Li, X. L., Jiang, L., Lin, B. Y .,
+West, P., Bhagavatula, C., Bras, R. L., Hwang, J. D.,
+Sanyal, S., Welleck, S., Ren, X., Ettinger, A., Harchaoui,
+Z., and Choi, Y . Faith and fate: Limits of transformers on
+compositionality, 2023. URL https://arxiv.org/
+abs/2305.18654.
+Gandhi, K., Chakravarthy, A., Singh, A., nathan lile, and
+Goodman, N. D. Cognitive behaviors that enable self-
+improving reasoners, or, four habits of highly effective
+stars.COLM, 2025.
+He, A., Fried, D., and Welleck, S. Rewarding the un-
+likely: Lifting grpo beyond distribution sharpening.arXiv
+preprint arXiv:2506.02355, 2025.
+Jiang, Y ., Li, Y ., Chen, G., Liu, D., Cheng, Y ., and Shao, J.
+Rethinking entropy regularization in large reasoning mod-
+els, 2025. URL https://arxiv.org/abs/2509.
+25133.
+Liu, Z., Chen, C., Li, W., Qi, P., Pang, T., Du, C., Lee,
+W. S., and Lin, M. Understanding r1-zero-like training:
+A critical perspective.COLM, 2025.
+OpenAI. Openai o1 system card.ArXiv, 2024.
+OpenAI, Akkaya, I., Andrychowicz, M., Chociej, M.,
+Litwin, M., McGrew, B., Petron, A., Paino, A., Plap-
+pert, M., Powell, G., Ribas, R., Schneider, J., Tezak, N.,
+Tworek, J., Welinder, P., Weng, L., Yuan, Q., Zaremba,
+W., and Zhang, L. Solving rubik’s cube with a robot
+hand.CoRR, abs/1910.07113, 2019. URL http:
+//arxiv.org/abs/1910.07113.
+Park, S., Kaur, S., and Arora, S. How does rl post-training in-
+duce skill composition? a case study on countdown, 2025.
+URLhttps://arxiv.org/abs/2512.01775.
+Shao, Z., Wang, P., Zhu, Q., Xu, R., Song, J.-M., Zhang, M.,
+Li, Y . K., Wu, Y ., and Guo, D. Deepseekmath: Pushing
+the limits of mathematical reasoning in open language
+models.ArXiv, abs/2402.03300, 2024.
+Wang, S., Yu, L., Gao, C., Zheng, C., Liu, S., Lu, R., Dang,
+K., Chen, X., Yang, J., Zhang, Z., et al. Beyond the
+80/20 rule: High-entropy minority tokens drive effective
+reinforcement learning for llm reasoning.arXiv preprint
+arXiv:2506.01939, 2025.
+Wei, J., Wang, X., Schuurmans, D., Bosma, M., Ichter,
+B., Xia, F., Chi, E., Le, Q., and Zhou, D. Chain-of-
+thought prompting elicits reasoning in large language
+models, 2023. URL https://arxiv.org/abs/
+2201.11903.
+Wen, X., Liu, Z., Zheng, S., Xu, Z., Ye, S., Wu, Z., Liang,
+X., Wang, Y ., Li, J., Miao, Z., et al. Reinforcement learn-
+ing with verifiable rewards implicitly incentivizes correct
+reasoning in base llms.arXiv preprint arXiv:2506.14245,
+2025.
+Yan, J., Li, Y ., Hu, Z., Wang, Z., Cui, G., Qu, X., Cheng,
+Y ., and Zhang, Y . Learning to reason under off-policy
+guidance, 2025. URL https://arxiv.org/abs/
+2504.14945.
+Yu, Q., Zhang, Z., Zhu, R., Yuan, Y ., Zuo, X., Yue, Y .,
+Dai, W., Fan, T., Liu, G., Liu, L., Liu, X., Lin, H., Lin,
+Z., Ma, B., Sheng, G., Tong, Y ., Zhang, C., Zhang, M.,
+Zhang, W., Zhu, H., Zhu, J., Chen, J., Chen, J., Wang,
+C., Yu, H., Song, Y ., Wei, X., Zhou, H., Liu, J., Ma, W.-
+Y ., Zhang, Y .-Q., Yan, L., Qiao, M., Wu, Y ., and Wang,
+M. Dapo: An open-source llm reinforcement learning
+system at scale, 2025. URL https://arxiv.org/
+abs/2503.14476.
+Yuan, L., Chen, W., Zhang, Y ., Cui, G., Wang, H., You, Z.,
+Ding, N., Liu, Z., Sun, M., and Peng, H. From f(x) and
+g(x) to f(g(x)) : Llms learn new skills in rl by composing
+old ones, 2025. URL https://arxiv.org/abs/
+2509.25123.
+Yue, Y ., Chen, Z., Lu, R., Zhao, A., Wang, Z., Song, S., and
+Huang, G. Does reinforcement learning really incentivize
+reasoning capacity in llms beyond the base model?ArXiv,
+2025.
+Zhan, R., Li, Y ., Wang, Z., Qu, X., Liu, D., Shao, J., Wong,
+D. F., and Cheng, Y . Exgrpo: Learning to reason from
+experience, 2025. URL https://arxiv.org/abs/
+2510.02245.
+Zhao, R., Meterez, A., Kakade, S. M., Pehlevan, C.,
+Jelassi, S., and Malach, E. Echo chamber: RL
+post-training amplifies behaviors learned in pretraining.
+CoRR, abs/2504.07912, 2025. doi: 10.48550/ARXIV .
+2504.07912. URLhttps://doi.org/10.48550/
+arXiv.2504.07912.
+Zheng, C., Liu, S., Li, M., Chen, X.-H., Yu, B., Gao, C.,
+Dang, K., Liu, Y ., Men, R., Yang, A., Zhou, J., and
+Lin, J. Group sequence policy optimization, 2025. URL
+https://arxiv.org/abs/2507.18071.
+Zhou, C., Liu, P., Xu, P., Iyer, S., Sun, J., Mao, Y ., Ma, X.,
+Efrat, A., Yu, P., Yu, L., Zhang, S., Ghosh, G., Lewis, M.,
+Zettlemoyer, L., and Levy, O. Lima: Less is more for
+alignment, 2023. URL https://arxiv.org/abs/
+2305.11206.
+Zhu, X., Xia, M., Wei, Z., Chen, W.-L., Chen, D., and Meng,
+Y . The surprising effectiveness of negative reinforcement
+in llm reasoning.arXiv preprint arXiv:2506.01347, 2025.
+10
+
+
+===== PAGE 11 =====
+A. Algebrarium Framework
+To rigorously evaluate the symbolic reasoning capabilities of Large Language Models (LLMs) while mitigating the risks
+of data contamination, we developedAlgebrarium. Unlike standard benchmarks that rely on static datasets, which are
+susceptible to memorization during pre-training, Algebrarium serves as a framework for theprocedural generation of
+synthetic algebraic tasks. By constructing data dynamically based on arbitrary, user-defined mathematical structures, it
+establishes a hermetic evaluation environment where models must rely on on-the-fly reasoning rather than retrieval.
+The core philosophy of Algebrarium lies in the decoupling ofabstract mathematical definitionfromconcrete task generation.
+This approach facilitates the creation of infinite variations of reasoning problems derived from a single logical core. The
+framework adheres to three fundamental principles:
+1. Arbitrary Algebraic StructuresAlgebrarium treats algebra as a formal system defined by a tuple (S,Σ,A) , where S
+denotes a carrier set (finite or infinite),Σ represents a signature of operations with defined arities and precedence, and A
+constitutes the axioms or computational rules governing interaction. Crucially, these structures are defined declaratively.
+This design allows the framework to generate tasks for standard structures, such as modular arithmetic or non-abelian
+groups, as well as entirely novel and custom-defined logical systems that the model has never encountered. Consequently,
+this enforces genuine zero-shot reasoning.
+2. Procedural Task ConstructionRather than retrieving pre-existing questions, the framework constructs reasoning
+tasks algorithmically. A generation engine instantiates specific algebraic instances and produces symbolic artifacts, such as
+expression trees or equations, to ensure that every sample is unique. This pipeline includes mechanisms for:
+• Controllable Complexity:Parameters including recursion depth, expression length, and the cardinality of the
+underlying set can be adjusted to create a smooth difficulty gradient.
+• Diverse Task Types:The engine supports various symbolic tasks, ranging from forward evaluation, such as reducing
+an expression a◦b◦c to a single element, to inverse reasoning, which involves solving equations like a◦x=b or
+systems of group equations.
+3. Verifiable Ground TruthSince the data is generated from formal logic rules, the “ground truth” is deterministic and
+mathematically verifiable. This characteristic allows for exact-match evaluation of the model’s outputs and enables the
+automatic generation of step-by-step Chain-of-Thought (CoT) traces for fine-tuning or interpretability studies.
+B. Implementation Details and Training Dynamics
+B.1. Base Models and Infrastructure
+We evaluate a comprehensive suite of base models to ensure the generalizability of our findings. Our experiments cover
+three major model families:
+•Qwen3:Qwen3-4B, and Qwen3-4B-Instruct.
+•Llama-3.1:Llama-3.1-8B-Instruct and Llama-3.1-3B-Instruct.
+•Gemma-3:gemma-3-4b-it and gemma-3-12b-it.
+All models are trained using the verl framework. We utilize vLLM for efficient rollout generation, employing Tensor
+Parallelism (T P= 2) to handle the memory requirements of long-context reasoning up to 8,192 tokens.
+B.2. Hyperparameter Configuration
+For all experiments, we employ Group Relative Policy Optimization (GRPO) using the AdamW optimizer with a learning
+rate of 1×10 −6 over 100 optimization steps. The training is conducted with a global batch size of 128, a mini-batch size of
+8, and a group size (G) of 8, with gradient accumulation enabled. We set the maximum prompt and response lengths to
+1,024 and 8,192 tokens, respectively. Regarding the RL objective, we monitor the KL divergence with a penalty coefficient
+β= 0.001 , though the KL loss is not included in the optimization objective. Additionally, advantage normalization is
+disabled during training.
+11
+
+
+===== PAGE 12 =====
+B.3. Training Dynamics
+We analyze the training stability and performance progression throughout the 100 optimization steps. As illustrated in
+Figure 7, we monitor two key metrics across the Qwen, Llama, and Gemma model families:
+• Critic Reward (Top Row):The trajectory of the mean reward (Pass@1) starts near zero and exhibits a sharp increase
+before converging, indicating the models are effectively learning the target objective.
+• Actor Entropy (Bottom Row):The policy entropy decreases rapidly during the initial phase and stabilizes as training
+progresses, reflecting the increasing confidence of the policy distribution.
+0.8
+0.8
+0.9
+0.9
+1.0Critic Reward
+Qwen Family
+Qwen3-4B-Instruct-2507
+Qwen3-4B 0.0
+0.2
+0.4
+0.6
+Llama Family
+Llama-3.2-3B-Instruct
+Llama-3.1-8B-Instruct
+0.2
+0.4
+0.6
+0.8
+Gemma Family
+gemma-3-4b-it-text
+gemma-3-12b-it-text
+0 20 40 60 80 100
+Training Step
+0.2
+0.2
+0.2
+0.3
+0.3
+0.4Actor Entropy
+Qwen3-4B-Instruct-2507
+Qwen3-4B
+0 20 40 60 80 100
+Training Step
+0.0
+2.0
+4.0
+6.0
+8.0
+Llama-3.2-3B-Instruct
+Llama-3.1-8B-Instruct
+0 20 40 60 80 100
+Training Step
+0.1
+0.2
+0.3
+0.4
+0.5 gemma-3-4b-it-text
+gemma-3-12b-it-text
+Figure 7. Training Dynamics across Model Families.The top row displays the evolution of Critic Reward, while the bottom row
+illustrates the Actor Entropy over 100 training steps. The results demonstrate consistent convergence behaviors across Qwen, Llama, and
+Gemma families.
+C. Domain Specifications and Operational Semantics
+In this section, we provide the detailed formal specifications for the four algebraic systems employed in our experiments.
+Each system is constructed via theAlgebrariumframework using distinct generative logic to cover different quadrants of
+group theory properties (Abelian vs. Non-Abelian, Finite vs. Infinite).
+C.1. Encrypted History Navigation (Infinite Abelian Group)
+This domain models 1-dimensional navigation on an integer line, obfuscated by a substitution cipher. It tests the model’s
+ability to perform arithmetic operations (Z) under symbolic encryption.
+Representation
+•Base System:Base-7.
+•Cipher Alphabet:A bijective mappingϕ:{0, . . . ,6} → {a, . . . , g}where07→a,17→b, . . . ,67→g.
+• Structure:Elements are strings in the format DIR(val), where DIR∈ {FWD,BACK} and val is a string of cipher
+characters representing a Base-7 magnitude.
+12
+
+
+===== PAGE 13 =====
+Operational LogicGiven two navigation stepsS 1 andS 2:
+1.Decryption:The cipher string is decoded into a Base-10 integerN= PL−1
+i=0 ϕ−1(ci)·7 (L−1−i).
+2.Signed Interpretation:FWDimplies+N, whileBACKimplies−N.
+3.Arithmetic Combination:We computeR=N 1 +N 2.
+4.Re-encryption:The resultRis encoded back into the target format:
+• IfR >0, the direction isFWD.
+• IfR <0, the direction isBACK.
+• The absolute value|R|is converted to Base-7 and mapped viaϕ.
+ExampleComputingFWD(ad)+BACK(ef):
+•ad 7 →0·7 + 3 = 3. Direction FWD→+3.
+•ef 7 →4·7 + 5 = 33. Direction BACK→ −33.
+• Sum:3 + (−33) =−30.
+• Result: Magnitude30 = 42 7 →ec. Sign Negative→BACK. Final:BACK(ec).
+C.2. Enigma 3-Rotor System (Finite Abelian Group)
+This domain simulates the state of a simplified Enigma machine with three independent rotors. Mathematically, it represents
+the direct product groupZ 26 ×Z 26 ×Z 26.
+Representation
+•State:A comma-separated stringR 1, R2, R3 where eachR i ∈ {A, . . . , Z}.
+•Mapping:Letters map to offsets0. . .25(A=0, B=1, ... Z=25).
+Operational LogicThe binary operation combines two states via component-wise addition modulo 26. Unlike a physical
+Enigma machine, there is no ”carry” or stepping mechanism between rotors in this simplified algebraic model.
+(r1, r2, r3)⊕(s 1, s2, s3) = ((r1 +s 1)mod26,(r 2 +s 2)mod26,(r 3 +s 3)mod26)(10)
+The inverse operation corresponds to negation modulo 26: inv(r) = (26−r) (mod 26).
+ExampleComputingA,C,Z⊕B,B,C:
+• Rotor 1:A(0) +B(1) = 1→B
+• Rotor 2:C(2) +B(1) = 3→D
+• Rotor 3:Z(25) +C(2) = 27≡1 (mod 26)→B
+• Result:B,D,B
+C.3. Knitting Instruction System (Infinite Non-Abelian Group)
+This domain models a Free Group generated by two elements. It represents sequences of reversible actions where order
+matters and adjacent inverses cancel.
+13
+
+
+===== PAGE 14 =====
+Representation
+•Alphabet:Σ ={k, p, K, P}.
+•Semantics:k(knit),p(purl). Capital letters represent inverses:K=k −1 (un-knit),P=p −1 (un-purl).
+•Identity:The empty stringϵ.
+Operational LogicThe operation is string concatenation followed by recursive reduction. The reduction rule is defined
+by the cancellation of adjacent inverse pairs:
+xx−1 →ϵandx −1x→ϵ(11)
+Specifically, the pairs (k, K) and (p, P) annihilate each other. This process repeats until the string is in its irreducible
+canonical form.
+ExampleComputingkp≫PK:
+1. Concatenate:kpPK
+2. Inner Cancellation: The adjacent pairp, Pcancels.k(pP)K→kK.
+3. Secondary Cancellation: The adjacent pairk, Kcancels.kK→ϵ.
+4. Result: Empty string (Identity).
+C.4. Rubik’s Cube Sequence System (Finite Non-Abelian Group)
+This domain models the algebra of face rotations on a 3×3×3 cube. It enforces strict canonicalization rules involving
+commutation and modulo arithmetic, representing a quotient of a free group.
+Representation
+•Moves:F∈ {R, L, U, D, F, B}representing face turns.
+•Modifiers:None (90° clockwise),#(90° counter-clockwise/prime),2(180°).
+•Sequence:A space-separated list of moves (e.g.,R U R#).
+Operational LogicOperations are defined by sequence concatenation followed by reduction to a uniqueCanonical Form.
+Three specific rules are applied iteratively:
+1.Inverse Cancellation:Moves followed by their inverse are removed (e.g.,RR#→ϵ).
+2.Face Consolidation (Mod 4):Consecutive moves of the same face are summed modulo 4.
+• Example:R·R2→R3≡R#(since1 + 2 = 3≡ −1).
+• Example:R·R·R·R→R4≡ϵ.
+3.Commutative Reordering:While the group is generally non-abelian, opposite faces commute (e.g.,RL=LR). To
+ensure a unique representation, we enforce a lexicographical priority:
+•RprecedesL;UprecedesD;FprecedesB.
+• Example: A sequence input asL Ris automatically rewritten toR L.
+14
+
+
+===== PAGE 15 =====
+ExampleSolving equationX=inv(R U)·R U R#:
+1. InvertR U→U# R#.
+2. Concatenate:U# R# R U R#.
+3. Consolidate:R#andRcancel. Sequence becomesU# U R#.
+4. Consolidate:U#andUcancel.
+5. Result:R#.
+15

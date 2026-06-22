@@ -1,0 +1,1091 @@
+
+
+===== PAGE 1 =====
+Tracing the ongoing emergence of human-like reasoning in Large Language 
+Models 
+Paolo Morosi1*, Nikoleta Pantelidou1, Fritz Günther2, Elena 
+Pagliarini1, Evelina Leivada1,3 
+1. Departament de Filologia Catalana, Universitat Autònoma de Barcelona, Barcelona 
+08193, Spain. 
+2. Institut für Psychologie, Humboldt-Universitat zu Berlin, Berlin 10099, Germany. 
+3. Institució Catalana de Recerca i Estudis Avançats (ICREA), Barcelona 08010, Spain 
+ 
+*Corresponding author: Paolo Morosi 
+Email: paolo.morosi@uab.cat 
+Keywords: Large Language Models, Reasoning, Inferences, Conditionals 
+ 
+Abstract 
+Humans effortlessly go beyond literal meanings: “If you mow the lawn, I’ll give you 
+50$”, is typically understood as  implying that the speaker will pay only if the lawn is 
+mowed, whereas  “If you’re hungry, there’s pizza in the oven” implies that pizza is 
+available regardless of the hearer’s hunger. Large Language Models (LLMs) show 
+human-like performance on many tasks, yet it remains unclear whether they reason like 
+humans. To address this, we conducted a population-matching experiment assessing how 
+25 LLMs compute conditional inferences across 4 languages,  compared to  an equal 
+number of humans per language. We find that humans  enrich logical reasoning through 
+pragmatic inferences across languages. Model behavior is more variable . Some LLMs 
+perfectly follow the truth -table of conditionals but they ignore pragmatic inferences, 
+while others deviate from the truth -table, adhering to a single interpretation across the 
+board, thus reflecting accurate rule -based processing but not human -like reasoning. 
+Overall, LLMs are accurate semantic operators, but fail to capture the pragmatic 
+enrichments characteristic of human reasoning. Crucially, LLM accuracy is neither 
+predicted nor boosted by open vs. closed status, training orientation, or architecture type, 
+suggesting that pragmatic reasoning is still an emerging ability in the cognitive toolkit of 
+artificial systems. 
+ 
+1. Introduction 
+Recent advances in Artificial Intelligence (AI), and Large Language Models (LLMs) in 
+particular, have ignited an interdisciplinary debate at the intersection of computer science, 
+cognitive science, and linguistics. The increasingly sophisticated abilities of LLMs have 
+given rise to claims that formal properties of human language have emerged in these 
+systems (1-2). For some scholars, such claims challenge long-standing generative theories 
+of grammar (3-4) and position LLMs as accurate models for studying human learning and 
+processing of language (5). At the same time, it has been argued that LLMs, while 
+undeniably impressive linguistic agents, have cognitive toolkits that remain 
+fundamentally different from those of humans, particularly in their handling of 
+pragmatics and deeper structural generalizations that underpin human linguistic 
+
+
+===== PAGE 2 =====
+competence (1, 6-9). This debate bears directly on critical questions concerning the nature 
+of human cognition, the limits of AI, and the very definitions of “language” and 
+“understanding” that different disciplines endorse (10-11). 
+Against this backdrop, a growing body of work in computational linguistics and 
+cognitive science has focused on systematically probing the limits of LLMs’ knowledge 
+(e.g., LODNA (12)). This line of research has yielded diverging conclusions. On the one 
+hand, several studies report that LLMs successfully capture important aspects of human 
+language, including morphological generalizations (13-15), polysemy patterns (16), long-
+distance number agreement (17), and other construction types, such as nominal 
+expressions (18), or target placement in prepositional phrases (19). On the other hand, 
+LLM performance often diverges from human baselines on linguistic phenomena that 
+humans develop early, including core syntactic distinctions (20), explicit reasoning about 
+syntactic structures and rules (21), sensitivity to attested versus unattested word orders 
+(22), and grammaticality judgments across a range of linguistic domains (23-24). 
+ An increasingly growing line of work has argued that, even when LLMs appear 
+to display sophisticated linguistic competence, they nonetheless struggle with meaning -
+related components of language (8, 25). More specifically, LLMs have been argued to 
+lack language understanding rooted in a perception of real -world reality (26), to exhibit 
+shallow sensitivity to meaning in comprehension tasks (27), and to lack stable conceptual 
+representations and signifiers (28). These limitations entail systematic deviations from 
+human behavior in meaning -sensitive domains, such as passive constructions and 
+negation (20), correlative comparative idiomatic constructions (29) generic statements 
+(30), quantificational expressions (31), and pragmatic implicatures in general (32). 
+ Claiming in broad strokes that LLMs struggle with meaning -related components 
+of language is not sufficient if one cannot indicate the precise source of the challenges. 
+We offer a unifying explanation of these general inconsistencies, arguing that the 
+reasoning abilities of LLMs are affected by what we term a Decontextualization Bias: a 
+tendency to rely on formal or literal aspects of linguistic input, without yet fully 
+integrating the contextual cues that guide human processing. One way to frame this 
+distinction is that LLMs have acquired formal linguistic competence, but not functional 
+linguistic competence (1). This bias gives rise to a systematic preference for literal 
+readings (33), a weakness to interpret implicatures (34) and a tendency to converge on a 
+single interpretation in the face of ambiguous language (35). More generally, g iven that 
+LLMs do not acquire language grounded in real-world conditions, they may be inherently 
+biased toward literal interpretations at the expense of pragmatically enriched ones. Under 
+this view, although LLMs can potentially capture certain aspects of pragmatic regularities, 
+when a literal interpretation competes with a contextually enriched alternative, models 
+are predicted to diverge from human baselines, as humans exhibit the opposite tendency: 
+they consistently draw pragmatic inferences by adhering to Gricean principles of 
+cooperative communication and by contextualizing incoming stimuli through readily 
+accessible long-term memory resources (36-38). 
+ While limitations in language processing inevitably affect the ability to reason 
+using linguistic input, to determine where exactly the reasoning abilities of LLMs deviate 
+
+
+===== PAGE 3 =====
+from human baselines, one needs to tap into the complexity of the semantics -pragmatics 
+interface, teasing apart the contribution of the different components behind it. We do that 
+through a novel benchmark that tests how models interpret conditional stateme nts in 
+comparison to humans across 4 languages: Catalan, English, Italian, Spanish. 
+Conditionals constitute a core linguistic construction that integrates semantics, 
+pragmatics, reasoning, and probability assignment (39), making them uniquely suited for 
+disentangling meaning -related components of language in model performance. 
+Specifically, we focus on two types of inferences that humans typically associate with 
+conditionals: perfected (40) and biscuit (41-42) interpretations. Humans compute both 
+inferences reliably, albeit to different degrees, as discussed below (43-45).  
+ To obtain a broad and representative assessment (46), we evaluated 25 LLMs 
+covering different families and architectures, aggregating model responses at a scale 
+comparable to the human sample, thus facilitating reliable statistical comparison. This 
+broad coverage allows us not only to chart the overall emergence of reasoning in model 
+behavior, but also to investigate which architectural and training choices may boost the 
+development of this property in data -driven systems. Specifically, we focus on 3 largely 
+unexplored main issues. 
+ First, we examine differences between open -source and closed -source models. 
+The distinction is not always straightforward. Open -source systems generally provide 
+greater transparency and accessibility to their training code and data, whereas proprietary 
+models often achieve state-of-the-art performance but restrict access to their architecture 
+and training materials. Importantly, many so -called open -source models provide only 
+open weights, which are downloadable and runnable locally, while their underlying code 
+and training data remain private. Prior work has highlighted that both training data and 
+type of access can influence the capabilities and limitations of LLMs (47). Given that 
+transparency and accessibility increasingly guide both research and deploym ent 
+decisions, it is important to assess whether model performance systematically varies with 
+open- or closed-sourceness. 
+ Second, we contrast general -purpose generative models with reasoning -oriented 
+models. This comparison is theoretically motivated because it generates two competing 
+predictions. Reasoning -oriented systems, including models optimized for chain -of-
+thought prompting or tool augmentation (48-49), may be better equipped to integrate key 
+components of reasoning such as logical structure and pragmatic enrichment, benefiting 
+from explicit inference mechanisms. In contrast, general -purpose generative models are 
+trained on large -scale, diverse corpora, which may allow human -like linguistic 
+competence to emerge spontaneously in silico. Comparing models with different training 
+orientations allows us to evaluate whether logical generalizations and pragmatic 
+inferences rely primarily on specialized reasoning mechanisms or can arise naturally in 
+broadly trained, AI generative systems. 
+ Third, we tap into architectural differences by comparing dense models (50 -51) 
+with Mixture -of-Experts (MoE) architectures (52 -54). This contrast likewise yields 
+competing predictions. MoE architecture substantially increases effective capacity 
+without proportional computational cost and may therefore support richer representations 
+
+
+===== PAGE 4 =====
+and more flexible inferences. Dense models, by contrast, may promote more stable and 
+globally integrated processing. Comparing these architectures allows us to test whether 
+performance on complex reasoning tasks is primarily shaped by capacity allocation, 
+sparsity, or broader design constraints. 
+ Together, these comparisons enable us to move beyond aggregate accuracy and 
+identify which aspects of model design facilitate — or constrain — the emergence of 
+human-like reasoning in LLMs. We therefore address two main Research Questions 
+(RQs):  
+ 
+RQ1. Do LLMs reason like humans? Specifically, do they exhibit both logical reasoning 
+and pragmatic grounding to the same extent as human speakers when confronted 
+with the same material? 
+RQ2.  Does model performance vary across types of LLMs and languages? Does 
+performance relate to factors such as (i) availability (open- vs. closed-source), (ii) 
+type of training (generative vs. reasoning), and (iii) architectural design (dense vs. 
+MoE)?  
+ 
+2. The linguistic properties of conditionals 
+Conditional statements are chosen to explore the reasoning abilities of LLMs because 
+they are special in combining a semantic component (i.e., the logical meaning of 
+conditionals) with a pragmatic component (i.e., the two inferences). To exemplify, in 
+standard conditionals (SCs) (e.g., “If you mow the lawn, I’ll give you 50$”), speakers 
+typically strengthen the sentence to a biconditional, perfected reading (i). In biscuit 
+conditionals (BCs) (e.g., “If you’re hungry, there’s pizza in the oven”), the consequent is 
+interpreted as holding independently of the antecedent (ii). 
+ 
+(i) If you mow the lawn, I will give you five dollars. (40)    STANDARD 
+(ii) If John is hungry, there is pizza in the oven. (apud (41))  BISCUIT 
+ 
+In classical propositional logic, however, the SC if p, then q is defined as follows: 
+ 
+(iii) ⟦p → q⟧=1 iff ¬p ∨ q 
+ 
+On this definition, the conditional is a purely truth-functional operator rather than a causal 
+or temporal one. Therefore, it is true in all cases except when the antecedent p is true and 
+the consequent q is false. Crucially, when the antecedent is false, the conditional is 
+vacuously true, as the circumstance under which it could be falsified does not arise. 
+Accordingly, in (i), classical semantics allows for the possibility that the hearer receives 
+five dollars even if the lawn is not mowed; for instance, if the hearer tidies their room or 
+cooks dinner. 
+In natural language interpretation, however, canonical if-conditionals typically 
+convey additional information, including causal dependence and relevance between 
+antecedent and consequent, temporal ordering, and speaker expectations (55 -56). As a 
+
+
+===== PAGE 5 =====
+result, in everyday conversation, SCs as (i) are often pragmatically strengthened to a 
+biconditional interpretation (i.e., q if and only if p), formally represented in (iv): 
+ 
+(iv) ⟦p ↔ q⟧ = 1 iff (⟦p⟧ = ⟦q⟧) 
+ 
+Under this interpretation, the hearer will receive five dollars if and only if they mow the 
+lawn, and not in other circumstances. Importantly, this strengthening does not follow from 
+the truth conditions of the conditional itself but is instead usually taken to be a pragmatic 
+inference (57), commonly modeled as an exhaustivity implicature (58 -60). Specifically, 
+exhaustification leads hearers to infer that the stated antecedent exhausts the set of 
+relevant conditions under which the consequent holds, thereby  yielding a strengthened, 
+biconditional interpretation. 
+In contrast, the BC in (ii) differs from SCs (e.g., (i)) in that the consequent q is 
+interpreted as holding independently of the antecedent p. This interpretation can be 
+schematically characterized as in (v): 
+ 
+(v) ⟦p → q⟧ = ⟦q⟧ 
+ 
+Intuitively, in (ii), the existence of pizza in the oven does not depend on John’s hunger 
+and holds regardless of whether the antecedent is true or false. Some authors describe this 
+as the “literal meaning” of conditionals (43), insofar as it is compatible with the classical 
+truth table for conditionals. Crucially, however, the biscuit reading does not amount to 
+vacuous truth: the conditional is true not because the antecedent fails, but because 
+antecedent and consequent are understood as causally and epistemically independent. 
+Under most accounts (59, 61 -62), the entailment of the consequent in BCs is 
+instead derived via a pragmatic inference layered on top of standard conditional 
+semantics. Hearers thus infer the epistemic independence of the consequent from the 
+antecedent; namely that neither proposition is informative about the truth of the other 
+relative to a given epistemic state. 
+ The distinct interpretations underlying perfected and biscuit conditionals yield 
+clear empirical predictions about how humans reason regarding the truth of conditional 
+statements across contexts. In the next section, we provide the results of an experimen t 
+testing whether the full variation of human interpretive patterns has emerged in LLMs. 
+Our design yields two distinct predictions for each conditional type in the critical 
+conditions, where a pragmatic response is expected. For SCs, participants are pred icted 
+to provide a negative response when evaluating the truth of the consequent, consistent 
+with the target pragmatic biconditional inference. In contrast, for BCs, an affirmative 
+response to the same question is predicted, reflecting an inference in which the antecedent 
+
+
+===== PAGE 6 =====
+and consequent are interpreted as holding independently. In the following section, we 
+provide a detailed description of the experimental design. 
+ 
+3.  Methods 
+ 
+3.1 Experimental design and materials 
+Building on previous experimental literature on conditionals (43), we designed a truth -
+value judgment task in 4 languages: Catalan, English, Italian, and Spanish. For each 
+language, we constructed 54 experimental prompts containing either a SC or a BC. 
+As exemplified in (vi) and (vii), each prompt consisted of (a) a short context 
+specifying the truth of the antecedent p and/or the consequent q, (b) a brief distractor 
+sentence, and (c) a conditional statement. Participants were then asked to reason about 
+the truth of the consequent q on the basis of the conditional uttered in the given context. 
+In addition to the experimental items, we included 18 filler trials (9 true, 9 false) to 
+maintain participant engagement and reduce the transparency of the experimental 
+manipulation. 
+ The 54 experimental items per language included 27 SCs and 27 BCs: 9 critical 
+SCs, 9 true control SCs, 9 false control SCs, 9 critical BCs, 9 true control BCs, 9 false 
+control BCs. These items were distributed across three lists following a Latin -square 
+design, such that each participant saw each item in only one condition. Each list therefore 
+contained 27 trials: 9 SCs, 9 BCs, and 9 fillers (5 true and 4 false). SC and BC items 
+appeared in three truth-table configurations: 
+ 
+A. True control conditions  (3 items per conditional type): the antecedent and 
+consequent were both true in the context ( p ∧ q), and the consequent was therefore 
+expected to be judged true. 
+B. False control conditions (3 items per conditional type): the antecedent was true but 
+the consequent was false (p ∧ ¬q), and the consequent was therefore expected to be 
+judged false. 
+C. Critical conditions (3 items per conditional type): the antecedent was false ( ¬p ∧ 
+q?) In these cases, the expected judgment diverged by conditional type: the 
+consequent was expected to be judged false for SCs (reflecting a perfected, 
+biconditional reading) and true for BCs (reflecting a biscuit reading and the 
+inference that p and q are independent). In other words, for SCs the target reading is 
+the one that tightly links the truth value of the consequent to that of the antecedent, 
+whereas in BCs, the two are expected to be interpreted as independent. 
+ 
+Examples of critical SC and BC trials are given in (vi) and (vii), respectively. 
+ 
+(vi) Here’s the context: The lawn has not been mowed. Also, the flowers still need 
+watering. Mary had said: “If Paul mows the lawn, he will get 50€”. Based on what 
+Mary says, is it true that Paul got 50€? 
+(vii) Here’s the context: John is not hungry. There is pasta in the fridge. Mary says: “If 
+John is hungry, there is pizza in the oven”. Based on what Mary says, is it true that 
+there is pizza in the oven? 
+
+
+===== PAGE 7 =====
+ 
+The target “no” response in (vi) indicates a perfected biconditional interpretation, 
+according to which Paul would receive €50 if and only if he mows the lawn. In contrast, 
+the target “yes” response to the BC in (vii) indicates that there is pizza in the oven 
+regardless of John’s hunger, suggesting that the antecedent and consequent are 
+independent. The full set of prompts is publicly available at 
+https://osf.io/xuqbw/overview.  
+ 
+3.2 Human Participants 
+ 
+We collected truth -value judgments from a total of 364 participants (F =162, non -
+binary=4), recruited via the crowdsourcing platform Prolific. All participants were self -
+identified native speakers of the target language (Catalan, English, Italian, or Spanish). 
+ Participants were excluded if they met at least one of the following criteria: (i) 
+self-reported speech- or language-related disorders (e.g., dyslexia), (ii) prior or ongoing 
+treatment with a speech /language pathologist, (iii) self -identification as neurodivergent 
+(e.g., autism), or (iv) failure to correctly respond to at least 6 out of the 9 filler items. 
+After exclusions, the final sample comprised 313 participants (F=136, mean age: 38;15). 
+See Table 1 for the sample size and demographic information of participants.  
+ 
+  N Age (Mean) Female Male Non-binary 
+Catalan 81 33;64 40 40 1 
+English 78 45;83 46 32 0 
+Italian 76 35;25 28 48 0 
+Spanish 78 37;86 22 55 1 
+Total 313 38;15 136 175 2 
+Table 1. Sample size and demographic information of the participants included in the analysis.  
+ 
+For each language, participants were evenly assigned to one of three lists following the 
+Latin-square design, resulting in at least 25 participants per list.  
+ Trials were pseudo -randomized to prevent consecutive presentation of items of 
+the same conditional type or condition. After providing informed consent and 
+demographic and sociolinguistic information, participants were instructed that they would 
+read short texts and answer a question on each trial, and that they would not be able to 
+return to previous trials, once they advanced. 
+ On each trial, participants saw the full prompt on the screen together with a text 
+box in which they typed their response and a “Next” button to proceed. The prompt 
+remained visible while participants typed their answer. Once the response was submitted, 
+the trial could not be re -accessed. Responses were manually mapped to trinary truth 
+judgments (true/false/undetermined) and subsequently scored for accuracy as 1 (correct) 
+or 0 (incorrect) according to the target response. 
+ The experiment was implemented using the PCIbex Farm platform ( 63). The 
+median completion time was 19.23 minutes. Anonymized participant data is available at 
+the OSF repository. The study was conducted in accordance with the Declaration of 
+
+
+===== PAGE 8 =====
+Helsinki and approved by the Ethics Committee for Research ( Comité d’Ètica en la 
+Recerca, CERec) of the Autonomous University of Barcelona (application CEEAH 
+7150). 
+ 
+3.3 LLMs 
+We evaluated 25 LLMs encompassing both commercial and open-source systems, dense 
+and MoE  architectures, and generative as well as reasoning models, including 
+representatives from the Claude, GPT, Gemini, Llama, Mistral, Falcon, and Qwen 
+families. A complete list of tested models, along with their interface, open-source status, 
+architecture, and model type, is provided in Table 2.  
+ 
+LLM Interface Availability Architecture Type 
+Claude Haiku 4.5 (65) Open 
+Router 
+Closed Dense Generative 
+(Hybrid) 
+Claude Opus 4 (65) Open 
+Router 
+Closed Dense Reasoning 
+Claude Sonnet 4.5 (66) Open 
+Router 
+Closed Dense Generative 
+(Hybrid) 
+DeepSeek-v3.1 (67) Ollama Open 
+weight 
+MoE Generative 
+(Hybrid) 
+Distill-bert (Distill -
+distilbert-base-cased-
+distilled-squad) (68) 
+Hugging 
+Face 
+Open source Dense Generative 
+Falcon 7-B (69) Hugging 
+Face 
+Open source Dense Generative 
+Gemini 2.5 Pro (70) Open 
+Router 
+Closed MoE Reasoning 
+Gemini 2.5 Flash (70) Open 
+Router 
+Closed MoE Reasoning 
+Gemma-3-4b-it (71) Open 
+Router 
+Open 
+weight 
+Dense Generative 
+GLM-4.6 (72) Ollama Open source MoE Reasoning 
+(Hybrid) 
+GPT-4o (73) Open 
+Router 
+Closed Dense Generative 
+GPT-4o-mini (73) Open 
+Router 
+Closed Dense Reasoning 
+GPT-5 (74) Open 
+Router Free 
+Closed Dense Reasoning 
+GPT-oss 120b (74) Ollama Open 
+weight 
+MoE Reasoning 
+
+
+===== PAGE 9 =====
+Table 2. Characteristics of the 25 tested models. 
+All models were tested on the same stimuli used with human participants. For each 
+language, models were presented with the complete set of 54 experimental items and 18 
+fillers (i.e., all three Latin-square lists), ensuring identical coverage of conditions across 
+systems. Using the full dataset per language allowed us to obtain 72 judgments per model 
+(54 experimental + 18 fillers) and to aggregate responses across models to match the scale 
+of the human sample for statistical comparison. The model responses w ere collected in 
+two sessions over the course of various days. 
+ Prompts were identical to those shown to humans (e.g., (vi) -(vii)) and were 
+submitted verbatim without additional instructions beyond the task question. Models 
+generated free-text responses, which were manually mapped to binary truth judgments 
+(true/false) and scored for accuracy as 1 (correct) or 0 (incorrect) based on the target 
+response, consistent with the scoring procedure used for human participants. All the tested 
+LLMs were queried programmatically using Python 3.12 ( 86). As shown in Table 2, 
+access was handled through 3 AI model runners: Hugging Face ( 87), Ollama ( 88), and 
+OpenRouter (89). Testing was conducted between October and November 2025. 
+ All the prompts, the anonymized results, and the code for the statistical analyses 
+are available at https://osf.io/xuqbw/overview.  
+ 
+4. Results and analysis 
+Grok 4 Fast (75) Open 
+Router 
+Closed Dense Generative 
+(Hybrid) 
+Kimi K2 -Instruct-0905 
+(76) 
+Ollama Open source MoE Generative 
+Llama3.3 70 b Instruct 
+(77) 
+Open 
+Router Free 
+Open source Dense Generative 
+Llama4 Scout (78) Open 
+Router Free 
+Open 
+weight 
+MoE Generative 
+Mistral-7B Instruct v0.2 
+(79) 
+Hugging 
+Face 
+Open source Dense Generative 
+Nvidia-nemotron-nano-
+9b-v2 (80) 
+Open 
+Router 
+Open source Dense Reasoning 
+(Hybrid) 
+OLMo 2-0325-32b-
+instruct (81) 
+Open 
+Router 
+Open source Dense Generative 
+Perplexity sonar-
+reasoning-pro (82) 
+Open 
+Router 
+Closed Dense Reasoning 
+Phi-4 reasoning plus (83) Open 
+Router 
+Open 
+weight 
+Dense Reasoning 
+Qwen3-vl-235b (84) Ollama Open 
+weight 
+MoE Reasoning 
+Virtuoso Large (85) Open 
+Router 
+Closed Dense Generative 
+
+
+===== PAGE 10 =====
+We compared human participants and LLMs on a truth-value judgment task designed to 
+dissociate logical from pragmatic interpretations of conditionals, focusing on the 
+distinction between perfected and biscuit readings. The primary dependent measure was 
+binary accuracy (i.e. correct vs. incorrect interpretations relative to the target answer; see 
+Methods for further details).  
+We analyzed the data with logistic regression analyses, using generalized linear -
+mixed effects models in R to account for the nested data structure ( 90-91). Our baseline 
+model contained only an intercept, plus random intercepts for participants and items. In 
+this analysis, each LLM is treated equivalent to an individual human participant. 
+Removing any of these random intercepts resulted in a significant dec rease of model fit 
+in a likelihood -ratio test ( X2(1) = 1264, p < .001 and X2(1) = 2143.8, p < .001, 
+respectively). We then identified our statistical model via forward model selection with 
+likelihood-ratio tests, successively entering additional predictors in a theoretically 
+motivated order. The results of this model selection process are displayed in Table 3. 
+ 
+Step Additional predictors X2 df p 
+0 1 + (1|participant) + (1|item)    
+1 + Conditional [Standard vs. Biscuit] 0.03 1 .856 
+2 + Prompt [Experimental vs. Control] 38.74 1 < .001 
+3 + Prompt*Conditional 33.70 1 < .001 
+4 + Agent [human vs. LLM] 25.73 1 < .001 
+5 + Prompt*Agent 762.85 1 < .001 
+Model parameters of the resulting model (Step 5) 
+ Fixed effect b z p 
+ Intercept [Control, Biscuit, human] 2.24 12.56 < .001 
+ Prompt [Experimental] -1.88 -6.60 < .001 
+ Conditional [Standard] -0.77 -3.33 < .001 
+ Agent [LLM] 0.13 0.61 .540 
+ Prompt [Experimental] * Condition 
+[Standard] 
+3.07 7.67 < .001 
+ Prompt [Experimental] * Agent [LLM] -3.19 -25.75 < .001 
+Table 3. Upper part. Results of the likelihood ratio tests for the logistic mixed -effects models with the 
+binary variable accuracy as the dependent variable (1: correct, 0: incorrect). Predictors that did not 
+significantly improve model fit (marked in grey) were not included in the model for the subsequent steps. 
+ 
+ 
+The resulting model in Table 3 revealed significant effects of prompt type and its 
+interactions with both conditional type and agent. In particular, the Prompt*Conditional 
+interaction indicates that the differences between Standard and Biscuit conditionals is 
+substantially stronger in the experimental trials, whereas the Prompt*Agent interaction 
+
+
+===== PAGE 11 =====
+shows that the experimental manipulation differentially affected human participants and 
+LLMs (see also Figure 1). 
+ 
+4.1 Agent comparison 
+Across all languages, humans performed near ceiling in the true control conditions for 
+both conditional types but showed lower accuracy in false control conditions. In the 
+experimental condition, human accuracy is higher for SCs than for BCs. Comparing 
+humans and LLMs, we observe no differences in the control conditions. In the 
+experimental conditions, however, LLMs perform significantly worse than human 
+participants. We therefore conducted a focused analysis on experimental trials only.  
+ In this subset of the data, including an interaction between Agent and Conditional 
+—in addition to their respective main effects and the intercepts for participants and items 
+[Accuracy ~ Agent + Conditional + (1 | participant) + (1 | item)]— does not significantly 
+improve model fit ( X2(1) = 0.116, p = .733). As can be seen in Figure 1, in the 
+experimental conditions we observe the same difference in accuracy between BCs and 
+SCs (higher for Standard; b = 2.68, z = 7.68, p < .001) in humans and LLMs, but at an 
+overall lower level for LLMs (b = -3.50, z = -10.83, p < .001). Overall, human accuracy 
+remained relatively stable across control and experimental trials, whereas LLM accuracy 
+dropped substantially in experimental contexts requiring pragmatic reasoning (Figure 1). 
+Thus, although LLMs showed some s ensitivity to the different conditions, behaving as 
+reliable logical agents, their responses were markedly less consistent in critical 
+conditions, which required a pragmatic interpretation. 
+ 
+ 
+Figure 1. Accuracy across conditions, agents, and languages. Colored triangles indicate mean LLM 
+accuracy per language, while colored circles indicate mean human accuracy per language. Black triangles 
+and circles indicate overall accuracy for models and humans respectively. Vertical bars represent SE. 
+ 
+4.2 Models and languages comparison 
+Next, we turned to differences between individual LLM architectures. Within this subset 
+of the data that only contains LLM responses, removing the random intercept for 
+“participants” from the described model leads to a significant decrease in model fit (X2(1) 
+
+
+
+===== PAGE 12 =====
+= 915.86, p < .001), indicating high variation between different LLM architectures in 
+terms of their accuracy in the task at hand. As Figure 2 shows, mean accuracies range 
+from .000 (Distill -Bert) to .833 (Llama3.3). Overall, substantial heterogeneity emer ged 
+across individual models. Beyond general accuracy, models differed in their sensitivity to 
+conditional type. Allowing the Standard–Biscuit contrast to vary by model significantly 
+improved fit ( χ² = 106.04, p < .001), demonstrating that some models reli ably 
+distinguished the two conditional types whereas others did not. For instance, GPT -4o-
+mini and Grok 4 Fast exhibited strong differentiation, with differences exceeding 0.6 
+between Standard and Biscuit in experimental trials, whereas models such as Falcon 7-B 
+or GPT5 showed weak or even reversed contrasts.  
+We then tested whether LLM performance differs across different languages. 
+Starting from a model containing as fixed effect the interaction between Prompt and 
+Conditional, plus random intercepts for participants and items [Accuracy ~ 
+Prompt*Conditional + (1 | participant) + (1 | item)] , we tested whether additionally 
+including a random intercept for languages improved model fit. This was not the case 
+(X2(1) = 0.000, p > .999), with very similar mean accuracy being observed in all 4 tested 
+languages (ranging from .639 in English to .652 in Catalan). Conditional interpretation 
+therefore appears largely language -independent within the tested set of languages , 
+suggesting that pragmatic limitations arise primarily from model -internal factors rather 
+than language -specific processing constraints. We also observed modest model × 
+language interactions ( χ² = 12.76, p < .001), indicating that some models’ ability to 
+generalize pragmatic distinctions could be influenced by language, although these effects 
+were far smaller than model-specific baseline differences (Figure 3). 
+ 
+ 
+Figure 2. Mean accuracy in experimental trials by model and language. The black line represents model 
+mean accuracy across languages. 
+ 
+We further tested whether LLMs differ in their sensitivity to the SCs and BCs contrast. 
+Including a by -participant random slope of Conditionals [Accuracy ~ 
+Prompt*Conditional + (Conditional | participant) + (1 | item) + (1|language) + 
+
+
+
+===== PAGE 13 =====
+(1|participant: language)] significantly increased model fit (X2(2) = 106.04, p < .001), 
+confirming that models vary widely in how strongly they differentiate between 
+conditional types. Some models had a much better performance for SCs (e.g., Llama3.3: 
+accuracy .972 for SCs, and .167 for BCs), some models —all with ver y low overall 
+performance—  showed only a small difference (e.g., Gemini 2.5 Pro: accuracy .111 for 
+SCs and .028 for BCs), and one model even showed the reverse pattern (Falcon 7 -B: 
+accuracy .056 for SCs and .472 for BCs). Overall, we observe great heterog eneity in 
+model performance. Some high -performing models, such as Llama3.3 70b Instruct and 
+Kimi K2-Instruct-0905, maintained accuracies above 0.75 across languages, while other 
+models, such as DeepSeek -v3.1 or GPT5, remained near chance regardless of lang uage 
+(Figure 3). 
+ 
+ 
+Figure 3. Mean accuracy across languages for all models in critical Standard and critical Biscuit conditions. 
+The black line represents mean accuracy across the two conditions. 
+ 
+Finally, we examined whether broad design features could account for the observed 
+variation across models. Specifically, we tested 3 factors: openness (open vs. closed 
+models), type of architecture (dense vs. mixture -of-experts), and training orientation 
+(generative vs. reasoning -oriented). Crucially, none of these factors reliably predicted 
+better model performance. Including openness as a fixed effect did not lead to a 
+significant increase in model fit ( X2(1) = 0.307, p < .580), presenting no evidence for 
+general differences in accuracy between open -source and proprietary models (Table 4). 
+Similarly, adding architectural type ( χ² = 0.15, p = .70) or model type (generative vs. 
+reasoning-oriented; χ² = 0.01, p = .996) did not significantly improve fit. Mean differences 
+across these categories were small and statistically indistinguishable, suggesting that 
+high-level design choices do not systematically accuracy in our reasoning task. Instead, 
+performance differences appear to be largely model-specific, reflecting idiosyncratic and 
+largely opaque combinations of training data, internal repres entations, and fine -tuning 
+strategies. For example, while two dense models might differ dramatically in overall 
+accuracy and pragmatic differentiation, a mixture -of-experts (MoE) system could 
+
+
+
+===== PAGE 14 =====
+outperform them in some languages or conditions but not others. These findings 
+underscore that the computation of pragmatic inferences in LLMs is highly contingent on 
+the internal properties of individual models, rather than being determined by broad 
+architectural or training categories (Table 4). 
+ 
+Feature Category Mean Accuracy 
+Open status Open 0.626  
+Closed 0.668 
+Architecture Dense 0.636  
+MoE 0.664 
+Training type Generative 0.638  
+Hybrid 0.653  
+Reasoning 0.648 
+Table 4. Mean accuracy by design characteristics. No category demonstrated a statistically significant effect 
+on overall accuracy (all χ² < 1, p > 0.5). 
+ 
+5. Discussion 
+This experiment investigates whether LLMs reason in ways comparable to humans. 
+Across 4 languages, 313 humans, and 25 state-of-the-art LLMs, we observe a consistent 
+pattern: humans exhibit robust, context-sensitive pragmatic enrichment, whereas models 
+are reliable logical operators but show only partial and highly variable sensitivity to these 
+inferences. Overall, our findings suggest that the tested LLMs successfully capture the 
+truth-conditional semantics of conditionals but struggle to compute the pragma tic 
+reasoning that characterizes human interpretation. Below, we discuss these findings in 
+relation to our two main Research Questions.  
+With respect to our primary Research Question —whether LLMs reason like 
+humans, interpreting conditionals in a human -like manner— the human data replicated 
+and extended earlier findings from English -speaking populations (43), using a different 
+methodology and testing across different languages. Evcen & Barner report that speakers 
+derive perfected interpretations of SCs in approximately 82% of cases, whereas BCs 
+receive biscuit interpretations in approximately 58% of cases (43). In our study, humans 
+perfected SCs at a stable rate of more than 88% on average across languages, while biscuit 
+readings for BCs were observed at 57% on average. Thus, human participants reliably 
+distinguished SCs from BCs: perfected interpretations were endorsed consistently, while 
+biscuit interpretations were derived only about half of the times.  
+ LLMs exhibited some sensitivity to conditional structure, but their performance 
+sharply deviated from human baselines in pragmatically demanding contexts (Figure 1): 
+in critical trials, models rarely produced biscuit interpretations and only inconsistentl y 
+produced perfected readings. Thus, even when models reasoned in a way that captured 
+the human distinction in inferences, distinguishing control from experimental conditions 
+and SCs from BCs, their responses did not fully match human baselines in terms of  
+accuracy. 
+
+
+===== PAGE 15 =====
+ Inspection of individual model performance revealed two broad behavioral 
+profiles. A first group of models (i.e., Perplexity sonar -reasoning-pro, GPT-4o, GPT-5, 
+GPT-oss 120b, DeepSeek -v3.1, Claude Sonnet 4.5, Claude Haiku 4.5, Claude Opus 4, 
+Qwen3-vl-235b, Gemini 2.5 Pro, Virtuoso Large, GLM-4.6) adhered closely to the truth-
+table semantics of conditionals, treating sentences with false antecedents as vacuously 
+true and consequently failing whenever contextual reasoning about the consequent was 
+required (i.e., in critical conditions). A second group (i.e., OLMo 2 -0325-32b-instruct, 
+Nvidia-nemotron-nano-9b-v2, Kimi K2 -Instruct-0905, GPT -4o-mini, Llama3.3 70 b 
+Instruct, Grok 4 Fast, Mistral -7B Instruct v0.2, Llama4 Scout) instead adopted a 
+biconditional inter pretation, strengthening if p, q  to q if and only if p  across both 
+conditional types. This behavior implies that these models do not engage in genuine 
+pragmatic reasoning, but rather rely on a fixed, rule-based strategy that treats conditionals 
+as biconditionals across the board. Importantly, although this strategy yields superficially 
+good performance on perfected standard conditionals, it systematically precludes a biscuit 
+interpretation. Some models deviated from these two dominant patterns. Gemini 2.5 
+Flash, Gemma -3-4b-it, Phi -4 reasoning plus, for instanc e, showed a more variable 
+behavior, generally avoiding biscuit readings in critical BCs, but occasionally producing 
+biconditional interpretations for SCs. Falcon 7 -B tended to provide positive responses 
+across conditions and conditional types, suggesting a positive response bias.  
+ Nonetheless, the two general response profiles displayed by LLMs explain the 
+overall distribution of results: biscuit interpretations were nearly absent, whereas 
+accuracy on SCs was comparatively higher. Taken together, these findings suggest that 
+the tested LLMs behave more like competent semantic agents rather than pragmatic 
+reasoners. While models often capture the literal, truth -conditional structure of 
+conditionals, they struggle to integrate context ual cues and speaker intentions in the 
+flexible, inference-driven manner characteristic of human interpretation. This pattern is 
+consistent with what we term a Decontextualization Bias: a tendency to privilege surface 
+form and literal meaning over contextually enriched interpretations, which stems from 
+absence of grounding language in real -world communicative settings. Under this view, 
+models may acquire certain pragmatic regularities, but when literal and enriched 
+interpretations compete, they resort to the former, diverging systematically from human 
+behavior. This aligns with the observation that LLMs appear to have developed formal 
+linguistic competence without fully attaining functional competence, defined as the 
+ability to use language in contextually and world-grounded ways (1).  
+ Turning to the interpretive differences between perfected and biscuit readings, 
+human behavior clearly supports this distinction: the two constructions diverged in 
+contexts where a pragmatic inference was required, consistent with accounts in which 
+strengthened readings arise through implicature calculation (58 -60), whereas biscuit 
+interpretations depend on reasoning about epistemic independence between antecedent 
+and consequent (59, 61-62, 92). 
+ Crucially, LLM behavior mirrors this distinction only weakly. Although some 
+models exhibited a reduced SC vs. BC contrast, the effect was attenuated and highly 
+inconsistent across models. Many models produced either literal, truth -conditional 
+
+
+===== PAGE 16 =====
+interpretations or uniformly strengthened biconditionals, thereby collapsing the 
+pragmatic distinction between SCs and BCs observed in human judgments. Specifically, 
+rather than flexibly computing different inferences depending on context, models often 
+applied a single interpretive strategy across constructions, as independently observed in 
+previous work (33, 35). These results reinforce the idea that pragmatic enrichment is not 
+a uniform or automatic consequence of large-scale language modeling. Instead, it appears 
+to require mechanisms for context integration and relevance reasoning that are only 
+partially, if at all, captured by current architectures. Overall, we find that reasoning can 
+be conceived as a multi -step process that integrates various componen ts (e.g., temporal 
+sequencing, causal linking, logical processing, pragmatic enrichment, world -based 
+inference), and at present, the outermost layers of this multi -step process, that are 
+responsible for rewriting the interpretability of the linguistic message based on pragmatic, 
+world-grounded inferences, are still under development in LLMs. 
+ Our second Research Question examined whether differences in LLM 
+performance could be predicted by language or broad design choices. Language appeared 
+to play little role: both humans and models showed highly similar patterns across Catalan, 
+English, Ital ian, and Spanish. This suggests that conditional reasoning in this task is 
+largely language-independent and that cross-linguistic transfer is not a primary bottleneck 
+for current systems.  
+ Nonetheless, closer inspection of model responses revealed a high degree of cross-
+linguistic “leakage”. Specifically, some models (e.g., GPT -4o, Grok 4 Fast, Mistral -7B 
+Instruct v0.2,  Falcon 7-B, Nvidia-nemotron-nano-9b-v2) produced outputs in English — 
+and occasionally in Spanish and other languages — when queried in languages distinct 
+from English. This effect was particularly pronounced for Catalan, the language spoken 
+by the smaller speaker community from the ones we tested, where responses were often  
+produced in a linguistically similar language such as Spanish, or in English. This may 
+suggest that, for these models, English remains the dominant and primary operational 
+language (93-96). Therefore, although model performance was relatively uniform in the 
+present task, a deeper examination of model performance through further larger -scale 
+testing may reveal important cross-linguistic disparities. 
+ In contrast, substantial variability emerged across individual models. Baseline 
+accuracy and sensitivity to conditional type differed widely: some systems approximated 
+human accuracy (e.g., Kimi K2 -Instruct-0905, Llama 3.3 70B Instruct, Llama 4 Scout, 
+OLMo 2 -0325-32B-Instruct), whereas others performed near or below chance (e.g., 
+Falcon 7B, GLM-4.6, GPT-5), with one model performing at floor levels (Figures 2 and 
+3). While as an overall class, LLMs do not align with human responses when it comes to 
+reasoning, we find that a few models successfully approximate human baselines. At the 
+same time, this high performance still deviates from human behavior in two ways. First, 
+unlike humans, LLM performance was largely rigid across conditions, reflecting rule -
+based interpretation (i.e., either all conditionals are biconditionals, or all conditionals 
+follow the truth table), and not pragmatically enriched reasoning. Second, LLM 
+performance was highly heterogenous across models. Crucially, this heterogeneity was 
+not explained by broad design characteristics, and such that we cannot claim that the best-
+
+
+===== PAGE 17 =====
+performing LLMs reason in a human-like way as a direct consequence of specific aspects 
+of their status, training, or architecture. Accuracy did not systematically track openness 
+(open vs. closed source), architectural sparsity (dense vs. mixture-of-experts), or training 
+orientation (generative vs. reasoning -focused). Both high - and low-performing systems 
+were found within each category. In other words, coarse-grained taxonomic labels failed 
+to predict model accuracy in the given task. This finding has pract ical and theoretical 
+implications. From an engineering perspective, it suggests that high -level design labels 
+are poor predictors of reasoning competence, when this requires pragmatic enrichment. 
+From a cognitive perspective, it indicates that human -like i nterpretation is not an 
+automatic byproduct of scale or architectural sophistication, but rather an emergent, 
+model-specific property that depends on details not captured by coarse taxonomies at 
+present. 
+ Several limitations to this study should be noted. For instance, although we tested 
+4 typologically related languages and observed highly consistent patterns across them, 
+our sample remains limited; broader cross -linguistic coverage, including non -Indo-
+European and lower -resource languages, would be necessary to fully assess the 
+generalization of these findings. Moreover, while we compared models spanning diverse 
+families and design choices, the distribution of intrinsic characteristics (e.g., open vs. 
+closed source, dense vs. MoE, generative vs. reasoning -oriented training) was not 
+perfectly balanced, limiting strong causal inferences about how specific architectural or 
+training factors may genuinely shape pragmatic competence. Last, our evaluation relied 
+on controlled, sentence-level judgments that isolate semantic and pragmatic reasoning but 
+may under- or overestimate performance in richer, discourse-level tasks where additional 
+contextual cues are available. 
+    To conclude, this study examined how LLMs interpret conditional statements in 
+comparison to human baselines. Overall, our results reveal a systematic gap between 
+semantic and pragmatic competence in current models. While LLMs frequently reproduce 
+the formal logic of conditionals, they fail to consistently perform the contextual reasoning 
+that humans deploy naturally. This pattern aligns with the idea that LLMs exhibit a 
+Decontextualization Bias, that favors surface form and statistical regularities over deeper 
+integration of discourse context and communicative intents. Importantly, these findings 
+do not imply that pragmatic reasoning is inherently unattainable for LLMs. Rather, they 
+suggest that such abilities do not emerge automatically from scale alone. Ac hieving 
+human-like reasoning may require additional mechanisms, including richer grounding in 
+the world, interactive learning environments, or explicit modeling of speaker goals and 
+intentions. 
+ 
+Ethical statement 
+The study was conducted in accordance with the Declaration of Helsinki and approved 
+by the Ethics Committee for Research ( Comité d’Ètica en la Recerca , CERec) of the 
+Autonomous University of Barcelona (application CEEAH 7150). All human participants 
+gave informed consent to participate in the study. 
+ 
+
+
+===== PAGE 18 =====
+Funding statement 
+EL acknowledges funding from the Spanish Ministry of Science & Innovation under the 
+research project CNS2023 -144415. EL and FG acknowledge joint funding from 
+the Spanish Ministry of Science & Innovation and the German Research Foundation 
+under the research project PID2024-157681NI-I00. F.G. acknowledges funding from the 
+German Research Foundation (Deutsche Forschungsgemeinschaft) under the Emmy -
+Noether grant “What’s in a name?” (project No. 459717703). EP acknowledges the 
+financial support of Grant PID2022 -138413NB-I00, funded by 
+MCIN/AEI/10.13039/501100011033 and by the European Union and of Grant RYC2021-
+033969-I (Ramón y Cajal), funded by MCIN/AEI/10.13039/501100011033 and by 
+European Union Next-GenerationEU/PRTR. 
+ 
+Data accessibility 
+All materials associated with this study are publicly available on the  OSF repository at 
+https://osf.io/xuqbw/overview. This repository includes the full set of experimental 
+prompts, anonymized dataset , and the code used for statistical analyses, as well as 
+relevant documentation to reproduce the results. 
+ 
+Competing interests 
+The authors declare no competing interests. 
+ 
+Authors’ contributions 
+PM, EP, and EL designed research; PM and NP performed research; NP and FG analyzed 
+data; PM wrote the paper; all the other authors edited, revised, and approved the paper. 
+ 
+References 
+ 
+1. K. Mahowald et al, Dissociating  language and thought in large language models. 
+Trends Cogn Sci 28(6), 517–540 (2024).   
+2. R. Futrell, K. Mahowald, How linguistics learned to stop worrying and love the 
+language models. Behav Brain Sci, 1–98 (2025). 
+https://doi.org/10.1017/S0140525X2510112X.  
+3. N. Chomsky. Aspects of the Theory of Syntax. The MIT Press. 1965. 
+4. N. Chomsky. The Minimalist Program. The MIT Press. 1995. 
+5. S. T. Piantadosi. “Modern language models refute Chomsky’s approach to language”. 
+In From Fieldwork to Linguistic Theory: A Tribute to Dan Everett , E. Gibson, M. 
+Poliak, Eds. (Language Science Press, 2023), pp. 353–414. 
+6. A. Moro, M. Greco, S. F. Coppola, Large languages, impossible languages and human 
+brains. Cortex 167, 82–85 (2023). 
+7.  L. Rizzi, On the complementarity of Generative Grammar and Large Language 
+Models. Italian Journal of Linguistics 37(1), 145–152 (2025). 
+8. G. C. Ramchand, Is it the end of Generative linguistics as we know it? Italian Journal 
+of Linguistics 37(1), 131–144 (2025). 
+9. R. Katzir, Why large language models are poor theories of human linguistic cognition: 
+A reply to Piantadosi. Biolinguistics 17 (2023). https://doi.org/10.5964/bioling.13153.  
+
+
+===== PAGE 19 =====
+10. N. Chomsky, I. Roberts, J. Watumull. 2023. Noam Chomsky: The false promise of 
+ChatGPT. The New York Times. Available at 
+https://www.nytimes.com/2023/03/08/opinion/noam-chomsky-chatgpt-ai.html 
+(accessed 20 February 2026). 
+11. C. Chesi, Is it the end of (generative) linguistics as we know it? Italian Journal of 
+Linguistics 37(1), 3–44 (2025). 
+12. M. Baroni. “On the proper role of linguistically oriented deep net analysis in linguistic 
+theorizing”. In Algebraic Structure in Natural Language , L. Shalom, J -P. Bernardy, 
+Eds. (CRC Press, 2022), pp. 1–16. 
+13. L. Weissweiler et al. “Counting the bugs in ChatGPT’s Wugs: A multilingual 
+investigation into the morphological capabilities of a Large Language Model”. In 
+Proceedings of the 2023 Conference on Empirical Methods in Natural Language 
+Processing, H. Bouamor, J. Pino, B. Kalika Eds. (ACL, 2023), pp. 6508–6524. 
+14. T. A. Dang, L. Raviv, L. Galke. “Morphology matters: Probing the cross -linguistic 
+morphological generalization abilities of Large Language Models through a Wug 
+Test”. In Proceedings of the 13th Edition of the Workshop on Cognitive Modeling and 
+Computational Linguistics, T. Kuribavaski et al., Eds. (ACL, 2024), pp. 177–188. 
+15.  N. Pantelidou, E. Leivada, R. Montero, P. Morosi. Community size rather than 
+grammatical complexity better predicts Large Language Model accuracy in a novel 
+Wug Test . PLoS One 21(3): e0343164 (2026). 
+https://doi.org/10.1371/journal.pone.0343164  
+16. A. Temerko, M. Garcia, P. Gamallo. “A continuous approach to metaphorically 
+motivated regular polysemy in language models. In Proceedings of the 29th 
+Conference on Computational Natural Language Learning . (ACL, 2025), pp. 419 –
+436.   
+17. K. Gulordava, P. Bojanowski, E. Grave, T. Linzen, M. Baroni. “Colorless green 
+recurrent networks dream hierarchically. In Proceedings of the 2018 Conference of 
+the North American Chapter of the Association for Computational Linguistics: 
+Human Language Technologies, Volume 1: Long papers. (ACL, 2018), pp. 1195 –
+1205. 
+18. K. Mahowald. “A discerning several thousand judgments: GPT -3 rates the article + 
+adjective + numeral + noun construction. In Proceedings of the 17th Conference of the 
+European Chapter of the Association for Computational Linguistics. (ACL, 2023), 
+pp. 265–273. 
+19. C. Potts. Characterizing English preposing in PP constructions. Journal of Linguistics, 
+1–39 (2024). 
+20. E. Leivada, E. Murphy, G. Marcus, DALL·E 2 fails to reliably capture common 
+syntactic processes. Social Sciences & Humanities Open 8(1) (2023). 
+https://doi.org/10.1016/j.ssaho.2023.100648. 
+21. H. Zhou et al. How well do Large Language Models understand syntax? An evaluation 
+by asking natural language questions.  arXiv [Preprint] (2023). 
+https://arxiv.org/abs/2311.08287 (accessed 20 February 2026). 
+22. X. Yang, T. Aoyama, Y . Yao, E. Wilcox. “Anything goes? A crosslinguistic study of 
+(im)possible language learning in LMs”. Proceedings of the 63 rd Annual Meeting of 
+the Association for Computational Linguistics, Volume 1: Long papers. (ACL, 2025), 
+pp. 26058–26077. 
+23. V . Dentella, F. Günther, E. Leivada, Systematic testing of three Language Models 
+reveals low language accuracy, absence of response stability, and a yes-response bias. 
+Proc. Natl. Acad. Sci. U.S.A.  120 (51) e2309583120 (2023). 
+https://doi.org/10.1073/pnas.2309583120. 
+
+
+===== PAGE 20 =====
+24. E. Leivada, F. Günther, V . Dentella, Reply to Hu et al: Applying different evaluation 
+standards to humans vs. Large Language Models overestimates AI performance. Proc. 
+Natl. Acad. Sci. U.S.A.  121 (36) e2406752121 (2024). 
+https://doi.org/10.1073/pnas.2406752121  
+25. E. M. Bender, A. Koller. “Climbing towards NLU: On meaning, form, and 
+understanding in the age of data”. In Proceedings of the 58 th Annual Meeting of the 
+Association for Computational Linguistcs. (ACL, 2020), pp. 5185–5198.  
+26. M. Shanahan, Talking about Large Language Models. Commun. ACM 67(2), 68–79 
+(2023). https://doi.org/10.1145/3624724. 
+27. V . Dentella, F. Günther, E. Murphy, G. Marcus, E. Leivada, Testing AI on language 
+comprehension tasks reveals insensitivity to underlying meaning. Sci Rep 14, 28083 
+(2023). https://doi.org/10.1038/s41598-024-79531-8.    
+28. E. Leivada, G. Marcus, F. Günther, E. Murphy. A sentence is worth a thousand 
+pictures: Can Large Language Models understand hum4n l4ngu4ge and the world 
+behind words? Philosophical Transactions of the Royal Society A. 
+29. L. Weissweiler, V . Hofmann, A. Köksal, H. Schütze, Explaining pretrained language 
+models’ understanding of linguistic structures using construction grammar. Front Artif 
+Intell 6, 1225791 (2023). https://doi.org/10.3389/frai.2023.1225791. 
+30. C. Collacciani, G. Rambelli, M. Bolognesi. “Quantifying generalizations: Exploring 
+the divide between human and LLMs’ sensitivity to quantification”. In Proceedings 
+of the 62nd Annual Meeting of the Association for Computational Linguistics, Volume 
+1: Long papers. (ACL, 2024), pp. 11811 – 11822. 
+31. R. Montero, N. Moskvina, P. Morosi, T. Serrano, E. Pagliarini, E. Leivada, 
+Quantification and object perception in multimodal large language models deviate 
+from human linguistic cognition. arXiv [Preprint] (2026). 
+https://arxiv.org/abs/2511.08126. (accessed 25 March 2026).  
+32. Z. Qiu, X. Duan, Z. Cai. “Does ChatGPT resemble humans in processing 
+implicatures?” In Proceedings of the 4 th Natural Logic Meets Machine Learning 
+Workshop (ACL, 2023), pp. 25–34. 
+33. J. Hu, S. Floyd, O. Juravlev, E. Fedorenko, E. Gibson. “A fine-grained comparison of 
+pragmatic language understanding in humans and language models”. In Proceedings 
+of the 61st Annual Meeting of the Association for Computational Linguistics, Volume 
+1: Long papers. (ACL, 2023), pp. 4194–4213. 
+34. D. Park, J. Lee, H. Jeong, S. Park, S. Lee. “Pragmatic competence evaluation of Large 
+Language Models for the Korean Language”. Proceedings of the 38 th Pacific Asia 
+Conference on Language, Information and Computation (ACL, 2024), pp. 256–266. 
+35. X. Wu et al. Uncovering the fragility of trustworthy LLMs through Chinese textual 
+ambiguity. arXiv [Preprint] (2025). https://arxiv.org/abs/2507.23121 (accessed 20 
+February 2026).  
+36. D. Kahneman, A. Tversky, On the study of statistical intuitions. Cognition 11(2), 123–
+141 (1982). https://doi.org/10.1016/0010-0277(82)90022-1. 
+37. D. J. Hilton, The social context of reasoning: Conversational inference and rational 
+judgment. Psychol Bull 118(2), 248 –271 (1995). 
+https://psycnet.apa.org/doi/10.1037/0033-2909.118.2.248. 
+38. K. E. Stanovich, R. F. West, Individual differences in reasoning: Implications for the 
+rationality debate? Behav Brain Sci 23(5), 645 –665 (2000). 
+https://doi.org/10.1017/s0140525x00003435.     
+39. D. Lassiter, Distinguishing semantics, pragmatics, and reasoning in the theory of 
+conditionals. Inquiry 68(7), 2431 –2452 (2025). 
+https://doi.org/10.1080/0020174X.2024.2405186. 
+
+
+===== PAGE 21 =====
+40. M. L. Geis, A. M. Zwicky, On invited references. Linguist Inq 2(4), 561–566. 
+41. M. E. A. Siegel, Biscuit conditionals: Quantification over potential literal acts. 
+Linguist Philos 29, 167–203 (2006). https://doi.org/10.1007/s10988-006-0003-2. 
+42. J. L. Austin, “Ifs and Cans”, in Philosophical Papers (Oxford University Press, 1961), 
+pp. 153–180.  
+43. E. Evcen, D. Barner, Already perfect: Language users access the pragmatic meanings 
+of conditionals first. Open Mind 9, 1098 –1120 (2025). 
+https://doi.org/10.1162/opmi.a.17. 
+44. B. van Tiel, W. Schaeken, Processing conversational implicatures: Alternatives and 
+counterfactual reasoning. Cogn Sci 41(S5), 1119 –1154 (2016). 
+https://doi.org/10.1111/cogs.12362. 
+45. F. Cariani, L. J. Rips. “Experimenting with (conditional) perfection: Tests of the 
+Exhaustivity Theory”. In Palgrave Studies in Pragmatics, Language and Cognition, 
+S. Kaufmann, D. E. Over, G. Sharma Eds. (Palgrave Macmillan, 2023). 
+https://doi.org/10.1007/978-3-031-05682-6_9. 
+46. A. de Varda, C. Saponaro, M. Marelli, High variability in LLMs’ analogical reasoning. 
+Nat hum behav 9(7), 1339–1341 (2025). 
+47. E. M. Bender, T. Gebru, A McMillan -Major, S. Shmitchell. “On the dangers od 
+stochastic parrots: Can language models be too bog?”. In Proceedings of the 2021 
+ACM Conference on Fairness, Accountability, and Transparency (FAccT, 2021), pp. 
+610–623. https://doi.org/10.1145/3442188.3445922. 
+48. J. Wei et al., Chain-of-thought prompting elicits reasoning in large language models. 
+Advances in Neural Information Processing systems 35, 24824–24837 (2022). 
+49. T. Schick, L. Qin, H. Schütze, Tool -Augmented Language Models: Augmenting 
+LLMs with External Reasoning Modules. arXiv [Preprint] (2025). 
+https://arxiv.org/abs/2205.12255  (accessed 20 February 2026). 
+50. T. B. Brown et al. “Language models are few -shot learners”. In Proceedings of the 
+34th Internation Conference on Neural Information Processing Systems (NIPS, 2020), 
+pp. 1877–1901. 
+51. A. Chowdhery et al., PaLM: Scaling Language Modeling with Pathways. J Mach 
+Learn Res 24, 1–113 (2023). 
+52. N. Shazeer et al., Outrageously Large Neural Networks: The Sparsely-Gated Mixture-
+of-Experts Layer. arXiv [Preprint] (2017). https://arxiv.org/abs/1701.06538 (accessed 
+20 February 2026). 
+53. W. Fedus, B. Zoph, N. Shazeer, Switch transformers: Scaling to trillion parameter 
+models with simple and efficient MoE. J Mach Learn Res 23, 1–39 (2022).          
+54. M. Artetxe et al., Efficient Large-Scale Language Modeling with Mixture of Experts. 
+arXiv [Preprint] (2022) https://arxiv.org/abs/2112.10684 (accessed 20 February 
+2026).   
+55. R. Stalnaker, “A theory of conditionals” In IFs. The University of Western Ontario 
+Series in Philosophy of Science 15, W.L. Harper, R. Stalnaker, G. Pearce, EDS 
+(Springer, 1968). https://doi.org/10.1007/978-94-009-9117-0_2. 
+56. D. Lewis, Probabilities of conditionals and conditional probabilities. Philos Rev 85, 
+297–315 (1976). 
+57.  J. van der Auwera, Pragmatics in the last quarter century: The case of conditional 
+perfection. J Pragmat 27, 261–274 (1997). 
+58. K. V on Fintel, Conditional Strengthening . Unpublished Manuscript (MIT, 2001). 
+http://mit.edu/fintel/fintel-2001-condstrength.pdf. 
+59. M. Franke, “Signal to Act: Game Theory in Pragmatics”, PhD thesis. University of 
+Amsterdam (2009); Available from https://hdl.handle.net/11245/1.313416. 
+
+
+===== PAGE 22 =====
+60. E. Herburger, “Only if: If only we understood it” In Proceedings of Sinn und 
+Bedeutung 19 (2015). https://doi.org/10.18148/sub/2015.v19i0.235. 
+61. M. Franke, “The pragmatics of biscuit conditionals”, In Proceedings of the 16 th 
+Amsterdam Colloquium , pp. 91 –96 (2007). 
+https://platform.openjournals.nl/PAC/article/view/22859. 
+62. M. Biezma, A. Goebel, Being pragmatic about biscuits. Linguist Philos 46(3), 567–
+626 (2023).  
+63. J. Zehr, F. Schwarz. PennController for Internet Based Experiments (IBEX) (2018). 
+https://doi.org/10.17605/OSF.IO/MD832. 
+64. Anthropic. Claude Haiku 4.5  (Oct 15 version) [Large Language Model]. 
+https://claude.ai. (2025)        
+65. Anthropic. System Card: Claude Opus 4 & Claude Sonnet 4. Anthropic system cards 
+page (2025). 
+66. Anthropic. Claude Sonnet 4.5  (Sep 29 version) [Large Language Model]. 
+https://claude.ai (2025).        
+67. DeepSeek-AI. DeepSeek -V3 Technical Report. arXiv [Preprint] (2024). 
+https://arxiv.org/abs/2412.19437 (accessed 11 March 2026). 
+68. V . Sanh, L. Debut, J. Chaumond, T. Wolf. DistilBERT, a distilled version of BERT: 
+smaller, faster, cheaper and lighter. arXiv [Preprint] (2020). 
+https://arxiv.org/abs/1910.01108 (accessed 11 March 2026). 
+69. E. Almazrouei, et al. The Falcon Series of Open Language Models. arXiv [Preprint] 
+(2023). https://arxiv.org/abs/2311.16867 (accessed 11 March 2026). 
+70. Google DeepMind. Pushing the Frontier with Advanced Reasoning, Multimodality, 
+Log Context, and Next Generation Agentic Capabilities. arXiv [Preprint] (2025). 
+https://arxiv.org/abs/2507.06261 (accessed 11 March 2026). 
+71. Gemma Team. Gemma 3 Technical Report. arXiv [Preprint] (2025). 
+https://arxiv.org/abs/2503.19786 (accessed 11 March 2026). 
+72. GLM-V Team. GLM-4.5V and GLM-4.1V-Thinking: Towards Versatile Multimodal 
+Reasoning with Scalable Reinforcement Learning. arXiv [Preprint] (2026). 
+https://arxiv.org/abs/2507.01006 (accessed 11 March 2026). 
+73. OpenAI. GPT -4o System Card. arXiv [Preprint] (2024). 
+https://arxiv.org/abs/2410.21276 (accessed 11 March 2026). 
+74.  A. Singh, et al. OpenAI GPT -5 System Card. arXiv [Preprint] (2025). 
+https://arxiv.org/abs/2601.03267 (accessed 11 March 2026). 
+75. xAI. Grok 4 [Large language model]. https://x.ai/ (2025). 
+76. Kimi Team. Kimi K2: Open Agentic Intelligence. arXiv [Preprint] (2026).  
+https://arxiv.org/abs/2507.20534 (accessed 11 March 2026). 
+77. A. Grattafiori, et al. The Llama 3 Herd of Models. arXiv [Preprint] (2024). 
+https://arxiv.org/abs/2407.21783 (accessed 11 March 2026) 
+78. MetaAI. The Llama 4 Herd: Architecture, Training, Evaluation, and Deployment 
+Notes. arXiv [Preprint] (2026). https://arxiv.org/abs/2601.11659 (accessed 11 March 
+2026). 
+79. A. Jiang, et al. Mistral 7B. arXiv [Preprint] (2023). https://arxiv.org/abs/2310.06825 
+(accessed 11 March 2026). 
+80. NVIDIA. NVIDIA Nemotron Nano 2: An Accurate and Efficient Hybrid Mamba -
+Transformer Reasoning Model. arXiv [Preprint] (2025). 
+https://arxiv.org/abs/2508.14444 (accessed 11 March 2026). 
+81. Team OLMo. 2 OLMo 2 Furious. arXiv [Preprint] (2025). 
+https://arxiv.org/abs/2501.00656 (accessed 11 March 2026). 
+
+
+===== PAGE 23 =====
+82. Perplexity AI. Sonar Reasoning Pro  (version as of March 2026) [Large language 
+model] (2026). https://www.perplexity.ai. 
+83. M. Abdin, et al. Phi -4 Technical Report. arXiv [Preprint] (2024). 
+https://arxiv.org/abs/2412.08905 (accessed 11 March 2026). 
+84. S. Bai, et al. Qwen3 -VL Technical Report. arXiv [Preprint] (2025). 
+https://arxiv.org/abs/2511.21631 (accessed 11 March 2026). 
+85. OpenLink Software. Virtuoso Large -Scale Triple Store. 
+http://virtuoso.openlinksw.com/ (2024). 
+86. Python Software Foundation. Python. Version 3.12 [software] (2023). Available from 
+https://www.python.org/downloads/release/python-3120/   
+87. T. Wolf, et al., Transformers: State -of-the-art natural language processing. In 
+Proceedings of the 2020 Conference on Empirical Methods in Natural Language 
+Processing: System Demonstrations  (ACL, 2020), pp. 38 –45. Available at: 
+https://github.com/huggingface/transformers.  
+88. Ollama, Inc. Ollama: Local large language model runner [software] (2023 –2026). 
+Available at: https://ollama.com./.  
+89. OpenRouter. OpenRouter API: Unified access to multiple AI models [software] 
+(2023–2026). Available at: https://openrouter.ai./. 
+90. D. Bates, M. Mächler, B. Bolker, & S. Walker., Fitting linear mixed -effecs models 
+using lme4. J Stat Softw 67, 1–48 (2015). https://doi.org/10.18637/jss.v067.i01. 
+91. A. Kuznetova, P. B. Brockhoff, & R. H. B. Christensens. lmerTest Package: Tests in 
+Linear Mixed Effects Models. J Stat Softw 82/13), 1 –26 (2017). 
+https://doi.org/10.18637/jss.v082.i13.  
+92. K. Rawlins, “Biscuit Conditionals” in The Wiley Blackwell Companion to Semantics, 
+D. Gutzmann, et al., Eds. (John Wiley & Sons, 2021). 
+https://doi.org/10.1002/9781118788516.sem101. 
+93. K. Ahuja, et al., Mega: Multilingual evaluation of generative AI. In Proceedings of 
+the 2023 Conference on Empirical Methods in Natural Language Processing (ACL, 
+2023), pp. 42332–4267. https://doi.org/10.18653/v1/2023.emnlp-main.258. 
+94. J. Etxaniz, et al. Do multilingual language models think better in English? In 
+Proceedings of the 2024 Conference of the North American Chapter of the Association 
+for Computational Linguistics: Human Language Technologies 2 (short papers) 
+(ACL, 2024), pp. 550–564. https://doi.org/10.18653/v1/2024.naacl-short.46. 
+95. Y . Xu, et al., A survey on multilingual large language models: corpora alignment, and 
+bias. Front. Comput. Sci. 19, 1911362 (2025). https://doi.org/10.1007/s11704-024-
+40579-4. 
+96. L. Qin, et al., A survey of miltilingual large language models. Patterns 6(1), 101118 
+(2025). https://doi.org/10.1016/j.patter.2024.101118. 
+ 
+ 

@@ -1,0 +1,907 @@
+
+
+===== PAGE 1 =====
+arXiv:2506.11135v1  [cs.CL]  10 Jun 2025
+Large Language Models and Emergence:
+A Complex Systems Perspective
+David C. Krakauer 1, John W. Krakauer 1,2, and Melanie Mitchell 1
+1Santa Fe Institute
+2 Department of Neuroscience, Johns Hopkins School of Medicine
+June 16, 2025
+Abstract
+Emergence is a concept in complexity science that describes how many-
+body systems manifest novel higher-level properties, properties that can
+bedescribedbyreplacinghigh-dimensionalmechanismswithlower-dimensional
+effective variables and theories. This is captured by the idea “more is
+different”. Intelligence is a consummate emergent property manifesting
+increasingly efficient—cheaper and faster—uses of emergent capabilities
+to solve problems. This is captured by the idea “less is more”. In this
+paper, we first examine claims that Large Language Models exhibit emer-
+gent capabilities, reviewing several approaches to quantifying emergence,
+and secondly ask whether LLMs possess emergent intelligence.
+1 Introduction
+Large Language Models (LLMs) are deep neural networks that, through training
+on huge amounts of text, learn to accurately predict the next word (or token)
+in a text. It has been surprising to many that next-token prediction has lead
+to impressive abilities, such as learning of syntax, code generation, writing in
+any style, and factual recall. It has been claimed in the LLM literature that,
+as the number of network parameters and amount of training data is scaled
+up, certain capabilities arise suddenly and unexpectedly, a phenomenon that
+these writers term “emergence”. For example, Wei et al. [1] write, “we define
+emergent abilities of large language models as abilities that are not present in
+smaller-scale models but are present in large-scale models; thus they cannot be
+predicted by simply extrapolating the performance improvements on smaller-
+scale models.” And in a recent review of emergent abilities in LLMs Berti et al.
+[2] survey around 100 papers the majority of which equate emergence with the
+discontinuous appearance of abilities with increasing data or model size.
+Several questions are immediately raised by such statements. First, what does
+emergence mean? Second, why does emergence matter? And finally what is
+meant by “cannot be predicted”? In the scientific literature, emergence is a
+term with a more rigorous underpinning than merely colloquial reference to
+either the discontinuous development of capability, or the unexpectedness of
+capacities from the point of view of a human observer. Minimally, emergence
+1
+
+
+===== PAGE 2 =====
+describes the reorganization of a system that can support a new, often smaller
+description, that screens off microscopic details not essential to predicting the
+future of a system. Emergence matters because it leads to an enormous cost
+saving in how systems are described, predicted, and controlled. We do not need
+to use quantum mechanics to build a bridge because the classical world emerges
+from the quantum—a fact exploited by engineers. We similarly do not need
+to track every individual in an economy to predict economic recessions: macro-
+level variables such as stock prices, unemployment levels, and interest rates help
+provide effective (though imperfect) economic theories.
+In this paper we argue that the term emergence, in the context of LLMs, should
+be reserved for the combination of successful task performance and the asso-
+ciated new coarse-grained representations formed within the responsible struc-
+ture, in this case the neural network. Evidence for emergence could include
+novel bases that promote algorithmic compression and new internal models of
+computation, abstractions that lead to demonstrable efficiencies in prediction,
+problem solving and generalization, and the breaking of scaling – breaking self-
+similarity – with increasing data and model size. Additionally, in the context of
+LLMs, we argue for the importance of distinguishing emergentcapabilities from
+emergent intelligence.
+Emergent intelligence is the internal use of coarse-grainings to solve a broad
+range of problems. In humans these coarse-grainings are often related through
+analogy, that by means of thoughtful and minimal modification, permit signifi-
+cant generalization and extrapolation. For example, the inverse square law is a
+coarse-grained concept, that, through analogies made in the physical sciences,
+describes behavior relating to gravity, electrostatics, acoustics, and electromag-
+netism.
+By contrast, calculators are capable, they have many engineered (rather then
+emergent) functions that encode a large number of efficient mechanisms for
+solving problems of arithmetic, including the Taylor expansion, Sterling’s for-
+mula, and the CORDIC algorithm. We would not call these intelligent because
+they cannot support the construction of analogies between these concepts, and
+provide no mechanism for the simple modification of rules into new capabilities.
+Emergent intelligence is clearly a feature of human reasoning and human lan-
+guage, but as of yet, an unproven feature of LLMs, which at best, as we shall
+argue below, demonstrate emergent capability. Many of these capabilities are
+likely to exceed human capability the ways calculators have been exceeding hu-
+man arithmetical ability for over a century. To be fair LLMs, have never been
+selected for efficiency through evolution, and in some cases have been shown
+to exhibit a Rube Goldberg logic, whose most consistent feature as described
+by Anthropic Research, “is the massive complexity underlying the model’s re-
+sponses even in relatively simple contexts. The mechanisms of the model can
+apparently only be faithfully described using an overwhelmingly large causal
+graph” [3]. And this is coupled to extremely inefficient energy use [4].
+There is little reason to expect LLMS to be intelligent since all we have been
+training through endless benchmark targeting is hugely overparameterized ca-
+pability. A gifted mathematician is clearly not just a vast assemblage of diverse
+calculators; they are much closer to an analogy-making system, typically in pos-
+2
+
+
+===== PAGE 3 =====
+session of rather poor calculators. A mathematician is described as intelligent
+because they can do “more with less” (explaining an ever increasing number
+of phenomena with a modest set of basic ideas, or as Henri Poincare wrote,
+"Mathematics is the art of giving the same name to different things.") not
+“more with more” (explaining an ever increasing number of phenomena with an
+ever increasing set of contingent ideas).
+In this paper, we begin by describing the specific claims in the LLM literature
+concerning the emergence of capabilities. We then provide a short “primer” on
+the concept of emergence, and the conditions under which we believe it makes
+sense to use the term. We contrast two types of emergence, which we term
+“knowledge-out” (properties emerging from systems with simple homogeneous
+components) and “knowledge-in” (properties emerging from systems with com-
+plex structure or with complex inputs or environment), and we disucss the
+importance of this distinction. Following this, we lay out a framework for an-
+alyzing emergence using mechanisms studied in complexity science, including
+scaling, criticality, compression, and novel bases and manifolds, and we describe
+how emergent coarse-graining of a system can enable generalization abilities.
+We conclude by discussing the important difference between systems displaying
+emergent capabilities and those displaying emergentintelligence.
+2 Emergence Claims for LLMs
+The 2022 paper “Emergent Abilities of Large Language Models” [1] introduced
+the idea that as network and training data size are scaled up, LLMs exhibit sud-
+den, unexpected “emergent” capacities that were not present in smaller models.
+The authors plot model accuracy versus scale for LLMs of various sizes on sev-
+eral benchmark datasets. For many tasks, at certain scales each model shows a
+sharp increase in accuracy, an increase that was not predicted by earlier empir-
+ical “scaling laws” [5]. In some cases the accuracy remains at or near zero over
+several scales until it sharply rises well above random chance. One example is
+a benchmark that tests accuracy on three-digit addition. As described in [2],
+a model with six billion parameters achieves only 1% accuracy on this bench-
+mark, a model with 13 billion parameters improves only slightly to 8% accuracy,
+but a model with 175 billion parameters suddenly reaches 80% accuracy. Wei
+et al. note that “emergence motivates future research on why such abilities are
+acquired and whether more scaling will lead to further emergent abilities.”
+There has been some controversy over how sharply these improvements occur
+as networks are scaled; a follow-up study [6] showed that for some of the capa-
+bilities termed “emergent” in [1], if more continuous success metrics are used,
+the improvement with scale becomes continuous rather than abrupt. However,
+other studies have questioned the generality of the continuous improvement
+claims [1, 2].
+It has also been argued that so-called emergent abilities of LLMs result from a
+(predictable) increase in ability in larger models for “in-context learning”, that
+is, an improved ability to use examples given in a prompt, as well as from
+post-training “instruction tuning”, which improves the ability of larger models
+to follow instructions given in a prompt [7].
+3
+
+
+===== PAGE 4 =====
+Other studies claiming emergence in LLMs have equated emergent abilities sim-
+ply with those abilities that LLMs were not explicitly trained for, such as nu-
+merical understanding [8], analogical reasoning [9], capability for legal reasoning
+[10], and formation of “world models” [11].
+In summary, in the LLM literature, the termemergencehas been used to refer to
+surprising or sudden jumps in accuracy on particular benchmarks as a function
+of the scale of the data, model, or cluster, or as capacities of models that they
+were not explicitly trained to have. (A similar analysis of emergence claims for
+LLMs is given in [12].)
+In the following sections, we will describe a richer and more useful framework
+for understanding emergence, one that has a long history in the scientific liter-
+ature. Very few of the features of LLMs, from the abruptness of performance
+increases on benchmarks, through to generalization, have much, if anything to
+do with any technical sense of the word emergence, and are adequately described
+using the more familiar ideas of learning, inference, compression, and perhaps
+development. Here, we situate claims of emergent abilities—and more generally,
+emergent intelligence—in LLMs in the framework of complexity science.
+3 A Primer on Emergence
+There is no single accepted definition of emergence [13, 14]. However, there
+are widely accepted necessary (though not sufficient) mereological properties
+(part-to-whole relations). Emergence necessarily permits a new and compressed
+model or description of a system’s long-term behavior: emergent properties are
+not efficiently described at their microscopic levels but through coarse-graining,
+allowing for “effective theories” operating on derived degrees of freedom [15, 16,
+17].
+For example, populations of molecules are often described using individual-level
+molecular dynamics. But they can also be described parsimoniously through
+their aggregate properties by treating them as a continuum using fluid dy-
+namics [18]. Molecular dynamics needs to account for each particle’s position
+and momentum independently, whereas fluid dynamics need only describe bulk
+properties: total mass, length, pressure, and time. In this way, fluid dynam-
+ics provides an effective theory of these coarse-grained variables—the emergent
+properties of fluids. Such an effective theory can describe and predict a system
+at the coarse-grained level without any reference to the lower level. There is no
+requirement for discontinuity, or “abrupt changes” in the phenomena, merely a
+new description that efficiently captures the new organization.
+In short, a minimum and necessary signature of any emergence claim is a coarse-
+graining of observables coupled to a compression of the system description that
+remains predictive [19]. This is what is implied by Anderson’s famous “more
+is different” maxim [20]. The word “different” here refers to the novel, coarse-
+grained variables and macroscopic rules describing the time evolution of any
+system, which enables the effective theory to screen off contributions from mi-
+croscopic degrees of freedom [21]. Anderson was specifically interested in how
+the symmetric dynamics of physical laws cease to be informative with increasing
+molecular scales, where symmetry is often broken, and how the loss of configura-
+4
+
+
+===== PAGE 5 =====
+tional symmetry demands new coarse grained models [22]. This basic argument
+for the power of "effective theory" is lost in almost all discussions of emergence
+in the LLM literature, as is illustrated in Berti et. al’s recent review [2].
+Emergent properties are typically observed following the addition of constituent
+elements (e.g., adding molecules to a medium or adding edges to a graph) or
+throughchangesintheinternalorganizationofasystem(increasingtemperature
+or rewiring existing edges) [23]. A system is emergent when a new and causally
+sufficient reduced description of a system is enabled by these modifications.
+Most generally, a central aspect of emergence is the appearance of novel or
+compressible structure and function. A second aspect of emergence is that
+this structure and function can come “for free”, referring to self-organization,
+or more fundamental physical and chemical processes, which produce ordered
+states through a process of energy minimization. We can say that the term
+emergence typically applies when at least some of the following conditions hold:
+Conditions for Emergence
+1. Scaling: A new internal organization arises as a function of scaling of
+generic components that lends itself to a new and parsimonious descrip-
+tion.
+2. Criticality: Systems that undergo a rapid or discontinuous change, such
+as a phase transition in a control variable, where a new organization lends
+itself to a new description.
+3. Compression: Compressed representations internal to the model are ex-
+ploited by the model to increase the representation’s fidelity or efficiency.
+4. Novel Bases: New bases or functions are discovered that provide an in-
+ternal “alphabet” that is used to encode regularities.
+5. Generalization: In adaptive systems the capabilities arising from one task
+can be used to solve different tasks, enabling competence arising from the
+union of discrete performance.
+This list makes clear why emergence is so important. Systems that demonstrate
+emergent properties can be induced to produce novelty through a simple scaling
+of parts and they lend themselves to very efficient, high-level descriptions or
+abstractions, which provide levers for control and design. Without emergence,
+the only way to make sense of and influence the world would be through mi-
+croscopic descriptions of its basic units and interactions, that is, via a scientific
+monoculture described using quantum field theory with interventions at the
+most fundamental scales.
+There is a complication for identifying emergence in software: all engineered sys-
+tems need to possess causally emergent capabilities because they need to screen-
+off irrelevant microscopic details. However, engineered systems are rarely de-
+scribed as “emergent” because they arise by design—they are designed or trained
+to produce a target macroscopic behavior. This in contrast to, for example, the
+pizoelectic properties of a quartz crystal that arise when sufficient collections
+of oxygen and silicon atoms are bonded at high pressure. The macroscopic pi-
+zoelectric property was never a target of design, learning, or selection; it is a
+5
+
+
+===== PAGE 6 =====
+collective property of atomic interactions. In order to discuss whether LLMs
+show emergence, given that they are, in a sense, engineered, we need to make a
+distinction between two different kinds of emergence in complex systems, which
+we term "knowledge-out" and "knowledge-in", and describe in the next section.
+4 Knowledge-Out Versus Knowledge-In Emergence
+There is a useful distinction to be made between the kind of emergence seen in
+many-body physical and chemical systems and that seen in complexadaptive
+systems. In the former case, emergent properties are assumed to be generated
+from large numbers of simple components following relatively simple rules (e.g.,
+individual molecules obeying Newton’s laws). In contrast, in complex systems
+that adapt or learn, such as biological organisms, brains, economies, and LLMs,
+emergent properties such as bodily organs, stock indices, or cognitive capabili-
+ties are generated by mechanisms that extract large amounts of “knowledge”—
+structured information including facts and rules—from pre-existing complex
+environments. We will say that emergence in chemistry and physics has a
+“knowledge-out” (KO) character, since it is characterized by complex structure
+or behavior arising from simple interactions among simple elements. Conversely,
+emergence in complex adaptive systems has a “knowledge-in” (KI) character,
+since it is characterized by complex structure or behavior arising from complex
+inputs or environments [23].
+TheobjectiveofKOscienceistodemonstratehowparsimoniousandlocalmech-
+anisms, when implemented by large collections of identical (or near identical)
+elements, produce macroscopic outputs that permit a variety of knowledge-rich
+explanations [24]. When it comes to the KI sciences, emergence claims are not
+so straightforward, given that adaptive changes are made to every component
+in a system on an individual basis.
+In KI cases, the word emergence is often substituted with the words engineered,
+developed, evolved, trained, or learned. In reviewing the use of emergence con-
+ceptsfromphysicsversusbiology, Newmanreferstothesedistinctionsas“generic
+versus genetic” [25], which correspond to KO and KI, respectively. In agenetic
+or KI system, where each component is parameterized, there is no obvious “free”
+structure and function of the kind found ingeneric or KO systems such as col-
+lections of atoms. However, in KI systems, there can still be coarse-grained
+global properties that screen off microscopic details. Given that LLMS’s are
+clearly KI systems—trained with vast corpora using machine learning meth-
+ods, emergence claims are required to describe both their coarse-grained global
+properties as well as the local microscopic mechanisms from which they emerge.
+In Table 1 we illustrate this micro-macro requirement by listing a few examples
+of phenomena that are widely thought to exhibit KI-type emergence in evolved
+and engineered systems. In each example, the local mechanism is a property or
+action of an individual in a population (e.g., an insect in a colony, an individual
+activator or inhibitor in a medium, a bird in a flock, a neuron in a population),
+each of which is the product of evolutionary processes in complex environments.
+The local, microscopic interactions enable global macroscopic properties, which
+enable coarse-grained descriptions that are themselves the elements of an effec-
+6
+
+
+===== PAGE 7 =====
+Emergent Phe-
+nomenon
+Local Microscopic
+Mechanism
+Global Macro-
+scopic Property
+Reference
+Stigmergy Depositing an acti-
+vating chemical trace
+Efficient resource al-
+location/extraction
+[26]
+Turing Patterns Differential diffusion
+of activators and in-
+hibitors
+Stripes, segments,
+and spirals
+[27]
+Flocking Separation, align-
+ment, and cohesion
+Coordinated object
+avoidance
+[28]
+Visual Receptive
+Fields
+Maximizing mutual
+information between
+cells
+Center surround fil-
+ters
+[29]
+Content-Addressable
+Memory
+Asynchronously spik-
+ing thresholded units
+Error correcting
+memory and general-
+ization
+[30]
+Table 1: A few examples of KI-type emergent phenomena including local mecha-
+nisms, which are either evolved or learned, and coarse-grained global properties.
+tive theory, one that is casually sufficient to predict the long-term behavior of
+the system. In none of the examples can emergence be claimed based purely on
+macroscopic properties.
+5 Framework for the Analysis of Emergence
+What kind of emergence is demonstrated by an LLM? What is the relevant
+coarse-graining and compression and what consequent effective theories for their
+behavior provide evidence of emergence? [31]. In this section we attempt to sit-
+uate LLMs in the five principles that we sketched in Section 3: (1) Scaling:
+how changing the number of system components changes its properties; (2)
+Criticality: the theory of the phases of a system; (3) Compression: reduction of
+the system’s description size or dimensionality achieved through efficient coarse-
+graining; (4) Novel Bases: discovering the minimal constituent elements capable
+of describing the system; and (5) Generalization: the behavior of system rules
+outside of the training or adaptive context. Most emergence claims in the scien-
+tific literature make use of some combination of these principles. We also relate
+these claims to the challenge of describing emergence in the KI setting.
+5.1 Emergence Through Scaling and Criticality
+Scaling is often applied to emergence in complex systems to demonstrate how
+“more is different”. More components can support more efficient descriptions
+(as with the previous example of fluid dynamics) as well as supporting phase
+transitions (critical behavior). By changing the value of a control variable (com-
+ponent number, temperature, etc) there can be a corresponding causal change
+in an order parameter (e.g., magnetization) that shows power law scaling in
+the vicinity of a phase transition [32]. Scaling in system size (size of molecules,
+connections,etc) can lead to the spontaneous breaking of a symmetry, such that
+different phases are described by different symmetry groups [33, 34, 35]. These
+emergent regularities are often captured through effective parameters that de-
+7
+
+
+===== PAGE 8 =====
+scribe the emergent dimensions in a model.
+This “more is different” scaling is unlike the idea of scale-invariant properties
+of a system [36] or the scaling of distributions of data [37]. These allometric
+and distributional scaling principles become important as a reference or baseline
+against which to capture fundamental changes in internal organization through
+the “breaking” of scaling—different exponents are required to capture regularity
+at different system sizes where this scale is not set externally [38].
+The double descent phenomenon seen in neural networks [39], in which, as model
+size increases, test loss goes down, then up due to overfitting, and then down
+again, has been proposed as an example of emergence through the breaking of
+scaling. However, both linear and polynomial regression demonstrate double
+descent under the appropriate conditions. These relate to the choice of penalty
+and or complexity measures on either side of an interpolation threshold [40],
+and how representative samples are of the dimensions of variation in the test
+set [41]. Thus double descent provide no evidence for emergence.
+More persuasive is recent work by Guth & Ménard (2025, in prep) showing
+that for neural networks being trained on a given task, the peak of the double
+descent behavior in the loss occurs concomitantly with a qualitative change in
+the neural encoding: the covariance spectra of weights (or learned features)
+go from exponential to scale-free. This qualitative reorganization implies a
+qualitative change in the bases available to perform the task. This would seem
+to provide evidence for emergence in a convolutional neural network in the form
+of a phase transition giving rise to a new form of representational structure
+inside the network associated with an improvement in performance. This is an
+emergent capability.
+Scaling has come to play a leading role in claims of emergence in LLMs. Re-
+call that a major claim is that scaling up network parameters or training data
+results in discontinuous jumps in accuracy on certain benchmarks—jumps that
+roughly resemble phase transitions in physical systems (such as water’s phase
+transitions under increasing temperature) [42] [43]. However, there are many
+differences between such discontinuities and physical phase transitions. First, it
+is not clear that LLM abilities have clear “phases”, or if the observed jumps in
+accuracy are actually continuous improvements under certain metrics [6]. Sec-
+ond, in physical phase transitions, the control parameter (e.g., temperature)
+is typically a one-dimensional quantity. While LLM capability transitions are
+plotted on a two-dimensional graph, the control variable on the x-axis (“scale”)
+is actually a high-dimensional complex quantity—either human-generated text
+data consisting of highly interdependent tokens or the highly interdependent,
+evolving parameters of a network-in-training, or both at the same time. This is
+what we have described as Knowledge-In (KI), and while KI does not rule out
+emergence (see Table 1), it does require that we distinguish carefully between
+the local mechanisms and the global property of interest. If the global prop-
+erty is being “programmed” by extensive training, we would hardly describe the
+behavior as emergent.
+Furthermore it is not clear that discrete jumps in LLM accuracy (if such jumps
+exist) reflect any kind of global reorganization of the internal structure of the
+network that supports the coarse-graining required by the most elementary no-
+8
+
+
+===== PAGE 9 =====
+tion of emergence. As we have argued in making the KO and KI distinction,
+in the KI case evidence from the external behavior of LLMs is not sufficient
+to establish that the network has transitioned to a new “phase” with novel
+emergent capabilities; it will be necessary to better understand what these be-
+haviors correspond to microscopically “under the hood”. A candidate study
+supporting emergent capability through scaling is [42], which provides evidence
+for a non-linear reduction in a test loss concomitant with the acquisition of a
+new internal syntactic structure, Where this structure also seems to support a
+reduced-complexity description. This is rather like the flocking example [28] in
+which, given sufficient agents (in the LLM case, the size of the networks and
+training data), new collective behavior emerges with low dimensional degrees of
+freedom.
+5.2 Emergence Through Compression
+Compression describes a multitude of approaches for encoding information or
+mechanisms in a lower-dimensional representation. This is typically achieved by
+eliminating redundancies, efficiently encoding common features, and quantizing
+sparse data. Emergence is associated with the internal discovery of coarse-
+grained models that capture the compressed regularities in the data. The
+strongest evidence of emergence through compression is when the system oper-
+ates directly on the coarse-grained degrees of freedom in order to perform better
+inference, such as in sensory perception [44, 45].
+A possible example of emergence through compression in LLMs is the case of
+“emergent world models” in the OthelloGPT transformer [11, 46]. In this case, a
+transformer trained only on tokens representing legal moves in the game Othello
+was shown to have formed compressed, causally relevant internal representations
+oftheOthellogameboard—inotherwords, acoarse-grainedmodelthatcaptures
+the compressed regularities in the data. This is a different form of emergence
+than that claimed in [1], in which new abilities seemed to arise with increased
+scale. In OthelloGPT, no scaling was involved; the term “emergence” was used
+to refer to the creation of a coarse-grained, parsimonious internal model of the
+data. One caveat is that the internal model may not have been as parsimonious
+or “compressed” as implied in the original papers—another study claimed that
+the internal model amounted to a large “bag of heuristics” [47]. Moreover,
+there was only weak evidence that the emergent representation was causally
+responsible for the network’s ability to predict legal moves, and so at this point
+we can not be certain that this is a truly emergent capability.
+5.3 Emergence Through Novel Bases and Manifolds
+An important approach to compression is to discover novel bases: encodings
+of a subspace in a dataset than can jointly span its full space. Bases can be
+composed in principled ways to recover a full data set. Unlike simple forms of
+data compression (lossy or lossless), bases are compositional and interpretable.
+In this case emergence takes the forms of the appearance of a small number of
+novel bases to describe what would otherwise be a very large dataset [29, 48].
+Manifolds—spaces that are locally Euclidean and whose bases are open sets—
+provide a natural means of connecting points that live in high dimensional
+9
+
+
+===== PAGE 10 =====
+spaces. The manifold hypothesis asserts that high dimensional data sets can
+be encoded without loss of information, through local low dimensional neigh-
+borhoods. The emergence of a manifold (e.g. color space, frequency space) is
+thought of as an efficient means of encoding regularities as well as interpolating
+and extrapolating to new points [49, 50, 51].
+As in emergence through compression, establishing emergence through novel
+bases and manifolds requires understanding how the internals of a system have
+organizedtoimplementsuchstructures. Relativelylittleisknownaboutwhether
+or how such structures might exist in LLMs, beyond the kinds of simple “mech-
+anistic interpretability” analyses such as that described above for OthelloGPT.
+Two of the more compelling examples of novel bases include the demonstration
+of abstraction units in self-supervised transformers [52] and the discovery of
+covariant features in visual inputs that are aligned through layers of geometric
+transformations into very regular patterns of activation [53].
+5.4 Generalization Through Emergence
+We use the term “generalization” to refer to the ability of an adaptive system
+to succeed on tasks or in situations that differ qualitatively from the system’s
+prior experiences or training. Emergence—in the form of coarse-grained vari-
+ables and theories—can give rise to robust generalization by transforming a
+detailed, high-dimensional representation to a more abstract, low-dimensional
+one, via compression and the discovery of novel bases. For example, evolu-
+tion produced groups of neurons in the brain that become organized as spatial
+maps, structures that represent higher-level units of information than individual
+neurons, and that generalize across myriad situations, including being used to
+process non-spatial data. Indeed, this kind of ability for generalization is what
+gives emergence much of its power.
+Generalization has been approached formally in several ways, including through
+measures of dimension, (e.g, the Vapnik–Chervonenkis (VC) dimension, which
+provide a natural measure of the ability of a system to classify points [54]), and
+through measures of function approximation (e.g. The Probably Approximately
+Correct framework, which provides a measure of the generalization gap [55]).
+Both of these provide techniques for analyzing generalization in stationary en-
+vironments, whereas emergence in humans often implies behavior in radically
+different environments.
+Given that the training data and the task-specific internal mechanisms for LLMs
+are typically unknown, it is hard to determine whether the claimed abilities are
+general, orwhethertheyrelyonmemorizationofsimilarexamplesinthetraining
+dataoronnon-generalizable“shortcuts” [56]. Inanumberofcases, LLMabilities
+cited as emergent have later been shown to lack generality and robustness (e.g.,
+[57, 58]). Nevertheless, there is some evidence for such generalization ability in
+LLMs, for example, extrapolating forward in time the behavior of real-valued
+dynamical systems, without fine tuning when using language data to train the
+networks. This opens up a series of fascinating questions about the domain-
+generality of rules encoded in natural language [59].
+10
+
+
+===== PAGE 11 =====
+6 Conclusions
+6.1 Emergent Capabilities in LLMs
+In this paper we surveyed some of the claims for emergent capabilities in LLMs.
+As background for evaluating these claims, we described necessary conditions
+for emergence, as well as a framework of several principles for quantifying it.
+We argued that in LLMs, the term emergence should be used not merely
+to signify surprising or unpredictable task performance, or abrupt changes in
+performance, but requires at minimum the identification of relevant coarse-
+grained variables that form effective mechanisms— reduced “internal degrees of
+freedom”—for this behavior, mechanisms that can explain or predict the be-
+havior of the system at this higher level, screening off details of lower level
+mechanisms such as weights and activations. More quantitative evidence for
+emergence includes the kinds of principles related to emergence in physical sys-
+tems, such as breaking of scaling through reorganization, evidence for the use of
+novel bases and manifolds formed through compression of regularities, and new
+forms of abstraction that lead to demonstrable efficiencies in prediction, prob-
+lem solving, generalization, and analogy-making. Identifying such principles
+would be an important step in understanding the seemingly novel capabilities
+that arise in LLMs.
+Three types of emergence claims have been made for LLM capabilities: (1)
+sharp improvements in specific capabilities that occur as the system or training
+data is scaled; (2) capabilities are identified that the LLMs were not specifically
+trained for; and (3) internal “world models” emerging from autoregressive token
+prediction. Each of these cases, and particularly the last, present provocative
+evidence for emergence, but in all cases that evidence is incomplete. Cases (1)
+and (2) relies on several assumptions: that the capabilities tested are genuinely
+new, general, and don’t rely on memorized training data or other shortcuts; that
+these capabilities are not present in simpler models; and that the capabilities are
+unexpected or unpredictable given the training data and the models’ size. None
+of these assumptions has been conclusively verified. As for case (3) the complex-
+ity framework of [60] provides a principled approach to thinking about “world
+models” as these relate to discrete-time stochastic processes. To the extent that
+an LLM is effective at next-token prediction, and to the degree to which the
+model can be shown to exploit a minimum of information, they might be de-
+scribed as world models. However, the recent work by [61] demonstrates that
+recovering an accurate world model is very difficult, since next token prediction
+is a fragile metric.
+LLMs display a wide range of functional capabilities, but due to their large
+number of parameters, nonlinear interactions among components, and size of
+training data, pinpointing which of these capabilities is “surprising” is incredi-
+bly difficult. Neural networks are known to be universal function approximators,
+and to the degree that many tasks, such as arithmetic and multiplication, are
+functions, perhaps LLMs have been implicitly “programmed” through their ex-
+tensive training on language data.
+There are three possible roles of language as it relates to training an LLM: (1)
+language itself provides a more or less complete and compressed representation
+11
+
+
+===== PAGE 12 =====
+oftheworld(includingnon-linguisticmodalities); (2)spokenorwrittenlanguage
+mirrors an internal “language of thought”; and (3) language is a non-supervised
+“programming language”. If language does provide a complete representation
+of the world, then training on more language data would indeed enable an in-
+creasinglyexpansiveanddetailed representationof naturalandcultural patterns
+and processes. If natural language is the language of thought (“mentalese”) then
+training on more language data would fill out the numerous ways that human-
+ity has historically reasoned about regularities in the world. And if language is
+a programming language, by combining detailed instruction tuning with next
+word prediction it can exploit principles of computational universality to imple-
+ment any computable function.
+We do not have definitive evidence for any of these three claims, but they play
+a crucial role in any statement relating to how surprising the behavior of an
+LLM will be deemed. The more information about the world that resides in
+language, the weaker emergence claims become, under any of these claims. This
+is because in the limit of any KI system, the internal degrees of freedom of a
+model simply converge by some form of engineering on every external degree
+of freedom, and no coarse-grained internal model is produced or required. The
+fact that an internal program only works when complete (e.g., waiting for a final
+control loop to be implemented), and thus produces a discontinuous increase in
+performance for the system, does not in way make this increase an emergent
+property.
+The approach we adopted in this paper is to properly assess for emergence
+claims the properties of the structure responsible for a new capability, and to
+reserve the notion of emergence only when one or more the the conditions for
+emergence (Section 3) are met. We do not yet have a theory with respect to
+capabilitiesthemselves; wedonotknowaprioriwhichtaskscanbeaccomplished
+by LLMs as they just get larger (“more is more”) versus those that require a
+qualitative change in network internal structure (“more is different”). But we
+believe that the approach and principles described in this paper will contribute
+to a more rigorous evaluation of emergence in complex AI models and a better
+scientific understanding of the extent to which scaling such models can produce
+increasingly sophisticated and general capabilities.
+6.2 Emergent Capability Is Not Emergent Intelligence
+In this paper, we have situated claims of emergent LLM abilities in a broader
+framework for understanding emergence. While most such claims focus on in-
+dividual capabilities, some influential voices in the LLM community have gone
+further, asserting that LLMs are a form of “emergent intelligence”. Geoffrey
+Hinton has gone as far as stating that “large scale digital computation is prob-
+ably far better at acquiring knowledge than biological computation and may
+soon be much more intelligent than us.” [62]
+In humans we do not mistake various, often impressive, cognitive capabilities
+for intelligence. Intelligence is reserved for a more general capacity for learning
+and solving problems quickly and parsimoniously, with a minimal expenditure
+of energy (a similar view is given in [63]), where the concepts and methods used
+in solving particular problems can be easily modified and repurposed. It is for
+12
+
+
+===== PAGE 13 =====
+this reason that for our cognitively limited species, the hallmark of emergent
+intelligence consists in finding very compact and energetically efficient means of
+solving problems: “less is more”. These solutions are moreover readily commu-
+nicable with a few words of instruction between humans based on their under-
+standing the meaning of what is communicated. We do not teach one another
+mathematics by sharing synaptic weights, but by drawing a few illustrative fig-
+ures, or manipulating symbols on a page. Indeed human cultural evolution can
+be understood as the transmission of more effective and compact symbols and
+procedures for inference [64, 65].
+This human form of intelligence can be considered truly emergent because it
+involves the discovery of effective theories of knowledge—compact and low-
+dimensional languages that screen-off most of neuroscience and even much of
+psychology. Indeed, folk psychology is in many ways a successful effective the-
+ory: its concepts allow humans to attribute beliefs and desires to other people,
+and frequently successfully predict and explain their behavior [66]. Movies, art,
+politics, and journals, like the one in which this article appears, would not exist
+without shared folk psychological concepts.
+The causal power of human understanding is also incontestable. A recent paper
+illustratesthisbycontrastinghowtwodifferentformsofintelligence—procedural
+and understanding-based, can induce an identical neural network structure [67].
+Briefly, monkeys and humans can be trained to learn two sets of pairwise as-
+sociations between arbitrary symbols. Each set of associations is defined as a
+context. What has been shown is that, through trial and error, monkeys and
+humans can generate a representational geometry across a large population of
+neurons in hippocampus that permits implicit inference of the latent contextual
+variable. What is truly surprising is that by providing verbal instruction, a
+human (unlike a monkey) can configure this structure in minutes rather than
+through laborious training. This “instant” intelligence is based in this case on
+understanding an instructed sentence. An effective theory made of psychologi-
+cal constructs can causally change a neural network structure. There are many
+such examples of short circuiting of trial and error learning by quickly “get-
+ting it”.[68][69][70]. This includes comparisons across human subjects where
+only those individuals who explicitly understood a task (via a natural language
+explanation) reached a correct solution whereas implicit trial and error rein-
+forcement failed to converge. [71]. This kind of instruction-mediated emergence
+has yet to be demonstrated in an LLM.
+Human intelligence is a low-bandwidth phenomenon, and is as much if not
+more about the scaling down of effort as the scaling up of capability [72]. As
+Einstein wrote, “The grand aim of all science is to cover the greatest number of
+empirical facts by logical deduction from the smallest number of hypotheses or
+axioms.” [73] We know that for any elegant algorithm there is an alternative
+brute force solution that does the job. It might even be the case that there are
+uncountable problems that require brute force and that this is a domain where
+LLMs and their cognitively alien relatives, including SAT solvers, will provide
+extraordinary utility [74]. What Donald Knuth said of programs might also be
+applied to intelligence: “Programs are meant to be read by humans and only
+incidentally for computers to execute.” [75]. Similarly, intelligence is a property
+of understanding and only incidentally a matter of capability.
+13
+
+
+===== PAGE 14 =====
+6.3 Acknowledgments
+The authors thank the referees for their thoughtful and constructive comments,
+which clarified many arguments in this paper. This work has been supported
+by the Templeton World Charity Foundation, Inc. (funder DOI 501100011730)
+under the grant https://doi.org/10.54224/20650. D.C.K. is also supported by
+grant no. 81366 from the Robert Wood Johnson Foundation on Using Emergent
+Engineering for integrating complex systems to achieve an equitable society.
+M.M. is also supported by subcontract 2673699 from the Sandia National Lab-
+oratories.
+References
+[1] Jason Wei, Yi Tay, Rishi Bommasani, Colin Raffel, Barret Zoph, Sebastian
+Borgeaud, Dani Yogatama, Maarten Bosma, Denny Zhou, Donald Metzler,
+Ed H. Chi, Tatsunori Hashimoto, Oriol Vinyals, Percy Liang, Jeff Dean,
+and William Fedus. Emergent abilities of large language models.Transac-
+tions on Machine Learning Research, 2022.
+[2] Leonardo Berti, Flavio Giorgi, and Gjergji Kasneci. Emergent abilities in
+large language models: A survey.arXiv:2503.05788, 2025.
+[3] Jack Lindsey, Wes Gurnee, Emmanuel Ameisen, Brian Chen, Adam
+Pearce, Nicholas L. Turner, Craig Citro, David Abrahams, Shan Carter,
+Basil Hosmer, Jonathan Marcus, Michael Sklar, Adly Templeton, Tren-
+ton Bricken, Callum McDougall, Hoagy Cunningham, Thomas Henighan,
+Adam Jermyn, Andy Jones, Andrew Persic, Zhenyi Qi, T. Ben Thomp-
+son, Sam Zimmerman, Kelley Rivoire, Thomas Conerly, Chris Olah,
+and Joshua Batson. On the biology of a large language model,
+2025. Transformer Circuits Thread https://transformer-circuits.
+pub/2025/attribution-graphs/biology.html.
+[4] Peng Jiang, Christian Sonne, Wangliang Li, Fengqi You, and Siming You.
+Preventing the immense increase in the life-cycle energy and carbon foot-
+prints of llm-powered intelligent chatbots.Engineering, 40:202–210, 2024.
+[5] Jared Kaplan, Sam McCandlish, Tom Henighan, Tom B. Brown, Benjamin
+Chess, Rewon Child, Scott Gray, Alec Radford, Jeffrey Wu, and Dario
+Amodei. Scaling laws for neural language models.arXiv:2001.08361, 2020.
+[6] Rylan Schaeffer, Brando Miranda, and Sanmi Koyejo. Are emergent abil-
+ities of large language models a mirage?Advances in Neural Information
+Processing Systems, 36:55565–55581, 2023.
+[7] Sheng Lu, Irina Bigoulaeva, Rachneet Sachdeva, Harish Tayyar Madabushi,
+and Iryna Gurevych. Are emergent abilities in large language models just
+in-context learning? In Proceedings of The 62nd Annual Meeting of the
+Association for Computational Linguistics (ACL 2024), 2024.
+[8] David Noever and Forrest McKee. Numeracy from literacy: Data science
+as an emergent skill from large language models.arXiv:2301.13382, 2023.
+14
+
+
+===== PAGE 15 =====
+[9] Taylor Webb, Keith J. Holyoak, and Hongjing Lu. Emergent analogical
+reasoning in large language models.Nature Human Behaviour, 7(9):1526–
+1541, 2023.
+[10] John J. Nay, DavidKaramardian, Sarah B.Lawsky, WentingTao, Meghana
+Bhat, Raghav Jain, Aaron Travis Lee, Jonathan H. Choi, and Jungo Ka-
+sai. Large language models as tax attorneys: A case study in legal ca-
+pabilities emergence. Philosophical Transactions of the Royal Society A,
+382(2270):20230159, 2024.
+[11] Kenneth Li, Aspen K Hopkins, David Bau, Fernanda Viégas, Hanspeter
+Pfister, and Martin Wattenberg. Emergent world representations: Explor-
+ing a sequence model trained on a synthetic task. InProceedings of the
+International Conference on Learning Representations (ICLR-2023), 2023.
+[12] Anna Rogers and Alexandra S. Luccioni. Position: Key claims in LLM re-
+search have a long tail of footnotes. InProceedings of the 41st International
+Conference on Machine Learning (ICML 2024), 2024.
+[13] Mark A. Bedau and Paul Humphreys.Emergence: Contemporary Readings
+in Philosophy and Science. MIT Press, March 2008.
+[14] Sophie Gibb, Robin F. Hendry, and Tom Lancaster.The Routledge Hand-
+book of Emergence. Routledge, March 2019.
+[15] David J. Chalmers. Strong and weak emergence. In Phillip Claton and
+Paul Davies, editors,The Re-Emergence of Emergence. Oxford University
+Press, New York, 2006.
+[16] David Krakauer, Nils Bertschinger, Eckehard Olbrich, Jessica C. Flack, and
+Nihat Ay. The information theory of individuality.Theory in Biosciences,
+139:209–223, 2020.
+[17] Sean M. Carroll and Achyuth Parola. What emergence can possibly mean.
+arXiv:2410.15468, October 2024.
+[18] Jiri Blazek. Computational Fluid Dynamics: Principles and Applications.
+Butterworth-Heinemann, 2015.
+[19] Navot Israeli and Nigel Goldenfeld. Coarse-graining of cellular automata,
+emergence, and the predictability of complex systems. Physical Review
+E—Statistical, Nonlinear, and Soft Matter Physics, 73(2):026203, 2006.
+[20] P. W. Anderson. More is different. Science, 177(4047):393–396, August
+1972.
+[21] Wesley C. Salmon. Statistical Explanation and Statistical Relevance, vol-
+ume 69. University of Pittsburgh Press, 2010.
+[22] David C. Krakauer. Symmetry—simplicity, broken symmetry—complexity.
+Interface Focus, 13(3):20220075, 2023.
+[23] David C. Krakauer.The Complex World. Santa Fe Institute Press, Santa
+Fe, NM, 2024.
+[24] Richard P. Feynman, Robert B. Leighton, and Matthew L. Sands.The
+Feynman Lectures on Physics. Addison-Wesley Publishing Company, 1963.
+15
+
+
+===== PAGE 16 =====
+[25] Stuart A. Newman. Development and evolution: The physics connection.
+In Alan C. Love, editor, Conceptual Change in Biology: Scientific and
+Philosophical Perspectives on Evolution and Development, pages 421–440.
+Springer Netherlands, Dordrecht, 2015.
+[26] Francis Heylighen. Stigmergy as a universal coordination mechanism I:
+Definition and components.Cognitive Systems Research, 38:4–13, 2016.
+[27] A. M. Turing. The chemical basis of morphogenesis.Philosophical Trans-
+actions of the Royal Society, 237(641):37–72, 1952.
+[28] Craig W. Reynolds. Flocks, herds and schools: A distributed behavioral
+model. InProceedings of the 14th Annual Conference on Computer Graph-
+ics and Interactive Techniques, 1987.
+[29] R. Linsker. Perceptual neural organization: Some approaches based on
+network models and information theory.Annual Reviews of Neuroscience,
+13(1):257–281, 1990.
+[30] J. J. Hopfield. Neural networks and physical systems with emergent collec-
+tive computational abilities. Proc. Natl. Acad. Sci. U. S. A., 79(8):2554–
+2558, April 1982.
+[31] David C. Krakauer. Unifying complexity science and machine learning.
+Frontiers in Complex Systems, 1:1235202, 2023.
+[32] Ricard V. Solé.Phase Transitions. Primers in Complex Systems. Princeton
+University Press, Princeton, NJ, 2011.
+[33] Jessica C. Flack, Doug Erwin, Tanya Elliot, and David C. Krakauer.
+Timescales, symmetry, and uncertainty reduction in the origins of hier-
+archy in biological systems.Evolution Cooperation and Complexity, pages
+45–74, 2013.
+[34] Heinz G. Schuster.Criticality in Neural Systems. John Wiley & Sons, 2014.
+[35] James P. O’Dwyer, Steven W. Kembel, and Thomas J. Sharpton. Back-
+bones of evolutionary history test biodiversity theory for microbes.Pro-
+ceedings of the National Academy of Sciences, 112(27):8356–8361, 2015.
+[36] James H. Brown and Geoffrey B. West.Scaling in Biology. Oxford Univer-
+sity Press, 2000.
+[37] Stefan Thurner, Rudolf Hanel, and Peter Klimek.Introduction to the The-
+ory of Complex Systems. Oxford University Press, 2018.
+[38] Christopher P. Kempes, M. A. R. Koehl, and Geoffrey B. West. The scales
+that limit: The physical boundaries of evolution.Frontiers in Ecology and
+Evolution, 7:242, 2019.
+[39] Preetum Nakkiran, Gal Kaplun, Yamini Bansal, Tristan Yang, Boaz Barak,
+and Ilya Sutskever. Deep double descent: Where bigger models and more
+data hurt. Journal of Statistical Mechanics: Theory and Experiment ,
+2021(12):124003, 2021.
+16
+
+
+===== PAGE 17 =====
+[40] Alicia Curth, Alan Jeffares, and Mihaela van der Schaar. A u-turn on
+double descent: Rethinking parameter counting in statistical learning.Ad-
+vances in Neural Information Processing Systems, 36:55932–55962, 2023.
+[41] Rylan Schaeffer, Mikail Khona, Zachary Robertson, Akhilan Boopathy,
+Kateryna Pistunova, Jason W. Rocks, Ila Rani Fiete, and Oluwasanmi
+Koyejo. Double descent demystified: Identifying, interpreting & ablating
+the sources of a deep learning puzzle. arXiv preprint arXiv:2303.14151,
+2023.
+[42] Angelica Chen, Ravid Shwartz-Ziv, Kyunghyun Cho, Matthew L. Leavitt,
+and Naomi Saphra. Sudden drops in the loss: Syntax acquisition, phase
+transitions, and simplicity bias in mlms.arXiv preprint arXiv:2309.07311,
+2023.
+[43] Kai Nakaishi, Yoshihiko Nishikawa, and Koji Hukushima. Critical phase
+transitioninlargelanguagemodels. arXiv preprint arXiv:2406.05335, 2024.
+[44] Bruno A. Olshausen and David J. Field. Sparse coding of sensory inputs.
+Current Opinion in Neurobiology, 14(4):481–487, 2004.
+[45] Charles F. Stevens. What the fly’s nose tells the fly’s brain.Proceedings of
+the National Academy of Sciences, 112(30):9460–9465, 2015.
+[46] Neel Nanda, Andrew Lee, and Martin Wattenberg. Emergent lin-
+ear representations in world models of self-supervised sequence models.
+arXiv:2309.00941, 2023.
+[47] J. Y. Lin, Jack S., Adam Karvonen, and Can Rager. OthelloGPT
+learned a bag of heuristics, 2024. https://www.lesswrong.com/posts/
+gcpNuEZnxAPayaKBY/othellogpt-learned-a-bag-of-heuristics-1 .
+[48] Matthias Kaschube, Michael Schnabel, and Fred Wolf. Self-organization
+and the selection of pinwheel density in visual cortical development.New
+Journal of Physics, 10(1):015009, 2008.
+[49] Daniel Polani. Foundations and formalizations of self-organization. Ad-
+vances in Applied Self-Organizing Systems, pages 19–37, 2008.
+[50] Hujun Yin. Learning nonlinear principal manifolds by self-organising maps.
+In Principal Manifolds for Data Nisualization and Dimension Reduction,
+pages 68–95. Springer, 2008.
+[51] Adam Rupe and James P. Crutchfield. On principles of emergent organi-
+zation. Physics Reports, 1071:1–47, 2024.
+[52] Quentin RV. Ferry, Joshua Ching, and Takashi Kawai. Emergence and
+function of abstract representations in self-supervised transformers.arXiv
+preprint arXiv:2312.05361, 2023.
+[53] Florentin Guth, Brice Ménard, Gaspar Rochette, and Stéphane Mallat.
+A rainbow in deep network black boxes. Journal of Machine Learning
+Research, 25(350):1–59, 2024.
+[54] Vladimir Vapnik, Esther Levin, and Yann LeCun. Measuring the vc-
+dimension of a learning machine.Neural Computation, 6(5):851–876, 1994.
+17
+
+
+===== PAGE 18 =====
+[55] Leslie Valiant. Probably Approximately Correct: Nature’s Algorithms for
+Learning and Prospering in a Complex World. Basic Books, 2013.
+[56] Melanie Mitchell. How do we know how smart AI systems are?Science,
+381(6654):eadj5957, 2023.
+[57] Iman Mirzadeh, Keivan Alizadeh, Hooman Shahrokhi, Oncel Tuzel,
+Samy Bengio, and Mehrdad Farajtabar. GSM-Symbolic: Understand-
+ing the limitations of mathematical reasoning in large language models.
+arXiv:2410.05229, 2024.
+[58] MarthaLewisandMelanieMitchell. Evaluatingtherobustnessofanalogical
+reasoning in GPT models. Transactions on Machine Learning Research,
+2024.
+[59] Toni J. B. Liu, Nicolas Boullé, Raphaël Sarfati, and Christopher J. Earls.
+Llms learn governing principles of dynamical systems, revealing an in-
+context neural scaling law.arXiv preprint arXiv:2402.00795, 2024.
+[60] Cosma Rohilla Shalizi and Cristopher Moore. What is a macrostate? sub-
+jective observations and objective dynamics.Found. Phys., 55(1), February
+2025.
+[61] Keyon Vafa, Justin Chen, Ashesh Rambachan, Jon Kleinberg, and Sendhil
+Mullainathan. Evaluating the world model implicit in a generative model.
+Advances in Neural Information Processing Systems, 37:26941–26975, 2024.
+[62] Geoffrey Hinton. Will digital intelligence replace biological intelligence?,
+2024. Romanes Lecture, Oxford, UK,https://www.youtube.com/watch?
+v=N1TEjTeQeg0.
+[63] François Chollet. On the measure of intelligence.arXiv:1911.01547, 2019.
+[64] Joseph Mazur. Enlightening symbols: A short history of mathematical no-
+tation and its hidden powers. Princeton University Press, 2014.
+[65] RaúlRojas. The Language of Mathematics: The Stories behind the Symbols.
+Princeton University Press, 2025.
+[66] Daniel Hutto and Ian Ravenscroft. Folk psychology as a theory, 2021.
+[67] Hristos S Courellis, Juri Minxha, Araceli R Cardenas, Daniel L Kimmel,
+Chrystal M Reed, Taufik A Valiante, C Daniel Salzman, Adam N Mamelak,
+Stefano Fusi, and Ueli Rutishauser. Abstract representations emerge in
+human hippocampal neurons during inference.Nature, 632(8026):841–849,
+2024.
+[68] Pietro Mazzoni and John W Krakauer. An implicit plan overrides an
+explicit strategy during visuomotor adaptation.Journal of neuroscience,
+26(14):3642–3645, 2006.
+[69] M Felice Ghilardi, Clara Moisello, Giulia Silvestri, Claude Ghez, and
+John W Krakauer. Learning of a sequential motor skill comprises explicit
+and implicit components that consolidate differently.Journal of neurophys-
+iology, 101(5):2218–2229, 2009.
+18
+
+
+===== PAGE 19 =====
+[70] Harry Manley, Peter Dayan, and Jörn Diedrichsen. When money is not
+enough: awareness, success, and variability in motor learning.PLoS One,
+9(1):e86580, 2014.
+[71] JohnWKrakauer. Representationincognitivesciencebynicholasshea: but
+is it thinking? the philosophy of representation meets systems neuroscience,
+2022.
+[72] David C Krakauer, Jessica C Flack, Simon DeDeo, Doyne Farmer, and
+Daniel Rockmore. Intelligent data analysis of intelligent systems. InIn-
+ternational Symposium on Intelligent Data Analysis, pages 8–17. Springer,
+2010.
+[73] Lincoln Barnett and Albert Einstein. The Universe and Dr. Einstein.
+Courier Corporation, 2005.
+[74] Marijn JH Heule and Oliver Kullmann. The science of brute force.Com-
+munications of the ACM, 60(8):70–79, 2017.
+[75] Harold Abelson and Gerald Jay Sussman.Structure and interpretation of
+computer programs. The MIT Press, 1996.
+19

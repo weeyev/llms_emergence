@@ -1,0 +1,2012 @@
+
+
+===== PAGE 1 =====
+arXiv:2411.02362v1  [math.PR]  4 Nov 2024
+Limit theorems for random Dirichlet series: boundary case
+Alexander Iksanov ∗ and Ruslan Kostohryz †
+Abstract
+Buraczewski et al (2023) proved a functional limit theorem (FLT) and a law of the
+iterated logarithm (LIL) for a random Dirichlet series ∑
+k≥2(log k)αk−1/2−sηk as s → 0+,
+where α > − 1/2 and η1, η2, . . . are independent identically distributed random variables with
+zero mean and ﬁnite variance. We prove a FLT and a LIL in a boundary case α = − 1/2.
+The boundary case is more demanding technically than the case α > − 1/2.
+Key words: functional limit theorem; law of the iterated log arithm; random Dirichlet series
+2020 Mathematics Subject Classiﬁcation: Primary: 60F15, 6 0F17
+Secondary: 60G50
+1. Introduction
+Recently there has been a surge of activity around limit theo rems for random Dirichlet series
+and their zeros. Throughout the paper, by random Dirichlet series , we mean a random series
+parameterized by s > 0:
+Xα(s) :=
+∑
+k≥ 2
+(log k)α
+k1/2+s ηk,
+where α ∈ R and η1, η2, . . . are independent copies of a random variable η with zero mean
+and ﬁnite variance, which live on a probability space (Ω , F, P). By Kolmogorov’s three series
+theorem, the series deﬁning Xα(s) converges almost surely (a.s.) for each s > 0. Furthermore, if
+α < − 1/2, the series Xα(0+) converges a.s. by the same theorem. Thus, as far as limit theorems
+for Xα(s) as s → 0+ are concerned, the case α < − 1/2 is not interesting, hence excluded in the
+sequel.
+The following functional limit theorem (FLT) and law of the i terated logarithm (LIL) were
+known in the case α > − 1/2. We write = ⇒ for weak convergence in a function space and
+C(0, ∞ ) and C[0, ∞ ) for the spaces of real-valued continuous functions deﬁned on (0 , ∞ ) and
+[0, ∞ ), respectively. It is assumed that the spaces C(0, ∞ ) and C[0, ∞ ) are endowed with the
+topology of locally uniform convergence.
+Proposition 1.1. Assume that E[η] = 0 , σ2 := E[η2] ∈ (0, ∞ ) and let α > − 1/2. Then
+(
+s1/2+α ∑
+k≥ 2
+(log k)α
+k1/2+st ηk
+)
+t>0
+=⇒
+(
+σ
+∫
+[0,∞ )
+yαe− tydB(y)
+)
+t>0
+, s → 0+
+on C(0, ∞ ), where (B(y))y≥ 0 is a standard Brownian motion.
+∗Faculty of Computer Science and Cybernetics, Taras Shevche nko National University of Kyiv, Ukraine; e-mail
+address: iksan@univ.kiev.ua
+†Faculty of Computer Science and Cybernetics, Taras Shevche nko National University of Kyiv, Ukraine; e-mail
+address: kostogriz2909@gmail.com
+1
+
+
+===== PAGE 2 =====
+Proposition 1.1 follows from Corollary 2.3 in [5]. In the cit ed article, the result was derived by
+a specialization of a FLT for Xα(s), with a complex-valued η, in the space of analytic functions.
+For a family ( xt) of real numbers denote by C((xt)) the set of its limit points.
+Proposition 1.2. Assume that E[η] = 0 , σ2 = E[η2] ∈ (0, ∞ ) and let α > − 1/2. Then, almost
+surely,
+C
+(( ( 22α
+σ2Γ(1 + 2α)
+s1+2α
+log log 1/s
+) 1/2 ∑
+k≥ 2
+(log k)α
+k1/2+s ηk : s ∈ (0, e− 1)
+))
+= [− 1, 1],
+where Γ is the Euler gamma function.
+Proposition 1.2 can be found in Theorem 3.1 of [5]. A classica l form of the LIL in terms
+of lim sup and lim inf was earlier obtained in Theorem 1.1 of [2 ] in a rather particular case
+P{η = ± 1} = 1/2 and α = 0. Nevertheless, we stress that the work [2] gave impetus to both [5]
+and the present paper.
+Our purpose is to formulate and prove counterparts of Propos itions 1.1 and 1.2 in a boundary
+case α = − 1/2.
+In the case α = 0, real zeros of random Dirichlet series have been in focus o f the recent papers
+[1, 3, 8] (it is assumed in [8] that the distribution of η is symmetric γ-stable for γ ∈ (0, 2]). In
+the case α > − 1/2, limit theorems for complex and real zeros of s ↦→ Xα(s) were proved in [5].
+Although we do not directly investigate zeros of s ↦→ X− 1/2(s) in the present paper, our LIL
+stated in Theorem 2.2 below entails that, a.s., s ↦→ X− 1/2(s) has inﬁnitely many real zeros in
+any right neighborhood of 0.
+2. Main results
+We start by stating a FLT for X− 1/2(s), properly scaled, as s → 0+. If α > − 1/2, the
+variance of Xα(s) exhibits a polynomial growth, whereas the growth of Var [ X− 1/2(s)] is loga-
+rithmic. This partly justiﬁes the facts that the scaling of t ime in Proposition 1.1 is st, that is,
+standard, whereas the scaling of time in Theorem 2.1 is st.
+Theorem 2.1. Assume that E[η] = 0 and σ2 = E[η2] ∈ (0, ∞ ). Then
+( 1
+(log 1/s)1/2
+∑
+k≥ 2
+(log k)− 1/2
+k1/2+st ηk
+)
+t≥ 0
+=⇒ (σB(t))t≥ 0, s → 0+
+on C[0, ∞ ), where (B(t))t≥ 0 is a standard Brownian motion.
+Observe that the limit process in Theorem 2.1 is nowhere diﬀer entiable a.s., whereas the
+limit process in Proposition 1.1 is inﬁnitely diﬀerentiable a.s. This distinction is a manifestation
+of intricacy of the boundary case α = − 1/2.
+We proceed with a LIL for X− 1/2(s) as s → 0+. The FLT given in Theorem 2.1 was used
+for guessing the LIL’s form, namely, the factor log log log 1 /s in the normalization.
+Theorem 2.2. Assume that E[η] = 0 and σ2 = E[η2] ∈ (0, ∞ ). Then
+C
+((( 1
+2σ2 log 1/s log log log 1/s
+) 1/2 ∑
+k≥ 2
+(log k)− 1/2
+k1/2+s ηk : s ∈ (0, e− e)
+))
+= [− 1, 1] a.s. (1)
+2
+
+
+===== PAGE 3 =====
+In particular,
+lim sup
+s→ 0+
+( 1
+log 1/s log log log 1/s
+) 1/2 ∑
+k≥ 2
+(log k)− 1/2
+k1/2+s ηk = (2σ2)1/2 a.s. (2)
+and
+lim inf
+s→ 0+
+( 1
+log 1/s log log log 1/s
+) 1/2 ∑
+k≥ 2
+(log k)− 1/2
+k1/2+s ηk = − (2σ2)1/2 a.s. (3)
+Since Var [X− 1/2(s)] ∼ σ2 log 1/s as s → 0+, we infer log log Var [ X− 1/2(s)] ∼ log log log 1/s
+as s → 0+, where, as usual, f (s) ∼ g(s) as s → 0+ means that lim s→ 0+(f (s)/g(s)) = 1. Thus,
+formulas (2) and (3) are indeed laws of the iterated logarithm.
+The remainder of the paper is structured as follows. Theorem s 2.2 and 2.1 are proved in
+Sections 3 and 4, respectively. The reversed order of the pro ofs is necessitated by the fact that
+our proof of Theorem 2.1 uses some arguments and calculation s from the proof of Theorem 2.2.
+At the ﬁrst glance it looks plausible that an economical proo f of the LIL may be based on a
+strong approximation by a Brownian motion of a standard rand om walk generated by η. In
+Section 5 we explain that this naive idea fails.
+3. Proof of Theorem 2.2
+It is convenient to split the presentation into two pieces. W e start by proving one half of
+Theorem 2.2. In what follows we write log (3) for log log log.
+Proposition 3.1. Under the assumptions of Theorem 2.2,
+lim sup
+s→ 0+
+( 1
+log 1/s log(3) 1/s
+) 1/2 ∑
+k≥ 2
+(log k)− 1/2
+k1/2+s ηk ≤ (2σ2)1/2 a.s. (4)
+and
+lim inf
+s→ 0+
+( 1
+log 1/s log(3) 1/s
+) 1/2 ∑
+k≥ 2
+(log k)− 1/2
+k1/2+s ηk ≥ − (2σ2)1/2 a.s. (5)
+Replacing ηk with ηk/σ we can work under the assumption that σ2 = 1. For s ∈ (0, e− e),
+put
+f (s) =
+( 1
+2 log 1/s log(3) 1/s
+) 1/2
+.
+Let M : (0, ∞ ) → N0 denote a function satisfying lim s→ 0+ M (s) = + ∞ and
+lim
+s→ 0+
+M (s)
+log 1/s = 0. (6)
+Here, as usual, N0 := N ∪ { 0}.
+We start by removing from the series in focus an initial fragm ent with a vanishing contribu-
+tion. In all the lemmas given below we assume without further notice that the assumptions of
+Theorem 2.2 are in force.
+Lemma 3.2. The following limit relation holds
+lim
+s→ 0+
+f (s)
+M (s)∑
+k=2
+(log k)− 1/2
+k1/2+s ηk = 0 a.s.
+3
+
+
+===== PAGE 4 =====
+Proof. Put T0 := 0 and Tn := η1 + . . .+ ηn for n ∈ N. According to the LIL for standard random
+walks,
+|Tn| ≤ max
+k≤ n
+|Tk|= O((n log log n)1/2), n → ∞ a.s. (7)
+Observe that
+M (s)∑
+k=2
+(log k)− 1/2
+k1/2+s ηk =
+∫
+(3/2, M(s)]
+dT⌊x⌋
+(log x)1/2x1/2+s .
+Integrating by parts we obtain
+∫
+(3/2, M(s)]
+(log x)− 1/2
+x1/2+s dT⌊x⌋ = (log M (s))− 1/2TM (s)
+(M (s))1/2+s
+− (log 3/2)− 1/2η1
+(3/2)1/2+s +
+∫ M (s)
+3/2
+((log x)− 3/2/2 + (1/2 + s)(log x)− 1/2)T⌊x⌋
+x3/2+s dx.
+Relation (6) entails lim s→ 0+(M (s))s = 1. This in combination with (7) enables us to conclude
+that, as s → 0+,
+(log M (s))− 1/2|TM (s)|
+(M (s))1/2+s ∼ (log M (s))− 1/2|TM (s)|
+(M (s))1/2 = O((log M (s))− 1/2(log log M (s))1/2) = o(1).
+Since lim s→ 0+ f (s) = 0, the latter ensures that
+lim
+s→ 0+
+f (s) (log M (s))− 1/2|TM (s)|
+(M (s))1/2+s = 0 a.s.
+To complete the proof, it is suﬃcient to show that
+lim
+s→ 0+
+f (s)
+∫ M (s)
+3/2
+(log x)− 1/2|T⌊x⌋|
+x3/2+s dx = 0 a.s.
+To this end, write
+∫ M (s)
+3/2
+(log x)− 1/2|T⌊x⌋|
+x3/2+s dx ≤
+(
+max
+k≤ M (s)
+|Tk|
+) ∫ M (s)
+3/2
+(log x)− 1/2
+x3/2+s dx
+= O((M (s) log log M (s))1/2)O(1) = O((M (s) log log M (s))1/2), s → 0 + a.s.
+having utilized (7) for the penultimate equality. Since (6) entails
+lim
+s→ 0+
+M (s) log log M (s)
+log 1/s log(3) 1/s
+= 0,
+the claim follows.
+Put g(s) := E
+( ∑
+k≥ 2
+(log k)−1/2
+k1/2+s ηk
+) 2
+= ∑
+k≥ 2
+(log k)−1
+k1+2s for s > 0 and recall that g(s) ∼ log 1/s
+as s → 0+. For k ∈ N, ρ > 0 and s ∈ (0, e− e), deﬁne the event
+Ak,ρ(s) :=
+{
+|ηk|> ρ
+log log 1/s
+( k1+2s log k g(s)
+log(3) 1/s
+) 1/2}
+.
+Next, we demonstrate that the second (remaining) part of the series also vanishes if the
+variables ηk are properly truncated.
+4
+
+
+===== PAGE 5 =====
+Lemma 3.3. For all ρ > 0,
+lim
+s→ 0+
+∑
+k≥ M (s)+1
+(log k)− 1/2
+k1/2+s |ηk|/BD
+Ak,ρ(s) = 0 a.s. (8)
+and
+lim
+s→ 0+
+∑
+k≥ M (s)+1
+(log k)− 1/2
+k1/2+s E
+(
+|ηk|/BD
+Ak,ρ(s)
+)
+= 0. (9)
+Proof. Put h(s) := (log log 1 /s)(log(3) 1/s)1/2. Observe that, for k ≥ 3 and s ≥ 0, k2s log k ≥ 1.
+Hence, for s ∈ (0, e− e),
+∑
+k≥ M (s)+1
+(log k)− 1/2
+k1/2+s |ηk|/BD
+Ak,ρ(s) ≤
+∑
+k≥ M (s)+1
+|ηk|
+k1/2
+/BD
+{k−1/2|ηk|>ρ(g(s))1/2(h(s))−1} a.s.
+The assumption E[η2] < ∞ entails limk→∞ k− 1/2|ηk|= 0 a.s. and thereupon sup k≥ 1(k− 1/2|ηk|) <
+∞ a.s. Since lim s→ 0+((g(s))1/2(h(s))− 1) = + ∞ , we infer
+/BD
+{k−1/2|ηk|>ρ(g(s))1/2(h(s))−1} ≤ /BD
+{supk≥1 (k−1/2|ηk|)>ρ(g(s))1/2(h(s))−1} = 0
+a.s. for small s. We have proved that the sum in (8) is equal to 0 a.s. for small e nough s.
+Relation (9) is justiﬁed as follows:
+∑
+k≥ M (s)+1
+(log k)− 1/2
+k1/2+s E
+(
+|ηk|/BD
+Ak,ρ(s)
+)
+≤
+∑
+k≥ M (s)+1
+k− 1/2E
+(
+|η|/BD
+{ρ−1(g(s))−1/2h(s)|η|>k1/2}
+)
+≤ E
+(
+|η|
+⌊ρ−2(g(s))−1(h(s))2η2⌋∑
+k=1
+k− 1/2
+)
+≤ 2ρ− 1Eη2(g(s))− 1/2h(s)
+= 2ρ− 1(g(s))− 1/2h(s) → 0, s → 0 + .
+The proof of Lemma 3.3 is complete.
+In what follows, ( Ak,ρ(s))c denotes the complement of Ak,ρ(s), that is, for k ∈ N, ρ > 0 and
+s ∈ (0, e− e),
+(Ak,ρ(s))c :=
+{
+|ηk| ≤ ρ
+log log 1/s
+( k1+2s log k g(s)
+log(3) 1/s
+) 1/2}
+.
+Our next result is concerned with the fragment of the series g iving the principal contribution.
+However, this is a light version of what we really need, for th e convergence here is only along a
+sequence.
+Lemma 3.4. Fix any γ ∈ (0, (
+√
+5 − 1)/2), pick any ρ = ρ(γ) satisfying
+(1 − γ)(1 + γ)2(2 − exp(2
+√
+2(1 + γ)ρ)) > 1 (10)
+and put sn := exp(− exp(n1− γ)) for n ∈ N. Then
+lim sup
+n→∞
+f (sn)
+∑
+k≥ M (sn)+1
+(log k)− 1/2˜ηk,ρ(sn)
+k1/2+sn
+≤ 1 + γ a.s.,
+where ˜ηk,ρ(s) := ηk
+/BD
+(Ak,ρ(s))c − E
+(
+ηk
+/BD
+(Ak,ρ(s))c
+)
+for k ∈ N and s ∈ (0, e− e).
+5
+
+
+===== PAGE 6 =====
+Proof. Since (1 − γ)(1 + γ)2 > 1 whenever γ ∈ (0, (
+√
+5 − 1)/2), ρ satisfying (10) does indeed
+exist.
+Put f ∗(s) := (2 g(s) log (3) 1/s)− 1/2 for s ∈ (0, e− e). Since f ∗(s) ∼ f (s) as s → 0+, we can
+and do prove the result, with f ∗ replacing f . Put
+X(s) = f ∗(s)
+∑
+k≥ M (s)+1
+(log k)− 1/2 ˜ηk,ρ(s)
+k1/2+s , s ∈ (0, e− e).
+Using e x ≤ 1 + x + (x2/2)e|x| for x ∈ R and E[˜ηk,ρ(s)] = 0 we deduce, for u ∈ R,
+E[euX(s)] =
+∏
+k≥ M (s)+1
+E
+[
+exp
+(
+uf ∗(s) (log k)− 1/2˜ηk,ρ(s)
+k1/2+s
+)]
+≤
+∏
+k≥ M (s)+1
+(
+1 + u2(f ∗(s))2
+2
+(log k)− 1
+k1+2s E
+[
+(˜ηk,ρ(s))2 exp
+(
+|u|f ∗(s) (log k)− 1/2|˜ηk,ρ(s)|
+k1/2+s
+)])
+.
+The inequality
+|˜ηk,ρ(s)| ≤ |ηk|/BD
+(Ak,ρ(s))c +E
+(
+|ηk|/BD
+(Ak,ρ(s))c
+)
+≤ 2ρk1/2+s
+log log 1/s
+( log k g(s)
+log(3) 1/s
+) 1/2
+≤ 2ρk1/2+s
+( log k g(s)
+log(3) 1/s
+) 1/2
+a.s., (11)
+which is valid for integer k ≥ 2 and s ∈ (0, e− e), implies that
+exp
+(
+|u|f ∗(s) (log k)− 1/2|˜ηk,ρ(s)|
+k1/2+s
+)
+≤ exp
+( √
+2ρ|u|
+log(3) 1/s
+)
+a.s.
+Together with the inequalities E[(˜ηk,ρ(s))2] ≤ 1 and 1 + x ≤ ex for x ∈ R this gives, for u ∈ R,
+E[euX(s)] ≤
+∏
+k≥ M (s)+1
+exp
+( u2(f ∗(s))2
+2
+(log k)− 1
+k1+2s exp
+( √
+2ρ|u|
+log(3) 1/s
+))
+≤ exp
+( u2
+4 log(3) 1/s
+exp
+( √
+2ρ|u|
+log(3) 1/s
+))
+. (12)
+An application of Markov’s inequality yields, for u ≥ 0,
+P{X(sn) > 1+ γ} ≤ e− (1+γ)uE[euX(sn)] ≤ exp
+(
+− (1+ γ)u+ u2
+4 log(3) 1/sn
+exp
+( √
+2ρu
+log(3) 1/sn
+))
+.
+Putting u = 2(1 + γ) log(3) 1/sn we conclude that
+P{X(sn) > 1 + γ} ≤ exp(− (1 + γ)2(2 − exp(2
+√
+2(1 + γ)ρ)) log(3) 1/sn)
+= 1
+n(1− γ)(1+γ)2(2− exp(2
+√
+2(1+γ)ρ)) .
+Thus, in view of (10), ∑
+n≥ 1 P{X(sn) > 1 + γ} < ∞ , and invoking the direct part of the
+Borel-Cantelli lemma completes the proof of Lemma 3.4.
+6
+
+
+===== PAGE 7 =====
+Now we present our ﬁnal, and the most involved, preparatory r esult. It shows that the
+convergence along a sequence discussed in Lemma 3.4 can be li fted to the full convergence along
+the real numbers.
+Lemma 3.5. Let (sn)n∈ N be as deﬁned in Lemma 3.4, where γ ∈ (0, 1/2), and M (s) =
+⌊log 1/s/ log log 1/s⌋ for s ∈ (0, e− e). For s ∈ [sn+1, sn], the following limit relation holds
+lim
+n→∞
+f (s)
+( ∑
+k≥ M (s)+1
+(log k)− 1/2
+k1/2+s ηk −
+∑
+k≥ M (sn+1)+1
+(log k)− 1/2
+k1/2+sn+1
+ηk
+)
+= 0 a.s.
+Proof. Using the fact that M is a nonincreasing function for the arguments close to 0, wri te, for
+s ∈ [sn+1, sn],
+∑
+k≥ M (s)+1
+(log k)− 1/2ηk
+k1/2+s −
+∑
+k≥ M (sn+1)+1
+(log k)− 1/2ηk
+k1/2+sn+1
+=
+M (sn+1)∑
+k=M (s)+1
+(log k)− 1/2ηk
+k1/2+s
++
+∑
+k≥ M (sn+1)+1
+(log k)− 1/2
+( 1
+k1/2+s − 1
+k1/2+sn+1
+)
+ηk =: In,1(s) + In,2(s).
+Analysis of In,1(s). Actually, we shall prove that lim n→∞ sups∈ [sn+1, sn] |In,1(s)|= 0 a.s. This
+relation is even more than we need because lim s→ 0+ f (s) = 0. We obtain with the help of
+summation by parts
+In,1(s) = (log M (sn+1))− 1/2TM (sn+1)
+(M (sn+1))1/2+s − (log(M (s) + 1))− 1/2TM (s)
+(M (s) + 1)1/2+s
++
+M (sn+1)− 1∑
+k=M (s)+1
+( (log k)− 1/2
+k1/2+s − (log(k + 1))− 1/2
+(k + 1)1/2+s
+)
+Tk,
+where, as before, Tn = η1 +. . .+ηn for n ∈ N. Invoking formula (7) and lim n→∞ (M (sn+1))sn+1 =
+1 we obtain
+(log M (sn+1))− 1/2|TM (sn+1)|
+(M (sn+1))1/2+s ≤ (log M (sn+1))− 1/2|TM (sn+1)|
+(M (sn+1))1/2+sn+1
+∼ (log M (sn+1))− 1/2|TM (sn+1)|
+(M (sn+1))1/2
+= O((log M (sn+1))− 1/2(log log M (sn+1))1/2) → 0, n → ∞ a.s.
+By a similar argument we conclude that
+lim
+n→∞
+sup
+s∈ [sn+1, sn]
+(log(M (s) + 1))− 1/2|TM (s)|
+(M (s) + 1)1/2+s = 0 a.s.
+7
+
+
+===== PAGE 8 =====
+Further, for s ∈ [sn+1, sn] and large n,
+⏐
+⏐
+⏐
+⏐
+⏐
+M (sn+1)− 1∑
+k=M (s)+1
+(
+(log k)− 1/2
+k1/2+s − (log(k + 1))− 1/2
+(k + 1)1/2+s
+)
+Tk
+⏐
+⏐
+⏐
+⏐
+⏐
+≤
+M (sn+1)− 1∑
+k=M (s)+1
+(
+(log k)− 1/2
+k1/2+s − (log(k + 1))− 1/2
+(k + 1)1/2+s
+)
+|Tk|
+≤
+(
+sup
+j≤ M (sn+1)
+|Tj|
+) M (sn+1)− 1∑
+k=M (s)+1
+(
+(log k)− 1/2
+k1/2+s − (log(k + 1))− 1/2
+(k + 1)1/2+s
+)
+≤
+(
+sup
+j≤ M (sn+1)
+|Tj|
+) (log M (s))− 1/2
+(M (s))1/2+s ≤
+(
+sup
+j≤ M (sn+1)
+|Tj|
+) (log M (sn))− 1/2
+(M (sn))1/2+sn+1
+= O((log M (sn+1))− 1/2(log log M (sn+1))1/2) → 0, n → ∞ a.s.
+We have used (7), lim n→∞ (M (sn+1)/M(sn)) = 1 and lim n→∞ (M (sn))sn+1 = 1 for the equality.
+Analysis of In,2(s). One can show that
+lim
+n→∞
+sup
+s≥ sn+1
+∑
+k≥ M (sn+1)+1
+(log k)− 1/2
+( 1
+k1/2+sn+1
+− 1
+k1/2+s
+)
+|ηk|/BD
+{|ηk|>k1/2 log n} = 0 a.s. (13)
+and
+lim
+n→∞
+sup
+s≥ sn+1
+∑
+k≥ M (sn+1)+1
+(log k)− 1/2
+( 1
+k1/2+sn+1
+− 1
+k1/2+s
+)
+E
+[
+|ηk|/BD
+{|ηk|>k1/2 log n}
+]
+= 0. (14)
+For instance, relation (13) follows from sup k≥ 1(k− 1/2|ηk|) < ∞ a.s. and
+∑
+k≥ M (sn+1)+1
+(log k)− 1/2
+( 1
+k1/2+sn+1
+− 1
+k1/2+s
+)
+|ηk|/BD
+{|ηk|>k1/2 log n}
+≤
+∑
+k≥ M (sn+1)+1
+|ηk|
+k1/2
+/BD
+{k−1/2|ηk|>log n} a.s.
+The summands on the right-hand side are equal to 0 for large en ough n. Here, we have used
+k2sn+1 log k ≥ 1, for k ≥ 3 and n ∈ N. More details can be found in the proof of Lemma 3.3.
+Put ˆηk(n) := ηk
+/BD
+{|ηk|≤ k1/2 log n} − E
+[
+ηk
+/BD
+{|ηk|≤ k1/2 log n}
+]
+for k, n ∈ N. For n ∈ N and small
+positive u, put
+Y ∗
+n (u) :=
+∑
+k≥ M (sn+1)+1
+(log k)− 1/2 ˆηk(n)
+k1/2+u .
+In view of (13) and (14), it suﬃces to demonstrate that, for ea ch s ∈ [sn+1, sn],
+lim
+n→∞
+f (sn)(Y ∗
+n (s) − Y ∗
+n (sn+1)) = 0 a.s.
+By a technical reason to be explained below, we shall show tha t, for each v ∈ [vn+1, vn],
+lim
+n→∞
+f (sn)(Yn(v) − Yn(vn+1)) = 0 a.s. , (15)
+8
+
+
+===== PAGE 9 =====
+where Yn(v) := Y ∗
+n (exp(− 1/v)), vn := 1/(log 1/sn) = exp( − n1− γ) for n ∈ N and v > 0.
+For j ∈ N0 and n ∈ N, put
+Fj(n) := {tj, m(n) := vn+1 + 2− jm(vn − vn+1) : 0 ≤ m ≤ 2j}.
+Note that Fj(n) ⊆ Fj+1(n) and put F (n) := ⋃
+j≥ 0 Fj(n). The set F (n) is dense in the interval
+[vn+1, vn]. For any u ∈ [vn+1, vn], put
+uj := max{v ∈ Fj(n) : v ≤ u} = vn+1 + 2− j(vn − vn+1)
+⌊ 2j(u − vn+1)
+vn − vn+1
+⌋
+.
+Then lim j→∞ uj = u (we omit the dependence on n in the notation). An important observation
+is that either uj− 1 = uj or uj− 1 = uj − 2− j(vn − vn+1). Consequently, uj = tj,m for some
+0 ≤ m ≤ 2j, which implies that either uj− 1 = tj, m or uj− 1 = tj, m− 1. Since Yn is a.s. continuous
+on [ vn+1, vn], we obtain
+|Yn(u) − Yn(vn+1)|= lim
+l→∞
+|Yn(ul) − Yn(vn+1)|
+= lim
+l→∞
+⏐
+⏐
+⏐
+l∑
+j=1
+(Yn(uj) − Yn(uj− 1)) + Yn(u0) − Yn(vn+1)
+⏐
+⏐
+⏐
+≤ lim
+l→∞
+l∑
+j=0
+max
+1≤ m≤ 2j
+|Yn(tj, m) − Yn(tj, m− 1)|=
+∑
+j≥ 0
+max
+1≤ m≤ 2j
+|Yn(tj, m) − Yn(tj, m− 1)|.
+Thus, our purpose is to prove that, for all ε > 0 and suﬃciently large n0 ∈ N,
+∑
+n≥ n0
+P
+{ ∑
+j≥ 0
+max
+1≤ m≤ 2j
+f (sn)|Yn(tj, m) − Yn(tj, m− 1)|> ε
+}
+< ∞ .
+Put aj := (j + 1)2− j/2 for j ∈ N0. In view of ∑
+j≥ 0 aj < ∞ , it suﬃces to show that, for all ε > 0,
+∑
+n≥ n0
+∑
+j≥ 0
+P
+{
+max
+1≤ m≤ 2j
+f (sn)|Yn(tj, m) − Yn(tj, m− 1)|> εa j
+}
+< ∞ . (16)
+Now we proceed similarly to the proof of Lemma 3.4 and refer to that proof regarding any
+missing details. Write, for u ∈ R and suﬃciently large n,
+E
+[
+exp
+(
+± u(Yn(tj, m) − Yn(tj, m− 1))
+)]
+= E
+[
+exp
+(
+± u
+∑
+k≥ M (sn+1)+1
+1
+(k log k)1/2
+( 1
+kexp(− 1/tj, m) − 1
+kexp(− 1/tj, m−1)
+)
+ˆηk(n)
+)]
+≤
+∏
+k≥ M (sn+1)+1
+(
+1 + u2
+2
+1
+k log k
+( 1
+kexp(− 1/tj, m) − 1
+kexp(− 1/tj, m−1)
+) 2
+× E
+[
+(ˆηk(n))2 exp
+( |u|
+(k log k)1/2
+( 1
+kexp(− 1/tj, m) − 1
+kexp(− 1/tj, m−1)
+)
+|ˆηk(n)|
+)]
+.
+Now we prove that, for large n, all j ∈ N0 and integer m ∈ [0, 2j ],
+A(j, n) :=
+∑
+k≥ M (sn+1)+1
+1
+k log k
+( 1
+kexp(− 1/tj, m) − 1
+kexp(− 1/tj, m−1)
+) 2
+≤ 2− j(vn − vn+1)
+v2
+n+1
+.
+9
+
+
+===== PAGE 10 =====
+For ﬁxed a, b > 0, the function x ↦→ x− 1e− x(e− ax − e− bx)2 is decreasing on (1 , ∞ ). Indeed,
+x ↦→ xe− x is decreasing on (1 , ∞ ), and
+x ↦→ e− min(a,b)xx− 2(1 − e− (max(a,b)− min(a,b))x)2
+is decreasing on (0 , ∞ ) as the product of two positive decreasing functions. As far as monotonic-
+ity of the second function is concerned, observe that, up to a multiplicative constant, it is the
+Laplace-Stieltjes transform of the Lebesgue-Stieltjes co nvolution of the uniform distribution on
+[0, 1] with itself. Using this argument with x = log k, a = exp(− 1/tj, m) and b = exp(− 1/tj, m− 1)
+we conclude that the function of argument k under the sum deﬁning A(j, n) is decreasing, whence
+A(j, n) ≤
+∫ ∞
+e
+1
+x log x
+( 1
+x2 exp(− 1/tj, m−1) + 1
+x2 exp(− 1/tj, m) − 2
+xexp(− 1/tj, m−1)+exp(− 1/tj, m)
+)
+dx
+=
+∫ ∞
+2 exp(− 1/tj, m−1)
+e− x
+x dx +
+∫ ∞
+2 exp(− 1/tj, m)
+e− x
+x dx
+− 2
+∫ ∞
+exp(− 1/tj, m−1)+exp(− 1/tj, m)
+e− x
+x dx =
+∫ 1
+2 exp(− 1/tj, m−1)
+e− x
+x dx
++
+∫ 1
+2 exp(− 1/tj, m)
+e− x
+x dx − 2
+∫ 1
+exp(− 1/tj, m−1)+exp(− 1/tj, m)
+e− x
+x dx.
+Put I(y) :=
+∫ y
+0 x− 1(1 − e− x)dx for y ∈ [0, 1] and observe that
+∫ 1
+y
+x− 1e− xdx = − log y − I(1) + I(y), y ∈ (0, 1].
+The function x ↦→ x− 1(1 − e− x) is decreasing on (0 , ∞ ) as the Laplace-Stieltjes transform of
+the uniform distribution on [0 , 1]. Hence, I is concave on [0 , 1] and thereupon, for a, b ∈ [0, 1],
+I(2a) + I(2b) − 2I(a + b) ≤ 0. As a consequence,
+A(j, n) ≤ − 2 log 2 + 1
+tj, m− 1
++ 1
+tj, m
++ 2 log
+(
+e− 1/tj, m−1 + e− 1/tj, m
+)
+≤ tj, m − tj, m− 1
+tj, m− 1tj, m
+≤ 2− j(vn − vn+1)
+v2
+n+1
+, (17)
+which proves the claim.
+Next we work towards estimating
+B(u, k, n) := exp
+( |u|
+(k log k)1/2
+( 1
+kexp(− 1/tj, m−1) − 1
+kexp(− 1/tj, m)
+)
+|ˆηk(n)|
+)
+for k ≥ M (sn+1) + 1. Assume ﬁrst that 2 j ≥ v− 2
+n+1(vn − vn+1). Observe that, for a > 0 and
+0 < s < t ,
+0 ≤ exp(− ae− 1/s) − exp(− ae− 1/t) ≤ a exp(− ae− 1/s)e− 1/t(1/s − 1/t).
+Using this inequality with a = log k, t = tj, m− 1 and s = tj, m we obtain
+0 ≤ 1
+kexp(− 1/tj, m−1) − 1
+kexp(− 1/tj, m) ≤ log k
+kexp(− 1/tj, m−1) e− 1/tj, m
+( 1
+tj, m− 1
+− 1
+tj, m
+)
+.
+10
+
+
+===== PAGE 11 =====
+In view of the inequality xe− ax ≤ (ea)− 1 for x ≥ 0 we conclude that the right-hand side does
+not exceed
+1
+e e1/tj, m−1− 1/tj, m
+( 1
+tj, m− 1
+− 1
+tj, m
+)
+≤ 1
+e exp
+( 2− j(vn − vn+1)
+v2
+n+1
+) 2− j(vn − vn+1)
+v2
+n+1
+≤ 2− j(vn − vn+1)
+v2
+n+1
+,
+where the last inequality is justiﬁed by our present choice o f j. Thus,
+B(u, k, n) ≤ |u|2− j log n
+(log M (sn+1))1/2
+vn − vn+1
+v2
+n+1
+=: Cj(u, n)
+whenever k ≥ M (sn+1) + 1.
+Assume now that 2 j ≤ v− 2
+n+1(vn − vn+1) for nonnegative integer j. Using a trivial estimate
+1
+kexp(− 1/tj, m−1) − 1
+kexp(− 1/tj, m) ≤ 1
+we infer
+B(u, k, n) ≤ |u|log n
+(log M (sn+1))1/2 =: Cj(u, n)
+whenever k ≥ M (sn+1) + 1.
+Using now 1 + x ≤ ex for x ∈ R we arrive at
+E
+[
+exp
+(
+± u(Yn(tj, m) − Yn(tj, m− 1))
+)]
+≤ exp
+( u2
+2
+2− j(vn − vn+1)
+v2
+n+1
+eCj (u,n)
+)
+, u ∈ R.
+By Markov’s inequality and the inequality e u|x| ≤ eux + e− ux for x ∈ R,
+P
+{
+f (sn)|Yn(tj, m) − Yn(tj, m− 1)|> εa j
+}
+≤ exp
+(
+− u εaj
+f (sn)
+)
+E[exp(u|Yn(tj, m) − Yn(tj, m− 1)|)]
+≤ 2 exp
+(
+− uεaj
+f (sn) + u2
+2
+2− j(vn − vn+1)
+v2
+n+1
+eCj (u,n)
+)
+.
+Put
+u = ε2j/2
+f (sn)
+v2
+n+1
+vn − vn+1
+and kn := 1
+(f (sn))2
+v2
+n+1
+vn − vn+1
+.
+In view of
+(log M (sn+1))− 1/2 ∼ nγ/2− 1/2,
+( vn+1
+vn − vn+1
+) 1/2
+∼ (1 − γ)− 1/2nγ/2, n → ∞
+and
+lim
+n→∞
+(log 1/sn)vn+1 = 1
+we conclude that, for j satisfying 2 j ≥ v− 2
+n+1(vn − vn+1),
+Cj(u, n) = |u|2− j log n
+(log M (sn+1))1/2
+vn − vn+1
+v2
+n+1
+= ε2− j/2 log n
+f (sn)(log M (sn+1))1/2
+≤ ε log n
+f (sn)(log M (sn+1))1/2
+vn+1
+(vn − vn+1)1/2
+= ε21/2((log 1/sn)vn+1)1/2(log(3) 1/sn)1/2 log n
+(log M (sn+1))1/2
+( vn+1
+vn − vn+1
+) 1/2
+∼ ε21/2nγ− 1/2(log n)3/2 → 0, n → ∞ .
+11
+
+
+===== PAGE 12 =====
+For nonnegative integer j satisfying 2 j ≤ v− 2
+n+1(vn − vn+1), Cj(u, n) admits the same upper
+bound:
+Cj(u, n) = |u|log n
+(log M (sn+1))1/2 = ε2j/2 log n
+f (sn)(log M (sn+1))1/2
+v2
+n+1
+vn − vn+1
+≤ ε log n
+f (sn)(log M (sn+1))1/2
+vn+1
+(vn − vn+1)1/2 → 0, n → ∞ .
+Therefore, for suﬃciently large n such that kn > ε − 2 log 2 and e Cj (u,n) ≤ 3/2,
+∑
+j≥ 0
+P
+{
+max
+1≤ m≤ 2j
+f (sn)|Yn(tj, m) − Yn(tj, m− 1)|> εa j
+}
+≤
+∑
+j≥ 0
+2j2 exp(− ε2(j + 1)kn) exp
+(
+3ε2kn/4
+)
+= 2 exp(− ε2kn/4)
+1 − 2 exp(− ε2kn) .
+Since kn ∼ 2nγ log n as n → ∞ , (16) follows.
+Now we comment on the reason behind the passage from Y ∗
+n to Yn via a logarithmic trans-
+formation. In order to have in the present context a successf ul approximation with the help of a
+dyadic partition of an interval [ λn+1, λn], say, the endpoints should satisfy lim n→∞ (λn/λn+1) =
+1. This is the case for λn = vn and not the case for λn = sn.
+We are prepared to prove Proposition 3.1.
+Proof of Proposition 3.1. We only prove (4) because (5) follows from (4) by replacing ηk with
+− ηk. Recall our convention that σ2 = 1.
+Choose any γ > 0 suﬃciently close to 0, put sn = exp( − exp(n1− γ)) for n ∈ N and select
+ρ = ρ(γ) such that (10) holds true. Let M (s) = ⌊log 1/s/ log log 1/s⌋ for s ∈ (0, e− e). By
+Lemmas 3.3 and 3.4 and the fact that E
+(
+ηk
+/BD
+(Ak,ρ(s))c
+)
+= − E
+(
+ηk
+/BD
+(Ak,ρ(s))c
+)
+,
+lim sup
+n→∞
+f (sn)
+∑
+k≥ M (sn)+1
+(log k)− 1/2
+k1/2+sn
+ηk ≤ 1 + γ a.s. (18)
+Lemma 3.5 in combination with relation (18) entails
+lim sup
+s→ 0+
+f (s)
+∑
+k≥ M (s)+1
+(log k)− 1/2
+k1/2+s ηk ≤ 1 + γ a.s.
+Finally, by Lemma 3.2,
+lim sup
+s→ 0+
+f (s)
+∑
+k≥ 2
+(log k)− 1/2
+k1/2+s ηk ≤ 1 + γ a.s.,
+which entails (4) because the left-hand side does not depend on γ.
+Proposition 3.6. Under the assumptions of Theorem 2.2,
+lim sup
+s→ 0+
+( 1
+log 1/s log(3) 1/s
+) 1/2 ∑
+k≥ 2
+(log k)− 1/2
+k1/2+s ηk ≥ (2σ2)1/2 a.s. (19)
+and
+lim inf
+s→ 0+
+( 1
+log 1/s log(3) 1/s
+) 1/2 ∑
+k≥ 2
+(log k)− 1/2
+k1/2+s ηk ≤ − (2σ2)1/2 a.s. (20)
+12
+
+
+===== PAGE 13 =====
+Proposition 3.6 will be proved by using Lemmas 3.2 and 3.3, to gether with two additional
+lemmas. In the ﬁrst of these, we show that an initial and a ﬁnal fragments of the series in
+question do not contribute to the LIL.
+As before, we assume without further notice that the assumpt ions of Theorem 2.2 hold true
+and that σ2 = 1. When proving Proposition 3.6 we use the sets Ak,ρ(s) and the corresponding
+variables ˜ηk,ρ(s) with ρ = 1.
+Lemma 3.7. Fix any γ > 0 and put sn := exp( − exp(n1+γ)) for n ≥ 1. Let N1 and N2
+be functions which take positive integer values, may depend on γ and satisfy N1(s) ≥ 2 for
+small positive s, lims→ 0+(log log N1(s)/ log 1/s) = 0 , lims→ 0+(log log N2(s)/ log 1/s) = 1 and
+lims→ 0+ s log N2(s) = 0 . Then
+lim
+n→∞
+f (sn)
+N1(sn)∑
+k=2
+(log k)− 1/2
+k1/2+sn
+˜ηk,1(sn) = 0 a.s. (21)
+and
+lim
+n→∞
+f (sn)
+∑
+k≥ N2(sn)+1
+(log k)− 1/2
+k1/2+sn
+˜ηk,1(sn) = 0 a.s. (22)
+Proof. As in the proof of Lemma 3.4, we obtain the result, with f ∗ replacing f . For s > 0 close
+to 0, put
+Z1(s) := f ∗(s)
+N1(s)∑
+k=2
+(log k)− 1/2
+k1/2+s ˜ηk,1(s).
+The reasoning used to derive both (21) and (22) is similar to t he one applied in the proof of
+Lemma 3.4. Therefore, we give a proof of (21) and indicate the only minor change needed for a
+proof of (22).
+Regarding (21), in view of the direct part of the Borel–Cante lli lemma, it is suﬃcient to
+demonstrate that, for all ε > 0,
+∑
+n≥ 1
+P{Z1(sn) > ε} < ∞ . (23)
+To this end, we obtain a counterpart of (12), for u ∈ R,
+E[euZ1(s)] ≤ exp
+( u2(f ∗(s))2
+2
+N1(s)∑
+k=2
+(log k)− 1
+k1+2s exp
+( √
+2|u|
+log(3) 1/s
+))
+.
+For each ﬁxed s > 0, the function x → (log x)− 1x− 1− 2s is decreasing on (1 , ∞ ). The assumption
+lims→ 0+(log log N1(s)/ log 1/s) = 0 entails lim s→ 0+ s log N1(s) = 0. Hence,
+N1(s)∑
+k=2
+(log k)− 1
+k1+2s ≤ (log 2)− 1
+21+2s +
+∫ N1(s)
+2
+(log x)− 1
+x1+2s dx
+= O(1) +
+∫ 2s log N1(s)
+(2 log 2)s
+y− 1e− ydy = O(log log N1(s)), s → 0 + . (24)
+Our choice of N1 guarantees that there exists an r > 0 close to 0 and such that
+N1(s)∑
+k=2
+(log k)− 1
+k1+2s ≤ rg(s)
+13
+
+
+===== PAGE 14 =====
+for small positive s, and also (1 − δ)(1+ γ) > 1, where δ := r(4ε2)− 1 exp(
+√
+2ε− 1) with ε appearing
+in (23). Then, for u ∈ R and small s > 0,
+E[euZ1(s)] ≤ exp
+( ru2g(s)(f ∗(s))2
+2 exp
+( √
+2|u|
+log(3) 1/s
+))
+= exp
+( ru2
+4 log(3) 1/s
+exp
+( √
+2|u|
+log(3) 1/s
+))
+.
+Applying Markov’s inequality with u = (1/ε) log(3) 1/sn yields, for large n,
+P{Z1(sn) > ε } ≤ e− uεE[euZ1(sn)] ≤ exp
+(
+−
+(
+1 − r(4ε2)− 1e
+√
+2ε−1)
+log(3) 1/sn
+)
+= 1
+n(1− δ)(1+γ) ,
+thereby proving (23) and hence (21).
+The proof of (22) is analogous to that of (21). The correspond ing version of (24) reads
+∑
+k≥ N2(s)+1
+(log k)− 1
+k1+2s ≤
+∫ ∞
+N2(s)
+(log x)− 1
+x1+2s dx =
+∫ ∞
+2s log N2(s)
+y− 1e− ydy = o(1) (25)
+as s → 0+.
+Lemma 3.8 treats the component of the series in question whic h gives a principal contribution
+to the LIL. Our proof is based on the converse part of the Borel –Cantelli lemma, which requires
+independence. The independence requirement complicates t o some extent a selection of the
+essential component.
+Lemma 3.8. Fix suﬃciently small δ > 0, pick γ > 0 satisfying (1 + γ)(1 − δ2/8) < 1 and let,
+as before, sn = exp(− exp(n1+γ)) for n ∈ N. Then
+lim sup
+n→∞
+f (sn)
+∑
+k≥ 2
+(log k)− 1/2
+k1/2+sn
+˜ηk,1(sn) ≥ 1 − δ a.s.
+Proof. Observe that lim n→∞ (sn+1/sn) = ∞ . Functions s ↦→ log log N1(s)/ log 1/s in Lemma 3.7
+can tend to 0 as fast as we please. Thus, we can choose N1 satisfying
+log log N1(sn+1)
+log 1/sn
+= log log N1(sn+1)
+log 1/sn+1
+log 1/sn+1
+log 1/sn
+→ + ∞ , n → ∞ .
+Let N2 be any function satisfying the assumptions of Lemma 3.7. Sin ce
+lim
+n→∞
+log log N2(sn)
+log 1/sn
+= 1,
+we conclude that there exists n0 ∈ N such that
+log log N1(sn+1)
+log 1/sn
+≥ log log N2(sn)
+log 1/sn
+for all n ≥ n0,
+whence
+N1(sn+1) ≥ N2(sn), n ≥ n0. (26)
+In view of Lemma 3.7, it is suﬃcient to check that
+lim sup
+n→∞
+Z2(sn) ≥ 1 − δ a.s., (27)
+14
+
+
+===== PAGE 15 =====
+where, for small s > 0,
+Z2(s) := f (s)
+N2(s)∑
+k=N1(s)+1
+(log k)− 1/2
+k1/2+s ˜ηk,1(s).
+We shall prove that there exists s > 0 such that for all s ∈ (0, s),
+P{Z2(s) > 1 − δ} ≥ 3− 1e− (1− δ2/8) log(3) 1/s. (28)
+As a consequence,
+∑
+n≥ n1
+P{Z2(sn) > 1 − δ} ≥ 3− 1 ∑
+n≥ n1
+1
+n(1+γ)(1− δ2/8) = ∞ ,
+where n1 ≥ n0 is chosen to ensure that sn < s for n ≥ n1. In view of (26) the random variables
+Z2(sn1 ), Z2(sn1+1), . . . are independent. Hence, divergence of the series entails (2 7) by the
+converse part of the Borel-Cantelli lemma.
+When proving (28) we shall use the event
+Us :=
+{
+1 − δ < Z 2(s) ≤ 1
+}
+=
+{
+(1 − δ)V (s) < W (s)/(g(s))1/2 ≤ V (s)
+}
+,
+where V (s) = (2 log (3) 1/s)1/2 and
+W (s) := Z2(s)
+f (s) =
+N2(s)∑
+k=N1(s)+1
+(log k)− 1/2
+k1/2+s ˜ηk,1(s).
+For u ∈ R and small s > 0, let Qs,u be a probability measure on (Ω , F) deﬁned by
+Qs,u(A) = E
+(
+euW (s)/(g(s))1/2
+/BD
+A
+)
+EeuW (s)/(g(s))1/2 , A ∈ F. (29)
+Then
+(
+Eeu(W (s)/(g(s))1/2− V (s))
+)
+Qs,u(Us) = e − uV (s)EeuW (s)/(g(s))1/2
+/BD
+Us
+≤ P(Us) ≤ P{Z2(s) > 1 − δ}. (30)
+We shall demonstrate that by selecting an appropriate u = u(s) = O((log(3) 1/s)1/2), the ex-
+pectation on the left-hand side is bounded from below by e − (1− δ2/8) log(3) 1/s for small positive s.
+Also, we shall prove that Qs,u(Us) ≥ 1/3, thereby deriving (28).
+We start by showing that, with u = O((log(3) 1/s)1/2),
+E[euW (s)/(g(s))1/2
+] ∼ eu2/2+u2h(s), s → 0+ (31)
+for some function h satisfying lim s→ 0+ h(s) = 0. Put
+ξk(s) = (log k)− 1/2
+(g(s))1/2k1/2+s ˜ηk,1(s), k ≥ 2, s ∈ (0, e− e).
+15
+
+
+===== PAGE 16 =====
+As a consequence, for u ∈ R,
+uW (s)/(g(s))1/2 =
+N2(s)∑
+k=N1(s)+1
+uξk(s). (32)
+According to the second inequality in (11),
+|uξk(s)|= O(1/ log log 1/s) = o(1), s → 0 + a.s.
+for each k ≥ 2. Using
+ex = 1 + x + x2/2 + o(x2) and log(1 + x) = x + O(x2), x → 0,
+we obtain
+E[euW (s)/(g(s))1/2
+] =
+N2(s)∏
+k=N1(s)+1
+E[exp(uξk(s))] =
+N2(s)∏
+k=N1(s)+1
+E
+[
+1 + uξk(s) + u2ξ2
+k(s)(1/2 + o(1))
+]
+= exp
+N2(s)∑
+k=N1(s)+1
+log
+(
+1 + u2E
+[
+ξ2
+k(s)(1/2 + o(1))
+])
+= exp
+(
+u2(
+1/2 + o(1)
+) N2(s)∑
+k=N1(s)+1
+Eξ2
+k(s) + u4O
+( N2(s)∑
+k=N1(s)+1
+(Eξ2
+k(s))2
+))
+. (33)
+Here, we have used the fact that the o(1) term can be chosen nonrandom. In view of (24) and
+(25)
+N2(s)∑
+k=N1(s)+1
+(log k)− 1
+k1+2s ∼ g(s), s → 0 + .
+The latter, combined with uniformity in the integer k ∈ [N1(s) + 1, N2(s)] of the limit relation
+E[˜η2
+k,1(s)] = E[η2
+k
+/BD
+(Ak,1(s))c ] −
+(
+E[ηk
+/BD
+(Ak,1(s))c ]
+) 2 → 1, s → 0+,
+results in
+N2(s)∑
+k=N1(s)+1
+E[ξ2
+k(s)] = 1
+g(s)
+N2(s)∑
+k=N1(s)+1
+(log k)− 1
+k1+2s E˜η2
+k,1(s) → 1, s → 0 + . (34)
+Finally,
+u2
+N2(s)∑
+k=N1(s)+1
+(E[ξ2
+k(s)])2 = u2
+(g(s))2
+N2(s)∑
+k=N1(s)+1
+(log k)− 2
+k2+4s (E[˜η2
+k,1(s)])2
+≤ u2
+(g(s))2
+∑
+k≥ N1(s)+1
+(log k)− 2
+k2 = o(1), s → 0+ (35)
+because both factors converge to 0 as s → 0+. Now relations (33), (34) and (35) entail (31).
+16
+
+
+===== PAGE 17 =====
+Observe that formula (31), with u ∈ R ﬁxed, reads lim s→ 0+ E[euW (s)/(g(s))1/2
+] = e u2/2 as
+s → 0+, which implies a central limit theorem W (s)/(g(s))1/2 d→ N (0, 1) as s → 0+. Here,
+d→ denotes convergence in distribution and N (0, 1) denotes a random variable with the normal
+distribution with mean 0 and variance 1.
+Passing to the proof of (28), put
+u = u(s) =
+√
+2(1 − δ/2)(log(3) 1/s)1/2.
+Formula (31) entails
+E[eu(W (s)/(g(s))1/2− V (s))] = e − (1− δ2/4) log(3) 1/s+o(log(3) 1/s) ≥ e− (1− δ2/8) log(3) 1/s (36)
+for small s > 0. Now we show that the Qs,u-distribution of W (s)/(g(s))1/2 − (u + 2uh(s))
+converges weakly as s → 0+ to the P-distribution of N (0, 1). To this end, we prove convergence
+of the moment generating functions. Let EQs,u denote the expectation with respect to the
+probability measure Qs,u. Invoking (31) we conclude that, for t ∈ R,
+EQs,u[et(W (s)/(g(s))1/2 − (u+2uh(s)))] ∼ E[e(t+u)W (s)/(g(s))1/2
+]
+E[euW (s)/(g(s))1/2
+]
+e− t(u+2uh(s))
+= exp
+(
+(t + u)2/2 + (t + u)2h(s) − u2/2 − u2h(s) − t(u + 2uh(s))
+)
+= exp
+(
+(1/2 + h(s))t2)
+→ exp(t2/2) = E[exp(t N (0, 1))], s → 0 + .
+As a consequence of the weak convergence, we infer
+lim sup
+s→ 0+
+Qs,u
+{
+W (s)/(g(s))1/2 ≤ (1 − δ)V (s)
+}
+≤ lim
+s→ 0+
+Qs,u
+{
+W (s)/(g(s))1/2 ≤ u + 2uh(s)
+}
+= P{N (0, 1) ≤ 0} = 1/2.
+Further, the relation lim s→ 0+(V (s) − (u + 2uh(s))) = + ∞ entails
+lim
+s→ 0+
+Qs,u
+{
+W (s)/(g(s))1/2 ≤ V (s)
+}
+= 1
+and thereupon
+Qs,u(Us) = Qs,u
+{
+W (s)/(g(s))1/2 ≤ V (s)
+}
+− Qs,u
+{
+W (s)/(g(s))1/2 ≤ (1 − δ)V (s)
+}
+≥ 1/3 (37)
+for small s > 0. Now (28) follows from (30), (36) and (37). The proof of Lemm a 3.8 is
+complete.
+Proof of Proposition 3.6. It suﬃces to prove (19). To this end, pick suﬃciently small δ > 0 and
+γ > 0, and let sn = exp(− exp(n1+γ)) for n ≥ 1. We shall invoke a representation
+f (sn)
+∑
+k≥ 2
+(log k)− 1/2
+k1/2+sn
+ηk = f (sn)
+⌊(log 1/sn)1/2⌋∑
+k=2
+(log k)− 1/2
+k1/2+sn
+ηk
+− f (sn)
+⌊(log 1/sn)1/2⌋∑
+k=2
+(log k)− 1/2
+k1/2+sn
+(ηk
+/BD
+(Ak,1(sn))c − E[ηk
+/BD
+(Ak,1(sn))c ])
++ f (sn)
+∑
+k≥⌊ (log 1/sn)1/2⌋+1
+(log k)− 1/2
+k1/2+sn
+(ηk
+/BD
+Ak,1(sn) − E[ηk
+/BD
+Ak,1(sn)])
++ f (sn)
+∑
+k≥ 2
+(log k)− 1/2
+k1/2+sn
+(ηk
+/BD
+(Ak,1(sn))c − E[ηk
+/BD
+(Ak,1(sn))c ]).
+17
+
+
+===== PAGE 18 =====
+Here, we have used that E[η] = 0. The ﬁrst three terms on the right-hand side converge to 0
+a.s. as n → ∞ by Lemma 3.2, formula (21) of Lemma 3.7, with N1(s) = M (s) = ⌊(log 1/s)1/2⌋,
+and Lemma 3.3, respectively. Lemma 3.8 ensures that
+lim sup
+s→ 0+
+f (s)
+∑
+k≥ 2
+(log k)− 1/2
+k1/2+s ηk ≥ lim sup
+n→∞
+f (sn)
+∑
+k≥ 2
+(log k)− 1/2
+k1/2+sn
+ηk ≥ 1 − δ a.s.
+Sending δ to 0+ we arrive at (19).
+Proof of Theorem 2.2. A combination of Propositions 3.1 and 3.6 yields (2) and (3). To prove
+(1) we put H := {z ∈ C : Re z > 0} and
+X(z) :=
+∑
+k≥ 2
+(log k)− 1/2
+k1/2+z ηk, z ∈ H,
+and note that the so deﬁned X is a random analytic function, see p. 247 in [5]. Hence, its
+restriction to positive arguments s → X(s) = ∑
+k≥ 2(log k)− 1/2k− 1/2− sηk is a.s. continuous, and
+so is s ↦→ (2σ2 log 1/s log(3) 1/s)− 1/2X(s) on (0 , e− e). In view of (2) and (3), we obtain (1) with
+the help of the intermediate value theorem for continuous fu nctions.
+4. Proof of Theorem 2.1
+It is more convenient to prove the result in an equivalent for m
+( 1
+s1/2
+∑
+k≥ 2
+(log k)− 1/2
+k1/2+exp(− ts) ηk
+)
+t≥ 0
+=⇒ (σB(t))t≥ 0, s → +∞
+on C[0, ∞ ). Without loss of generality we can and do assume that σ2 = 1.
+In what follows we write X for X− 1/2. We use a standard approach, which consists of two
+steps: (a) proving weak convergence of ﬁnite-dimensional d istributions; (b) checking tightness.
+(a) If t = 0, then, for s > 0, X(e− ts) = X(1) = ∑
+k≥ 2(log k)− 1/2k− 3/2ηk, and s− 1/2X(1)
+converges in probability to B(0) = 0 as s → +∞ .
+Thus, it suﬃces to show that, for t1, t2 ∈ (0, ∞ ) (we do not need to consider t = 0),
+E
+[
+X(e− t1s)X(e− t2s)
+]
+∼ min(t1, t2)s, s → +∞ (38)
+and check the Lindeberg-Feller condition: for all ε > 0 and each ﬁxed t > 0,
+lim
+s→ +∞
+1
+s
+∑
+k≥ 2
+E
+[( (log k)− 1/2
+k1/2+exp(− ts) ηk
+) 2
+/BD
+{(log k)−1/2|ηk|>εk1/2+exp(−ts)s1/2}
+]
+= 0. (39)
+Proof of (38). Using monotonicity to pass from the series to an integral we o btain
+E
+[ ∑
+k≥ 2
+(log k)− 1/2
+k1/2+exp(− t1s) ηk
+∑
+j≥ 2
+(log j)− 1/2
+j1/2+exp(− t2s) ηj
+]
+=
+∑
+k≥ 2
+(log k)− 1
+k1+exp(− t1s)+exp(− t2s)
+∼
+∫ ∞
+e
+(log y)− 1
+y1+exp(− t1s)+exp(− t2s) dy =
+∫ ∞
+1
+e− (exp(− t1s)+exp(− t2s))y
+y dy ∼ − log(e− t1s + e− t2s)
+∼ min(t1, t2)s, s → +∞ .
+18
+
+
+===== PAGE 19 =====
+Proof of (39). For each k ≥ 2 and each s > 0, (log k)− 1/2k− 1/2− exp(− ts) ≤ (log 2)− 1/2 =: 1/A.
+Hence, the expression under the limit on the left-hand side o f (39) does not exceed
+1
+s
+∑
+k≥ 2
+(log k)− 1
+k1+2 exp(− ts) E[η2
+/BD
+{|η|>As1/2}].
+As shown in the proof of (38), ∑
+k≥ 2(log k)− 1k− 1− 2 exp(− ts) ∼ ts as s → +∞ . Further, E[η2] < ∞
+entails lim s→ +∞ E[η2
+/BD
+{|η|>As1/2}] = 0. With these at hand, (39) follows.
+(b) We have to prove tightness on C[0, T ] (the set of continuous functions deﬁned on [0 , T ]) for
+each T > 0. Since ( B(t))t∈ [0,T ] has the same distribution as T 1/2(B(t))t∈ [0,1], it is enough to
+investigate the case T = 1 only.
+Let M ∗ : (0, ∞ ) → N0 denote a function satisfying lim s→ +∞ M ∗(s) = + ∞ and M ∗(s) = o(s)
+as s → +∞ . We shall need a relation sup k≤ n |Tk|= O(n1/2) in probability as n → ∞ , which is a
+consequence of n− 1/2 maxk≤ n |Tk| d→ | Normal (0, 1)| as n → ∞ . Repeating the proof of Lemma
+3.2, with the aforementioned limit relation replacing (7), we infer
+lim
+s→ +∞
+1
+s1/2 sup
+t∈ [0,1]
+⏐
+⏐
+⏐
+M ∗(s)∑
+k=2
+(log k)− 1/2
+k1/2+exp(− ts) ηk
+⏐
+⏐
+⏐ = 0 in probability . (40)
+From now on, we choose any particular M ∗ as above, for instance, M ∗(s) = ⌊s1/2⌋ and put
+a(s) := (log M ∗(s))1/2 for s ≥ 0. Arguing as in the proof of Lemma 3.3 or in the analysis of
+In,2(s) in the proof of Lemma 3.5 we obtain
+lim
+s→ +∞
+sup
+t∈ [0,1]
+∑
+k≥ M ∗(s)+1
+(log k)− 1/2
+k1/2+exp(− ts) |ηk|/BD
+{|ηk|>k1/2a(s)} = 0 a.s. (41)
+and
+lim
+s→∞
+sup
+t∈ [0,1]
+∑
+k≥ M ∗(s)+1
+(log k)− 1/2
+k1/2+exp(− ts) E
+[
+|ηk|/BD
+{|ηk|>k1/2a(s)}
+]
+= 0. (42)
+Put η∗
+k(s) := ηk
+/BD
+{|ηk|≤ k1/2a(s)} − E
+[
+ηk
+/BD
+{|ηk|≤ k1/2a(s)}
+]
+for k ∈ N and s > 0. Put
+X ∗(t, s) := 1
+s1/2
+∑
+k≥ M ∗(s)+1
+(log k)− 1/2η∗
+k(s)
+k1/2+exp(− ts) , t ≥ 0, s > 0.
+In view of (40), (41) and (42) it remains to prove tightness of the distributions of ( X ∗(t, s))t∈ [0,1]
+for large s > 0. According to formula (7.8) on p. 82 in [4], it is enough to sh ow that, for all
+ε > 0,
+lim
+i→∞
+lim sup
+s→∞
+P{ sup
+u,v∈ [0,1], |u− v|≤ 2−i
+|X ∗(u, s) − X ∗(v, s)|> ε} = 0. (43)
+The proof of (43) follows closely the last part of the proof of Lemma 3.5. We use dyadic
+partitions of [0 , 1] by points t∗
+j, m := 2 − jm for j ∈ N0 and m = 0 , 1, . . . ,2j. Similarly to the
+argument preceding formula (16) we infer
+sup
+u,v∈ [0,1], |u− v|≤ 2−i
+|X ∗(u, s) − X ∗(v, s)| ≤
+∑
+j≥ i
+max
+1≤ m≤ 2j
+|X ∗(t∗
+j, m, s) − X ∗(t∗
+j, m− 1, s)|.
+19
+
+
+===== PAGE 20 =====
+Thus, it suﬃces to prove that, for all ε > 0,
+lim
+i→∞
+lim sup
+s→ +∞
+P
+{ ∑
+j≥ i
+max
+1≤ m≤ 2j
+|X ∗(t∗
+j, m, s) − X ∗(t∗
+j, m− 1, s)|> εs 1/2
+}
+= 0.
+Put a∗
+j := 2− j/2j2 for j ∈ N0. The last limit relation follows if we can show that, for all ε > 0,
+lim
+i→∞
+lim sup
+s→ +∞
+∑
+j≥ i
+P
+{
+max
+1≤ m≤ 2j
+|X ∗(t∗
+j, m) − X ∗(t∗
+j, m− 1)|> εa ∗
+j s1/2
+}
+= 0.
+Denote by A∗(j, s) and B∗(u, k, s) the counterparts of A(j, n) and B(u, k, n) in the present
+situation. Then A∗(j, s) ≤ 2− js and, if 2 j ≥ s, B∗(u, k, s) ≤ | u|2− j s =: C ∗
+j (u, s), if 2 j ≤ s,
+B∗(j, k, s) ≤ | u|=: C ∗
+j (u, s). With these at hand we obtain
+E
+[
+exp
+(
+± u(X ∗(t∗
+j, m, s) − X ∗(t∗
+j, m− 1, s))
+)]
+≤ exp
+( 2− jsu2
+2 eC∗
+j (u,s)
+)
+, u ∈ R
+and thereupon
+P
+{
+|X ∗(t∗
+j, m, s)− X ∗(t∗
+j, m− 1, s)|> εa ∗
+j s1/2}
+≤ exp(− uεa∗
+j s1/2)E[exp(u|X ∗(t∗
+j, m, s)− X ∗(t∗
+j, m− 1, s)|)]
+≤ 2 exp
+(
+− uε2− j/2j2s1/2 + 2− jsu2
+2 eC∗
+j (u,s)
+)
+.
+Put u = ε2j/2s− 1/2. Then C ∗
+j (u, s) ≤ ε and further
+∑
+j≥ i
+P
+{
+max
+1≤ m≤ 2j
+|X ∗(t∗
+j, m, s) − X ∗(t∗
+j, m− 1, s)|> εa ∗
+j s1/2
+}
+≤ 2 exp(ε2eε/2)
+∑
+j≥ i
+2je− ε2j2
+→ 0, i → ∞ .
+The proof of Theorem 2.1 is complete.
+5. A failure of approach based on a strong approximation
+Our proof of Theorem 2.2 is quite technical. Naturally we wan ted to work out a less technical
+argument. One promising possibility has been to exploit a st rong approximation result for
+centered standard random walks with ﬁnite variance, see, fo r instance, Theorem 12.6 in [6].
+Lemma 5.1. There exists a standard Brownian motion (W (t))t≥ 0 such that
+T⌊t⌋ − W (t) = o((t log log t)1/2), t → ∞ a.s.
+Implicit in the preceding proofs is the fact that the princip al contribution to the LIL is made
+by the fragment of the original series which has the variance comparable to the variance of the
+full series. More precisely, one may reduce attention to the sum ∑N2(s)
+k=N1(s)
+(log k)−1/2
+k1/2+s ηk, where
+N1 and N2 are positive integer-valued functions satisfying lim s→ 0+(log log N1(s)/ log 1/s) = 0,
+lims→ 0+ s log N2(s) = 0 and
+lim
+s→ 0+
+(log log N2(s)/ log 1/s) = 1 . (44)
+20
+
+
+===== PAGE 21 =====
+The reason is that
+Var
+( N2(s)∑
+k=N1(s)
+(log k)− 1/2
+k1/2+s ηk
+)
+∼ Var
+( ∑
+k≥ 2
+(log k)− 1/2
+k1/2+s ηk
+)
+∼ log 1/s, s → 0 + .
+We hoped it would be possible to work with Gaussian random var iables given by∫ N2(s)
+N1(s)
+(log x)−1/2
+x1/2+s dW (x) in place of
+∫ N2(s)
+N1(s)
+(log x)−1/2
+x1/2+s dT⌊x⌋. Unfortunately, Lemma 5.1 does not
+seem to secure such a possibility. Indeed, after integratin g by parts we intended to show that
+lim
+s→ 0+
+f (s)
+∫ N2(s)
+N1(s)
+|T⌊x⌋ − W (x)|
+(log x)1/2x3/2+s dx = 0 a.s.
+In view of Lemma 5.1 the latter would be a consequence of
+lim
+s→ 0+
+f (s)
+∫ N2(s)
+N1(s)
+(log log x)1/2
+(log x)1/2x1+s dx = 0. (45)
+Since
+∫ N2(s)
+N1(s)
+(log log x)1/2
+(log x)1/2x1+s dx = 1
+s1/2
+∫ s log N2(s)
+s log N1(s)
+(log 1/s + log z)1/2e− z
+z1/2 dz
+≤ (log log N2(s))1/2
+s1/2
+∫ s log N2(s)
+0
+e− z
+z1/2 dz ∼ 2(log N2(s) log log N2(s))1/2, s → 0+,
+the validity of (45) required lim s→ 0+(log N2(s)/ log 1/s) = 0, which was incompatible with (44).
+We note in passing that another strong approximation of ( Tn)n≥ 0, this time by sums of
+independent Gaussian random variables, has a better error t he big O of square root, see [7].
+Revisiting the calculation above reveals that this approxi mation does not seem to help either.
+Acknowledgment. The present work was supported by the National Research Foun dation of
+Ukraine (project 2023.03/0059 ‘Contribution to modern the ory of random series’).
+References
+[1] M. Aymone, Real zeros of random Dirichlet series . Electron. Commun. Probab. 24 (2019),
+article no. 54, 8 pp.
+[2] M. Aymone, S. Frometa and R. Misturini, Law of the iterated logarithm for a random
+Dirichlet series . Electron. Commun. Probab. 25 (2020), article no. 56, 14 pp.
+[3] M. Aymone, S. Frometa and R. Misturini, How many real zeros does a random Dirichlet
+series have? . Electron. J. Probab. 29 (2024), article no. 5, 17 pp.
+[4] P. Billingsley, Convergence of probability measures , second edition. Wiley, 1999.
+[5] D. Buraczewski, C. Dong, A. Iksanov and A. Marynych, Limit theorems for random Dirich-
+let series . Stoch. Proc. Appl. 165 (2023), 246–274.
+[6] O. Kallenberg, Foundations of modern probability . Springer, 1997
+[7] P. Major, An improvement of Strassen ’s invariance principle. Ann. Probab. 7 (1979), 55–61.
+[8] H. Zhao and Y. Huang, Random Dirichlet series with α-stable coeﬃcients. Statist. Probab.
+Letters 208 (2024), 110047.
+21

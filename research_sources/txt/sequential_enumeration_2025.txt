@@ -1,0 +1,1392 @@
+
+
+===== PAGE 1 =====
+Sequential Enumeration in Large Language Models
+Kuinan Hou1, Marco Zorzi1, and Alberto Testolin1
+University of Padova, 35131 Padova, IT
+Abstract. Reliably counting and generating sequences of items remain
+a significant challenge for neural networks, including Large Language
+Models (LLMs). Indeed, although this capability is readily handled by
+rule-based symbolic systems based on serial computation, learning to
+systematically deploy counting procedures is difficult for neural models,
+which should acquire these skills through learning. Previous research
+has demonstrated that recurrent architectures can only approximately
+track and enumerate sequences of events: it remains unclear whether
+modern deep learning systems, including LLMs, can deploy systematic
+counting procedures over sequences of discrete symbols. This paper aims
+to fill this gap by investigating the sequential enumeration abilities of five
+state-of-the-art LLMs, including proprietary, open-source, and reasoning
+models. We probe LLMs in sequential naming and production tasks
+involving lists of letters and words, adopting a variety of prompting
+instructions to explore the role of chain-of-thought in the spontaneous
+emerging of counting strategies. We also evaluate open-source models
+with the same architecture but increasing size to assess whether the
+mastering of counting principles follows scaling laws, and we analyze the
+embedding dynamics during sequential enumeration to investigate the
+emergent encoding of numerosity. We find that some LLMs are indeed
+capable of deploying counting procedures when explicitly prompted to do
+so, but none of them spontaneously engage in counting when simply asked
+to enumerate the number of items in a sequence. Our results suggest that,
+despite their impressive emergent abilities, LLMs cannot yet robustly and
+systematically deploy counting procedures, highlighting a persistent gap
+between neural and symbolic approaches to compositional generalization.
+Keywords:Counting·Number sense·LLMs
+1 Introduction
+Many animal species possess an approximate sense of quantity, which allows to
+coarsely estimate the number of items in a set [12]. This "number sense" can
+support the rapid and parallel estimation of the number of objects in visual
+scenes [3], but it also allows to estimate the number of events in sequences
+of flashes and sounds [14,34] or motor actions [7] through serial accumulation
+mechanisms [21]. In addition to these approximate enumeration abilities, humans
+also have the unique capacity for exact enumeration, which requires systematically
+deploying counting procedures [17]. Sequential counting involves a bi-directional
+arXiv:2512.04727v2  [cs.AI]  13 Jan 2026
+
+
+===== PAGE 2 =====
+2 Hou et al.
+mapping between discrete quantities and number symbols that must conform
+to specific rules: i) one-to-one correspondence between items and symbols, ii)
+stable order, and iii) cardinality principle [20]. Bi-directionality of the mapping
+is implied by the deployment of counting both to determine the number of items
+in a set (how-manytask) and to create a set of N items (give-Ntask). Crucially,
+learning to count is considered a key milestone in the development of numeracy,
+because it implies the understanding of an abstract “successor function” [41],
+and it is consistently linked to arithmetic performance and math skills [26].
+Not surprisingly, it takes several years for children to fully master sequential
+enumeration, especially in give-N tasks [41].
+Interestingly, despite the remarkable achievements in disparate math domains
+such as automated theorem proving [35] and discovery of new mathematical
+conjectures [11], it is still unclear whether modern AI systems possess a true
+understanding of quantities and numbers [44]. Indeed, it has been repeatedly
+shown that even the most advanced deep learning models still make striking
+errors when it comes to basic tasks that require enumerating the number of items
+in a visual scene [24,46] or the number of letters and words in a sentence [19,52].
+In this work, we therefore systematically study the sequential enumeration
+abilities of state-of-the-art Large Language Models (LLMs), by probing them
+with both naming (how-many) tasks and production (give-N) tasks involving
+sequences of discrete elements. We explore different prompting strategies to
+investigate whether more advanced models can spontaneously deploy counting
+procedures and whether the responses are still approximately close to the target
+when explicit counting is forbidden. We also analyze how model size relates to
+task accuracy to assess whether the emergence of more accurate counting skills
+is directly related to the number of tunable parameters. Finally, in order to
+gain insights into the inner encoding of counting-related numerical information,
+we inspect the temporal dynamics of the latent space by analyzing the state
+space trajectory of embeddings during enumeration, and we also study neuronal
+tuning functions by measuring how the activation of individual hidden neurons
+is modulated by changes in the properties of the sequence being counted.
+The key contributions of our work are the following: i) We conduct a system-
+atic study of the sequential enumeration capabilities of state-of-the-art LLMs,
+including both proprietary and open-source models; ii) Besides the most com-
+monly used naming task, which requires to count items in a given string, we
+probe the models using an original production task, which requires to generate
+sequences containing a target number of items; this distinction is particularly
+relevant considering that naming and production provide different insights into
+enumeration capabilities [8]; iii) We implement a variety of prompting strategies
+to establish whether LLMs can spontaneously count, and whether explicitly
+asking to count could result in performance gains compared to the use of more
+generic instructions; iv) We study whether performance depends on the nature of
+the items being enumerated, using both uniform and heterogeneous sequences of
+letters or words; v) We analyze the hidden dynamics of Llama models to study
+the emergence of serial accumulation mechanisms.
+
+
+===== PAGE 3 =====
+Sequential Enumeration in Large Language Models 3
+2 Related Work
+Serial counting has long been considered a key benchmark for investigating
+the computational capabilities of recurrent neural networks. Seminal work in
+the 1990s showed that recurrent networks trained in token prediction tasks
+can learn to process simple deterministic context-free languages that require to
+count the number of elements in a string [39], while long-short-term memory
+(LSTM)networkscanexhibitevenmorerobustaccuracyandgeneratesequencesof
+precisely timed spikes [22]. However, although LSTMs in some cases can generalize
+tohighernumbersthanthoseseeninthetrainingset[ 50],recentworkstillsuggests
+that recurrent architectures struggle to learn counting algorithms [16]. Memory-
+augmentednetworkstrainedusingreinforcementlearningcanpartiallyextrapolate
+on give-N tasks, but only up to small numbers [15]. Cognitive modeling studies
+have instead focused on studying parallel visual estimation of numerosity [6,45,9],
+also considering the acquisition of explicit counting skills [40] or the role of
+sequential eye movements [47]. Others have shown that multi-modal AI systems
+have poor parallel visual enumeration capabilities [36,46]: this phenomenon
+might be analyzed through the lenses of the binding problem, which arises when
+processing multiple objects using a shared set of representational resources [4].
+However, only a few studies investigated sequential enumeration in LLMs.
+Although it is well known that LLMs often exhibit nontrivial emergent abili-
+ties, including mathematical reasoning [18], they appear to have poor counting
+skills [13], which could partially explain their limitations in tasks that require
+length generalization [1]. For example, it has been recently shown that LLMs
+cannot reliably count the number of letters in a word [19] or the number of words
+in a sentence [52]. Some authors have proposed that these issues could be due to
+the non-recurrent nature of transformers [5], while others argue that layer nor-
+malization and scaling of the attention weights are the two main operations that
+make it impossible for standard transformers to learn counting in a generalizable
+way [32]. It has also been proposed that counting in transformers is influenced by
+vocabulary size or number of unique tokens in the sequence [53], though the latter
+was confounded with sequence length in the simulations. Another recent work
+has shown that counting in LLMs is more challenging when the correct output
+is a low-probability piece of text (e.g., rarely used numbers) [30]. A concurrent
+line of research has focused on the computational advantages provided by chain-
+of-thought (CoT) prompting methods [49]. Indeed, although LLMs inherit the
+computational limitations of the transformer architecture [29], CoT dramatically
+improves their accuracy in tasks that are hard for parallel computation thanks
+to the iterative processing of intermediate reasoning steps [28].
+3 Methodology
+3.1 Models considered
+We consider several LLMs spanning different sizes and architectures. For propri-
+etary models, we include the newest GPT5 reasoning model [gpt-5-2025-08-07]
+
+
+===== PAGE 4 =====
+4 Hou et al.
+and the GPT4 model [gpt-4.1-2025-04-14] developed by OpenAI, and the most
+recent Gemini family model [gemini-2.5-pro-preview-03-25] developed by Google.
+For open-source models, we include three variants of increasing size from the
+Llama3 family released by Meta: [Llama-3.2-3B-Instruct], [Llama-3.1-8B-Instruct]
+and [Llama-3.3-70B-Instruct], as well as the recent Qwen reasoning model [QwQ-
+32B] developed by Alibaba. Information about the computing hardware used in
+the experiments is provided in Supplementary Section B.
+3.2 Sequential enumeration tasks
+We examine two distinct types of sequential enumeration tasks that cognitive
+scientists have proposed to probe basic numerical skills: numerosity naming [38]
+and numerosity production [51,43]. These tasks allow for assessing the repre-
+sentation and manipulation of numerical quantities, and are adapted here to
+evaluate the extent to which AI models can operate over numerical sequences
+of discrete elements. In the naming task, the model is presented with a string
+representing a sequence of elements and is required to output the number of
+elements contained in the sequence. The numerosity production task reverses
+this process: the model is given a target numerical value and is asked to generate
+a sequence containing the specified number of elements. This tests the model’s
+ability to translate abstract numerical representations into concrete, countable
+outputs. Previous work [15] studied a production task using small numbers; here
+we test models on target numbers ranging from 10 to 100 in increments of 10 to
+ensure systematic coverage across enumeration ranges.
+We explore enumeration skills on two types of discrete elements: letters and
+words. For letters, stimuli are randomly sampled from the standard English
+alphabet characters. For words, stimuli are randomly selected from a curated list
+of five-letter English words to ensure that all elements have the same length and
+avoid confounds due to variability in non-numerical magnitudes [45]. Importantly,
+all words were chosen to ensure a one-token-per-word correspondence to guarantee
+that the model’s task emphasizes sequential enumeration rather than language
+modeling or token segmentation [54]. In both conditions, we explored sequences
+containing both homogeneous and heterogeneous elements. Further details about
+the creation of testing sequences can be found in the Supplementary Section C.
+3.3 Prompting strategies
+We designed a structured set of system prompts made up of four key sections:
+1)contextual background, 2)task goal, 3)counting strategy, and 4)response
+formatting.
+Contextual Background.Each prompt begins by placing the model in the
+role of a participant in a psychometric experiment through the sentence “You are
+the subject of a psychometric experiment designed to investigate enumeration
+capabilities. Do your best to be accurate.”. This narrative framing is intended
+to engage the model in a cooperative, goal-directed task where accuracy and
+compliance are expected.
+
+
+===== PAGE 5 =====
+Sequential Enumeration in Large Language Models 5
+Task Goal.This section defines the enumeration objective. For the naming
+task, the model is asked to count the number of repetitions in a given sequence
+(”I will ask you how many letters/words are there in a string.”) An
+example of the user message paired with this condition: “How many ‘table’
+are there in ‘table table table table table table table table table’?”.
+For the production task, the model is prompted to generate a target number of
+repeated letters or words (”I will ask you to write some letters/words
+a given number of times.”). An example of the user message paired with
+this condition: “Write the letterA 10 times”. This setup allows us to examine
+both forward (sequence-to-number) and reverse (number-to-sequence) mappings.
+Additional prompt examples are provided in Section D.2. As a control condition,
+we also tested whether the most powerful LLMs could count via coding (details
+can be found in Supplementary Section G.5).
+Counting StrategyThe key manipulation across prompt types lies in
+the strategy the model is instructed—or allowed—to use for enumeration. We
+distinguish four conditions:
+–Explicit Counting:The model is obligated to count carefully and to use any
+supportive strategy (e.g., markers or numerical annotations).Instructional
+cue: “You should generate markers, numbers or any other symbols that may
+help you keep track.”This tests the model’s capacity for deliberate and
+systematic enumeration.
+–Spontaneous Counting:The model receives no guidance regarding counting
+and must decide autonomously whether and how to count.Instructional cue:
+None (no explicit instruction about counting is provided).This condition
+assesses whether systematic counting behavior can emerge in the absence of
+explicit instruction.
+–Mental Counting:The model is allowed to count, but only "mentally",
+without producing any visible symbols to support counting.Instructional
+cue: “You are allowed to count in your mind but please do not count explicitly:
+you cannot generate markers, numbers or any other symbols that may help
+you keep track.”This probes the model’s capacity for covert enumeration and
+internal working memory usage.
+–Forbid Counting:The model is explicitly instructed not to count or use any
+form of structure that aids counting.Instructional cue: “You are not allowed
+to count and you cannot generate markers, numbers or any other symbols
+that may help you keep track.”This probes the approximate enumeration
+abilities of the model, in analogy with the articulatory suppression paradigms
+used in cognitive science to study temporal estimation when counting is
+precluded [37].
+Response Formatting.At the end of each system prompt, we ask the
+models to mark their responses within the special tags "<my_answer>" and
+"</my_answer>" to facilitate the post-processing of the output. For the smaller
+Llama models (Llama3 3B and Llama3 8B), response formatting is tailored to each
+model so that the model can perform the best alignment with the instructions.
+More details can be found in Supplementary Section D.1.
+
+
+===== PAGE 6 =====
+6 Hou et al.
+3.4 Performance Evaluation
+Model responses were parsed semi-automatically using Python scripts (details
+in Supplementary Section F). Two metrics then quantified task performance.
+Accuracy was defined as the proportion of trials where the parsed output exactly
+matched the target numerosity; invalid trials were counted as incorrect. Mean
+Absolute Error (MAE) was instead computed as:MAE = 1
+n
+Pn
+i=1 |Ci − ˆCi| where
+c is the target numerosity andˆcis the model’s reported count. To prevent bias
+toward low-count performance, errors exceeding 512 were capped at 512. Further
+details, including per-condition token limits and invalid trial counts, are provided
+in Supplementary Section E.
+3.5 Latent Space Dynamics and Neuronal Tuning Profiles During
+Enumeration
+To investigate how the Llama70B model internally tracks the counted items
+we analyzed the dynamics of its hidden states during token generation across
+the four prompting strategies (inference details in Supplementary Section E).
+Specifically, we aimed to identify whether an internal counter mechanism emerges
+in the model, and to determine under which conditions such a structure is
+most apparent. We therefore applied principal component analysis (PCA) to
+the last-layer embeddings extracted during the stepwise generation process. By
+reducing the high-dimensional activation space to a lower-dimensional trajectory,
+PCA enables us to examine structured temporal dynamics and assess whether
+consistent patterns, such as linear progression or cyclic structure, are present
+across counting steps. This approach is widely used in neuroscience to analyze
+neuronal population activity, and it has proven effective in uncovering latent
+dynamicalstructuresunderlyingbehaviorallyrelevantcomputations[ 10].Separate
+PCA models were fit for each condition to preserve potential condition-specific
+representational structure. To analyze temporal dynamics, we extracted PC’s
+time series for each target numerosity (for trials with sequence length exceeding
+the target numerostiy, we clipped the time series at the target number). While
+the first two PCs are presented for clear 2D visualization and often capture
+the majority of variance related to behaviorally relevant computations, we also
+inspected higher-order components (see Supplementary Section G.6).
+4 Results
+4.1 Task Performance
+Figure 1 shows the enumeration accuracy across all prompting conditions for
+naming and production tasks involving homogeneous sequences of elements1
+1 Results on heterogeneous sequences are reported in Supplementary Section G.4.
+Performance is qualitatively similar, though homogeneous sequences seem slightly
+more challenging to enumerate (especially for the naming task), probably because
+in uniform sets individual items are less distinguishable, as also suggested by recent
+work on visual enumeration [23].
+
+
+===== PAGE 7 =====
+Sequential Enumeration in Large Language Models 7
+GPT-5GPT-4.1Gemini2.5Llama70BQwen32B
+0
+0.2
+0.4
+0.6
+0.8
+1.0Accuracy
+Explicit Counting
+GPT-5GPT-4.1Gemini2.5Llama70BQwen32B
+Spontaneous Counting
+GPT-5GPT-4.1Gemini2.5Llama70BQwen32B
+Mental Counting
+GPT-5GPT-4.1Gemini2.5Llama70BQwen32B
+Forbid Counting
+NamingLetter
+NamingWord
+ProductionLetter
+ProductionWord
+140
+160
+180
+200
+220
+GPT-5GPT-4.1Gemini2.5Llama70BQwen32B
+0
+20
+40
+60
+80
+MAE
+140
+160
+180
+200
+220
+GPT-5GPT-4.1Gemini2.5Llama70BQwen32B
+0
+20
+40
+60
+80
+140
+160
+180
+200
+220
+GPT-5GPT-4.1Gemini2.5Llama70BQwen32B
+0
+20
+40
+60
+80
+140
+160
+180
+200
+220
+GPT-5GPT-4.1Gemini2.5Llama70BQwen32B
+0
+20
+40
+60
+80
+Fig. 1.Comparison of accuracy and mean absolute error (MAE) across different models
+and prompting conditions. Bars represent accuracy or MAE for each model (x-axis)
+across the four tasks: naming/production×letter/word. Error bars indicate the vari-
+ability of the estimates: for accuracy, binomial standard errors are shown; for MAE,
+standard errors of the mean are shown.
+Proprietary models consistently achieve the highest accuracy, though open-source
+models also excel in production tasks when explicitly asked to count. However,
+accuracies significantly drop in naming tasks even when the models are explicitly
+asked to count, suggesting that it is more challenging to enumerate a given
+list of items rather than producing one from scratch. Accuracy also generally
+declines under all other prompting conditions, showing that none of the models
+can reliably enumerate the elements of a sequence when not explicitly instructed
+to count. However, the MAE plots show that when proprietary models make
+errors, they still get reasonably close to the target number.
+Notably, in the spontaneous counting condition, none of the models exhibits
+systematic counting behavior (see Supplementary Section G.6). When the models
+do not systematically count, the gap between the naming and production tasks is
+reduced, suggesting that in such conditions the LLMs rely on similar approximate
+estimation mechanisms. Nevertheless, it is interesting to note that GPT and
+Gemini can still provide answers that are close to the target, as indexed by their
+relatively low MAE. It is also interesting to note that overall the performance
+for the mental counting condition is slightly higher than that observed in the
+spontaneous and forbid counting conditions, suggesting that the models can
+somehow improve their internal encoding of numerosity when prompted to do
+so. To better investigate how different strategies impact behavioral performance,
+
+
+===== PAGE 8 =====
+8 Hou et al.
+we computed a scale-invariant accuracy measure (Normalized Absolute Error)
+for each counting condition and conducted a Friedman non-parametric test,
+followed by Bonferroni-corrected pairwise comparisons (details can be found in
+Supplementary Section G.3). In general, we can also see that LLMs are more
+accurate in naming and production tasks involving words rather than letters. This
+result is aligned with recent findings that highlight the importance of tokenization
+in counting precision [54]. Indeed, our selected set of words has a one-to-one
+correspondence with the tokens provided as input to the models, while sequences
+of letters can be tokenized differently (e.g., grouping a set of letters together)
+depending on the model specifications.
+For the Llama family we also studied the relationship between model size and
+counting performance, to investigate whether counting skills can be characterized
+as an emerging ability [48]. As model size increased from 3 to 70 billion, accuracy
+improved substantially, increasing from approximately 0.10 to 0.24, and MAE
+similarly decreased from over 200 in the smallest model to around 70 in the largest
+(see Supplementary Section G.2). However, this pattern shows that counting is
+not strictly emergent in the classic sense of a sharp threshold or phase transition,
+but rather gradually develops as model capacity increases [42]. Finally, one should
+note that the Qwen performance is still remarkable compared to that of other
+models, considering that it has a much smaller number of parameters.
+4.2 Analysis of Enumeration Errors
+For all models, the variance of the responses shows a consistent trend that aligns
+with accuracy across different prompting conditions, with errors increasing as the
+target numerosity increases (see Figure 2). Response errors for GPT and Gemini
+models are similar and generally close to the target number, even though in the
+forbid counting condition Gemini tends to overestimate the number of letters
+generated in the production task, while GPT4.1 tends to underestimate (see
+Supplementary Figure 6). Llama systematically underestimates in the naming
+task and overestimates in the production task, while Qwen does not exhibit
+specific biases. A Friedman test was carried out on the absolute errors as a
+function of condition, followed by Bonferroni-corrected pairwise comparisons,
+showing that counting strategies indeed significantly affect the amount of errors
+(see Supplementary Section G.3).
+4.3 Neural Dynamics during Sequential Enumeration
+The PCA analysis revealed that a small number of components can account for
+a substantial proportion of the variance in model activations across all counting
+conditions: PC1 alone explained 17% (explicit) and 47% (mental) of the total
+variance. Figure 3 shows how the first and second Principal Components (PC1
+and PC2) change across counting steps for the explicit and mental counting
+conditions (the other conditions are shown in Supplementary Fig. 9). In the
+mental counting condition, PC1 and PC2 show a strong correlation with the
+generated steps (computed for trials with the same target number and then
+
+
+===== PAGE 9 =====
+Sequential Enumeration in Large Language Models 9
+-100
+-80
+-60
+-40
+-20
+0
+20
+40
+60
+80
+100
+GPT5
+Diff to T arget
+Explicit Counting
+ Spontaneous Counting
+NamingLetter
+NamingWord
+ProductionLetter
+ProductionWord
+Mental Counting
+ Forbid Counting
+-100
+-80
+-60
+-40
+-20
+0
+20
+40
+60
+80
+100
+Llama70B
+Diff to T arget
+10 20 30 40 50 60 70 80 90 100
+T arget Numerosity
+-100
+-80
+-60
+-40
+-20
+0
+20
+40
+60
+80
+100
+Qwen32B
+Diff to T arget
+10 20 30 40 50 60 70 80 90 100
+T arget Numerosity
+10 20 30 40 50 60 70 80 90 100
+T arget Numerosity
+10 20 30 40 50 60 70 80 90 100
+T arget Numerosity
+Fig. 2.Scatter plots of enumeration errors (response – target value) across different
+prompting conditions for a selected subset of models. Each panel shows the response
+differences plotted against the target values, with distinct markers of different colors
+representing different task-stimulus combinations: blue for the naming task and green
+for the production task; triangles for letters and filled circles for words.
+averaged across targets), with Spearman correlations exceeding 0.83 and - 0.88,
+respectively (both p < 0.001), consistent with a step-tracking signal that may
+reflect an emergent internal counter. Interestingly, the explicit condition strongly
+diverges from mental counting even along the first component: the PC1 does not
+show (piece-wise) monotonicity as a function of step number but is characterized
+by a periodic trend with large dips at steps that are multiples of ten. The latter
+finding might be linked to the observation that LLMs use Fourier features to
+compute basic arithmetic operations [55] and/or to the presence of biases for
+decade numbers in training corpora [46].
+Despite high behavioral accuracy in the explicit condition, PCA revealed little
+systematic accumulation structure in the leading components. PC1 explained
+less variance, and PC1 seems to mainly account for tracking the decade number
+changes during generation. The internal dynamics underlying the mental counting
+condition instead appear more structured, especially when looking at the geome-
+try of the state-space defined by the first two PCs (Figure 4): we can observe a
+distinctive non-linear trajectory (horseshoe pattern), suggesting that the internal
+representation of counting evolves through several distinct phases. Nevertheless,
+the smooth overall trajectory suggests a consistent underlying computational
+
+
+===== PAGE 10 =====
+10 Hou et al.
+0 10 20 30 40 50 60 70 80 90 100
+-125
+-100
+-75
+-50
+-25
+0
+25
+50
+75
+PC1
+Explicit Counting
+0 10 20 30 40 50 60 70 80 90 100
+Mental Counting
+0 10 20 30 40 50 60 70 80 90 100
+Step
+-80
+-60
+-40
+-20
+0
+20
+40
+60
+80
+100PC2
+0 10 20 30 40 50 60 70 80 90 100
+Step
+0
+20
+40
+60
+80
+100
+T arget Numerosity
+Fig. 3.Trajectories of the first two PCs computed over hidden states, separately for
+the explicit and mental counting conditions. Each subplot shows the trajectories along
+PC1 and PC2 as a function of generation step, with colors indicating target numerosity.
+mechanism driving the enumeration, and the clear structure visible in just two
+dimensions indicates that these principal components capture meaningful aspects
+of the internal counting dynamics. Moreover, the representational geometry has
+a striking resemblance to the ordering of numerosities along a curved manifold
+recently observed in human neuroimaging [25]. Note also that the more compact
+range of PC values in mental counting suggests a more efficient (i.e., lower-
+dimensional) representation of quantity compared to explicit counting, suggesting
+that the model employs fundamentally different computational strategies for
+explicit versus mental counting. Overall, these findings suggest that structured,
+low-dimensional neural trajectories resembling internal counters emerge most
+clearly in the mental counting condition, despite the absence of explicit instruc-
+Fig. 4.2D presentation of the PCA results. The marker’s color gradient reflects genera-
+tion order across generation steps.
+
+
+===== PAGE 11 =====
+Sequential Enumeration in Large Language Models 11
+0 20 40 60 80 100
+Step
+0.0
+0.25
+0.5
+0.75
+1.0
+Normalized Activation
+Explicit Counting
+Positive Correlation Neurons
+Negative Correlation Neurons
+0 20 40 60 80 100
+Step
+Mental Counting
+Fig. 5.Population dynamics of unit activations across stepwise counting. For each
+condition, we plot the average activation of selected neurons within steps from 1 to 100.
+The activation is normalized and shaded with standard error for better visualization.
+tions, while explicit prompting leads to high performance via less interpretable,
+potentially token-based mechanisms.
+To identify neurons sensitive to sequence progression, we further analyzed
+hidden neuron activations across the four experimental conditions. For each trial,
+we selected responses with at least 100 generated steps and truncated them
+to the first 100 steps. Each neuron’s activation over generations was extracted
+and reshaped across trials to compute Pearson correlations with step indices.
+We identified the 500 neurons with the highest positive and 500 with the most
+negative correlations. As shown in Figure 5, we found that the activations change
+with the steps in two opposite directions, as expected in the mental counting
+condition. In the explicit condition this trend is less marked, with both groups of
+neurons’ activation level oscillating around the mean level. This suggests that in
+the explicit counting condition, there is not a population of neurons encoding the
+number of steps generated via activation. On the other hand, mental counting
+engages specialized populations of neurons with opposite activation trajectories.
+The variance for explicit counting is almost zero, while for mental counting, the
+variance increases after generation step 40.
+5 Discussion and Conclusions
+Overall, the variation in task performance across different prompting strate-
+gies highlights the extent to which LLMs rely on explicit cues and structured
+prompting to succeed in numerosity-related tasks, in with recent findings on
+higher-level algorithmic tasks [33]. Under the explicit counting condition, all
+models performed considerably better, with top-tier proprietary models achieving
+near-ceiling accuracy and minimal MAE, but only in the production task. This
+suggests that providing clear and structured prompts allows the models to exhibit
+a more consistent enumeration behavior, but also shows that even the most
+advanced models still struggle with counting the number of elements in a given
+list. The significant drop in performance observed in the spontaneous counting
+
+
+===== PAGE 12 =====
+12 Hou et al.
+condition further shows that while some models may possess an emergent ca-
+pacity to self-initiate counting, such behavior is extremely rare and inconsistent
+across tasks, revealing a key limitation of LLMs in the ability to spontaneously
+enumerate sequences of elements. Finally, the slightly higher performance in the
+mental counting condition compared to the spontaneous and forbid counting
+conditions further highlights the importance of prompt framing: in line with
+previous findings, most models appear to be sensitive not just to the operational
+structure of the task but also to the cognitive stance implied by the prompt [2].
+Our state space analysis provides empirical support for this assertion, reveal-
+ing fundamentally different computational strategies: only the mental counting
+condition showed a smooth, continuous trajectory resembling an accumulation
+process, suggesting a more analog representation of quantity similar to serial
+accumulation mechanisms implemented in biological circuits [21,31]. Notably,
+this gradual accumulation disappears during explicit counting, suggesting that in
+such condition the LLM rather exploits an associative chaining mechanism that
+allows it to keep track of the items by only relying on the previously generated
+symbolic number, thereby exploiting a surface-level token prediction strategy
+rather than maintaining an internal counter. Given the suboptimal performance
+of Llama models, it is also evident that these LLMs lack a mechanism to compare
+the accumulation signal to the target symbolic number that is memorized during
+prompting instruction: this issue can be put in relation to the acquisition of
+counting skills during human development, where children often simply recall
+the counting sequence by rote memory, without having grasped the number
+semantics, and thus often cannot properly terminate the counting procedure
+because they lack a bi-directional mapping between numerosity representations
+and symbolic numbers [41].
+Our study also offers a nuanced perspective on the recent theoretical work by
+[53].Indeed,theiranalysisproposesthattransformerscanreliablycountonlyifthe
+embedding dimensiondis larger than the vocabulary sizem. Our scenario presents
+a key difference: while their study confounds vocabulary size with sequence length,
+our sequences use a single repeated token, isolating sequence length as the primary
+factor in counting errors. This supports and clarifies their broader theoretical
+point about the challenges of long-range dependencies. Interestingly, our results
+also indicate that model size is a less critical factor than architectural or training
+differences, as smaller models sometimes outperformed larger ones. This finding
+challenges the specific confound in the empirical demonstration proposed by [53],
+at the same time extending their theoretical framework by highlighting sequence
+length as a dominant variable in real-world LLMs.
+In conclusion, our work shows that while in some circumstances LLMs develop
+internal activation dynamics resembling serial accumulation mechanisms, these
+signals are not precise enough to guarantee accurate enumeration performance.
+Alternatively, when the LLMs rely on explicit counting, they might in fact
+deploy surface-level token prediction capabilities that might prevent a deeper
+understanding of the task semantics. It is conceivable that proficient mastery of
+counting and a deeper understanding of the properties of the number system will
+
+
+===== PAGE 13 =====
+Sequential Enumeration in Large Language Models 13
+require grounding of number concepts into sensorimotor experience, as claimed
+by mainstream theories in cognitive science [27].
+AcknowledgementsThisprojectwaspartiallysupportedbytheItalianMinistry
+of Education and Research [PRIN Grant 2022EBC78W] and by the European
+Union - NextGenerationEU as part of the National Recovery and Resilience
+Plan (PNRR) [Project GROUNDEEP, FAIR Missione 4, Componente 2, CUP
+J93C24000320007]. K.H. acknowledges the support of the China Scholarship
+Council (ID: 202307820031).
+References
+1. Anil, C., Wu, Y., Andreassen, A., Lewkowycz, A., Misra, V., Ramasesh, V., Slone,
+A., Gur-Ari, G., Dyer, E., Neyshabur, B.: Exploring length generalization in large
+language models. Advances in Neural Information Processing Systems35, 38546–
+38556 (2022)
+2. Battle, R., Gollapudi, T.: The unreasonable effectiveness of eccentric automatic
+prompts. arXiv preprint arXiv:2402.10949 (2024)
+3. Burr, D., Ross, J.: A visual sense of number. Current biology18(6), 425–428 (2008)
+4. Campbell, D., Rane, S., Giallanza, T., De Sabbata, C.N., Ghods, K., Joshi, A., et al.:
+Understanding the limits of vision language models through the lens of the binding
+problem. Advances in Neural Information Processing Systems37, 113436–113460
+(2024)
+5. Chang, Y., Bisk, Y.: Language models need inductive biases to count inductively.
+arXiv preprint arXiv:2405.20131 (2024)
+6. Chen, S., Zhou, Z., Fang, M., McClelland, J.L.: Can generic neural networks
+estimate numerosity like humans? In: Proceedings of the 40th Annual Conference
+of the Cognitive Science Society. pp. 202–207. Cognitive Science Society, Austin,
+TX (2018)
+7. Cicchini, G.M., Anobile, G., Burr, D.C.: Spontaneous perception of numerosity in
+humans. Nature communications7(1), 12536 (2016)
+8. Connor, D., Kirkland, P.K., Purpura, D.J.: The how many and give-n tasks: Con-
+ceptually distinct measures of the cardinality principle. Early Childhood Research
+Quarterly66, 61–74 (2024)
+9. Creatore,C.,Sabathiel,S.,Solstad,T.:Learningexactenumerationandapproximate
+estimation in deep neural network models. Cognition215, 104815 (2021)
+10. Cunningham, J.P., Yu, B.M.: Dimensionality reduction for large-scale neural record-
+ings. Nature neuroscience17(11), 1500–1509 (2014)
+11. Davies, A., Veličković, P., Buesing, L., Blackwell, S., Zheng, D., Tomašev, N.,
+Tanburn, R., Battaglia, P., Blundell, C., Juhász, A., et al.: Advancing mathematics
+by guiding human intuition with ai. Nature600(7887), 70–74 (2021)
+12. Dehaene, S.: The number sense: How the mind creates mathematics. OUP USA
+(2011)
+13. Delétang, G., Ruoss, A., Grau-Moya, J., Genewein, T., Wenliang, L.K., Catt, E.,
+Cundy, C., Hutter, M., Legg, S., Veness, J., et al.: Neural networks and the chomsky
+hierarchy. arXiv preprint arXiv:2207.02098 (2022)
+14. Dolfi, S., Testolin, A., Cutini, S., Zorzi, M.: Measuring temporal bias in sequential
+numerosity comparison. Behavior Research Methods56(7), 7561–7573 (2024)
+
+
+===== PAGE 14 =====
+14 Hou et al.
+15. Dulberg, Z., Webb, T., Cohen, J.: Modelling the development of counting with
+memory-augmented neural networks. arXiv preprint arXiv:2105.10577 (2021)
+16. El-Naggar, N., Ryzhikov, A., Daviaud, L., Madhyastha, P., Weyde, T.: Formal and
+empirical studies of counting behaviour in relu rnns. In: Proceedings of Machine
+Learning Research. pp. 199–222. PMLR (2023)
+17. Feigenson, L., Dehaene, S., Spelke, E.: Core systems of number. Trends in cognitive
+sciences8(7), 307–314 (2004)
+18. Frieder, S., Pinchetti, L., Griffiths, R.R., Salvatori, T., Lukasiewicz, T., Petersen,
+P., Berner, J.: Mathematical capabilities of chatgpt. Advances in neural information
+processing systems36, 27699–27744 (2023)
+19. Fu, T., Ferrando, R., Conde, J., Arriaga, C., Reviriego, P.: Why do large language
+models (llms) struggle to count letters? arXiv preprint arXiv:2412.18626 (2024)
+20. Gallistel, C.R., Gelman, R.: Preverbal and verbal counting and computation. Cog-
+nition44(1-2), 43–74 (1992)
+21. Gallistel, C.R., Gelman, R.: Non-verbal numerical cognition: From reals to integers.
+Trends in cognitive sciences4(2), 59–65 (2000)
+22. Gers, F.A., Schmidhuber, J.: Recurrent nets that time and count. In: Proceedings of
+the IEEE-INNS-ENNS International Joint Conference on Neural Networks. IJCNN
+2000. Neural Computing: New Challenges and Perspectives for the New Millennium.
+vol. 3, pp. 189–194. IEEE (2000)
+23. Hou, K., Jing, M., Ballan, L., Zorzi, M., Testolin, A.: Assessing the visual enu-
+meration abilities of specialized counting architectures and vision-language models.
+arXiv preprint arXiv:2512.15254 (2025)
+24. Kajić, I., Wiles, O., Albuquerque, I., Bauer, M., Wang, S., Pont-Tuset, J., Ne-
+matzadeh, A.: Evaluating numerical reasoning in text-to-image models. Advances
+in Neural Information Processing Systems37, 42211–42224 (2024)
+25. Karami, A., Castaldi, E., Eger, E., Piazza, M.: Distinct neural representational
+geometries of numerosity in early visual and association regions across visual streams.
+Communications Biology8(1), 1029 (2025)
+26. Koponen, T., Aunola, K., Nurmi, J.E.: Verbal counting skill predicts later math
+performanceanddifficultiesinmiddleschool.ContemporaryEducationalPsychology
+59, 101803 (2019)
+27. Lakoff, G., Núñez, R.: Where mathematics comes from, vol. 6. New York: Basic
+Books (2000)
+28. Li, Z., Liu, H., Zhou, D., Ma, T.: Chain of thought empowers transformers to solve
+inherently serial problems. arXiv preprint arXiv:2402.128751(2024)
+29. Liu, B., Ash, J.T., Goel, S., Krishnamurthy, A., Zhang, C.: Transformers learn
+shortcuts to automata. arXiv preprint arXiv:2210.10749 (2022)
+30. McCoy, R.T., Yao, S., Friedman, D., Hardy, M., Griffiths, T.L.: Embers of au-
+toregression: Understanding large language models through the problem they are
+trained to solve. arXiv preprint arXiv:2309.13638 (2023)
+31. Nieder, A., Diester, I., Tudusciuc, O.: Temporal and spatial enumeration processes
+in the primate parietal cortex. Science313(5792), 1431–1435 (2006)
+32. Ouellette, S., Pfister, R., Jud, H.: Counting and algorithmic generalization with
+transformers. arXiv preprint arXiv:2310.08661 (2023)
+33. Petruzzellis, F., Testolin, A., Sperduti, A.: Benchmarking gpt-4 on algorith-
+mic problems: A systematic evaluation of prompting strategies. arXiv preprint
+arXiv:2402.17396 (2024)
+34. Philippi, T.G., van Erp, J.B., Werkhoven, P.J.: Multisensory temporal numerosity
+judgment. Brain research1242, 116–125 (2008)
+
+
+===== PAGE 15 =====
+Sequential Enumeration in Large Language Models 15
+35. Polu, S., Sutskever, I.: Generative language modeling for automated theoremproving.
+arXiv preprint arXiv:2009.03393 (2020)
+36. Rane, S., Ku, A., Baldridge, J., Tenney, I., Griffiths, T., Kim, B.: Can generative
+multimodal models count to ten? In: Proceedings of the 46th Annual Meeting of
+the Cognitive Science Society. vol. 46 (2024)
+37. Rattat, A.C., Droit-Volet, S.: What is the best and easiest method of preventing
+counting in different temporal tasks? Behavior Research Methods44(1), 67–80
+(2012)
+38. Revkin, S.K., Piazza, M., Izard, V., Cohen, L., Dehaene, S.: Does subitizing reflect
+numerical estimation? Psychological science19(6), 607–614 (2008)
+39. Rodriguez, P., Wiles, J., Elman, J.L.: A recurrent neural network that learns to
+count. Connection Science11(1), 5–40 (1999)
+40. Sabathiel, S., McClelland, J.L., Solstad, T.: A computational model of learning
+to count in a multimodal, interactive environment. In: Proceedings of the Annual
+Meeting of the Cognitive Science Society. vol. 42 (2020)
+41. Sarnecka, B.W., Carey, S.: How counting represents number: What children must
+learn and when they learn it. Cognition108(3), 662–674 (2008)
+42. Schaeffer, R., Miranda, B., Koyejo, S.: Are emergent abilities of large language
+models a mirage? Advances in Neural Information Processing Systems36, 55565–
+55581 (2023)
+43. Sella, F., Berteletti, I., Lucangeli, D., Zorzi, M.: Spontaneous non-verbal counting
+in toddlers. Developmental science19(2), 329–337 (2016)
+44. Testolin, A.: Can neural networks do arithmetic? a survey on the elementary
+numerical skills of state-of-the-art deep learning models. Applied Sciences14(2),
+744 (2024)
+45. Testolin, A., Dolfi, S., Rochus, M., Zorzi, M.: Visual sense of number vs. sense of
+magnitude in humans and machines. Scientific reports10(1), 10045 (2020)
+46. Testolin, A., Hou, K., Zorzi, M.: Visual enumeration remains challenging for multi-
+modal generative ai. PloS one20(9), e0331566 (2025)
+47. Thompson, J.A., Sheahan, H., Dumbalska, T., Sandbrink, J.D., Piazza, M., Sum-
+merfield, C.: Zero-shot counting with a dual-stream neural network model. Neuron
+112(24), 4147–4158 (2024)
+48. Wei, J., Tay, Y., Bommasani, R., Raffel, C., Zoph, B., Borgeaud, S., Yogatama,
+D., Bosma, M., Zhou, D., Metzler, D., et al.: Emergent abilities of large language
+models. arXiv preprint arXiv:2206.07682 (2022)
+49. Wei, J., Wang, X., Schuurmans, D., Bosma, M., Xia, F., Chi, E., Le, Q.V., Zhou,
+D., et al.: Chain-of-thought prompting elicits reasoning in large language models.
+Advances in neural information processing systems35, 24824–24837 (2022)
+50. Weiss, G., Goldberg, Y., Yahav, E.: On the practical computational power of finite
+precision rnns for language recognition. arXiv preprint arXiv:1805.04908 (2018)
+51. Whalen, J., Gallistel, C.R., Gelman, R.: Nonverbal counting in humans: The
+psychophysics of number representation. Psychological science10(2), 130–137
+(1999)
+52. Xu, N., Ma, X.: Llm the genius paradox: A linguistic and math expert’s struggle
+with simple word-based counting problems. arXiv preprint arXiv:2410.14166 (2024)
+53. Yehudai, G., Kaplan, H., Ghandeharioun, A., Geva, M., Globerson, A.: When can
+transformers count to n? arXiv preprint arXiv:2407.15160 (2024)
+54. Zhang, X., Cao, J., You, C.: Counting ability of large language models and impact
+of tokenization. arXiv preprint arXiv:2410.19730 (2024)
+55. Zhou, T., et al.: Pre-trained large language models use fourier features to compute
+addition. In: Advances in Neural Information Processing Systems (NeurIPS) (2024)
+
+
+===== PAGE 16 =====
+16 Hou et al.
+Supplementary Material
+A Data and Source Code A vailability
+Models’ responses are stored in the pickle file of each model, and embedding
+trajectories can be found in our anonymized drive due to size limit. Scripts for
+collecting the results can also be found there.
+B Computational Hardware and Cloud APIs
+Data collection for open-source models was conducted using a computing cluster
+equipped with seven NVIDIA L40s GPUs, as well as Google Cloud instances
+featuring A100 GPUs. For proprietary models, responses were obtained through
+official APIs provided by OpenAI, while Gemini model outputs were collected
+using the Vertex AI platform.
+C Creation of Testing Sequences
+C.1 Word selection
+We first selected a set of words that are 5 letters long, and we created both
+homogeneous and heterogeneous sequences of words by randomly sampling from
+this list. A critical prerequisite for a valid analysis of counting behavior and its
+underlying neural dynamics is to ensure that the linguistic units of counting
+are represented as single tokens within the model’s vocabulary. To this end, we
+verified the tokenizer for each model in our study to confirm that all target
+words (e.g.’table’in the previous example) were encoded as single tokens. This
+control ensures that the observed neural dynamics reflect the cognitive process
+of counting and are not artifacts of sub-word tokenization or compositional
+encoding.
+C.2 Homogeneous stimuli
+The homogeneous stimuli were created by randomly sampling a word from the
+curated list or a random letter, then repeating it the target number of times
+for the naming task. In the production task, the model was asked to write the
+sampled word or letter the target number of times.
+C.3 Heterogeneous stimuli
+The non-uniform target string in this case was formed by different letters or
+words. For the naming task, both sequences of letters and words are tested, while
+
+
+===== PAGE 17 =====
+Sequential Enumeration in Large Language Models 17
+for the production task, only heterogeneous letters were asked2. Rather than
+sampling one word and repeating it the target number of times, we sampled
+the target number of different words and formed a string. While for the letters,
+repetition of the same letter is allowed. Results with heterogeneous stimuli can
+be found in Section G.4.
+D Prompting Details
+D.1 Response Formatting
+As discussed in Section 3.3, our system message consists of four components:
+(1)contextual background, (2)task goal, (3)counting strategy, and (4)response
+formatting. To maximize the performance of each LLM and ensure that responses
+adhere to the desired format, we specifically investigated the design of theresponse
+formattingcomponentformodelsthatexhibitedlowerproportionsofvalidoutputs.
+These models include Llama-3B and Llama-8B, which underperformed compared
+to others in terms of valid trial rates. For reference, the proportions of valid trials
+achieved by the higher-performing models are as follows: Gemini 2.5 Pro achieved
+98.3%, GPT-5 and GPT-4.1 achieved 100.0%, Llama-70B achieved 93.3% and
+Qwen-32B achieved 87.5%.
+To optimize the response formatting instructions, we explored several strate-
+gies: (1) varying the position of the response formatting (either preceding or
+following the task goal); (2) experimenting with alternative phrasings of the in-
+struction; and (3) providing an explicit example of a correctly formatted response.
+We conducted a controlled experiment to evaluate the effect of each variation.
+For both the naming and production tasks, we executed 10 trials per numerosity.
+Each set of 10 trials consisted of 5 trials using words and 5 using letters, both
+sampled randomly. The response formatting instruction that yielded the highest
+proportion of valid outputs was selected.
+The alternative phrasings we explored are:
+1. Format/write/give your response between an opening tag <my_answer>
+and a close tag </my_answer>.
+2. Please format all your answers by wrapping them in a <my_answer> opening
+tag and a </my_answer> closing tag.
+3. Begin/startansweringwith<my_answer>andfinish/stopwith</my_answer>.
+For Llama-3B, the best response formatting was ”Format your response
+between an opening tag <my_answer> and a close tag </my_answer>” without
+changing position and giving explicit examples. For Llama-8B, ”Please format
+all your answers by wrapping them in a <my_answer> opening tag and a
+2 Heterogeneous word generation poses a significant challenge to our automatic response
+parsing pipeline. Even with human inspection, tricky cases still exist. For instance,
+”OK, I will start generating 20 random words: apple, banana, cat, ice cream....”. On
+the other hand, for letters, we explicitly asked the model to generate a space before
+each letter, which can be parsed easily with our pipeline.
+
+
+===== PAGE 18 =====
+18 Hou et al.
+</my_answer> closing tag. For example, if the answer is ’76’, your response
+should be <my_answer>76</my_answer>.” resulted in giving more valid trials.
+After applying those response formatting, Llama-3B has 75.8% of valid trials and
+Llama-8B has 83.5% of valid trials.
+D.2 Prompt Examples
+We provide a more complete set of per-trial prompts in the shared drive.
+E Inference Details
+E.1 Token Limits
+To accelerate the data collection process and minimize computational overhead,
+we imposed upper limits on the number of tokens generated by the models.
+Specifically, for the naming task, the maximum number of tokens allowed was set
+to 512 for the word condition and 256 for the letter condition. For the production
+task, the corresponding limits were 1024 tokens for the word condition and 512
+tokens for the letter condition. Those limits are further adjusted during generation
+(details in Section F). For Qwen-32B, those token limits apply to the tokens after
+the ’</think>’ token, and we set a 2048 token limit for the reasoning process to
+prevent a non-stopping think loop.
+E.2 Tokenization Control
+To examine internal model representations, we extracted the hidden states from
+the final layer of the Llama-70B model, which consists of 8192 neurons per token.
+These activations provide a high-dimensional embedding of the model’s internal
+processing during generation.
+To isolate representational patterns independent of behavioral outcomes, we
+conducted a separate experiment from the main analyses presented in Section 4.1
+and 4.2. In this auxiliary run, we selected a single concrete word, “apple,” and
+focused exclusively on the production task. For each numerosity level, we gen-
+erated at least 10 valid trials. This approach allowed for controlled analysis by
+eliminating the variability introduced by the tokenization of letter sequences.
+Unlike words, letter sequences (e.g., “M,” “MM,” and “MMMM” are all represented
+by a single token) are subject to inconsistent tokenization. By using a single,
+concrete word, we ensured stable token boundaries and reliable extraction of
+hidden states.
+F Automatic Response Parsing Pipeline
+Each trial was checked for the presence of the special tags<my_answer> and
+</my_answer>. If missing, the trial was markedinvalid, and the model was allowed
+up to nine additional attempts (ten total) to produce a valid response. In the
+
+
+===== PAGE 19 =====
+Sequential Enumeration in Large Language Models 19
+production task, to prevent non-terminating output (e.g., repetition), we enforced
+task-specific token limits. If the model reached this limit, the token budget was
+halved and retried until it dropped to 512 tokens. Hitting the 512-token ceiling
+on three consecutive attempts rendered the trial invalid; otherwise, up to ten
+retries were allowed.
+Post-generation, valid responses were parsed based on task type. For the
+naming task, we extracted content between the answer tags and checked if it
+contained a single integer. Non-integer outputs were flagged for manual review.
+In the production task, we used regular expressions to extract and count only
+target tokens (letters or words) within the tags; extraneous text also triggered
+manual inspection. We made sure that spelling errors in the generated words
+were not regarded as wrong responses by implementing a post-processing pipeline
+measuring edit (Levenshtein) distance to find cases where the output word is
+only moderately different from the target word, and making sure that these were
+counted as correct trials. The results showed that all words generated have 0
+distance from the target word, showcasing no spelling errors at all.
+G Results
+G.1 Behavior Patterns
+-100
+-80
+-60
+-40
+-20
+0
+20
+40
+60
+80
+100
+GPT4.1
+Diff to T arget
+Explicit Counting
+NamingLetter
+NamingWord
+ProductionLetter
+ProductionWord
+Spontaneous Counting
+ Mental Counting
+ Forbid Counting
+10 20 30 40 50 60 70 80 90 100
+T arget Numerosity
+-100
+-80
+-60
+-40
+-20
+0
+20
+40
+60
+80
+100
+Gemini2.5
+Diff to T arget
+10 20 30 40 50 60 70 80 90 100
+T arget Numerosity
+10 20 30 40 50 60 70 80 90 100
+T arget Numerosity
+10 20 30 40 50 60 70 80 90 100
+T arget Numerosity
+Fig. 6.Scatter plots of enumeration errors (response – target value) across different
+prompting conditions for a selected subset of models. Each panel shows the response
+differences plotted against the target values, with distinct markers of different colors
+representing different task-stimulus combinations: blue for the naming task and green
+for the production task; triangles for letters and filled circles for words.
+
+
+===== PAGE 20 =====
+20 Hou et al.
+Systematic CountingWe investigated whether the models engaged in system-
+atic counting when required (explicit counting) and when contextually beneficial
+(spontaneous counting). This analysis focused on the production task. The nam-
+ing task was excluded, as the models frequently returned errors, potentially due
+to either repeating the target string incorrectly or failing to count. The current
+study design does not allow us to disentangle these factors.
+In the explicit counting condition, all models systematically counted on every
+valid trial. GPT-5 and Gemini 2.5 produced error-free responses in all valid cases.
+GPT-4.1 made 3 errors, Llama70B made 1 error, and Qwen-32B made 57 errors.
+Of GPT-4.1’s errors, two were due to grouping instead of systematic counting.
+Both GPT-4.1 and Llama-70B made an error on the wordunder, despite counting
+systematically; in both cases, they under-enumerated, suggesting that semantic
+information may interfere with counting accuracy. Qwen-32B’s errors arose not
+from a failure to count but from mistakes during the copying of letters and words
+from the think loop to our special tags without systematic counting again inside
+the special answer tags. In the spontaneous counting condition, among all the
+results, only Gemini 2.5 Pro deployed systematic counting in the production task
+for one trial (ID. 5385).
+Examples of Counting BehaviorWe provide some representative examples
+of models’ counting behaviors. Full responses can be found in the pickle files we
+provide.
+1.Grouping—Gemini 2.5 Pro Production ID:197
+"Okay, I will write the letter J exactly 70 times, using numbered groups to
+keep track.
+1 J J J J J J J J J J (10)
+2 J J J J J J J J J J (20)
+3 J J J J J J J J J J (30)
+4 J J J J J J J J J J (40)
+5 J J J J J J J J J J (50)
+6 J J J J J J J J J J (60)
+7 J J J J J J J J J J (70)
+I have written the letter J exactly 70 times."
+2.Systematic Counting—Gemini 2.5 Pro Production ID:5
+"1. Q
+2. Q
+3. Q
+4. Q
+5. Q
+6. Q
+7. Q
+8. Q
+9. Q
+10. Q"
+
+
+===== PAGE 21 =====
+Sequential Enumeration in Large Language Models 21
+3. Grouping and Systematic Counting—Gemini 2.5 Pro Production
+ID:581
+"Okay, I will write the letter U exactly 90 times. I will use numbering in
+groups of 10 to keep track.
+1 2 3 4 5 6 7 8 9 10
+U U U U U U U U U U (10)
+11 12 13 14 15 16 17 18 19 20
+U U U U U U U U U U (20)
+21 22 23 24 25 26 27 28 29 30
+U U U U U U U U U U (30)
+31 32 33 34 35 36 37 38 39 40
+U U U U U U U U U U (40)
+41 42 43 44 45 46 47 48 49 50
+U U U U U U U U U U (50)
+51 52 53 54 55 56 57 58 59 60
+U U U U U U U U U U (60)
+61 62 63 64 65 66 67 68 69 70
+U U U U U U U U U U (70)
+71 72 73 74 75 76 77 78 79 80
+U U U U U U U U U U (80)
+81 82 83 84 85 86 87 88 89 90
+U U U U U U U U U U (90)
+I have written the letter U exactly 90 times."
+4.Wrong Repeating and Correct Counting—GPT-4.1 Naming ID:405
+"Let me repeat the string and use markers to count:
+u u u u u u u u u u u u u u u u u u u u u u u u u u u u u u u u
+Now, let’s count by grouping into 5s for clarity:
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29
+30 31 32
+Final count: 32"
+5.Correct Repeating but Wrong Counting—GPT-4.1 Naming ID:500
+"Let’s repeat the string:
+storm storm storm storm storm storm storm storm storm storm
+storm storm storm storm storm storm storm storm storm storm
+storm storm storm storm storm storm storm storm storm storm
+storm storm storm storm storm storm storm storm storm storm
+storm storm storm storm storm storm storm storm storm storm
+storm storm storm storm storm storm storm storm storm storm
+storm storm storm storm storm storm storm storm storm storm
+Now, let’s count the words using markers (I’ll use ’|’ for every 10 counts):
+storm storm storm storm storm storm storm storm storm storm | (10)
+storm storm storm storm storm storm storm storm storm storm | (20)
+storm storm storm storm storm storm storm storm storm storm | (30)
+storm storm storm storm storm storm storm storm storm storm | (40)
+
+
+===== PAGE 22 =====
+22 Hou et al.
+storm storm storm storm storm storm storm storm storm storm | (50)
+storm storm storm storm storm storm storm storm storm storm | (60)
+Each line is 10, and there are 7 lines. Let’s check: 1st line: 10 2nd line: 10
+3rd line: 10 4th line: 10 5th line: 10 6th line: 10 7th line: 10
+10 + 10 + 10 + 10 + 10 + 10 + 10 = 70
+Final count: 70"
+G.2 Accuracy and MAE with Model Sizes
+We investigated the effect of model scaling on sequential enumeration tasks using
+models from the Llama family, specifically Llama-3B, Llama-8B, and Llama-70B.
+We selected the Llama family for this comparison because these models share
+the same architecture and training objective, differing only in model size, that is,
+primarily through the number of layers and hidden units.
+We evaluated performance using two metrics: accuracy and mean absolute
+error(MAE).AsshowninFigure7,bothaccuracyandMAEimproveprogressively
+with model size. This indicates that the ability to perform sequential enumeration
+does not exhibit a sharp emergence but rather improves gradually as model
+capacity increases within the tested size range. These findings suggest that
+sequential enumeration is not an emergent ability in the strict sense, but instead
+scales smoothly with model size in this family.
+3 8 70
+Model Size (Billion)
+0.00
+0.05
+0.10
+0.15
+0.20
+0.25Accuracy
+0
+50
+100
+150
+200
+MAE
+Accuracy and MAE vs. Model Size
+Fig. 7.Comparison of model performance across different Llama model sizes. Accuracy
+is shown as a blue line plot (left y-axis), and Mean Absolute Error (MAE) is represented
+by red bars (right y-axis). As model size increases from 3B to 70B, accuracy generally
+improves while MAE decreases, indicating better overall performance with larger models.
+G.3 Friedman Test
+We conducted a comprehensive statistical analysis to compare the performance
+of four different counting conditions (explicit, spontaneous, mental, and forbid)
+
+
+===== PAGE 23 =====
+Sequential Enumeration in Large Language Models 23
+across five models using Normalized Absolute Error (NAE) as the primary
+metric. NAE is calculated as the absolute difference between the target count
+and the model’s predicted count, normalized by the target count: NAE = |target
+- predicted| / target. This metric provides a scale-invariant measure of counting
+accuracy, where values closer to 0 indicate better performance. We employed the
+non-parametric Friedman test since the data did not meet normality assumptions.
+Effect sizes were quantified using Kendall’s W for the overall test and rank-biserial
+correlation for pairwise comparisons. When significant differences were detected,
+post-hoc pairwise Mann-Whitney U tests with Bonferroni correction (α = 0.0083)
+were conducted to identify specific method differences.
+The statistical analysis revealed significant differences in counting performance
+across methods for all five models, though with varying effect sizes and patterns.
+Table 1 shows the NAE across different models and counting methods. GPT-5
+showed the best performance by being error-free in the explicit word production
+task.Theoveralleffectsizeissmall(W=0.02),andPost-hocpairwisecomparisons
+with a Bonferroni correction revealed that the source of this significance stemmed
+specifically from the ’explicit’ method. GPT-4.1 demonstrated the second-best
+overall performance with consistently low NAE values (ranging from 0.02 to 0.08)
+and showed a medium effect size (W = 0.14), with explicit counting significantly
+outperforming all other methods. Gemini 2.5 Pro exhibited similarly strong
+performance (NAE values 0.07-0.17) but with a smaller effect size (W = 0.05),
+showing that explicit counting was significantly better than spontaneous, mental,
+and forbid methods. In contrast, Llama 70B displayed the most pronounced
+method differences with a large effect size (W = 0.37) and substantially higher
+NAE values, where explicit counting (NAE = 0.21) significantly outperformed all
+other methods, with performance deteriorating progressively through spontaneous
+(0.69), mental (1.03), to forbid (1.32). Qwen 32B showed an interesting pattern
+where mental (0.90) and forbid (0.79) methods performed better than explicit
+(1.38) and spontaneous (1.71) methods, though the overall effect size remained
+small (W = 0.03).
+In summary, our findings demonstrate that the counting method significantly
+affects performance across all tested language models, with GPT-4.1 and Gemini
+2.5 Pro showing superior accuracy and consistent preference for explicit counting,
+while Llama 70B exhibited the strongest method sensitivity, and Qwen 32B
+uniquely benefited from implicit counting approaches.
+G.4 Heterogeneous Stimuli
+We also tested how models perform when the stimuli are heterogeneous (i.e.,a
+string of random words or letters). For the production task, only random letters
+are tested, as it is challenging to find a reliable way to automate the answer
+validation process. As shown in Fig. 8, similar trends can be observed as when
+the models were tested with homogeneous stimuli. Notably, GPT-5 delivered
+perfect responses in the explicit and spontaneous conditions. Qwen was flagged
+as having an insufficient number of valid trials.
+
+
+===== PAGE 24 =====
+24 Hou et al.
+T able 1.NAE summary statistics by model and counting method
+Model Explicit Spontaneous Mental F orbid
+GPT5 0.05±0.10 0.05±0.08 0.05±0.09 0.06±0.10
+GPT4.1 0.02±0.06 0.03±0.04 0.04±0.07 0.08±0.11
+Gemini2.5pro 0.07±0.66 0.08±0.53 0.09±0.58 0.17±0.90
+Llama70b 0.21±0.71 0.69±1.24 1.03±1.58 1.32±1.91
+Qwen32b 1.38±3.33 1.71±3.31 0.90±2.31 0.79±2.07
+G.5 Counting via coding
+To investigate whether LLMs’ coding ability could support perfect sequential
+enumeration, we select the SOTA coding LLM, GPT-5 as the testing model (see
+Aider LLM Leaderboards). As generating letters or words, either uniformly or
+non-uniformly, is too easy, we focus only on the non-uniform naming task. We
+gave 30 trials for GPT-5 to generate a code snippet that can count the number
+of letters or words in a given string. The prompt is:
+You need to write a code snippet to count how many letters or
+words in a given string. The input is a string and the output
+of the snippet should be an integer number. Try your best to
+consider all possible conditions and return the final Python
+code.
+After human inspection and testing the code snippets, our results revealed
+that only 11 trials (36%) are suitable for a string that could be either words or
+letters. Other code snippets require specification of whether the goal is to count
+words or letters. Among those valid trials, 10 trials returned perfect accuracy,
+and one code snippet achieved 50% of accuracy. We provide the generated code
+snippet in the drive folder.
+G.6 Analysis of Embeddings
+Figure 9 illustrates the evolution of the first five PCs over the course of generation
+steps across the four counting conditions. Notably, the mental and forbid counting
+conditions exhibit highly similar dynamics across all five PCs, suggesting shared
+underlying representational structures but differences in the precision of those
+representations. In contrast, the explicit counting condition reveals distinct spikes
+at multiples of five and decade numbers, indicating a more discretized and
+externally guided numerosity representation. Although the spontaneous counting
+condition is behaviorally similar to the mental and forbid conditions, its latent
+dynamics display a hybrid pattern. Specifically, for some target numerosities,
+spontaneous counting exhibits internal accumulator-like patterns similar to the
+mental and forbid conditions, while for others, it shows spike patterns aligned
+
+
+===== PAGE 25 =====
+Sequential Enumeration in Large Language Models 25
+GPT-5GPT4.1Gemini2.5Llama70BQwen32B
+0
+0.2
+0.4
+0.6
+0.8
+1.0Accuracy
+Explicit Counting
+GPT-5GPT4.1Gemini2.5Llama70BQwen32B
+Spontaneous Counting
+GPT-5GPT4.1Gemini2.5Llama70BQwen32B
+Mental Counting
+GPT-5GPT4.1Gemini2.5Llama70BQwen32B
+Forbid Counting
+140
+160
+180
+200
+220
+GPT-5GPT4.1Gemini2.5Llama70BQwen32B
+0
+20
+40
+60
+80
+MAE
+140
+160
+180
+200
+220
+GPT-5GPT4.1Gemini2.5Llama70BQwen32B
+0
+20
+40
+60
+80
+140
+160
+180
+200
+220
+GPT-5GPT4.1Gemini2.5Llama70BQwen32B
+0
+20
+40
+60
+80
+140
+160
+180
+200
+220
+GPT-5GPT4.1Gemini2.5Llama70BQwen32B
+0
+20
+40
+60
+80
+NamingLetter
+NamingWord
+ProductionLetter
+Fig. 8.Comparison of accuracy and mean absolute error (MAE) across different models
+and prompting conditions on heterogeneous stimuli. Bars represent accuracy or MAE for
+each model (x-axis) across the tasks. Error bars indicate the variability of the estimates:
+for accuracy, binomial standard errors are shown; for MAE, standard errors of the mean
+are shown. We flagged Qwen’s results as it has a large number of invalid trials.
+with those observed in the explicit condition. This suggests that spontaneous
+counting may engage a mixture of internal and externally anchored mechanisms
+in its representational trajectory.
+Correlation Analysis of Population EncodingTo quantify the relationship
+between individual neuron activations and sequence position, we computed
+Pearson correlation coefficients between each neuron’s activation trajectory and
+the corresponding step indices across all trials in Section 4.3. Among the 8192
+neurons, the top 500 with the strongest positive correlations exhibited a mean
+correlation coefficient of 0.523±0.003 (SEM), while the top 500 with the
+strongest negative correlations had a mean of –0.527±0.003 (SEM). In both
+cases,theaveragep-valueacrossneuronswas<.001,indicatingahighlysignificant
+association between neural activity and sequential position.
+
+
+===== PAGE 26 =====
+26 Hou et al.
+0 10 20 30 40 50 60 70 80 90100
+-100
+-75
+-50
+-25
+0
+25
+50
+75
+PC1
+Explicit Counting
+0 10 20 30 40 50 60 70 80 90100
+Spontaneous Counting
+0 10 20 30 40 50 60 70 80 90100
+Mental Counting
+0 10 20 30 40 50 60 70 80 90100
+Forbid Counting
+0 10 20 30 40 50 60 70 80 90100
+-100
+-75
+-50
+-25
+0
+25
+50
+75
+PC2
+0 10 20 30 40 50 60 70 80 90100 0 10 20 30 40 50 60 70 80 90100 0 10 20 30 40 50 60 70 80 90100
+0 10 20 30 40 50 60 70 80 90100
+-80
+-60
+-40
+-20
+0
+20
+40
+60
+PC3
+0 10 20 30 40 50 60 70 80 90100 0 10 20 30 40 50 60 70 80 90100 0 10 20 30 40 50 60 70 80 90100
+0 10 20 30 40 50 60 70 80 90100-80
+-60
+-40
+-20
+0
+20
+40
+60
+PC4
+0 10 20 30 40 50 60 70 80 90100 0 10 20 30 40 50 60 70 80 90100 0 10 20 30 40 50 60 70 80 90100
+0 10 20 30 40 50 60 70 80 90100
+Step
+-80
+-60
+-40
+-20
+0
+20
+40
+60
+PC5
+0 10 20 30 40 50 60 70 80 90100
+Step
+0 10 20 30 40 50 60 70 80 90100
+Step
+0 10 20 30 40 50 60 70 80 90100
+Step
+0
+20
+40
+60
+80
+100
+T arget Numerosity
+Fig. 9.Trajectories of the first five principal components computed over hidden states
+for all conditions. Each subplot shows the trajectories along the principal components
+as a function of generation step, with colors indicating the target numerosity.

@@ -1,0 +1,2650 @@
+
+
+===== PAGE 1 =====
+How Predictable Are Large Language Model Capabilities?
+A Case Study on BIG-bench
+Qinyuan Ye Harvey Yiyun Fu Xiang Ren Robin Jia
+University of Southern California, Los Angeles, CA, USA
+{qinyuany, harveyfu, xiangren, robinjia}@usc.edu
+Abstract
+We investigate the predictability of large lan-
+guage model (LLM) capabilities: given records
+of past experiments using different model fam-
+ilies, numbers of parameters, tasks, and num-
+bers of in-context examples, can we accurately
+predict LLM performance on new experiment
+configurations? Answering this question has
+practical implications for LLM users (e.g., de-
+ciding which models to try), developers ( e.g.,
+prioritizing evaluation on representative tasks),
+and the research community (e.g., identifying
+hard-to-predict capabilities that warrant further
+investigation).
+We study the performance prediction problem
+on experiment records from BIG-bench. On
+a random train-test split, an MLP-based pre-
+dictor achieves an R2 score greater than 95%,
+indicating the presence of learnable patterns
+within the experiment records. We then formu-
+late the problem of searching for “small-bench,”
+an informative subset of BIG-bench tasks from
+which the performance on the full set can be
+maximally recovered. We find a subset as infor-
+mative as BIG-bench Hard for evaluating new
+model families, while being 3× smaller. Addi-
+tionally, we find competitive subsets by cluster-
+ing task representations learned by our MLP-
+based predictor and selecting tasks close to clus-
+ter centroids, highlighting the importance of
+task diversity in constructing “small-bench.”1
+1 Introduction
+Large language models (LLMs) have revolution-
+ized natural language processing (NLP) research.
+Typically, when researchers introduce a new set of
+LLMs, they release them in various sizes and con-
+duct extensive evaluation on different tasks, while
+also considering different experiment configura-
+tions, such as prompting strategies and the number
+of in-context examples (Black et al., 2021; Zhang
+1Code can be found at https://github.com/INK-USC/
+predicting-big-bench.
+Model Family # param Task # shot
+Perf.
+?
+elementary_math
+code_line_desc
+strategy_qa
+3
+2
+0
+GPT-3
+3B
+0.48
+BIG-G 
+T=1
+8B
+0.19
+PaLM
+64B
+0.23
+GPT-3
+elementary_math
+6B
+1
+How 
+predictable
+ 
+are 
+LLM 
+capabilities?
+Train
+BIG-G 
+T=1
+PaLM
+GPT-3
+New 
+Model
+Test
+Task 
+87
+Task 
+6
+....................
+How 
+to 
+evaluate 
+new 
+models 
+within 
+budget 
+constraints
+?
+Task 214
+Task 
+32
+BIG-bench
+"small-bench"
+Task 
+127
+Figure 1: Overview. We study the problem of (1) pre-
+dicting LLM performance on new experiment configu-
+rations; (2) searching for a subset of tasks which is most
+informative for predicting performance on remaining
+tasks when evaluating a new model family.
+et al., 2022; Touvron et al., 2023). Given the com-
+binatorially large space of possible experimental
+configurations, running all possible experiments
+for a new set of LLMs is impractical. This begets
+a critical question: to what extent can we predict
+the capabilities of an LLM in a given experimental
+setting?
+Studying this problem helps address various
+practical issues. For LLM users, a performance
+prediction model could offer guidance for exper-
+iment design and decision-making by answering
+questions such as, “What model scale and how
+many shots are necessary to attain satisfactory per-
+formance for my task?” For LLM developers and
+the research community, a performance prediction
+model could lead to insights into LLM capabili-
+ties by identifying which capabilities are hard-to-
+predict and require further investigation, and which
+capabilities are highly correlated and may be depri-
+oritized during evaluation to save budget.
+arXiv:2305.14947v2  [cs.CL]  31 Oct 2023
+
+
+===== PAGE 2 =====
+We investigate the predictability of LLM capa-
+bilities on the BIG-bench (Srivastava et al., 2023)
+evaluation suite, as it includes a vast collection of
+experiment records. BIG-bench is a collaborative
+initiative aimed at “prob[ing] large language mod-
+els and extrapolat[ing] their future capabilities.” It
+has extensively evaluated various state-of-the-art
+LLMs on a diverse set of tasks contributed by the
+community. We gather and carefully filter these
+records, yielding a total of 56k+ records which we
+use as the “dataset” for our analysis.
+We first formulate the problem of performance
+prediction given experiment configurations such as
+model family, model scale, task, and the number
+of in-context examples used. We compare various
+matrix completion, tree-based, and neural network
+methods in a random train-test split scenario (§3).
+Further, we design and experiment with various
+data splits, representing different types of general-
+ization challenges, to simulate practical situations
+researchers may face (§4).
+We then consider the problem of searching for
+“small-bench,” a compact and informative subset of
+BIG-bench. This subset should allow for maximum
+recovery of performance on the complete BIG-
+bench, enabling efficient evaluation of new LLMs
+while maintaining evaluation generality. We formu-
+late this as a subset search problem (§5) and empir-
+ically compare various search methods, clustering-
+based subset construction methods, along with
+widely-adopted subsets such as BIG-bench Lite
+and BIG-bench Hard (Suzgun et al., 2023).
+Our key findings are summarized as follow:
+1. LLMs’ performance on BIG-bench follows pre-
+dictable patterns. In the default random train-test
+split scenario, our best predictor, an MLP model,
+achieves an RMSE lower than 0.05 (i.e., on av-
+erage mis-predict by < 0.05 when the range is
+[0, 1]) and an R2 greater than 95% (i.e., explains
+more than 95% variance in the target variable).
+2. The predictor’s performance is dependent on the
+assumptions of the train-test distribution. In a
+more challenging setting where we hold out the
+Cartesian product of complete model families
+(all model scales) and complete tasks (all num-
+bers of shots), the predictor’s performance de-
+creases (R2 : 95% → 86%).
+3. Performance of emergent tasks (Wei et al.,
+2022a) is not entirely unpredictable. In gen-
+eral, performance of emergent tasks is harder
+to predict than that of non-emergent tasks. In
+specific scenarios (e.g., when a related emergent
+task is present in the training set) our model can
+accurately predict emergent abilities.
+4. BIG-bench Lite and BIG-bench Hard (Suzgun
+et al., 2023), two subsets of BIG-bench com-
+monly used for evaluating new models, are sub-
+optimal if the goal is to recover the performance
+on remaining tasks. We are able to find a subset
+that is as informative as BIG-bench Hard while
+being 3× smaller by using randomized search.
+5. Task diversity and task value are critical factors
+in constructing “small-bench.” By clustering
+task representations learned by the MLP-based
+predictor and selecting tasks close to cluster cen-
+troids, we obtain competitive “small-bench” can-
+didates. This strategy is further improved by
+incorporating task value information.
+2 Related Work
+Scaling Laws and Emergent Abilities. Pre-
+training scale is critical to language model capa-
+bilities. Research on scaling laws (Kaplan et al.,
+2020; Rae et al., 2021; Hoffmann et al., 2022) aims
+to categorize the relationship between pre-training
+compute, corpus size, model size and the test log-
+likelihood loss. Our work can be loosely consid-
+ered as an extension to scaling laws, with three
+notable distinctions: (1) we focus on predicting
+downstream task performance; (2) we use model
+scale along with other experiment configuration in-
+formation; (3) we mainly experiment with machine
+learning methods instead of explicit power laws. In
+this same vein, recent work has studied the effect
+of scale in a “pre-train then fine-tune” paradigm
+(Tay et al., 2022) and has explored non-monotonic
+scaling laws for complex scaling behaviors (Ca-
+ballero et al., 2023). Another important observa-
+tion about scale is that very large language models
+exhibit emergent abilities (Wei et al., 2022a), which
+are described as “unpredictable.” In this work we
+empirically examine this claim and quantify the
+prediction errors under various assumptions.
+Benchmarking for LLMs. Along with the de-
+velopment and scaling of LLMs, there are contin-
+uing efforts to create benchmarks that assess the
+capabilities of these models. One general trend for
+these benchmarks is transitioning from single-task
+(Bowman et al., 2015; Rajpurkar et al., 2016), to
+multi-task (Wang et al., 2018, 2019), and finally
+to massively multi-task (Hendrycks et al., 2021;
+Srivastava et al., 2023). However, due to budget or
+
+
+===== PAGE 3 =====
+API constraints, models are typically evaluated on
+only a subset of the full range of available bench-
+marks. The selection is often made arbitrarily by
+the models’ developers, making it challenging to
+compare models in a fair and holistic way (see
+Liang et al. 2023, Fig. 4). In response to this issue,
+we study the “small-bench” problem and hope it
+offers insights on efficient benchmarking of LLMs.
+Performance Prediction. NLP ERF (Xia et al.,
+2020) is a pilot work on performance prediction
+in NLP, focusing on bilingual and cross-lingual
+tasks. It demonstrates the potential of selecting an
+informative subset of tasks for evaluation, which
+inspired our work on searching for “small-bench.”
+Ye et al. (2021) extend NLP ERF to account for
+fine-grained performance measures, confidence in-
+tervals and calibration. Zhu et al. (2022) study pre-
+dicting a model’s downstream performance (GLUE,
+Wang et al. 2018) using probing tasks performance
+(SentEval, Conneau and Kiela 2018), and advocate
+for incorporating probing during pre-training. Our
+work aims to add to the discussion by focusing on
+the performance prediction of LLMs. Given the
+ongoing advancements and substantial influence of
+LLMs in the field of NLP, we believe this topic is
+both timely and relevant, potentially holding impli-
+cations for future development of LLMs.
+3 Performance Prediction on BIG-bench
+3.1 Problem Definition
+In this section, we focus on the problem of learning
+from experiment records of large language models,
+and predict the performance of an unseen combina-
+tion of experiment settings.
+Notations. We use L to denote the model fami-
+lies in consideration (e.g., PaLM, GPT-3). We use
+T to denote the diverse collection of tasks in con-
+sideration (e.g., 2-digit subtraction, emoji_movie).
+Formally, an experiment record is defined by the
+following values:
+• Model family l ∈ L
+• Number of model parameters2 nparam ∈ N
+• Task being evaluated on t ∈ T
+• Number of in-context examples nshot ∈ N
+2Here we use nparam as the general representation of
+model scale. It is important to acknowledge a limitation:
+nparam does not provide a comprehensive description of
+model scale. Pre-training compute and corpus size should
+be included should such information be available.
+• Normalized performance3 y ∈ [0, 1]
+Our goal is to learn a regression model f that pre-
+dicts ˆy based on (l, nparam, t, nshot).
+Data Splits. We obtain a large set of experiment
+records D = {(l, nparam, t, nshot, y)} and split
+them into three non-overlapping subsets, Dtrain,
+Ddev, Dtest. By default, we use random splitting
+and adopt 10-fold cross validation.4 In subsequent
+sections of this paper, we also use other splitting
+strategies for controlled analysis (§3.4 and §4).
+Evaluation. We report root mean square error
+(RMSE) and coefficient of determination score
+(R2) on the test set Dtest. RMSE is defined asq
+1
+n
+Pn
+i=1(ˆy − y)2. R2 score characterizes the
+proportion of variance explained by the model, i.e.,
+R2 = Explained Variance
+Total Variance = 1 −
+Pn
+i=1(ˆy − y)2
+Pn
+i=1(¯y − y)2
+where ¯y = 1
+n
+nX
+i=1
+y
+In the main paper, we focus on RMSE and R2
+scores as they are widely accepted evaluation met-
+rics for regression problems. In Appendix C.1 we
+introduce two alternative metrics based on rank
+correlation and discuss our findings.
+3.2 Data
+We construct our dataset D from the BIG-bench
+repository.5 We design a series of filtering crite-
+ria (e.g., excluding tasks where all models have
+0 accuracy, excluding tasks with <100 examples),
+which are detailed in Appendix A. After filtering,
+our dataset has 56,143 experiment records. We list
+high-level statistics about this dataset in Table 1.
+We would like to highlight that this dataset cov-
+ers diverse tasks and models. According to Sri-
+vastava et al. (2023), tasks in BIG-bench cover
+“problems from linguistics, childhood development,
+math, common-sense reasoning, biology, physics,
+social bias, software development, and beyond.”
+We refer the readers to Fig. 3 and Table App. 3
+in Srivastava et al. (2023) for an overview. We
+also made our best effort to incorporate all avail-
+able model families in BIG-bench. The six model
+3For tasks metrics in a different range, e.g., [0, 100], we
+normalize the score to be in [0, 1] for consistency.
+4More specifically, we first splitD into 10 disjoint subsets,
+and then rotate on which ones are Ddev and Dtest.
+5https://github.com/google/BIG-bench/
+
+
+===== PAGE 4 =====
+# Experiment Records 56,143
+# Model Families 6
+BIG-G T=0, BIG-G T=1,
+BIG-G Sparse, PaLM
+GPT-3, Gopher
+# Models† 51
+# BIG-bench Tasks 134
+# BIG-bench Subtasks‡ 313
+{nshot} { 0,1,2,3,5}
+Table 1: Statistics of BIG-bench experiment records
+after filtering. †“Model” is defined by model family
+l and nparam, e.g., PaLM 535B. ‡The 313 subtasks
+fall into the 134 tasks. For simplicity we disregard the
+task-subtask hierarchy in this study. In the remaining of
+this paper, “tasks” refers to BIG-bench subtasks.
+families included are representative, and offer con-
+siderable diversity. We provide a brief summary of
+these model families (release date, company, model
+architecture choices, etc.) in Table 2.
+3.3 Compared Models
+Matrix Completion. Our problem is analogous
+to recommender systems or 2D matrix completion,
+if “models” (described by l and nparam) are con-
+sidered as “users,” and “n-shot tasks” (described
+by t and nshot) are considered as “items.” Each
+n-shot task (item i) is “rated” by each model (user
+u). With such adaptation, we consider the follow-
+ing matrix completion methods: (a) Model + Task
+Baseline: ˆy = µ+bu +bi, where µ is the global av-
+erage performance, bu represents the effect brought
+by user u, and bi represents the effect brought by
+item i. These parameters are learned by minimiz-
+ing mean square error on Dtrain. (b) Adapted
+SVD: ˆy = µ + bu + bi + q⊤
+u pi. Compared to (a),
+an additional vector qu is learned for each user u,
+and pi for each item i. The term q⊤
+u pi is expected
+to model the interaction between user u and item i.
+(c) Model-model kNN: First find the top k models
+most similar to u, then aggregate the performance
+of these k models on item i by using weighted
+averaging. (d) Task-task kNN: similar to model-
+model kNN, but finds similar tasks and aggregate
+performance on these tasks instead.
+Trees. We use two common tree-based methods
+that can directly learn to make predictions ˆy from
+the input (l, nparam, t, nshot): (e) Random Forest
+(Breiman, 2001) and (f) Gradient Boosted Trees
+(Friedman, 2001; Chen and Guestrin, 2016).
+0.6 0.7 0.8 0.9
+Test R2
+Model+T ask Baseline
+Adapted SVD
+Model-model kNN
+T ask-task kNN
+Random Forest
+Gradient Boosted Trees
+MLP
+0.7068
+0.8082
+0.8999
+0.9048
+0.9397
+0.9510
+0.9508
+Matrix Completion Trees Neural Networks
+Figure 2: Model Comparison for Performance Predic-
+tion using Default Data Split. Gradient boosted trees
+and MLP achieve strong performance (RMSE < 0.05
+and R2 > 0.95).
+Neural Networks. We train simple (g) multi-
+layer perceptron (MLP) models to predict ˆy from
+the input (l, nparam, t, nshot). Hyperparameters
+such as number of layers and hidden dimensions
+are determined based on Ddev performance.
+Featurization and Hyperparameters. Featur-
+ization for trees and MLPs are explained in Ap-
+pendix B. Hyperparameters and training details of
+these methods are discussed in Appendix D.1.
+3.4 Results and Analysis
+Trees and MLPs achieve strong performance.
+We experiment with the prediction models men-
+tioned above and present their performance in
+Fig. 2. (1) Tree-based methods and MLP outper-
+forms matrix completion methods by a large mar-
+gin. We hypothesize that the 2D user-item simplifi-
+cation may cause loss of information on the input
+space. For example, the value of nparam is merely
+used to distinguish different “users,” and does not
+contribute to the computation of ˆy directly. (2)
+Gradient boosted trees and MLP are the strongest
+among all compared models; both achieving RMSE
+< 0.05 (i.e., on average mis-predict by< 0.05) and
+R2 > 0.95 (i.e., more than 95% of variance in y
+is explained). This suggests that learnable patterns
+exist in LLM experiment records—LLM perfor-
+mance on unseen configurations can be predicted
+to a considerable extent in the current setting.
+Performance varies on different test groups
+(Fig. 3 ). To have a more fine-grained under-
+standing of the predictions, we group Dtest ex-
+amples according to the features such as nshot,
+nparam, and model family l, and then compute
+
+
+===== PAGE 5 =====
+R2 on each of these test groups.6 We use the MLP
+model predictions and present the results in Fig. 3
+using dark blue bars ( ). In terms of nshot, we
+find that it is harder to predict zero-shot perfor-
+mance than 2- or 3-shot performance. In terms of
+the model family l, we believe the three BIG-G
+models (T=0, T=1, sparse) are easier to predict be-
+cause their pre-training pipelines are similar. For
+nparam, we group all models into four buckets. For
+example, bucket 1 contains the smallest 25% mod-
+els. We observe a trend that performance of larger
+models are harder to predict.
+We also group Dtest according to whether the
+task t is an emergent task (see Appendix E in Wei
+et al. 2022a). Our predictor achieves an R2 score
+of 0.94 on the emergent group and 0.95 on the non-
+emergent group. This suggests in general emergent
+abilities are indeed harder to predict.
+Multi-group training is helpful (Fig. 3, / ↔ ).
+We further conduct a set of controlled experiments
+by only training on examples from the test group
+of interest ( e.g., examples with nshot = 0 ). We
+name them as single-group experiments ( / ), as
+opposed to multi-group experiments ( ) done in
+previous sections where the predictor is trained on
+all groups. Notably, in all settings, multi-group R2
+is always larger than single-group R2. There are
+limited observations of Gopher models in the train-
+ing set, and they benefit from multi-group learning
+significantly (R2 increases from 0.74 to 0.87). This
+reaffirms the claim that LLM performance exhibits
+shared patterns across various settings.
+Some groups benefit more from multi-group
+training, some are intrinsically harder to predict.
+(Fig. 3, ↔ / ↔ ) Our controlled experi-
+ments also allow us to distinguish between two fac-
+tors: the group is intrinsically harder to predict or
+the group benefits more from multi-group learning.
+In Fig. 3(a), results suggest that nshot = 0 group
+is not necessarily harder to predict than nshot = 2
+and nshot = 3 on its own (indicated by / bars),
+but the latter two benefit more from multi-group
+learning. Typically, when evaluating LLMs on a
+task, there is a huge performance boost when going
+from zero-shot to one-shot, and the performance
+improves more stably when more shots become
+available. It is easier to predict 3-shot performance
+when given 0,1,2-shot performance, than to predict
+6Note that the denominator in R2, total variance, will be
+different for each group.
+0.6 0.7 0.8 0.9 1.0
+3
+2
+1
+0
+(a) Group by nshot
+Trained on ...
+Single-group (1000 Examples)
+Single-group (All Examples)
+Multi-group (All Examples)
+0.6 0.7 0.8 0.9 1.0
+PaLM
+Gopher
+GPT-3
+BIG-G sparse
+BIG-G T=1
+BIG-G T=0
+(b) Group by Model Family l
+0.6 0.7 0.8 0.9 1.0
+Test R2 in Each Group
+Bucket 4
+Bucket 3
+Bucket 2
+Bucket 1
+(Largest)
+(Smallest)
+(c) Group by nparam (4 Buckets)
+Figure 3: R2 Score when Grouped with nshot, l, and
+nparam. Example: Multi-group nshot = 0 means
+training on the complete Dtrain (containing all nshot
+values) and evaluate onnshot = 0 examples in Dtest.
+Single-group (1000 Examples) nshot = 0 means using
+1000 nshot = 0 examples in Dtrain as the training data.
+0-shot performance when given 1,2,3-shot perfor-
+mance. This partly explains why the 0-shot group
+does not benefit much from multi-group training.
+In Fig. 3(b), BIG-G T=0 and BIG-G T=1 benefit
+from multi-group learning more than the GPT-3
+model family, resulting in higher R2 scores in the
+multi-group setting. In Fig. 3(c), we observe that
+larger models tend to be intrinsically more challeng-
+ing to predict. This observation is more significant
+when the single-group training set size is controlled
+to be 1000 (represented by bars), where we ob-
+serve a clear trend that groups consisting of larger
+models achieve lower R2 score.
+Identifying most/least “predictable” tasks. We
+further experiment with grouping test examples ac-
+
+
+===== PAGE 6 =====
+0.7 0.8 0.9 1.0
+ma:three_digit_subtraction_control
+qa_wikidata
+lm:sentence_negation_json
+ma:two_digit_multiplication_control
+ma:three_digit_addition_control
+0.9785
+0.9802
+0.9805
+0.9818
+0.9885
+5 Tasks with Highest R2
+400
+ 200
+ 0
+authorship_verification:swapped
+paragraph_segmentation
+gender_inclusive_sentences_german
+checkmate_in_one
+linguistics_puzzles
+-1.8346
+-5.9370
+-12.1233
+-38.2871
+-410.7146
+5 Tasks with Lowest R2
+Figure 4: 5 Most and Least “Predictable” Tasks
+Based on R2 Score. ma stands for “modi-
+fied_arithmetic”, lm stands for “linguistic_mapping”.
+Fig. 9 and 10 illustrate their scaling behaviors.
+cording to the task t they belong to, to identify the
+most and least predictable tasks. The five most
+predictable tasks (Fig. 4 Top) include qa_wikidata
+and linguistic_mappings, which were tasks marked
+as having high linearity7 in their scaling behavior
+(Srivastava et al. 2023, Sec 3.4). This observation
+is reasonable because high linearity typically im-
+plies predictability. However, modified_arithmetic,
+a task marked as having high breakthroughness
+(Srivastava et al., 2023) and emergence (Wei et al.,
+2022a), is considered highly predictable in our set-
+ting. Our hypothesis is that the predictor is able
+to infer this by learning from experiment records
+with similar configurations: If breakthroughness
+is observed with other models or other number of
+shots, the trained predictor is able to infer the trend
+for a new experiment configuration. We believe it
+is still challenging to predict breakthroughness/e-
+mergence in more restricted setting, e.g., based on
+task meta-data or input text alone.
+For the five tasks with lowestR2 scores (Fig. 4
+Bottom), we manually examined their scaling be-
+havior (Fig. 10) and indeed find these curves to be
+surprising. For future work, it will be interesting to
+investigate the underlying reasons, and to identify
+common characteristics shared among these tasks.
+4 Creating Challenging Train-Test Splits
+Previously, we randomly split D into Dtrain,
+Ddev, and Dtest, i.e., we randomly sampled
+7Linearity measures “the extent to which performance
+improves reliably with scale;” Breakthroughness measures
+“the extent to which a model is able to learn a task only once
+the model grows beyond a critical scale.” See Srivastava et al.
+(2023) Appendix B for the formal definition.
+0.6 0.7 0.8 0.9 1.0
+Test R2
+L3 Composition
+test × test
+L3
+(l, t)
+L2.2
+(l, t, nshot)
+L2.1
+(l, nparam, t)
+L1
+(l, nparam, t, nshot)
+Model + T ask Baseline
+T ask-task kNN
+Gradient Boosted Trees
+MLP
+Figure 5: Performance of Different Prediction Mod-
+els on Challenging Train-Test Splits. As the setting
+becomes more challenging (L1 → L2 → L3 → L3 Com-
+position), performance gradually drops and variance in-
+creases. MLP is least sensitive to these changes.
+(l, nparam, t, nshot) combinations. This is a rela-
+tively easy setting; for example, when the model
+family l, number of parameters nparam, and task t
+are kept the same, it may be easy for a model to pre-
+dict performance of nshot = 2 when the records of
+nshot = 1 and nshot = 3 appear in Dtrain. A more
+challenging data split would ensure that the com-
+binations of (l, nparam, t) in the test set are com-
+pletely unseen in Dtrain, and the model is required
+to predict for all possible nshot values. Taking it a
+step further, one may want make predictions on an
+unseen configuration of(l, t) for all possible values
+of nparam and nshot.
+4.1 Train-Test Split Settings
+To simulate these use cases, we design and com-
+pare model performance on three additional set-
+tings (L2.1, L2.2, L3).
+• L1: Random (l, nparam, t, nshot), used in §3
+• L2.1: Group by (l, nparam, t)
+• L2.2: Group by (l, t, nshot)
+• L3: Group by (l, t)
+For example, in L3, we first group all experiment
+records in D according to (l, t), then create Dtrain,
+Ddev, and Dtest by random splitting the groups.
+
+
+===== PAGE 7 =====
+Additionally, we make L3 setting even more
+challenging by holding out one entire subset of
+Ltest × Ttest. Specifically, we first select Ltest, a
+subset of model families ⊆ L , and Ttest, a sub-
+set of tasks ⊆ T . After this, Dtest is defined as
+{(l, nparam, t, nshot, y)|l ∈ L test, t ∈ T test}. This
+corresponds to a practical scenario where a new
+model family is developed, and researchers want
+to take a “sneak peek” at the full picture of its
+capabilities—evaluate on a subset of tasks (i.e.,
+Ttrain = T \Ttest), and predict the model’s perfor-
+mance on the remaining tasks (i.e., Ttest). We refer
+to this as the “L3 Composition” setting.8
+4.2 Results and Analysis
+Main Results. Results on four representative
+models in these settings are visualized in Fig. 5.
+We observe that as the settings becomes more chal-
+lenging (L1 → L2 → L3 → L3 Composition), per-
+formance gradually decreases and the standard de-
+viation increases. Another important observation
+is that though MLP and gradient boosted trees are
+comparable in the L1 setting, MLPs are less sen-
+sitive to the increased difficulty (performance de-
+crease is smaller and standard deviation is smaller).
+Sample Prediction Results in L3. In Fig. 7 we
+visualize predictions on four sample (l, t) combi-
+nations by the MLP model—two achieving high
+R2 scores and two achieving low R2 scores. We
+have two high-level observations: (1) Predictions
+are more accurate on (l, t) combinations which has
+observations on similar tasks t′ or similar models
+families l′ in Dtrain. (2) Over-estimation is a com-
+mon type of mistake made by our trained prediction
+models. We observe several cases of “false posi-
+tives” of emergent abilities. Due to space limit, we
+defer more discussion in §C.2.
+5 Searching for “small-bench”
+There has been a recent emphasis on assessing
+the generality of large language models, which in-
+volves evaluating these models on numerous tasks
+and scenarios. However, it will be extremely ex-
+pensive to conduct all these experiments every time
+a new model is developed in the future. Extend-
+ing from the holding out Ltest × T test setting in
+§4.1, in this section, we formulate and study the
+problem of searching for “small-bench:” Can we
+find a subset of BIG-bench tasks, such that when
+8In §D.2, we describe our efforts to ensure that the perfor-
+mance is as comparable as possible across settings.
+a new model family is evaluated on it, the per-
+formance of the remaining tasks can be maximally
+recovered? In the following we give a formal defini-
+tion of this problem (§5.1), construct “small-bench”
+candidates using different search algorithms and
+strategies (§5.2), and present our findings (§5.3).
+5.1 Problem Definition
+Our goal is to find Ttrain, a subset of all tasks T ,
+that are selected and used for evaluating new model
+families Ltest. We use b to represent the evaluation
+budget, i.e., |Ttrain| = b. We use Ttest = T \Ttrain
+to denote the tasks whose performance we wish to
+recover. The problem of finding the optimal T (b)∗
+train
+can be formulated as the following:
+arg max
+Ttrain
+R2(Ttest × Ltest)
+s.t. Ttrain ⊆ T , |Ttrain| = b
+R2(Ttest×Ltest) represents the R2 score on Ttest×
+Ltest when a predictor is trained on the remaining
+experiment records, as previously done in §4.
+Evaluation. Ideally the optimal Ttrain should al-
+low us to predict the performance ofany new model
+family, without overfitting to a specific held-out
+model family. To evaluate this, we adopt nested
+cross-validation on L during evaluation of a se-
+lected Ttrain. Specifically, given that |L| = 6, we
+create 6 × 5 = 30 different ways to hold out one
+model family as Ldev and one model family as
+Ltest. We then train 30 prediction models and re-
+port the average of 30 R2(Ttest × Ltest) scores.
+5.2 Compared Methods
+We consider different evaluation budget b ∈
+{4, 8, 16, 24, 32, 42}. We compare the following
+methods for selecting Ttrain.
+Baselines. (a) BIG-bench Lite (Srivastava et al.,
+2023): A subset of BIG-bench for cheaper evalu-
+ation, proposed in the original BIG-bench paper.
+|Ttrain| = 42 for BIG-bench Lite.9 (b) BIG-bench
+Hard (Suzgun et al., 2023): A subset of BIG-
+bench containing challenging tasks that cannot be
+solved with direct in-context learning but can be
+improved with chain-of-thought prompting (Wei
+et al., 2022b). |Ttrain| = 24 for BIG-bench Hard.
+(c) Random: For each b, randomly sample 5 Ttrain
+9Tasks in BIG-bench Lite/Hard are listed in Appendix G.
+To the best of our knowledge, the selection process for BIG-
+bench Lite is not disclosed.
+
+
+===== PAGE 8 =====
+such that |Ttrain| = b. We report the mean and
+standard deviation of these 5 runs.
+Search Algorithms. (d) Greedy Search : Based
+on the search result T (b−1)
+train at budget b −1, enumer-
+ate all tasks not present in T (b−1)
+train , and select the
+one task that achieves the highest R2(T (b)
+test × Ltest)
+to form the T (b)
+train at budget b. (e) Best of 5000 :
+For each b, randomly select 5000 Ttrain and select
+the one achieving the highest R2(Ldev × Ttest).
+Note that these search algorithms optimize
+R2(Ttest × L dev) during search, to ensure that
+Ttest × Ltest is held-out for evaluation. Addition-
+ally, to make the search computationally tractable,
+we only use 1 fixed fold from the 30 folds during
+search. We discuss the impact of these experimen-
+tal decisions in Appendix C.5.
+Clustering-based. We hypothesize that a good
+“small-bench” should be diverse (covering the task
+space comprehensively while avoiding redundancy
+by excluding similar tasks) and representative
+(each selected task providing informative insights
+for recovering the performance of other tasks). To
+validate this, we use the following methods to con-
+struct Ttrain. (f) k-means: We extract the task
+representations10 learned by our MLP models in
+§3. We apply k-means clustering to these represen-
+tations, group them into b clusters, and then select
+the task closest to the centroid of the each cluster.
+(g) k-means + Task Value:We first calculate the
+task value for each task in T by aggregating their
+contributions from the Best of 5000 search history.
+For example, if a task is present in 20 trials out of
+the 5000, its task value will be the average of the
+R2 scores from those 20 trials. We then incorporate
+this information into k-means clustering, by select-
+ing the task closest to the centroid among tasks that
+are top 25% valuable globally.
+5.3 Results and Discussion
+We visualize the results of all compared methods
+in Fig. 6. We have the following key observations.
+BIG-bench Hard and Lite are sub-optimal for
+recovering performance on remaining tasks. A
+8-task subset found by Best of 5000 and randomly-
+sampled 16-task subsets can match the 24-task BIG-
+bench Hard for this goal. We further examine the re-
+10The task t is represented as an one-hot feature in the input
+space. Thus, for each task, there is a vector corresponding to
+each task in the first layer of the MLP. We refer to these as
+“task representations.”
+4 8 16 24 32 42
+Size of train
+0.60
+0.65
+0.70
+0.75
+0.80
+0.8530-Fold R2( test × test)
+BB-Lite
+BB-Hard
+Baselines
+Random
+Search Algorithms
+Greedy Search
+Best of 5000
+Clustering-based
+K-means
+K-means + T ask Value
+Figure 6: “Small-bench” Search Results. X-axis: size
+of “small-bench” (Ttrain), i.e., number of tasks selected
+for evaluating a new model family. Y-axis: R2 score
+on recovering performance of remaining tasks. The
+complete BIG-bench will be at (313, 1.0) in this fig-
+ure. Takeaways: (1) BIG-bench Lite and Hard are
+sub-optimal for recovering performance on remaining
+tasks; (2) Task diversity and task value are important for
+constructing effective “small-bench” candidates.
+sults and find several cases where BIG-bench Hard
+fails to represent the complete BIG-bench. For ex-
+ample, according to full BIG-bench performance
+recovered from BIG-bench Hard, BIG-G T=1 2B
+is better than GPT-3 Large; however, according to
+the ground-truth BIG-bench performance, GPT-3
+Large is better than BIG-G T=1 2B, which is cap-
+tured more accurately when a 24-task small-bench
+candidate is used. See Table 3 for the details.
+It is important to note that BIG-bench Hard was
+not specifically designed for our goal, and thus
+is not expected to be competitive in our problem.
+Yet it is surprising that it underperforms randomly-
+sampled subsets. As a general recommendation for
+evaluating newly-developed models, we suggest
+using the Ttrain subsets found by solving the op-
+timization problem in §5.1. If there is a specific
+evaluation goal in mind (e.g., focus on frontier, as
+in the case of BIG-bench Hard), Ttrain should still
+be manually selected.
+Greedy search is unstable and finds sub-optimal
+solutions. Search algorithms consistently out-
+performs randomly sampled Ttrain sets; however,
+greedy search appears to be unstable, with occa-
+sional performance drops as the budget increases.
+Furthermore, at b = 42, it underperforms the Best
+of 5000 approach. We include additional results
+on other search algorithms, including beam search
+
+
+===== PAGE 9 =====
+and simulated annealing, in §C.4, where we ob-
+serve similar instablitiy. One possible explanation
+is the complexity of the search space, where the
+greedy search algorithm cannot guarantee finding
+the optimal solution. The gaps between the search
+objective (Ldev × Ttest in one fold) and the evalua-
+tion objective (Ltest × Ttest in 30 folds) could also
+contribute to this issue (§C.5).
+Task diversity and task value are important fac-
+tors for constructing “small-bench.” Firstly, k-
+means is comparable to or surpasses Best of 5000,
+despite that it is not explicitly optimized for the R2
+objective. This supports the notion that diversity is
+an important factor in constructing “small-bench.”
+This finding also suggests that the MLP models
+for performance prediction produce meaningful
+task representations as a side product. Secondly,
+k-means + Task Value is comparable to or out-
+performs k-means, confirming that task value is
+another important factor for constructing “small-
+bench,” complementing the diversity aspect.
+6 Conclusion and Future Work
+In this work, we began with the question, “How
+predictable are large language model capabilities?”
+and conducted a detailed case study on BIG-bench.
+We first formulated the machine learning prob-
+lem of predicting performance given configurations
+such as model family, the number of parameters,
+task, and the number of in-context learning exam-
+ples. Our strongest prediction model achieves an
+R2 score greater than 95%, which suggests past
+LLM experiment observations can be used to pre-
+dict the performance of new experiment configura-
+tions. To address the problem of increasing evalua-
+tion cost on massively multi-task benchmarks, we
+introduced the problem of searching for an infor-
+mative “small-bench.” Results suggest that popular
+subsets such as BIG-bench Lite and BIG-bench
+Hard are not optimal for this purpose. Instead, sub-
+sets characterized by diversity and high task values
+offer competitive “small-bench” candidates, high-
+lighting the importance of these two factors.
+In closing, while our study primarily focused on
+the predictability of LLM capabilities, we hope to
+initiate discussions on the following broader topics.
+Rethinking LLM Evaluation. Currently, there
+is a lack of consensus regarding evaluation prac-
+tices for newly developed LLMs. Often times new
+LLMs are evaluated on different set of selected
+tasks, making it hard to compare different models
+and quantify the progress in LLM development.
+Moreover, task selection is often heuristic, follow-
+ing past practices, or chosen arbitrarily without
+principled justifications. We anticipate more active
+discussion on establishing evaluation practices that
+assess LLM capabilities efficiently, reliably and
+rigorously, and we hope our work provides use-
+ful insights towards this. Related to our efforts on
+searching for “small-bench,” Perlitz et al. (2023)
+investigate the impact of benchmarking options on
+the trade-off between computational efficiency and
+reliability, and develop Flash-HELM, an efficient
+alternative to HELM (Liang et al., 2023). Vivek
+et al. (2023) propose Anchor Point Selection to
+select representative examples in the test set and
+reduce evaluation cost at the instance-level.
+Broadening observations on LLM capability
+landscape. Complementary to BIG-bench, sev-
+eral ongoing initiatives, such as HELM (Liang
+et al., 2023), Open LLM Leaderboard 11, and
+Eleuther AI LM Harness 12 are dedicated to sys-
+tematically evaluating existing LLMs. Integrating
+insights from these great initiatives into future work
+has the potential to enhance the accuracy of LLM
+performance prediction and deepen our understand-
+ing of LLM capabilities. Additionally, it would be
+intriguing to take into account recent advances such
+as chain-of-thought prompting (Wei et al., 2022b)
+and instruction tuning (Sanh et al., 2022; Ouyang
+et al., 2022), and systematically measure their ef-
+fects on LLM capabilities.
+Limitations
+Limited to BIG-bench results. We choose BIG-
+bench for our study due to its extensive collection
+of experiment records. Though it offers consider-
+able diversity in terms of tasks and models, several
+limitations exist. (1) Tasks: It’s important to note
+that BIG-bench tasks are sourced from the research
+community and may not accurately reflect the ac-
+tual distribution of tasks encountered by LLMs in
+real-world scenarios. Therefore, our study has lim-
+itations in terms of generalizing our conclusions
+to the real-world task distribution. (2) Models:
+Though we have made every effort to incorporate
+as many model families as possible, there are only
+11https://huggingface.co/spaces/HuggingFaceH4/
+open_llm_leaderboard
+12https://github.com/EleutherAI/
+lm-evaluation-harness
+
+
+===== PAGE 10 =====
+6 model families in our experiment record dataset
+derived from BIG-bench. Such scarcity introduces
+instability and increases the difficulty in investigat-
+ing the “small-bench” problem.
+Limited to publicly-available LLM meta-data.
+LLMs capabilities are dependent on many factors,
+beyond the model family l and number of param-
+eters nparam used in this study. Factors such as
+pre-training stability, convergence, pre-train corpus
+composition, etc., all play important roles. How-
+ever, we often don’t have access to this information.
+In this work, we assume that the input features
+(l, nparam) can capture such information during
+training implicitly. In the future, we believe our
+method can be expanded to include additional pre-
+training meta-data when they become available.
+Limited to interpolation settings. Our experi-
+ments mainly concentrate on interpolation settings,
+where the combinations of (l, nparam, t, nshot) are
+new in the test set, but each of the input element
+is seen at least once in the training set. As LLMs
+continue to grow in size, a very important aspect
+is predicting performance of larger models in an
+extrapolation setting. We present some preliminary
+findings in this setting in §C.3.
+Limitations in evaluation metrics. We use
+RMSE and R2 as they are widely-used metrics for
+regression tasks. However, both metrics have their
+limitations for our problem, especially in the con-
+text of conducting group-wise comparison (§3.4).
+RMSE does not account for the variance in the tar-
+get variable. A low RMSE value for a task may
+be solely due to the fact that the task performance
+is relatively insensitve to different experiment set-
+tings. On the other hand, while R2 score accounts
+for variance, it creates discrepancies when conduct-
+ing group-wise comparison since the denominator
+used to compute R2 differs for each group. To get
+a more comprehensive picture of our prediction
+model, we introduce task-average Pearson Correla-
+tion and Kendall Rank Correlation for evaluation
+and discuss our findings in Appendix C.1.
+Acknowledgements
+We thank anonymous reviewers and members of
+USC NLP for their valuable feedback. QY and XR
+were supported in part by the Office of the Director
+of National Intelligence (ODNI), Intelligence Ad-
+vanced Research Projects Activity (IARPA), via the
+HIATUS Program contract #2022-22072200006,
+the DARPA MCS program under Contract No.
+N660011924033, the Defense Advanced Research
+Projects Agency with award W911NF-19-20271,
+NSF IIS 2048211, and gift awards from Google
+and Amazon. HF was supported by a USC Provost
+Fellowship Award. RJ was supported by an Open
+Philanthropy research grant and a Cisco Research
+Award.
+References
+Sid Black, Leo Gao, Phil Wang, Connor Leahy,
+and Stella Biderman. 2021. GPT-Neo: Large
+Scale Autoregressive Language Modeling with Mesh-
+Tensorflow. In GPT-Neo.
+Samuel R. Bowman, Gabor Angeli, Christopher Potts,
+and Christopher D. Manning. 2015. A large anno-
+tated corpus for learning natural language inference.
+In Proceedings of the 2015 Conference on Empiri-
+cal Methods in Natural Language Processing , pages
+632–642, Lisbon, Portugal. Association for Compu-
+tational Linguistics.
+Leo Breiman. 2001. Random forests. Machine learning,
+45:5–32.
+Tom Brown, Benjamin Mann, Nick Ryder, Melanie
+Subbiah, Jared D Kaplan, Prafulla Dhariwal, Arvind
+Neelakantan, Pranav Shyam, Girish Sastry, Amanda
+Askell, Sandhini Agarwal, Ariel Herbert-V oss,
+Gretchen Krueger, Tom Henighan, Rewon Child,
+Aditya Ramesh, Daniel Ziegler, Jeffrey Wu, Clemens
+Winter, Chris Hesse, Mark Chen, Eric Sigler, Ma-
+teusz Litwin, Scott Gray, Benjamin Chess, Jack
+Clark, Christopher Berner, Sam McCandlish, Alec
+Radford, Ilya Sutskever, and Dario Amodei. 2020.
+Language models are few-shot learners. In Ad-
+vances in Neural Information Processing Systems ,
+volume 33, pages 1877–1901. Curran Associates,
+Inc.
+Ethan Caballero, Kshitij Gupta, Irina Rish, and David
+Krueger. 2023. Broken neural scaling laws. In The
+Eleventh International Conference on Learning Rep-
+resentations.
+Vladimír ˇCern`y. 1985. Thermodynamical approach to
+the traveling salesman problem: An efficient simula-
+tion algorithm. Journal of optimization theory and
+applications, 45:41–51.
+Tianqi Chen and Carlos Guestrin. 2016. Xgboost: A
+scalable tree boosting system. In Proceedings of the
+22nd ACM SIGKDD International Conference on
+Knowledge Discovery and Data Mining , KDD ’16,
+page 785–794, New York, NY , USA. Association for
+Computing Machinery.
+Aakanksha Chowdhery, Sharan Narang, Jacob Devlin,
+Maarten Bosma, Gaurav Mishra, Adam Roberts,
+Paul Barham, Hyung Won Chung, Charles Sutton,
+
+
+===== PAGE 11 =====
+Sebastian Gehrmann, et al. 2022. Palm: Scaling
+language modeling with pathways. arXiv preprint
+arXiv:2204.02311.
+Alexis Conneau and Douwe Kiela. 2018. SentEval: An
+evaluation toolkit for universal sentence representa-
+tions. In Proceedings of the Eleventh International
+Conference on Language Resources and Evaluation
+(LREC 2018), Miyazaki, Japan. European Language
+Resources Association (ELRA).
+Jerome H Friedman. 2001. Greedy function approx-
+imation: a gradient boosting machine. Annals of
+statistics, pages 1189–1232.
+Deep Ganguli, Danny Hernandez, Liane Lovitt,
+Amanda Askell, Yuntao Bai, Anna Chen, Tom Con-
+erly, Nova Dassarma, Dawn Drain, Nelson Elhage,
+Sheer El Showk, Stanislav Fort, Zac Hatfield-Dodds,
+Tom Henighan, Scott Johnston, Andy Jones, Nicholas
+Joseph, Jackson Kernian, Shauna Kravec, Ben Mann,
+Neel Nanda, Kamal Ndousse, Catherine Olsson,
+Daniela Amodei, Tom Brown, Jared Kaplan, Sam
+McCandlish, Christopher Olah, Dario Amodei, and
+Jack Clark. 2022. Predictability and surprise in large
+generative models. In 2022 ACM Conference on Fair-
+ness, Accountability, and Transparency, FAccT ’22,
+page 1747–1764, New York, NY , USA. Association
+for Computing Machinery.
+Dan Hendrycks, Collin Burns, Steven Basart, Andy Zou,
+Mantas Mazeika, Dawn Song, and Jacob Steinhardt.
+2021. Measuring massive multitask language under-
+standing. In International Conference on Learning
+Representations.
+Jordan Hoffmann, Sebastian Borgeaud, Arthur Men-
+sch, Elena Buchatskaya, Trevor Cai, Eliza Ruther-
+ford, Diego de Las Casas, Lisa Anne Hendricks,
+Johannes Welbl, Aidan Clark, et al. 2022. Train-
+ing compute-optimal large language models. arXiv
+preprint arXiv:2203.15556.
+Jared Kaplan, Sam McCandlish, Tom Henighan, Tom B
+Brown, Benjamin Chess, Rewon Child, Scott Gray,
+Alec Radford, Jeffrey Wu, and Dario Amodei. 2020.
+Scaling laws for neural language models. arXiv
+preprint arXiv:2001.08361.
+Percy Liang, Rishi Bommasani, Tony Lee, Dimitris
+Tsipras, Dilara Soylu, Michihiro Yasunaga, Yian
+Zhang, Deepak Narayanan, Yuhuai Wu, Ananya Ku-
+mar, Benjamin Newman, Binhang Yuan, Bobby Yan,
+Ce Zhang, Christian Alexander Cosgrove, Christo-
+pher D Manning, Christopher Re, Diana Acosta-
+Navas, Drew Arad Hudson, Eric Zelikman, Esin
+Durmus, Faisal Ladhak, Frieda Rong, Hongyu Ren,
+Huaxiu Yao, Jue W ANG, Keshav Santhanam, Laurel
+Orr, Lucia Zheng, Mert Yuksekgonul, Mirac Suzgun,
+Nathan Kim, Neel Guha, Niladri S. Chatterji, Omar
+Khattab, Peter Henderson, Qian Huang, Ryan An-
+drew Chi, Sang Michael Xie, Shibani Santurkar,
+Surya Ganguli, Tatsunori Hashimoto, Thomas Icard,
+Tianyi Zhang, Vishrav Chaudhary, William Wang,
+Xuechen Li, Yifan Mai, Yuhui Zhang, and Yuta Ko-
+reeda. 2023. Holistic evaluation of language models.
+Transactions on Machine Learning Research . Fea-
+tured Certification, Expert Certification.
+Nelson F. Liu, Tony Lee, Robin Jia, and Percy Liang.
+2023. Do question answering modeling improve-
+ments hold across benchmarks? In Proceedings
+of the 61st Annual Meeting of the Association for
+Computational Linguistics (V olume 1: Long Papers),
+pages 13186–13218, Toronto, Canada. Association
+for Computational Linguistics.
+Long Ouyang, Jeffrey Wu, Xu Jiang, Diogo Almeida,
+Carroll Wainwright, Pamela Mishkin, Chong Zhang,
+Sandhini Agarwal, Katarina Slama, Alex Ray, John
+Schulman, Jacob Hilton, Fraser Kelton, Luke Miller,
+Maddie Simens, Amanda Askell, Peter Welinder,
+Paul F Christiano, Jan Leike, and Ryan Lowe. 2022.
+Training language models to follow instructions with
+human feedback. In Advances in Neural Information
+Processing Systems, volume 35, pages 27730–27744.
+Curran Associates, Inc.
+Yotam Perlitz, Elron Bandel, Ariel Gera, Ofir Arviv,
+Liat Ein-Dor, Eyal Shnarch, Noam Slonim, Michal
+Shmueli-Scheuer, and Leshem Choshen. 2023. Ef-
+ficient benchmarking (of language models). arXiv
+preprint arXiv:2308.11696.
+Jack W Rae, Sebastian Borgeaud, Trevor Cai, Katie
+Millican, Jordan Hoffmann, Francis Song, John
+Aslanides, Sarah Henderson, Roman Ring, Susan-
+nah Young, et al. 2021. Scaling language models:
+Methods, analysis & insights from training gopher.
+arXiv preprint arXiv:2112.11446.
+Pranav Rajpurkar, Jian Zhang, Konstantin Lopyrev, and
+Percy Liang. 2016. SQuAD: 100,000+ questions for
+machine comprehension of text. In Proceedings of
+the 2016 Conference on Empirical Methods in Natu-
+ral Language Processing, pages 2383–2392, Austin,
+Texas. Association for Computational Linguistics.
+Victor Sanh, Albert Webson, Colin Raffel, Stephen
+Bach, Lintang Sutawika, Zaid Alyafeai, Antoine
+Chaffin, Arnaud Stiegler, Arun Raja, Manan Dey,
+M Saiful Bari, Canwen Xu, Urmish Thakker,
+Shanya Sharma Sharma, Eliza Szczechla, Taewoon
+Kim, Gunjan Chhablani, Nihal Nayak, Debajyoti
+Datta, Jonathan Chang, Mike Tian-Jian Jiang, Han
+Wang, Matteo Manica, Sheng Shen, Zheng Xin Yong,
+Harshit Pandey, Rachel Bawden, Thomas Wang, Tr-
+ishala Neeraj, Jos Rozen, Abheesht Sharma, An-
+drea Santilli, Thibault Fevry, Jason Alan Fries, Ryan
+Teehan, Teven Le Scao, Stella Biderman, Leo Gao,
+Thomas Wolf, and Alexander M Rush. 2022. Multi-
+task prompted training enables zero-shot task gener-
+alization. In International Conference on Learning
+Representations.
+Aarohi Srivastava, Abhinav Rastogi, Abhishek Rao,
+Abu Awal Md Shoeb, Abubakar Abid, Adam Fisch,
+Adam R. Brown, Adam Santoro, Aditya Gupta,
+Adrià Garriga-Alonso, Agnieszka Kluska, Aitor
+
+
+===== PAGE 12 =====
+Lewkowycz, Akshat Agarwal, Alethea Power, Alex
+Ray, Alex Warstadt, Alexander W. Kocurek, Ali
+Safaya, Ali Tazarv, Alice Xiang, Alicia Parrish,
+Allen Nie, Aman Hussain, Amanda Askell, Amanda
+Dsouza, Ambrose Slone, Ameet Rahane, Anan-
+tharaman S. Iyer, Anders Johan Andreassen, An-
+drea Madotto, Andrea Santilli, Andreas Stuhlmüller,
+Andrew M. Dai, Andrew La, Andrew Lampinen,
+Andy Zou, Angela Jiang, Angelica Chen, Anh
+Vuong, Animesh Gupta, Anna Gottardi, Antonio
+Norelli, Anu Venkatesh, Arash Gholamidavoodi,
+Arfa Tabassum, Arul Menezes, Arun Kirubara-
+jan, Asher Mullokandov, Ashish Sabharwal, Austin
+Herrick, Avia Efrat, Aykut Erdem, Ayla Karaka¸ s,
+B. Ryan Roberts, Bao Sheng Loe, Barret Zoph,
+Bartłomiej Bojanowski, Batuhan Özyurt, Behnam
+Hedayatnia, Behnam Neyshabur, Benjamin Inden,
+Benno Stein, Berk Ekmekci, Bill Yuchen Lin, Blake
+Howald, Bryan Orinion, Cameron Diao, Cameron
+Dour, Catherine Stinson, Cedrick Argueta, Cesar
+Ferri, Chandan Singh, Charles Rathkopf, Chenlin
+Meng, Chitta Baral, Chiyu Wu, Chris Callison-
+Burch, Christopher Waites, Christian V oigt, Christo-
+pher D Manning, Christopher Potts, Cindy Ramirez,
+Clara E. Rivera, Clemencia Siro, Colin Raffel, Court-
+ney Ashcraft, Cristina Garbacea, Damien Sileo,
+Dan Garrette, Dan Hendrycks, Dan Kilman, Dan
+Roth, C. Daniel Freeman, Daniel Khashabi, Daniel
+Levy, Daniel Moseguí González, Danielle Perszyk,
+Danny Hernandez, Danqi Chen, Daphne Ippolito,
+Dar Gilboa, David Dohan, David Drakard, David Ju-
+rgens, Debajyoti Datta, Deep Ganguli, Denis Emelin,
+Denis Kleyko, Deniz Yuret, Derek Chen, Derek
+Tam, Dieuwke Hupkes, Diganta Misra, Dilyar Buzan,
+Dimitri Coelho Mollo, Diyi Yang, Dong-Ho Lee,
+Dylan Schrader, Ekaterina Shutova, Ekin Dogus
+Cubuk, Elad Segal, Eleanor Hagerman, Elizabeth
+Barnes, Elizabeth Donoway, Ellie Pavlick, Emanuele
+Rodolà, Emma Lam, Eric Chu, Eric Tang, Erkut
+Erdem, Ernie Chang, Ethan A Chi, Ethan Dyer,
+Ethan Jerzak, Ethan Kim, Eunice Engefu Manyasi,
+Evgenii Zheltonozhskii, Fanyue Xia, Fatemeh Siar,
+Fernando Martínez-Plumed, Francesca Happé, Fran-
+cois Chollet, Frieda Rong, Gaurav Mishra, Genta In-
+dra Winata, Gerard de Melo, Germán Kruszewski,
+Giambattista Parascandolo, Giorgio Mariani, Glo-
+ria Xinyue Wang, Gonzalo Jaimovitch-Lopez, Gregor
+Betz, Guy Gur-Ari, Hana Galijasevic, Hannah Kim,
+Hannah Rashkin, Hannaneh Hajishirzi, Harsh Mehta,
+Hayden Bogar, Henry Francis Anthony Shevlin, Hin-
+rich Schuetze, Hiromu Yakura, Hongming Zhang,
+Hugh Mee Wong, Ian Ng, Isaac Noble, Jaap Jumelet,
+Jack Geissinger, Jackson Kernion, Jacob Hilton, Jae-
+hoon Lee, Jaime Fernández Fisac, James B Simon,
+James Koppel, James Zheng, James Zou, Jan Kocon,
+Jana Thompson, Janelle Wingfield, Jared Kaplan,
+Jarema Radom, Jascha Sohl-Dickstein, Jason Phang,
+Jason Wei, Jason Yosinski, Jekaterina Novikova, Jelle
+Bosscher, Jennifer Marsh, Jeremy Kim, Jeroen Taal,
+Jesse Engel, Jesujoba Alabi, Jiacheng Xu, Jiaming
+Song, Jillian Tang, Joan Waweru, John Burden, John
+Miller, John U. Balis, Jonathan Batchelder, Jonathan
+Berant, Jörg Frohberg, Jos Rozen, Jose Hernandez-
+Orallo, Joseph Boudeman, Joseph Guerr, Joseph
+Jones, Joshua B. Tenenbaum, Joshua S. Rule, Joyce
+Chua, Kamil Kanclerz, Karen Livescu, Karl Krauth,
+Karthik Gopalakrishnan, Katerina Ignatyeva, Katja
+Markert, Kaustubh Dhole, Kevin Gimpel, Kevin
+Omondi, Kory Wallace Mathewson, Kristen Chia-
+fullo, Ksenia Shkaruta, Kumar Shridhar, Kyle Mc-
+Donell, Kyle Richardson, Laria Reynolds, Leo Gao,
+Li Zhang, Liam Dugan, Lianhui Qin, Lidia Contreras-
+Ochando, Louis-Philippe Morency, Luca Moschella,
+Lucas Lam, Lucy Noble, Ludwig Schmidt, Luheng
+He, Luis Oliveros-Colón, Luke Metz, Lütfi Kerem
+Senel, Maarten Bosma, Maarten Sap, Maartje Ter
+Hoeve, Maheen Farooqi, Manaal Faruqui, Mantas
+Mazeika, Marco Baturan, Marco Marelli, Marco
+Maru, Maria Jose Ramirez-Quintana, Marie Tolkiehn,
+Mario Giulianelli, Martha Lewis, Martin Potthast,
+Matthew L Leavitt, Matthias Hagen, Mátyás Schu-
+bert, Medina Orduna Baitemirova, Melody Arnaud,
+Melvin McElrath, Michael Andrew Yee, Michael Co-
+hen, Michael Gu, Michael Ivanitskiy, Michael Star-
+ritt, Michael Strube, Michał Sw˛ edrowski, Michele
+Bevilacqua, Michihiro Yasunaga, Mihir Kale, Mike
+Cain, Mimee Xu, Mirac Suzgun, Mitch Walker,
+Mo Tiwari, Mohit Bansal, Moin Aminnaseri, Mor
+Geva, Mozhdeh Gheini, Mukund Varma T, Nanyun
+Peng, Nathan Andrew Chi, Nayeon Lee, Neta Gur-
+Ari Krakover, Nicholas Cameron, Nicholas Roberts,
+Nick Doiron, Nicole Martinez, Nikita Nangia, Niklas
+Deckers, Niklas Muennighoff, Nitish Shirish Keskar,
+Niveditha S. Iyer, Noah Constant, Noah Fiedel,
+Nuan Wen, Oliver Zhang, Omar Agha, Omar El-
+baghdadi, Omer Levy, Owain Evans, Pablo Anto-
+nio Moreno Casares, Parth Doshi, Pascale Fung,
+Paul Pu Liang, Paul Vicol, Pegah Alipoormolabashi,
+Peiyuan Liao, Percy Liang, Peter W Chang, Pe-
+ter Eckersley, Phu Mon Htut, Pinyu Hwang, Piotr
+Miłkowski, Piyush Patil, Pouya Pezeshkpour, Priti
+Oli, Qiaozhu Mei, Qing Lyu, Qinlang Chen, Ra-
+bin Banjade, Rachel Etta Rudolph, Raefer Gabriel,
+Rahel Habacker, Ramon Risco, Raphaël Millière,
+Rhythm Garg, Richard Barnes, Rif A. Saurous, Riku
+Arakawa, Robbe Raymaekers, Robert Frank, Ro-
+han Sikand, Roman Novak, Roman Sitelew, Ro-
+nan Le Bras, Rosanne Liu, Rowan Jacobs, Rui
+Zhang, Russ Salakhutdinov, Ryan Andrew Chi,
+Seungjae Ryan Lee, Ryan Stovall, Ryan Teehan,
+Rylan Yang, Sahib Singh, Saif M. Mohammad,
+Sajant Anand, Sam Dillavou, Sam Shleifer, Sam
+Wiseman, Samuel Gruetter, Samuel R. Bowman,
+Samuel Stern Schoenholz, Sanghyun Han, Sanjeev
+Kwatra, Sarah A. Rous, Sarik Ghazarian, Sayan
+Ghosh, Sean Casey, Sebastian Bischoff, Sebastian
+Gehrmann, Sebastian Schuster, Sepideh Sadeghi,
+Shadi Hamdan, Sharon Zhou, Shashank Srivastava,
+Sherry Shi, Shikhar Singh, Shima Asaadi, Shixi-
+ang Shane Gu, Shubh Pachchigar, Shubham Tosh-
+niwal, Shyam Upadhyay, Shyamolima Shammie
+Debnath, Siamak Shakeri, Simon Thormeyer, Si-
+mone Melzi, Siva Reddy, Sneha Priscilla Makini,
+Soo-Hwan Lee, Spencer Torene, Sriharsha Hatwar,
+Stanislas Dehaene, Stefan Divic, Stefano Ermon,
+Stella Biderman, Stephanie Lin, Stephen Prasad,
+
+
+===== PAGE 13 =====
+Steven Piantadosi, Stuart Shieber, Summer Mish-
+erghi, Svetlana Kiritchenko, Swaroop Mishra, Tal
+Linzen, Tal Schuster, Tao Li, Tao Yu, Tariq Ali,
+Tatsunori Hashimoto, Te-Lin Wu, Théo Desbor-
+des, Theodore Rothschild, Thomas Phan, Tianle
+Wang, Tiberius Nkinyili, Timo Schick, Timofei Ko-
+rnev, Titus Tunduny, Tobias Gerstenberg, Trenton
+Chang, Trishala Neeraj, Tushar Khot, Tyler Shultz,
+Uri Shaham, Vedant Misra, Vera Demberg, Victo-
+ria Nyamai, Vikas Raunak, Vinay Venkatesh Ra-
+masesh, vinay uday prabhu, Vishakh Padmakumar,
+Vivek Srikumar, William Fedus, William Saunders,
+William Zhang, Wout V ossen, Xiang Ren, Xiaoyu
+Tong, Xinran Zhao, Xinyi Wu, Xudong Shen, Yadol-
+lah Yaghoobzadeh, Yair Lakretz, Yangqiu Song,
+Yasaman Bahri, Yejin Choi, Yichi Yang, Yiding
+Hao, Yifu Chen, Yonatan Belinkov, Yu Hou, Yu-
+fang Hou, Yuntao Bai, Zachary Seid, Zhuoye Zhao,
+Zijian Wang, Zijie J. Wang, Zirui Wang, and Ziyi
+Wu. 2023. Beyond the imitation game: Quantifying
+and extrapolating the capabilities of language models.
+Transactions on Machine Learning Research.
+Mirac Suzgun, Nathan Scales, Nathanael Schärli, Se-
+bastian Gehrmann, Yi Tay, Hyung Won Chung,
+Aakanksha Chowdhery, Quoc Le, Ed Chi, Denny
+Zhou, and Jason Wei. 2023. Challenging BIG-bench
+tasks and whether chain-of-thought can solve them.
+In Findings of the Association for Computational Lin-
+guistics: ACL 2023 , pages 13003–13051, Toronto,
+Canada. Association for Computational Linguistics.
+Yi Tay, Mostafa Dehghani, Jinfeng Rao, William Fedus,
+Samira Abnar, Hyung Won Chung, Sharan Narang,
+Dani Yogatama, Ashish Vaswani, and Donald Met-
+zler. 2022. Scale efficiently: Insights from pretrain-
+ing and finetuning transformers. In International
+Conference on Learning Representations.
+Hugo Touvron, Thibaut Lavril, Gautier Izacard, Xavier
+Martinet, Marie-Anne Lachaux, Timothée Lacroix,
+Baptiste Rozière, Naman Goyal, Eric Hambro,
+Faisal Azhar, et al. 2023. Llama: Open and effi-
+cient foundation language models. arXiv preprint
+arXiv:2302.13971.
+Rajan Vivek, Kawin Ethayarajh, Diyi Yang, and Douwe
+Kiela. 2023. Anchor points: Benchmarking mod-
+els with much fewer examples. arXiv preprint
+arXiv:2309.08638.
+Alex Wang, Yada Pruksachatkun, Nikita Nangia, Aman-
+preet Singh, Julian Michael, Felix Hill, Omer Levy,
+and Samuel Bowman. 2019. Superglue: A stickier
+benchmark for general-purpose language understand-
+ing systems. In Advances in Neural Information
+Processing Systems, volume 32. Curran Associates,
+Inc.
+Alex Wang, Amanpreet Singh, Julian Michael, Felix
+Hill, Omer Levy, and Samuel Bowman. 2018. GLUE:
+A multi-task benchmark and analysis platform for nat-
+ural language understanding. In Proceedings of the
+2018 EMNLP Workshop BlackboxNLP: Analyzing
+and Interpreting Neural Networks for NLP , pages
+353–355, Brussels, Belgium. Association for Com-
+putational Linguistics.
+Jason Wei, Yi Tay, Rishi Bommasani, Colin Raffel,
+Barret Zoph, Sebastian Borgeaud, Dani Yogatama,
+Maarten Bosma, Denny Zhou, Donald Metzler, Ed H.
+Chi, Tatsunori Hashimoto, Oriol Vinyals, Percy
+Liang, Jeff Dean, and William Fedus. 2022a. Emer-
+gent abilities of large language models. Transactions
+on Machine Learning Research . Survey Certifica-
+tion.
+Jason Wei, Xuezhi Wang, Dale Schuurmans, Maarten
+Bosma, brian ichter, Fei Xia, Ed H. Chi, Quoc V Le,
+and Denny Zhou. 2022b. Chain of thought prompt-
+ing elicits reasoning in large language models. In
+Advances in Neural Information Processing Systems .
+Mengzhou Xia, Antonios Anastasopoulos, Ruochen Xu,
+Yiming Yang, and Graham Neubig. 2020. Predicting
+performance for natural language processing tasks.
+In Proceedings of the 58th Annual Meeting of the As-
+sociation for Computational Linguistics, pages 8625–
+8646, Online. Association for Computational Lin-
+guistics.
+Zihuiwen Ye, Pengfei Liu, Jinlan Fu, and Graham Neu-
+big. 2021. Towards more fine-grained and reliable
+NLP performance prediction. In Proceedings of the
+16th Conference of the European Chapter of the Asso-
+ciation for Computational Linguistics: Main V olume,
+pages 3703–3714, Online. Association for Computa-
+tional Linguistics.
+Susan Zhang, Stephen Roller, Naman Goyal, Mikel
+Artetxe, Moya Chen, Shuohui Chen, Christopher De-
+wan, Mona Diab, Xian Li, Xi Victoria Lin, et al. 2022.
+Opt: Open pre-trained transformer language models.
+arXiv preprint arXiv:2205.01068.
+Zining Zhu, Soroosh Shahtalebi, and Frank Rudzicz.
+2022. Predicting fine-tuning performance with prob-
+ing. In Proceedings of the 2022 Conference on Em-
+pirical Methods in Natural Language Processing ,
+pages 11534–11547, Abu Dhabi, United Arab Emi-
+rates. Association for Computational Linguistics.
+A Filtering BIG-bench Records
+We use the following criteria when filtering the
+records. After filtering we obtain a dataset with
+56k+ records which is described in Table 1. For
+now we limit the scope to predicting performance
+on the preferred evaluation metric.
+1. Keep json tasks and remove programmatic
+tasks.
+2. Remove T0/T5 models because there are only
+14 records for each of these two. Keep BIG-G,
+PaLM, GPT-3, Gopher models.
+
+
+===== PAGE 14 =====
+3. Remove BIG-bench subtasks whose perfor-
+mance on the preferred metric is zero for all
+models.
+4. Keep experiments whose preferred
+metric is in exact_str_match,
+multiple_choice_grade, rougeLsum.
+This keeps 93% of all records before this step.
+5. Remove entries of aggregating results from
+multiple subtasks as the performance of a task.
+6. Remove subtasks with less than 100 examples
+because small sample size may lead to large
+variance during evaluation
+We present a summary of the 6 model families in
+these records in Table 2.
+B Featurization
+In the main body of the paper we use the abstrac-
+tion of (l, nparam, t, nshot) to describe experiment
+configurations. In the actual training of tree-based
+models and MLP, we modify how these features
+are represented. In particular, the input features
+contain the following:
+1. l is converted as binary features for each
+model family, e.g., is_PaLM.
+2. (l, nparam) is converted as binary features for
+each model, e.g., is_PaLM_535B.
+3. There are 6 numerical features for the num-
+ber of parameters: number of total parame-
+ters, number of non-embedding parameters,
+number of FLOP-matched non-embedding pa-
+rameters; and the natural log of these three
+values.
+4. t is converted as binary features for each task,
+e.g., is_code_line_description.
+5. m is a binary feature for the preferred
+metric associated with the task t, e.g.,
+is_exact_str_match. BIG-bench defines a
+preferred metric for each task, so in the ab-
+straction it is covered by t.
+6. nshot is directly used as an input feature.
+For numerical features (6 features for the num-
+ber of parameters and 1 feature for the num-
+ber of shots), we use StandardScaler in the
+sklearn libarary to normalize them. Addition-
+ally, we normalize the performance value y to
+be in the range of [0, 1]. exact_str_match and
+multiple_choice_grade already satisfy this con-
+straint. The reported rougeLsum values are in the
+range of [0, 100] and are multiplied by0.01 to form
+our dataset.
+C Extended Experiment Details and
+Results
+C.1 Additional Evaluation Metrics for
+Performance Prediction
+In addition to RMSE and R2 score, two common
+metrics for evaluating regression models, we in-
+troduce two new metrics, Task-average Pearson
+Correlation and Task-average Kendall Rank Cor-
+relation. The usage of Pearson Correlation and
+Kendall Rank Correlation are inspired by Liu et al.
+(2023) and we further adapt them to be averaging
+across tasks.
+Concretely, we first group the test set Dtest into
+|T | groups, based on the associated task t of each
+example. Within each group, we compute the Pear-
+son Correlation or Kendall Rank Correlation be-
+tween the predicted performance and the actual
+performance. Finally, the average of these rank cor-
+relation values across all tasksT is then reported as
+the task-average rank correlation. We report these
+numbers along with RMSE and R2 in Table 6.
+Generally, prediction models with higher R2
+scores exhibit higher rank correlation. Exceptions
+emerge when closely comparing tree-based models
+and MLP models. While MLP models are compara-
+ble or outperform tree-based models in terms ofR2
+score, tree-based models tend to outperform MLP
+models in terms of task-avg (rank) correlation. Our
+further investigation reveals that tree-based models
+make more errors with large absolute errors, which
+are penalized heavily by RMSE and R2 (involv-
+ing taking square of these errors), whereas rank
+correlation is less sensitive to such errors.
+Throughout our paper, we primarily focus on ex-
+perimentation with MLP models due to their faster
+runtime and the values of the learned representa-
+tions in MLP. In practice, we recommend selecting
+methods based on the final goal: MLP models for
+more accurate prediction in terms of exact values;
+tree-based methods for more accurate ranking of
+different experiment settings.
+C.2 Sample Predictions in the L3 setting
+In Fig. 7 we visualize predictions on four sample
+(l, t) combinations by the MLP model. The left
+
+
+===== PAGE 15 =====
+Model Family Company Release Date Pre-train Corpus # Parameters Architecture Choices Infrastructure
+BIG-G (T=0, T=1) Google Jun 2022 2.8T tokens 2M to 137B Gated-GELU, relative attention TPUv3, GSPMDBIG-G Sparse Google Jun 2022 2.8T tokens 51M to 46B BIG-G + Mixture-of-Experts TPUv3, GSPMDPaLM Google Apr 2022 780B tokens 8B, 62B, 540B SwiGLU activation, parallel layers, etc. TPUv4, PathwayGPT-3 OpenAI May 2020 300B tokens 125M to 175B Alternating dense and sparse attention GPUsGopher DeepMind Nov 2021 300B tokens 44M to 280B RMSNorm, relative position encoding TPUv3, model parallelism, etc.
+Table 2: Summary of model families included in this study. These model families offer considerable diversity.
+Information in this table is aggregated from Srivastava et al. (2023); Chowdhery et al. (2022); Brown et al. (2020);
+Rae et al. (2021)
+BIG-G T=1 2B Wins Tie GPT-3 Large WinsConclusion
+Performance Recovered from BBH (24 subtasks)20.1% 70.1% 9.8% BIG-G T=1 2B is betterPerformance Recovered from small-bench (24 subtasks)19.1% 56.3% 24.6% GPT-3 Large is better
+Ground-truth full BIG-bench Performance14.3% 55.3% 30.4% GPT-3 Large is better
+Table 3: Using BIG-bench Hard and “small-bench” to recover performance and compare models. In this
+example, BBH is less informative in recovering performance on remaining tasks, and thus is the comparison is less
+accurate.
+two are cases achieving high R2 scores. The right
+two are cases achieving low R2 scores.
+For (l, t) combinations achieving highR2 scores,
+our observation is that either a combination (l, t′)
+exists in Dtrain such that t and t′ are similar (e.g., t
+and t′ are two sub-tasks from the same BIG-bench
+task), or (l′, t) exists in Dtrain such that l′ and l
+are similar (e.g., both l and l′ from the three BIG-
+G model families). Our interpretation is that the
+learned predictor is capturing model family simi-
+larities and task similarities and therefore predicts
+more accurately when l or t has a similar counter-
+part in the training set.
+For (l, t) combinations achieving low R2 scores,
+we observe several cases of overestimating perfor-
+mance or predicting “false positives” of emergent
+abilities. The selection of these combinations are
+largely due to using R2 as selection criteria—they
+have small total variance as the denominator for
+R2 score, so any overestimation will results in an
+extremely negative R2 score. Nevertheless, these
+qualitative results suggest that overestimation is
+a common type of mistake made by our trained
+prediction model.
+C.3 Performance Prediction in Extrapolation
+Settings
+In the input space of our problem,nshot and nparam
+are numerical features. Thus it is possible to test
+the extrapolation capabilities on these two inputs.
+We create three settings for testing the model’s
+extrapolation capabilities:
+• E1: Dtest contains examples with nshot = 3,
+Dtrain contains examples with nshot = 0, 1, 2
+• E2.1: Dtest contains examples with
+(l, nparam) = (GPT-3, 200B)
+• E2.2: Dtest contains examples with
+(l, nparam) = (PaLM, 535B)
+Relaxing Constraints by leaking 10% Dtest.
+Pure extrapolation may be extremely challenging.
+To better contextualize the results and understand
+limitations, we compare model performance in
+three slightly different settings. The first setting
+(S1) is holding 10% Dtrain as dev set for hyperpa-
+rameter selection and early stopping. This corre-
+sponds to the pure extrapolation setting, as no in-
+formation about Dtest is available at training time.
+The second setting (S2) is holding 10%Dtest as dev
+set. Information about Dtest is indirectly leaked to
+model training. The third setting is leaking 10%
+Dtest during training. This third setting (S3) is
+mainly for reference.
+More specifically, we split the original Dtrain
+into 90% D′
+train and 10% Ddev1. Also we split
+the original Dtest into 90% D′
+test and 10% Ddev2.
+In S1, model training, selection and evaluation is
+done with (D′
+train, Ddev1, D′
+test). In S2, we al-
+low model selection with Ddev2, so the experi-
+ment is done with (D′
+train, Ddev2, D′
+test). In S3,
+we leak Ddev2 (which is from the test distribution)
+to training time, and the experiment is done with
+(D′
+train ∪ Ddev2, Ddev1, D′
+test).
+Results and Findings. We present the results
+in Table 4. (1) Extrapolation in terms of nshot
+is promising, achieving R2 which is greater than
+0.9. However, extrapolation to increased model
+size remains challenging. This is closely related to
+the observation that emergent abilities is difficult
+to predict (Ganguli et al., 2022; Wei et al., 2022a).
+
+
+===== PAGE 16 =====
+1010 1011
+flop_matched_non_embedding_params
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0performance
+model: PaLM
+task: bbq_lite_json:
+bbq_lite_json_nationality_ambig
+0-shot pred
+0-shot true
+1-shot pred
+1-shot true
+2-shot pred
+2-shot true
+5-shot pred
+5-shot true
+107 108 109 1010 1011
+flop_matched_non_embedding_params
+0.0
+0.1
+0.2
+0.3
+0.4
+0.5performance
+model: BIG-G T=0
+task: modified_arithmetic:
+three_digit_addition_control
+0-shot pred
+0-shot true
+1-shot pred
+1-shot true
+2-shot pred
+2-shot true
+3-shot pred
+3-shot true
+1010 1011
+flop_matched_non_embedding_params
+0.0
+0.1
+0.2
+0.3
+0.4performance
+model: PaLM
+task: tense
+0-shot pred
+0-shot true
+1-shot pred
+1-shot true
+2-shot pred
+2-shot true
+5-shot pred
+5-shot true
+108 109 1010 1011
+flop_matched_non_embedding_params
+0.0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6performance
+model: GPT
+task: modified_arithmetic:
+three_digit_subtraction_plus_one
+0-shot pred
+0-shot true
+1-shot pred
+1-shot true
+2-shot pred
+2-shot true
+3-shot pred
+3-shot true
+Figure 7: Sample Prediction Results in L3 setting (§C.2). Left 2: (l, t) combinations achieving high R2 score;
+Right 2: (l, t) combinations achieving low R2 score.
+(2) Performance in S2 is consistently better than
+S1. Note that the only difference between these
+two setting is the Ddev used to do model selection.
+This suggests that the model overfits and fails to
+extrapolate well in the strict S1 setting. Leaking
+some information about the test distribution (as in
+S2 and S3) can greatly help improve prediction
+accuracy.
+C.4 Additional Results on “small-bench”
+search
+We experiment with two additional search algo-
+rithms for “small-bench” search: (1) Randomized
+Beam Search: Similar to regular beam search, ex-
+cept that we maintain a beam size of q = 4 and we
+enumerate 1/q randomly selected task candidates
+at each timestamp. This ensures the search run-
+time is equivalent to greedy search. (2) Simulated
+Annealing ( ˇCern`y, 1985): Initialize with a seed
+Ttrain; at time t, iteratively search in the neigh-
+bourhood of the Ttrain at time t − 1 and occasion-
+ally allowing uphill moves ( i.e., moving towards
+a worse solution). Results are visualized in Fig. 8.
+Similar to greedy search, these two search methods
+face optimization challenges discussed in §5.3 and
+may lead to sub-optimal solutions.
+C.5 Gaps between the “small-bench” search
+objective and evaluation objective
+In §5.3, we observe that the performance of greedy
+search is unstable and hypothesize that this is partly
+due to the gaps between the search and evaluation
+objective.
+Gap between Tdev and Ttest. To simulate the
+scenario that the prediction model is expected to
+make predictions on an unseen model family, we
+make sure that the search algorithm optimizes on
+Tdev × Ltest, and holds out Ttest × Ltest for evalua-
+tion. This creates a dev-test shift which may affect
+search algorithm results.
+4 8 16 24 32 42
+Size of train
+0.650.65
+0.70
+0.75
+0.80
+0.8530-Fold R2( test × test)
+BB-Lite
+BB-Hard
+Baselines
+Random
+Greedy Search
+Beam Search (#beam=4)
+Simulated Annealing
+Best of 5000
+Figure 8: Additional “Small-bench” Search Results.
+See §C.4 for in-depth analysis.
+Gap between 1 fold and 30 folds. Due to run-
+time concerns, we only launch search algorithms
+on 1 fold, while at evaluation time we use all 30
+folds. The 30 folds, derived from 6 distinct model
+families, may exhibit significant variations. Con-
+sequently, the search result on 1 fold may overfit
+to that specific fold and become less optimal on all
+30 folds.
+D Reproducibility
+D.1 Hyperparameters and Training Details
+For all the following methods and for each data
+split setting (L1/L2.1/L2.2/L3/L3 Composition),
+we select hyperparameters based on the dev perfor-
+mance on the first fold, and select the best set of
+hyperparameters from 100 random combinations
+from a pre-defined list.
+For Random Forest, we use the implementa-
+tion of RandomForestRegressor from sklearn
+library. We use squared_error as optimization crite-
+rion. The hyperparameter candidates are sampled
+
+
+===== PAGE 17 =====
+S1:Ddevis 10%Dtrain S2:Ddevis 10%Dtest S3: Leak 10%Dtest
+RMSE (↓) R2(↑) RMSE (↓) R2(↑) RMSE (↓) R2(↑)
+More shots
+E1: Hold outnshot= 3 0.0618 0.9297 0.0587 0.9367 0.0545 0.9454
+Scaling up model size
+E2.1: Hold out GPT-3 200B0.1314 0.6968 0.1017 0.8187 0.0830 0.8791
+E2.2: Hold out PaLM 535B0.2708 0.1535 0.1923 0.5731 0.1668 0.6789
+Table 4: Results of Extrapolation Experiments (§C.3).
+from the following:
+1 {
+2 " n_estimators " : [ 3 0 , 1 0 0 , 3 0 0 ] ,
+3 " max_depth " : [ None , 1 6 , 3 2 , 6 4 , 1 2 8 ] ,
+4 " m in _s am pl es_ sp li t " : [ 2 , 4 , 8 ] ,
+5 " min _samples _leaf " : [ 1 , 2 , 4 ] ,
+6 " max_features " : [ 1 . 0 , 0 . 9 , 0 . 8 , 0 . 7 , 0 . 6 , " sqrt "
+] ,
+7 " max_samples " : [ 1 . 0 , 0 . 9 , 0 . 8 , 0 . 7 , 0 . 6 ]
+8 }
+For Gradient Boosted Trees, we use the im-
+plementation of XGBRegressor from XGBoost li-
+brary (Chen and Guestrin, 2016). We use the
+reg:squarederror as objective. The hyperparam-
+eter candidates are sampled from the following:
+1 {
+2 " n_estimators " : [ 3 0 , 1 0 0 , 3 0 0 , 1 0 0 0 ] ,
+3 " learning_rate " : [ 0 . 1 , 0 . 3 , 0 . 5 , 0 . 8 , 1 . 0 ] ,
+4 " max_depth " : [ None , 1 6 , 3 2 , 6 4 , 1 2 8 ] , # None
+indicates no limit
+5 " gamma " : [ 0 , 0 . 1 , 0 . 2 ] ,
+6 " subsample " : [ 0 . 6 , 0 . 7 , 0 . 8 , 0 . 9 , 1 . 0 ] ,
+7 }
+For MLP, we implement with Pytorch. We use
+Adam optimzier and use MSELoss. The hyperpa-
+rameter candidates are sampled from the following:
+1 {
+2 " lr " : [ 1e - 3 , 3e - 4 , 1e - 4 ] ,
+3 " batch_size " : [ 3 2 , 6 4 , 1 2 8 ] ,
+4 " dropout " : [ 0 . 0 , 0 . 0 5 , 0 . 1 , 0 . 1 5 , 0 . 2 ] ,
+5 " hidden_dims " : [
+6 ( 1 2 8 , 6 4 , 3 2 , 1 6 ) , ( 2 5 6 , 1 2 8 , 6 4 , 3 2 ) ,
+7 ( 1 2 8 , 6 4 , 3 2 ) , ( 2 5 6 , 1 2 8 , 6 4 ) ,
+8 ( 6 4 , 3 2 ) , ( 1 2 8 , 6 4 ) , ( 2 5 6 , 1 2 8 ) ,
+9 ( 1 2 8 , ) , ( 6 4 , )
+10 ] ,
+11 " weight_decay " : [ 0 . 0 , 0 . 0 0 0 0 1 , 0 . 0 0 0 1 , 0 . 0 0 1 , 0 .
+0 1 ] ,
+12 }
+D.2 Details on Cross Validation
+L1: Random Splitting. We first split D into 10
+disjoint subsets, and then rotate on which ones
+are Ddev and Dtest. To save computation budget,
+hyperparameter selection is done on the Ddev of
+the first fold.
+L2.1/L2.2/L3: Random Splitting at Different
+Granularity. To ensure that the results are com-
+parable across settings as much as possible, we use
+Model Runtime (second)
+Matrix+Task Baseline 4
+Adapted SVD 2
+Model-model kNN 2
+Task-task kNN 5
+Random Forest 98
+Gradient Boosted Trees 242
+MLP 86
+MLP (optimized for search) 28
+Table 5: Runtime (Training+Evaluation) of Performance
+Prediction Models.
+10-fold cross validation for all these settings, sim-
+ilar to the practice in L1. This ensures for every
+fold, the sizes of Dtrain/Ddev/Dtest are consistent
+across settings, and each example in D appears in
+Dtest exactly once. In this case, the only changing
+variable is the data splitting strategy.
+L3 Composition: Holding out Ltest × Ttest. To
+align with the 10-fold setting in L1-L3 as much as
+possible, we split L into 3 non-overlapping subsets,
+and split T into 3 non-overlapping subsets. This
+gives 3 × 3 = 9 different Dtest for cross-validation.
+D.3 Hardware and Runtime
+Matrix completion experiments and tree-based ex-
+periments are done on a server with 56 Intel Xeon
+CPU E5-2690v4 (@ 2.6 GHz). MLP experiments
+are done on one NVIDIA GeForce RTX 2080 Ti.
+The runtime for training a model for performance
+prediction is listed in Table 5. For small-bench
+search, we optimized MLP training by not saving a
+copy of the best checkpoint in memory, and moving
+Dtrain and Ddev to GPU before training to reduce
+GPU I/O. For Greedy Search, the performance pre-
+diction algorithm is repeated for 12326 times, using
+approximately 5 days. For Best of 5000, the per-
+formance prediction algorithm is repeated for 5000
+times, using approximately 2 days.
+(Continued on next page)
+
+
+===== PAGE 18 =====
+E Full Results of Performance Prediction
+RMSE R2 Score Task Avg. Pearson Task Avg. Kendall
+L1 Setting: Random(l, nparam, t, nshot), 10 folds
+Model+Task Baseline 0.1220 (±0.0016) 0.7068 (±0.0067) 0.5207 (±0.0078) 0.3617 (±0.0077)
+Adapted SVD 0.0986 ( ±0.0014) 0.8082 (±0.0053) 0.5149 (±0.0089) 0.3443 (±0.0053)
+Model-model kNN 0.0712 (±0.0016) 0.8999 (±0.0041) 0.7046 (±0.0085) 0.5133 (±0.0070)
+Task-task kNN 0.0695 ( ±0.0012) 0.9048 (±0.0035) 0.7006 (±0.0091) 0.5109 (±0.0078)
+Random Forest 0.0553 ( ±0.0014) 0.9397 (±0.0030) 0.8378 (±0.0062) 0.6590 (±0.0058)
+Gradient Boosted Trees 0.0499 (±0.0013) 0.9510 (±0.0025) 0.8566 (±0.0085) 0.6690 (±0.0060)
+MLP 0.0500 ( ±0.0009) 0.9508 (±0.0014) 0.8203 (±0.0097) 0.6128 (±0.0065)
+L2.1 Setting: Random(l, nparam, t), 10 folds
+Model+Task Baseline 0.1221 (±0.0042) 0.7057 (±0.0158) 0.4823 (±0.0172) 0.3629 (±0.0152)
+Adapted SVD 0.1000 ( ±0.0039) 0.8026 (±0.0135) 0.4575 (±0.0115) 0.3229 (±0.0121)
+Model-model kNN 0.0721 (±0.0034) 0.8974 (±0.0085) 0.6669 (±0.0118) 0.5043 (±0.0110)
+Task-task kNN 0.0763 ( ±0.0031) 0.8852 (±0.0078) 0.6102 (±0.0190) 0.4548 (±0.0136)
+Random Forest 0.0724 ( ±0.0034) 0.8962 (±0.0109) 0.7468 (±0.0152) 0.5830 (±0.0101)
+Gradient Boosted Trees 0.0676 (±0.0029) 0.9095 (±0.0084) 0.7458 (±0.0155) 0.5759 (±0.0094)
+MLP 0.0616 ( ±0.0022) 0.9251 (±0.0040) 0.7008 (±0.0163) 0.5244 (±0.0126)
+L2.2 Setting: Random(l, t, nshot), 10 folds
+Model+Task Baseline 0.1315 (±0.0033) 0.6577 (±0.0288) 0.4556 (±0.0327) 0.3373 (±0.0229)
+Adapted SVD 0.1208 ( ±0.0042) 0.7107 (±0.0324) 0.4338 (±0.0229) 0.3095 (±0.0170)
+Model-model kNN 0.0983 (±0.0062) 0.8072 (±0.0339) 0.5885 (±0.0204) 0.4287 (±0.0116)
+Task-task kNN 0.0985 ( ±0.0060) 0.8079 (±0.0231) 0.6059 (±0.0181) 0.4449 (±0.0137)
+Random Forest 0.0675 ( ±0.0031) 0.9098 (±0.0096) 0.7571 (±0.0144) 0.5862 (±0.0107)
+Gradient Boosted Trees 0.0624 (±0.0033) 0.9229 (±0.0092) 0.7819 (±0.0116) 0.6057 (±0.0104)
+MLP 0.0555 ( ±0.0019) 0.9391 (±0.0050) 0.7424 (±0.0210) 0.5520 (±0.0143)
+L3 Setting: Random(l, t), 10 folds
+Model+Task Baseline 0.1321 (±0.0075) 0.6542 (±0.0302) 0.4746 (±0.0288) 0.3575 (±0.0229)
+Adapted SVD 0.1199 ( ±0.0088) 0.7146 (±0.0353) 0.4211 (±0.0291) 0.2979 (±0.0211)
+Model-model kNN 0.1028 (±0.0130) 0.7880 (±0.0531) 0.5954 (±0.0214) 0.4345 (±0.0106)
+Task-task kNN 0.1032 ( ±0.0076) 0.7878 (±0.0308) 0.5667 (±0.0242) 0.4102 (±0.0156)
+Random Forest 0.1015 ( ±0.0103) 0.7940 (±0.0414) 0.6617 (±0.0234) 0.4961 (±0.0174)
+Gradient Boosted Trees 0.0947 (±0.0084) 0.8212 (±0.0315) 0.6589 (±0.0302) 0.4827 (±0.0246)
+MLP 0.0736 ( ±0.0064) 0.8922 (±0.0164) 0.6573 (±0.0156) 0.4680 (±0.0148)
+L3 Composition Setting: Holding outLtest× Ttest, 9 folds
+Model+Task Baseline 0.1383 (±0.0115) 0.6231 (±0.0265) 0.5099 (±0.0763) 0.3709 (±0.0457)
+Adapted SVD 0.1318 ( ±0.0142) 0.6575 (±0.0460) 0.4720 (±0.0767) 0.3365 (±0.0541)
+Model-model kNN 0.1138 (±0.0173) 0.7398 (±0.0731) 0.5342 (±0.1198) 0.3918 (±0.0956)
+Task-task kNN 0.1152 ( ±0.0139) 0.7362 (±0.0530) 0.5692 (±0.0773) 0.4086 (±0.0657)
+Random Forest 0.1118 ( ±0.0154) 0.7475 (±0.0782) 0.6136 (±0.0781) 0.4347 (±0.0494)
+Gradient Boosted Trees 0.1072 (±0.0104) 0.7706 (±0.0451) 0.5970 (±0.0941) 0.4034 (±0.0588)
+MLP 0.0843 ( ±0.0072) 0.8597 (±0.0129) 0.6228 (±0.0991) 0.4236 (±0.0675)
+Table 6: Full Results of Performance Prediction. Matrix Completion Trees Neural Network
+
+
+===== PAGE 19 =====
+F Scaling Behavior of Most/Least “Predictable” Tasks (§3.4)
+107
+108
+109
+1010
+1011
+Effective parameter count
+0
+20
+40
+60
+80
+100exact_str_match
+modified_arithmetic:three_digit_addition_control
+BIG-G (0-shot)
+BIG-G (1-shot)
+BIG-G (2-shot)
+BIG-G (3-shot)
+BIG-G T=1 (0-shot)
+BIG-G T=1 (1-shot)
+BIG-G T=1 (2-shot)
+BIG-G T=1 (3-shot)
+BIG-G sparse (0-shot)
+BIG-G sparse (1-shot)
+BIG-G sparse (2-shot)
+BIG-G sparse (3-shot)
+GPT (0-shot)
+GPT (1-shot)
+GPT (2-shot)
+GPT (3-shot)
+PaLM (0-shot)
+PaLM (1-shot)
+PaLM (2-shot)
+PaLM (3-shot)
+(a) modified_arithmetic:
+three_digit_addition_control
+107
+108
+109
+1010
+1011
+Effective parameter count
+0
+20
+40
+60
+80exact_str_match
+modified_arithmetic:two_digit_multiplication_control
+BIG-G (0-shot)
+BIG-G (1-shot)
+BIG-G (2-shot)
+BIG-G (3-shot)
+BIG-G T=1 (0-shot)
+BIG-G T=1 (1-shot)
+BIG-G T=1 (2-shot)
+BIG-G T=1 (3-shot)
+BIG-G sparse (0-shot)
+BIG-G sparse (1-shot)
+BIG-G sparse (2-shot)
+BIG-G sparse (3-shot)
+GPT (0-shot)
+GPT (1-shot)
+GPT (2-shot)
+GPT (3-shot)
+PaLM (0-shot)
+PaLM (1-shot)
+PaLM (2-shot)
+PaLM (3-shot)
+(b) modified_arithmetic:
+two_digit_multiplication_control
+107
+108
+109
+1010
+1011
+Effective parameter count
+0
+20
+40
+60
+80
+100exact_str_match
+linguistic_mappings:sentence_negation_json
+BIG-G (0-shot)
+BIG-G (1-shot)
+BIG-G (2-shot)
+BIG-G (3-shot)
+BIG-G T=1 (0-shot)
+BIG-G T=1 (1-shot)
+BIG-G T=1 (2-shot)
+BIG-G T=1 (3-shot)
+BIG-G sparse (0-shot)
+BIG-G sparse (1-shot)
+BIG-G sparse (2-shot)
+BIG-G sparse (3-shot)
+GPT (0-shot)
+GPT (1-shot)
+GPT (2-shot)
+GPT (3-shot)
+PaLM (0-shot)
+PaLM (1-shot)
+PaLM (2-shot)
+PaLM (3-shot)
+(c) linguistic_mapping:
+sentence_negation_json
+107
+108
+109
+1010
+1011
+Effective parameter count
+0
+20
+40
+60
+80rougeLsum
+qa_wikidata
+BIG-G (0-shot)
+BIG-G (1-shot)
+BIG-G (2-shot)
+BIG-G (3-shot)
+BIG-G T=1 (0-shot)
+BIG-G T=1 (1-shot)
+BIG-G T=1 (2-shot)
+BIG-G T=1 (3-shot)
+BIG-G sparse (0-shot)
+BIG-G sparse (1-shot)
+BIG-G sparse (2-shot)
+BIG-G sparse (3-shot)
+GPT (0-shot)
+GPT (1-shot)
+GPT (2-shot)
+GPT (3-shot)
+PaLM (0-shot)
+PaLM (1-shot)
+PaLM (2-shot)
+PaLM (3-shot)
+Best rater
+Average rater
+(d) qa_wikidata
+107
+108
+109
+1010
+1011
+Effective parameter count
+0
+20
+40
+60
+80
+100exact_str_match
+modified_arithmetic:three_digit_subtraction_control
+BIG-G (0-shot)
+BIG-G (1-shot)
+BIG-G (2-shot)
+BIG-G (3-shot)
+BIG-G T=1 (0-shot)
+BIG-G T=1 (1-shot)
+BIG-G T=1 (2-shot)
+BIG-G T=1 (3-shot)
+BIG-G sparse (0-shot)
+BIG-G sparse (1-shot)
+BIG-G sparse (2-shot)
+BIG-G sparse (3-shot)
+GPT (0-shot)
+GPT (1-shot)
+GPT (2-shot)
+GPT (3-shot)
+PaLM (0-shot)
+PaLM (1-shot)
+PaLM (2-shot)
+PaLM (3-shot)
+(e) modified_arithmetic:
+three_digit_subtraction_control
+Figure 9: Scaling Behavior of Tasks with Highest R2 Score. Figures are obtained from https://github.com/
+google/BIG-bench
+
+
+===== PAGE 20 =====
+107
+108
+109
+1010
+1011
+Effective parameter count
+0.00
+0.05
+0.10
+0.15
+0.20
+0.25
+0.30exact_str_match
+linguistics_puzzles
+BIG-G (0-shot)
+BIG-G (1-shot)
+BIG-G (2-shot)
+BIG-G (3-shot)
+BIG-G T=1 (0-shot)
+BIG-G T=1 (1-shot)
+BIG-G T=1 (2-shot)
+BIG-G T=1 (3-shot)
+BIG-G sparse (0-shot)
+BIG-G sparse (1-shot)
+BIG-G sparse (2-shot)
+BIG-G sparse (3-shot)
+GPT (0-shot)
+GPT (1-shot)
+GPT (2-shot)
+GPT (3-shot)
+PaLM (0-shot)
+PaLM (1-shot)
+PaLM (2-shot)
+PaLM (3-shot)
+Best rater
+Average rater
+(a) linguistics_puzzles
+107
+108
+109
+1010
+1011
+Effective parameter count
+0
+10
+20
+30
+40
+50
+60
+70exact_str_match
+checkmate_in_one
+BIG-G (0-shot)
+BIG-G (1-shot)
+BIG-G (2-shot)
+BIG-G (3-shot)
+BIG-G T=1 (0-shot)
+BIG-G T=1 (1-shot)
+BIG-G T=1 (2-shot)
+BIG-G T=1 (3-shot)
+BIG-G sparse (0-shot)
+BIG-G sparse (1-shot)
+BIG-G sparse (2-shot)
+BIG-G sparse (3-shot)
+GPT (0-shot)
+GPT (1-shot)
+GPT (2-shot)
+GPT (3-shot)
+PaLM (0-shot)
+PaLM (1-shot)
+PaLM (2-shot)
+PaLM (3-shot)
+Best rater
+Average rater (b) checkmate_in_one
+107
+108
+109
+1010
+1011
+Effective parameter count
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0exact_str_match
+gender_inclusive_sentences_german
+BIG-G (0-shot)
+BIG-G (1-shot)
+BIG-G (2-shot)
+BIG-G (3-shot)
+BIG-G T=1 (0-shot)
+BIG-G T=1 (1-shot)
+BIG-G T=1 (2-shot)
+BIG-G T=1 (3-shot)
+BIG-G sparse (0-shot)
+BIG-G sparse (1-shot)
+BIG-G sparse (2-shot)
+BIG-G sparse (3-shot)
+GPT (0-shot)
+GPT (1-shot)
+GPT (2-shot)
+GPT (3-shot)
+PaLM (0-shot)
+PaLM (1-shot)
+PaLM (2-shot)
+PaLM (3-shot)
+Best rater
+Average rater
+(c) gender_inclusive
+_sentences_german
+107
+108
+109
+1010
+1011
+Effective parameter count
+0.0
+0.2
+0.4
+0.6
+0.8exact_str_match
+paragraph_segmentation
+BIG-G (0-shot)
+BIG-G (1-shot)
+BIG-G (2-shot)
+BIG-G (3-shot)
+BIG-G T=1 (0-shot)
+BIG-G T=1 (1-shot)
+BIG-G T=1 (2-shot)
+BIG-G T=1 (3-shot)
+BIG-G sparse (0-shot)
+BIG-G sparse (1-shot)
+BIG-G sparse (2-shot)
+BIG-G sparse (3-shot)
+GPT (0-shot)
+GPT (1-shot)
+GPT (2-shot)
+GPT (3-shot)
+Best rater
+Average rater
+(d) paragraph_segmentation
+107
+108
+109
+1010
+1011
+Effective parameter count
+48.0
+48.5
+49.0
+49.5
+50.0
+50.5
+51.0
+51.5
+52.0multiple_choice_grade
+authorship_verification:swapped
+BIG-G (0-shot)
+BIG-G (1-shot)
+BIG-G (2-shot)
+BIG-G (3-shot)
+BIG-G T=1 (0-shot)
+BIG-G T=1 (1-shot)
+BIG-G T=1 (2-shot)
+BIG-G T=1 (3-shot)
+BIG-G sparse (0-shot)
+BIG-G sparse (1-shot)
+BIG-G sparse (2-shot)
+BIG-G sparse (3-shot)
+PaLM (0-shot)
+PaLM (1-shot)
+PaLM (2-shot)
+PaLM (3-shot)
+Random
+(e) authorship_verification:
+swapped
+Figure 10: Scaling Behavior of Tasks with Lowest R2 Score. Figures are obtained from https://github.com/
+google/BIG-bench
+
+
+===== PAGE 21 =====
+G “Small-bench” Search Results
+G.1 BIG-bench Hard and BIG-bench Lite
+The two subsets listed below slightly differ from the original subsets, because we filtered out several
+subtasks as described in §A.
+1 {
+2 " bblite " : [ ' bbq_lite_json : bbq_lite_json_age_ambig ' , ' bbq_lite_json : bbq_lite_json_age_disambig ', '
+bbq_lite_json : b b q _ l it e _ j s o n _ di s a b i l i ty _ s t a t u s_ a m b i g' , ' bbq_lite_json :
+b b q _ l i t e _ j s o n _ d i s a b i l i t y _ s t a t u s _ d i s a m b i g', ' bbq_lite_json : bb q _l it e _j so n _g en d er _ id en t it y_ a mb ig ' , '
+bbq_lite_json : b b q _ l i t e _ j s o n _ g e n d e r _ i d e n t i t y _ d i s a m b i g', ' bbq_lite_json :
+bbq_lite_json_nationality_ambig ' , ' bbq_lite_json : bb q_l it e_ js on _na ti on al it y_d is am bi g ', '
+bbq_lite_json : b b q _ l i t e _ j s o n _ p h y s i c a l _ a p p e a r a n c e _ a m b i g' , ' bbq_lite_json :
+b b q _ l i t e _ j s o n _ p h y s i c a l _ a p p e a r a n c e _ d i s a m b i g' , ' bbq_lite_json : bb q_l it e_ js on _ra ce _e th ni cit y_ am bi g ', '
+bbq_lite_json : b b q _ l it e _ j s o n _ ra c e _ e t h ni c i t y _ d is a m b i g' , ' bbq_lite_json : bbq_lite_json_religion_ambig ',
+' bbq_lite_json : bbq_lite_json_religion_disambig ', ' bbq_lite_json : bbq_lite_json_ses_ambig ' , '
+bbq_lite_json : bbq_lite_json_ses_disambig ', ' bbq_lite_json : b b q _ l i t e _ j s o n _ s e x u a l _ o r i e n t a t i o n _ a m b i g' ,
+' bbq_lite_json : b b q _ l i t e _ j s o n _ s e x u a l _ o r i e n t a t i o n _ d i s a m b i g' , ' code_line_description ', '
+c o n c e p t u a l _ c o m b i n a t i o n s : emergent_properties', ' f or m a l_ f a ll a c ie s _ sy l l og i s ms _ n eg a t io n', '
+hindu_knowledge ', ' language_identification ' , ' linguistics_puzzles ' , ' logic_grid_puzzle ', '
+l ogi ca l_ de du cti on : five_objects ', ' l ogi ca l_ de duc ti on : seven_objects ' , ' lo gi ca l_ ded uc ti on :
+three_objects ', ' novel_concepts ' , ' operators ', ' parsinlu_reading_comprehension ', '
+play_dialog_same_or_different ', ' strange_stories : boolean ' , ' strange_stories : multiple_choice ' , '
+strategyqa ', ' s y m b o l _ i n t e r p r e t a t i o n : adversarial', ' s y m b o l _ i n t e r p r e t a t i o n : emoji_agnostic', '
+s y m b o l _ i n t e r p r e t a t i o n : name_agnostic', ' s y m b o l _ i n t e r p r e t a t i o n : plain', ' s y m b o l _ i n t e r p r e t a t i o n : tricky'
+, ' vitaminc_fact_verification ', ' winowhy '] ,
+3 " bbhard " : [ ' causal_judgment ', ' date_understanding ' , ' disambiguation_qa ', ' dyck_languages ', '
+f or m a l_ f a ll a c ie s _ sy l l og i s ms _ n eg a t io n' , ' geometric_shapes ' , ' hyperbaton ', ' l ogi ca l_ de du cti on :
+five_objects ', ' lo gi ca l_ de duc ti on : seven_objects ', ' l ogi ca l_ de duc ti on : three_objects ' , '
+movie_recommendation ', ' navigate ', ' object_counting ' , ' penguins_in_a_table ', '
+reasoning_about_colored_objects ' , ' ruin_names ' , ' s al ie n t_ tr a ns la t io n_ e rr or _ de te c ti on', ' snarks ', '
+sports_understanding ', ' temporal_sequences ' , ' t r a c k i n g _ s h u f f l e d _ o b j e c t s : five_objects', '
+t r a c k i n g _ s h u f f l e d _ o b j e c t s : seven_objects' , ' t r a c k i n g _ s h u f f l e d _ o b j e c t s : three_objects' , ' word_sorting '
+]
+4 }
+G.2 Best of 5000
+1 {
+2 4 : [ ' arithmetic : 5 _digit_subtraction ', ' go al _s te p_ wik ih ow : goal_inference ' , ' l i n g u i s t i c _ m a p p i n g s :
+past_tense_irregular_json ' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 7 _drop_answer_type_generation ' ] ,
+3 8 : [ ' arithmetic : 4 _digit_multiplication ', ' c h e s s _ s t a t e _ t r a c k i n g : real_medium' , ' e le m e nt a r y_ m a th _ q a :
+question_only ', ' l i n g u i s t i c _ m a p p i n g s : past_tense_regular_json ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 1 5
+_ m c t ac o _ q u e s t io n _ g e n e ra t i o n _ f re q u e n c y', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 3 4
+_ w i n o g r a n d e _ q u e s t i o n _ m o d i f i c a t i o n _ o b j e c t', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 3 8 _qasc_combined_fact', '
+physics '] ,
+4 1 6 : [ ' arithmetic : 2 _digit_addition ', ' arithmetic : 3 _digit_multiplication ', ' arithmetic : 4 _digit_subtraction
+', ' bbq_lite_json : bb q _l it e _j so n _g en d er _ id en t it y_ a mb ig ' , ' bbq_lite_json :
+b b q _ l i t e _ j s o n _ p h y s i c a l _ a p p e a r a n c e _ d i s a m b i g' , ' caus e_and_ef fect : two_sentences ' , '
+c h e s s _ s t a t e _ t r a c k i n g : real_medium', ' c h e s s _ s t a t e _ t r a c k i n g : synthetic_medium' , ' gem : cs_restaurants ', '
+g oal _s te p_ wi kih ow : goal_inference ', ' i nt er n at io n al _p h on et i c_ al p ha be t _n l i' , ' l i n g u i s t i c _ m a p p i n g s :
+plural_regular_json ' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 0 5
+_ m c t a c o _ w r o n g _ a n s w e r _ g e n e r a t i o n _ e v e n t _ d u r a t i o n', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 3 6
+_ q a s c _ t o p i c _ w o r d _ t o _ g e n e r a t e _ r e l a t e d _ f a c t', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 5 5
+_multirc_write_incorrect_answer ' , ' social_iqa ' ] ,
+5 2 4 : [ ' anachronisms ', ' arithmetic : 2 _digit_division ' , ' arithmetic : 3 _digit_division ' , ' arithmetic : 4
+_digit_subtraction ', ' bbq_lite_json : b b q _ l i t e _ j s o n _ p h y s i c a l _ a p p e a r a n c e _ a m b i g', ' dyck_languages ' , '
+e le m e nt a r y_ m a th _ q a : question_with_language_hint ', ' gem : asset ' , ' implicatures ', ' l i n g u i s t i c _ m a p p i n g s :
+plural_json ' , ' mathematical_induction ', ' mnist_ascii ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 1 4
+_ m c t a c o _ w r o n g _ a n s w e r _ g e n e r a t i o n _ a b s o l u t e _ t i m e p o i n t', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 1 7
+_ m c t a c o _ w r o n g _ a n s w e r _ g e n e r a t i o n _ f r e q u e n c y', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 4
+_ e s s e n t i a l _ t e r m s _ i d e n t i f y i n g _ e s s e n t i a l _ w o r d s', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 6 0
+_ropes_question_generation ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 6 1 _ropes_answer_generation ' , ' navigate ',
+' nonsense_words_grammar ', ' persian_idioms ' , ' social_iqa ' , ' strange_stories : multiple_choice ', '
+u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : dates', ' winowhy '] ,
+6 3 2 : [ ' a b s t r a c t _ n a r r a t i v e _ u n d e r s t a n d i n g : 4 _distractors', ' arithmetic : 2 _digit_division ' , ' arithmetic : 2
+_digit_subtraction ', ' arithmetic : 3 _digit_addition ', ' arithmetic : 3 _digit_division ', ' arithmetic : 4
+_digit_division ', ' arithmetic : 5 _digit_addition ', ' bbq_lite_json :
+b b q _ l i t e _ j s o n _ g e n d e r _ i d e n t i t y _ d i s a m b i g', ' br id gi ng _a nap ho ra _r es olu ti on _b ar qa ' , '
+c h e s s _ s t a t e _ t r a c k i n g : synthetic_long', ' common_morpheme ', ' e le m e nt a r y_ m a th _ q a :
+question_with_mathematical_hint ' , ' epistemic_reasoning ', ' gem : cs_restaurants ' , '
+identify_math_theorems ' , ' implicatures ', ' i n te r s ec t _g e o me t r y : shapes_ 4', ' kannada ', '
+l i n g u i s t i c _ m a p p i n g s : past_tense_json', ' l i n g u i s t i c _ m a p p i n g s : plural_json', ' l ogi ca l_ de duc ti on :
+three_objects ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 0 5 _ m c t a c o _ w r o n g _ a n s w e r _ g e n e r a t i o n _ e v e n t _ d u r a t i o n', '
+n a t u r a l _ i n s t r u c t i o n s : subtask 0 1 3 _ m c t a c o _ a n s w e r _ g e n e r a t i o n _ a b s o l u t e _ t i m e p o i n t', ' n a t u r a l _ i n s t r u c t i o n s
+: subtask 0 2 0 _mctaco_span_based_question ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 3
+_cosmosqa_question_generation ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 3 5
+_ w i n o g r a n d e _ q u e s t i o n _ m o d i f i c a t i o n _ p e r s o n', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 5
+_ mi s c el l a ne o u s_ s e nt e n ce _ p ar a p hr a s in g' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 5 4
+_multirc_write_correct_answer ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 5 6 _mul tirc_cla ssify_co rrect_an swer ' ,
+' u n i t _ i n t e r p r e t a t i o n : lv 0', ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : dates_unnatural_content', '
+u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : reverse_to_natural_content' ] ,
+
+
+===== PAGE 22 =====
+7 4 2 : [ ' a b s t r a c t _ n a r r a t i v e _ u n d e r s t a n d i n g : 9 _distractors', ' analogical_similarity ' , ' arithmetic : 2
+_digit_multiplication ', ' arithmetic : 2 _digit_subtraction ', ' arithmetic : 3 _digit_division ', '
+arithmetic : 5 _digit_addition ', ' bbq_lite_json : bbq_lite_json_age_disambig ' , ' cause _and_eff ect :
+two_sentences ', ' color : hsl ', ' cs_algorithms : lcs ', ' cs_algorithms : valid_parentheses ' , '
+e le m e nt a r y_ m a th _ q a : language_hint_only ', ' english_russian_proverbs ' , ' fantasy_reasoning ', ' gem :
+webnlg_en ', ' gem : webnlg_ru ', ' human_organs_senses ', ' intent_recognition ' , ' i nt e r se c t _g e o me t r y :
+shapes_ 3 ', ' l i n g u i s t i c _ m a p p i n g s : plural_json', ' m e t a p h o r _ u n d e r s t a n d i n g : met 2 lit', ' mnist_ascii ', '
+m o d i f i e d _ a r i t h m e t i c : three_digit_addition_control ' , ' movie_recommendation ', ' n a t u r a l _ i n s t r u c t i o n s :
+subtask 0 0 7 _ m c t a c o _ a n s w e r _ g e n e r a t i o n _ t r a n s i e n t _ s t a t i o n a r y' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 1 6
+_ mc ta c o_ an s we r_ g en er a ti on _ fr eq u en cy', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 4 _cosmosqa_answer_generation ',
+' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 6 _drop_question_generation ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 3 4
+_ w i n o g r a n d e _ q u e s t i o n _ m o d i f i c a t i o n _ o b j e c t', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 3 7
+_qasc_generate_related_fact ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 7 _ misc _an swe ring _sc ienc e_q ues tion s', '
+n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 9 _m ul t ir c_ q ue st i on s_ n ee de d _t o _a ns w er', ' paragraph_segmentation ', '
+question_selection ', ' simple_ethical_questions ', ' social_iqa ', ' strange_stories : boolean ', '
+swedish_to_german_proverbs ', ' s y m b o l _ i n t e r p r e t a t i o n : tricky', ' t r a c k i n g _ s h u f f l e d _ o b j e c t s :
+five_objects ', ' u n i t _ i n t e r p r e t a t i o n : lv 3', ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : u n n a t u r a l _ a d d i t i o n _ 2 _digit
+'] ,
+8 }
+G.3 Greedy Search
+1 {
+2 4 : [ ' gem : cs_restaurants ' , ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : dates_unnatural_content' , ' n a t u r a l _ i n s t r u c t i o n s
+: subtask 0 5 8 _multirc_question_answering ', ' presuppositions_as_nli '] ,
+3 8 : [ ' gem : cs_restaurants ' , ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : dates_unnatural_content' , ' n a t u r a l _ i n s t r u c t i o n s
+: subtask 0 5 8 _multirc_question_answering ', ' presuppositions_as_nli ', ' arithmetic : 5 _digit_division ', '
+e va lu a ti ng _ in fo r ma ti o n_ es s en ti a li ty', ' s i m p _ t u r i n g _ c o n c e p t : additional_set_ 2', ' l i n g u i s t i c _ m a p p i n g s :
+plural_regular_json ' ] ,
+4 1 6 : [ ' gem : cs_restaurants ', ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : dates_unnatural_content', '
+n a t u r a l _ i n s t r u c t i o n s : subtask 0 5 8 _multirc_question_answering ', ' presuppositions_as_nli ', ' arithmetic :
+5 _digit_division ' , ' e va lu a ti ng _ in fo r ma ti o n_ es s en ti a li ty', ' s i m p _ t u r i n g _ c o n c e p t : additional_set_ 2', '
+l i n g u i s t i c _ m a p p i n g s : plural_regular_json' , ' gem : wikilingua_en ', ' gem : common_gen ', ' arithmetic : 5
+_digit_subtraction ', ' ruin_names ', ' gem : asset ' , ' u n i t _ i n t e r p r e t a t i o n : lv 2', ' bbq_lite_json :
+b b q _ li t e _ j s o n _d i s a b i l it y _ s t a t us _ a m b i g', ' physics ' ] ,
+5 2 4 : [ ' gem : cs_restaurants ', ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : dates_unnatural_content', '
+n a t u r a l _ i n s t r u c t i o n s : subtask 0 5 8 _multirc_question_answering ', ' presuppositions_as_nli ', ' arithmetic :
+5 _digit_division ' , ' e va lu a ti ng _ in fo r ma ti o n_ es s en ti a li ty', ' s i m p _ t u r i n g _ c o n c e p t : additional_set_ 2', '
+l i n g u i s t i c _ m a p p i n g s : plural_regular_json' , ' gem : wikilingua_en ', ' gem : common_gen ', ' arithmetic : 5
+_digit_subtraction ', ' ruin_names ', ' gem : asset ' , ' u n i t _ i n t e r p r e t a t i o n : lv 2', ' bbq_lite_json :
+b b q _ li t e _ j s o n _d i s a b i l it y _ s t a t us _ a m b i g', ' physics ' , ' re al _o r_ fak e_ te xt : easy ', ' strange_stories :
+multiple_choice ', ' penguins_in_a_table ', ' nonsense_words_grammar ', ' c o n c e p t u a l _ c o m b i n a t i o n s :
+emergent_properties ' , ' code_line_description ', ' logical_sequence ', ' hhh_alignment : Helpfulness ' ] ,
+6 3 2 : [ ' gem : cs_restaurants ', ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : dates_unnatural_content', '
+n a t u r a l _ i n s t r u c t i o n s : subtask 0 5 8 _multirc_question_answering ', ' presuppositions_as_nli ', ' arithmetic :
+5 _digit_division ' , ' e va lu a ti ng _ in fo r ma ti o n_ es s en ti a li ty', ' s i m p _ t u r i n g _ c o n c e p t : additional_set_ 2', '
+l i n g u i s t i c _ m a p p i n g s : plural_regular_json' , ' gem : wikilingua_en ', ' gem : common_gen ', ' arithmetic : 5
+_digit_subtraction ', ' ruin_names ', ' gem : asset ' , ' u n i t _ i n t e r p r e t a t i o n : lv 2', ' bbq_lite_json :
+b b q _ li t e _ j s o n _d i s a b i l it y _ s t a t us _ a m b i g', ' physics ' , ' re al _o r_ fak e_ te xt : easy ', ' strange_stories :
+multiple_choice ', ' penguins_in_a_table ', ' nonsense_words_grammar ', ' c o n c e p t u a l _ c o m b i n a t i o n s :
+emergent_properties ' , ' code_line_description ', ' logical_sequence ', ' hhh_alignment : Helpfulness ' , '
+l i n g u i s t i c _ m a p p i n g s : pronoun_replacement_json ', ' gem : xsum ' , ' cs_algorithms : lcs ', '
+c h e s s _ s t a t e _ t r a c k i n g : real_long', ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : dates', ' entailed_polarity_hindi ' ,
+' bbq_lite_json : bbq_lite_json_nationality_ambig ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 3
+_cosmosqa_question_generation '] ,
+7 4 2 : [ ' gem : cs_restaurants ', ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : dates_unnatural_content', '
+n a t u r a l _ i n s t r u c t i o n s : subtask 0 5 8 _multirc_question_answering ', ' presuppositions_as_nli ', ' arithmetic :
+5 _digit_division ' , ' e va lu a ti ng _ in fo r ma ti o n_ es s en ti a li ty', ' s i m p _ t u r i n g _ c o n c e p t : additional_set_ 2', '
+l i n g u i s t i c _ m a p p i n g s : plural_regular_json' , ' gem : wikilingua_en ', ' gem : common_gen ', ' arithmetic : 5
+_digit_subtraction ', ' ruin_names ', ' gem : asset ' , ' u n i t _ i n t e r p r e t a t i o n : lv 2', ' bbq_lite_json :
+b b q _ li t e _ j s o n _d i s a b i l it y _ s t a t us _ a m b i g', ' physics ' , ' re al _o r_ fak e_ te xt : easy ', ' strange_stories :
+multiple_choice ', ' penguins_in_a_table ', ' nonsense_words_grammar ', ' c o n c e p t u a l _ c o m b i n a t i o n s :
+emergent_properties ' , ' code_line_description ', ' logical_sequence ', ' hhh_alignment : Helpfulness ' , '
+l i n g u i s t i c _ m a p p i n g s : pronoun_replacement_json ', ' gem : xsum ' , ' cs_algorithms : lcs ', '
+c h e s s _ s t a t e _ t r a c k i n g : real_long', ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : dates', ' entailed_polarity_hindi ' ,
+' bbq_lite_json : bbq_lite_json_nationality_ambig ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 3
+_cosmosqa_question_generation ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 0 4
+_ m c t a c o _ a n s w e r _ g e n e r a t i o n _ e v e n t _ d u r a t i o n', ' question_selection ' , ' s i m p _ t u r i n g _ c o n c e p t :
+additional_set_ 1 ', ' matrixshapes ', ' movie_dialog_same_or_different ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0
+2 1 _mctaco_grammatical_logical ', ' arithmetic : 4 _digit_division ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 6 1
+_ropes_answer_generation ', ' m o d i f i e d _ a r i t h m e t i c : three_digit_subtraction_control ' , '
+date_understanding ']
+8 }
+G.4 Beam Search (q=4, p=1/4)
+1 {
+2 4 : [ ' implicatures ' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 9 _m ul t ir c_ q ue st i on s_ n ee d ed _t o _a ns w er', '
+l i n g u i s t i c _ m a p p i n g s : past_tense_json', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 3 5
+_ w i n o g r a n d e _ q u e s t i o n _ m o d i f i c a t i o n _ p e r s o n'] ,
+3 8 : [ ' implicatures ' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 9 _m ul t ir c_ q ue st i on s_ n ee d ed _t o _a ns w er', '
+l i n g u i s t i c _ m a p p i n g s : past_tense_json', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 5 7
+_ mul ti rc _c la ssi fy _i nc orr ec t_ an sw er ' , ' gem : e 2 e_nlg ', ' arithmetic : 5 _digit_subtraction ', '
+l ogi ca l_ de du cti on : seven_objects ' , ' bbq_lite_json : bbq_lite_json_nationality_ambig '] ,
+
+
+===== PAGE 23 =====
+4 1 6 : [ ' implicatures ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 9 _m u lt ir c _q ue s ti on s _n ee d ed _t o _a ns w er' , '
+l i n g u i s t i c _ m a p p i n g s : past_tense_json', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 5 7
+_ mul ti rc _c la ssi fy _i nc orr ec t_ an sw er ' , ' gem : e 2 e_nlg ', ' arithmetic : 5 _digit_subtraction ', '
+l ogi ca l_ de du cti on : seven_objects ' , ' cryobiology_spanish ', ' vitaminc_fact_verification ', ' qa_wikidata
+', ' a b s t r a c t _ n a r r a t i v e _ u n d e r s t a n d i n g : 4 _distractors', ' l i n g u i s t i c _ m a p p i n g s : plural_json' , '
+s y m b o l _ i n t e r p r e t a t i o n : emoji_agnostic' , ' e le m e nt a r y_ m a th _ q a : question_with_mathematical_hint ' , '
+s i m p _ t u r i n g _ c o n c e p t : additional_set_ 2', ' e le m e nt a r y_ m a th _ q a : question_only '] ,
+5 2 4 : [ ' implicatures ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 9 _m u lt ir c _q ue s ti on s _n ee d ed _t o _a ns w er' , '
+l i n g u i s t i c _ m a p p i n g s : past_tense_json', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 5 7
+_ mul ti rc _c la ssi fy _i nc orr ec t_ an sw er ' , ' gem : e 2 e_nlg ', ' arithmetic : 5 _digit_subtraction ', '
+l ogi ca l_ de du cti on : seven_objects ' , ' cryobiology_spanish ', ' vitaminc_fact_verification ', ' qa_wikidata
+', ' a b s t r a c t _ n a r r a t i v e _ u n d e r s t a n d i n g : 4 _distractors', ' l i n g u i s t i c _ m a p p i n g s : plural_json' , '
+s y m b o l _ i n t e r p r e t a t i o n : emoji_agnostic' , ' e le m e nt a r y_ m a th _ q a : question_with_mathematical_hint ' , '
+s i m p _ t u r i n g _ c o n c e p t : additional_set_ 2', ' e le m e nt a r y_ m a th _ q a : question_only ', ' n a t u r a l _ i n s t r u c t i o n s :
+subtask 0 0 4 _ m c t a c o _ a n s w e r _ g e n e r a t i o n _ e v e n t _ d u r a t i o n', ' empirical_judgments ' , '
+gre_reading_comprehension ' , ' lo gi ca l_ ded uc ti on : three_objects ', ' arithmetic : 4 _digit_subtraction ', '
+hhh_alignment : Harms ' , ' bbq_lite_json : bbq_lite_json_nationality_ambig ' , ' n a t u r a l _ i n s t r u c t i o n s :
+subtask 0 2 5 _ c o s m o s q a_ i n c o r r ec t _ a n s w er _ g e n e r a ti o n'] ,
+6 3 2 : [ ' implicatures ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 9 _m u lt ir c _q ue s ti on s _n ee d ed _t o _a ns w er' , '
+l i n g u i s t i c _ m a p p i n g s : past_tense_json', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 5 7
+_ mul ti rc _c la ssi fy _i nc orr ec t_ an sw er ' , ' gem : e 2 e_nlg ', ' arithmetic : 5 _digit_subtraction ', '
+l ogi ca l_ de du cti on : seven_objects ' , ' cryobiology_spanish ', ' vitaminc_fact_verification ', ' qa_wikidata
+', ' a b s t r a c t _ n a r r a t i v e _ u n d e r s t a n d i n g : 4 _distractors', ' l i n g u i s t i c _ m a p p i n g s : plural_json' , '
+s y m b o l _ i n t e r p r e t a t i o n : emoji_agnostic' , ' e le m e nt a r y_ m a th _ q a : question_with_mathematical_hint ' , '
+s i m p _ t u r i n g _ c o n c e p t : additional_set_ 2', ' e le m e nt a r y_ m a th _ q a : question_only ', ' n a t u r a l _ i n s t r u c t i o n s :
+subtask 0 0 4 _ m c t a c o _ a n s w e r _ g e n e r a t i o n _ e v e n t _ d u r a t i o n', ' empirical_judgments ' , '
+gre_reading_comprehension ' , ' lo gi ca l_ ded uc ti on : three_objects ', ' e le m e nt a r y_ m a th _ q a :
+language_hint_only ', ' cifar 1 0 _classification : base 6 4 ', ' mathematical_induction ', ' arithmetic : 2
+_digit_subtraction ', ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : identity', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 5 4
+_multirc_write_correct_answer ', ' logical_sequence ', ' arithmetic : 5 _digit_multiplication ', '
+persian_idioms ' , ' l i n g u i s t i c _ m a p p i n g s : past_tense_regular_json ', ' p eri od ic _e lem en ts : subtask_ 1 ', '
+parsinlu_reading_comprehension '] ,
+7 4 2 : [ ' implicatures ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 9 _m u lt ir c _q ue s ti on s _n ee d ed _t o _a ns w er' , '
+l i n g u i s t i c _ m a p p i n g s : past_tense_json', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 5 7
+_ mul ti rc _c la ssi fy _i nc orr ec t_ an sw er ' , ' gem : e 2 e_nlg ', ' arithmetic : 5 _digit_subtraction ', '
+l ogi ca l_ de du cti on : seven_objects ' , ' cryobiology_spanish ', ' vitaminc_fact_verification ', ' qa_wikidata
+', ' a b s t r a c t _ n a r r a t i v e _ u n d e r s t a n d i n g : 4 _distractors', ' l i n g u i s t i c _ m a p p i n g s : plural_json' , '
+s y m b o l _ i n t e r p r e t a t i o n : emoji_agnostic' , ' e le m e nt a r y_ m a th _ q a : question_with_mathematical_hint ' , '
+s i m p _ t u r i n g _ c o n c e p t : additional_set_ 2', ' e le m e nt a r y_ m a th _ q a : question_only ', ' n a t u r a l _ i n s t r u c t i o n s :
+subtask 0 0 4 _ m c t a c o _ a n s w e r _ g e n e r a t i o n _ e v e n t _ d u r a t i o n', ' empirical_judgments ' , '
+gre_reading_comprehension ' , ' lo gi ca l_ ded uc ti on : three_objects ', ' e le m e nt a r y_ m a th _ q a :
+language_hint_only ', ' cifar 1 0 _classification : base 6 4 ', ' mathematical_induction ', ' arithmetic : 2
+_digit_subtraction ', ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : identity', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 5 4
+_multirc_write_correct_answer ', ' logical_sequence ', ' arithmetic : 5 _digit_multiplication ', '
+n a t u r a l _ i n s t r u c t i o n s : subtask 0 5 5 _multirc_write_incorrect_answer ' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 3 4
+_ w i n o g r a n d e _ q u e s t i o n _ m o d i f i c a t i o n _ o b j e c t', ' arithmetic : 3 _digit_addition ' , ' n a t u r a l _ i n s t r u c t i o n s :
+subtask 0 1 6 _ mc t ac o_ a ns we r _g en e ra ti o n_ fr e qu en c y' , ' language_identification ', ' crass_ai ', '
+n a t u r a l _ i n s t r u c t i o n s : subtask 0 5 0 _multirc_answerability ' , ' persian_idioms ' , ' disambiguation_qa ', ' gem
+: asset ', ' dark_humor_detection ', ' arithmetic : 4 _digit_addition ', '
+i nt er n at io n al _p h on et i c_ al p ha be t _n li', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 0 8
+_ m c t a c o _ w r o n g _ a n s w e r _ g e n e r a t i o n _ t r a n s i e n t _ s t a t i o n a r y']
+8 }
+G.5 k-means
+The numbers reported in Fig. 6 is the average of 5 runs. We ran the k-means algorithms with 5 different
+random initialization. In the following we list the “small-bench” candidates from 1 run. The same applies
+to “k-means + Task Value” results.
+1 {
+2 4 : [ ' anachronisms ' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 3 2 _ w i n o g r a n d e _ q u e s t i o n _ g e n e r a t i o n _ p e r s o n', '
+l i n g u i s t i c _ m a p p i n g s : de_past_tense_regular_json ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 3 3
+_winogrande_answer_generation '] " ,
+3 8 : [ ' anachronisms ' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 6 _drop_question_generation ' , ' arithmetic : 5
+_digit_addition ', ' l i n g u i s t i c _ m a p p i n g s : question_formation_json ' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 3 0
+_winogrande_full_person ', ' bbq_lite_json : bbq_lite_json_ses_disambig ', ' n a t u r a l _ i n s t r u c t i o n s : subtask
+0 3 9 _qasc_find_overlapping_words ' , ' l i n g u i s t i c _ m a p p i n g s : de_past_tense_regular_json '] " ,
+4 1 6 : [ ' anachronisms ', ' s y m b o l _ i n t e r p r e t a t i o n : plain' , ' arithmetic : 5 _digit_addition ' , ' l i n g u i s t i c _ m a p p i n g s :
+past_tense_regular_json ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 3 1 _ w i n o g r a n d e _ q u e s t i o n _ g e n e r a t i o n _ o b j e c t' ,
+' bbq_lite_json : bbq_lite_json_ses_disambig ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 3 9
+_qasc_find_overlapping_words ' , ' m o d i f i e d _ a r i t h m e t i c : t wo_ digi t_m ult ipli cat ion_ plu s_o ne' , '
+bbq_lite_json : bbq_lite_json_nationality_ambig ' , ' c h e s s _ s t a t e _ t r a c k i n g : real_medium', '
+l i n g u i s t i c _ m a p p i n g s : de_past_tense_regular_json ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 3 2
+_ w i n o g r a n d e _ q u e s t i o n _ g e n e r a t i o n _ p e r s o n', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 1 _qasc_answer_generation ' ,
+' gem : turk ', ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : dates_unnatural_content', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0
+4 8 _multirc_question_generation '] " ,
+5 2 4 : [ ' anachronisms ', ' re al _o r_ fa ke_ te xt : easy ', ' arithmetic : 5 _digit_addition ', ' gem : webnlg_en ', '
+n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 9 _m ul t ir c_ q ue st i on s_ n ee de d _t o _a ns w er', ' l i n g u i s t i c _ m a p p i n g s :
+past_tense_regular_json ', ' bbq_lite_json : bbq_lite_json_nationality_ambig ', ' gem : xsum ', '
+t r a c k i n g _ s h u f f l e d _ o b j e c t s : seven_objects' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 1 9
+_ mc ta c o_ te m po ra l _r ea s on in g _c at e go ry', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 4 _cosmosqa_answer_generation ',
+' n a t u r a l _ i n s t r u c t i o n s : subtask 0 3 0 _winogrande_full_person ' , ' c h e s s _ s t a t e _ t r a c k i n g : synthetic_medium',
+' n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 5 _m i s ce l l an e o us _ s en t e nc e _ pa r a ph r a si n g', '
+u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : reverse_to_natural_content' , ' a u t h o r s h i p _ v e r i f i c a t i o n : swapped' , '
+
+
+===== PAGE 24 =====
+n a t u r a l _ i n s t r u c t i o n s : subtask 0 3 9 _qasc_find_overlapping_words ' , ' m o d i f i e d _ a r i t h m e t i c :
+two_ digit_mu ltiplica tion_con trol ', ' bbq_lite_json : b b q _ l i t e _ j s o n _ s e x u a l _ o r i e n t a t i o n _ d i s a m b i g', '
+a b s t r a c t _ n a r r a t i v e _ u n d e r s t a n d i n g : 9 _distractors', ' color : hsl ' , ' fact_checker : fever ', ' tense ' , '
+i nt e r se c t _g e o me t r y : shapes_ 4'] " ,
+6 3 2 : [ ' anachronisms ', ' re al _o r_ fa ke_ te xt : easy ', ' arithmetic : 5 _digit_division ', ' gem : webnlg_en ', '
+n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 9 _m ul t ir c_ q ue st i on s_ n ee de d _t o _a ns w er', ' l i n g u i s t i c _ m a p p i n g s :
+past_tense_json ', ' bbq_lite_json : bbq_lite_json_nationality_ambig ', ' gem : xsum ' , '
+t r a c k i n g _ s h u f f l e d _ o b j e c t s : seven_objects' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 0
+_mctaco_span_based_question ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 3 2
+_ w i n o g r a n d e _ q u e s t i o n _ g e n e r a t i o n _ p e r s o n', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 3 2
+_ w i n o g r a n d e _ q u e s t i o n _ g e n e r a t i o n _ p e r s o n', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 0 3
+_ m c t a c o _ q u e s t i o n _ g e n e r a t i o n _ e v e n t _ d u r a t i o n' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 5
+_ mi s c el l a ne o u s_ s e nt e n ce _ p ar a p hr a s in g' , ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : reverse_natural_content' , '
+a u t h o r s h i p _ v e r i f i c a t i o n : swapped' , ' go al _s te p_w ik ih ow : goal_inference ', ' m o d i f i e d _ a r i t h m e t i c :
+two_ digit_mu ltiplica tion_con trol ', ' bbq_lite_json : b b q _ l i t e _ j s o n _ s e x u a l _ o r i e n t a t i o n _ d i s a m b i g', '
+a b s t r a c t _ n a r r a t i v e _ u n d e r s t a n d i n g : 9 _distractors', ' color : hsl ' , ' fact_checker : fever ', ' tense ' , '
+i nt e r se c t _g e o me t r y : shapes_ 4', ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : dates_unnatural_content', '
+n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 8 _multirc_question_generation ' , ' hyperbaton ' , ' s y m b o l _ i n t e r p r e t a t i o n :
+plain ' , ' arithmetic : 5 _digit_addition ' , ' c h e s s _ s t a t e _ t r a c k i n g : real_medium', ' s i m p _ t u r i n g _ c o n c e p t :
+additional_set_ 1 ', ' physics '] " ,
+7 4 2 : [ ' anachronisms ', ' re al _o r_ fa ke_ te xt : easy ', ' arithmetic : 5 _digit_division ', ' gem : webnlg_en ', '
+n a t u r a l _ i n s t r u c t i o n s : subtask 0 3 9 _qasc_find_overlapping_words ' , ' l i n g u i s t i c _ m a p p i n g s : past_tense_json'
+, ' bbq_lite_json : bbq_lite_json_nationality_ambig ' , ' gem : xsum ', ' t r a c k i n g _ s h u f f l e d _ o b j e c t s :
+seven_objects ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 1 9 _m ct a co _t e mp or a l_ re a so ni n g_ ca t eg o ry', '
+n a t u r a l _ i n s t r u c t i o n s : subtask 0 1 7 _ m c t a c o _ w r o n g _ a n s w e r _ g e n e r a t i o n _ f r e q u e n c y', ' n a t u r a l _ i n s t r u c t i o n s :
+subtask 0 3 0 _winogrande_full_person ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 0 3
+_ m c t a c o _ q u e s t i o n _ g e n e r a t i o n _ e v e n t _ d u r a t i o n' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 5
+_ mi s c el l a ne o u s_ s e nt e n ce _ p ar a p hr a s in g' , ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : reverse_natural_content' , '
+a u t h o r s h i p _ v e r i f i c a t i o n : swapped' , ' go al _s te p_w ik ih ow : goal_inference ', ' m o d i f i e d _ a r i t h m e t i c :
+two_ digit_mu ltiplica tion_con trol ', ' bbq_lite_json : b b q _ l i t e _ j s o n _ p h y s i c a l _ a p p e a r a n c e _ d i s a m b i g', '
+a b s t r a c t _ n a r r a t i v e _ u n d e r s t a n d i n g : 9 _distractors', ' color : hex ' , ' fact_checker : fever ', ' tense ' , '
+l i n g u i s t i c _ m a p p i n g s : de_past_tense_regular_json ', ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g :
+dates_unnatural_content ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 6 _drop_question_generation ', ' hyperbaton ',
+' s y m b o l _ i n t e r p r e t a t i o n : plain', ' arithmetic : 5 _digit_addition ', ' c h e s s _ s t a t e _ t r a c k i n g : real_medium' ,
+' s i m p _ t u r i n g _ c o n c e p t : additional_set_ 1', ' physics ' , ' cifar 1 0 _classification : base 6 4 ', '
+i nt e r se c t _g e o me t r y : shapes_ 4', ' e l em e n ta r y _m a th _ q a : question_with_language_hint ', ' go al _s te p_ wik ih ow :
+step_inference ' , ' unit_conversion : unit_identification ' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 5 6
+_mul tirc_cla ssify_co rrect_an swer ', ' strange_stories : multiple_choice ', ' discourse_marker_prediction '
+, ' bbq_lite_json : bbq_lite_json_religion_disambig ' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 4
+_cosmosqa_answer_generation '] "
+8 }
+G.6 k-means + Task Value
+1 {
+2 4 : [ ' bbq_lite_json : b b q _ l i t e _ j s o n _ s e x u a l _ o r i e n t a t i o n _ d i s a m b i g' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 9
+_winogrande_full_object ', ' gem : xsum ', ' l i n g u i s t i c _ m a p p i n g s : question_formation_json ' ] " ,
+3 8 : [ ' hyperbaton ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 6 _drop_question_generation ', ' arithmetic : 5
+_digit_addition ', ' l i n g u i s t i c _ m a p p i n g s : question_formation_json ' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 9
+_winogrande_full_object ', ' bbq_lite_json : b b q _ l i t e _ j s o n _ s e x u a l _ o r i e n t a t i o n _ d i s a m b i g' , '
+n a t u r a l _ i n s t r u c t i o n s : subtask 0 0 3 _ m c t a c o _ q u e s t i o n _ g e n e r a t i o n _ e v e n t _ d u r a t i o n' , ' gem : xsum ' ] " ,
+4 1 6 : [ ' hyperbaton ', ' re al _o r_ fa ke_ te xt : gpt 2 _xl ', ' arithmetic : 5 _digit_addition ', ' l i n g u i s t i c _ m a p p i n g s :
+past_tense_regular_json ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 9 _winogrande_full_object ', ' bbq_lite_json :
+b b q _ l i t e _ j s o n _ s e x u a l _ o r i e n t a t i o n _ d i s a m b i g', ' go al _s te p_ wik ih ow : goal_inference ', ' pe ri od ic _e lem en ts :
+subtask_ 1 ', ' bbq_lite_json : b b q _ l i t e _ j s o n _ p h y s i c a l _ a p p e a r a n c e _ a m b i g', ' c h e s s _ s t a t e _ t r a c k i n g :
+synthetic_long ' , ' i nt e r se c t _g e o me t r y : shapes_ 4', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 5
+_ c o s mo s q a _ i n c or r e c t _ a ns w e r _ g e ne r a t i o n', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 0 2 _quoref_answer_generation ',
+' gem : turk ', ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : dates_unnatural_content', ' n a t u r a l _ i n s t r u c t i o n s : subtask
+0 4 8 _multirc_question_generation ' ] " ,
+5 2 4 : [ ' snarks ' , ' re al _o r_ fa ke_ te xt : gpt 2 _xl ', ' arithmetic : 5 _digit_addition ', ' s i m p _ t u r i n g _ c o n c e p t :
+additional_set_ 2 ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 8 _multirc_question_generation ' , '
+l i n g u i s t i c _ m a p p i n g s : past_tense_regular_json ', ' bbq_lite_json :
+b b q _ l i t e _ j s o n _ p h y s i c a l _ a p p e a r a n c e _ a m b i g' , ' gem : xsum ' , ' analogical_similarity ' , '
+n a t u r a l _ i n s t r u c t i o n s : subtask 0 1 9 _m ct a co _t e mp or a l_ re a so ni n g_ c at eg o ry', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0
+2 5 _ c os m o s q a _ i nc o r r e c t _a n s w e r _ ge n e r a t i o n' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 9 _winogrande_full_object ',
+' c h e s s _ s t a t e _ t r a c k i n g : real_short', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 5
+_ mi s c el l a ne o u s_ s e nt e n ce _ p ar a p hr a s in g' , ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : reverse_to_natural_content' ,
+' hyperbaton ' , ' go al _s te p_w ik ih ow : goal_inference ', ' m o d i f i e d _ a r i t h m e t i c :
+two_ digit_mu ltiplica tion_con trol ', ' bbq_lite_json : b b q _ l i t e _ j s o n _ s e x u a l _ o r i e n t a t i o n _ d i s a m b i g', '
+nonsense_words_grammar ' , ' discourse_marker_prediction ', ' implicatures ', ' ascii_word_recognition ', '
+i nt e r se c t _g e o me t r y : shapes_ 4'] " ,
+6 3 2 : [ ' anachronisms ', ' re al _o r_ fa ke_ te xt : gpt 2 _xl ', ' arithmetic : 3 _digit_division ', '
+play_dialog_same_or_different ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 5 8 _multirc_question_answering ', '
+l i n g u i s t i c _ m a p p i n g s : past_tense_json', ' bbq_lite_json : b b q _ l i t e _ j s o n _ p h y s i c a l _ a p p e a r a n c e _ a m b i g', ' gem
+: xsum ' , ' analogical_similarity ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 0 _mctaco_span_based_question ', '
+n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 5 _ c o sm o s q a _ i nc o r r e c t _ an s w e r _ g en e r a t i o n' , ' m i n u t e _ m y s t e r i e s _ q a :
+multiplechoice ' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 0 3 _ m c t a c o _ q u e s t i o n _ g e n e r a t i o n _ e v e n t _ d u r a t i o n', '
+n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 5 _ mi s ce l l an e o us _ s en t e nc e _ pa r a ph r a si n g', '
+u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : reverse_to_natural_content' , ' a u t h o r s h i p _ v e r i f i c a t i o n : swapped' , '
+g oal _s te p_ wi kih ow : goal_inference ', ' m o d i f i e d _ a r i t h m e t i c : tw o_digit_ multipli cation_c ontrol ' , '
+bbq_lite_json : b b q _ l i t e _ j s o n _ s e x u a l _ o r i e n t a t i o n _ d i s a m b i g', ' figure_of_speech_detection ' , '
+discourse_marker_prediction ', ' implicatures ', ' ascii_word_recognition ', ' i n te r se c t _g e o me t r y : shapes_
+4 ', ' u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : dates_unnatural_content', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 8
+_multirc_question_generation ' , ' hyperbaton ' , ' s y m b o l _ i n t e r p r e t a t i o n : plain' , ' arithmetic : 5
+
+
+===== PAGE 25 =====
+_digit_addition ', ' c h e s s _ s t a t e _ t r a c k i n g : synthetic_long' , ' s i m p _ t u r i n g _ c o n c e p t : additional_set_ 1', '
+human_organs_senses ' ] " ,
+7 4 2 : [ ' anachronisms ', ' re al _o r_ fa ke_ te xt : gpt 2 _xl ', ' arithmetic : 3 _digit_division ', '
+play_dialog_same_or_different ', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 7 _ misc _an swe ring _sc ienc e_q ues tion s',
+' l i n g u i s t i c _ m a p p i n g s : past_tense_json', ' bbq_lite_json : b b q _ l i t e _ j s o n _ p h y s i c a l _ a p p e a r a n c e _ a m b i g', '
+gem : xsum ' , ' t r a c k i n g _ s h u f f l e d _ o b j e c t s : seven_objects' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 1 9
+_ mc ta c o_ te m po ra l _r ea s on in g _c at e go ry', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 1 7
+_ m c t a c o _ w r o n g _ a n s w e r _ g e n e r a t i o n _ f r e q u e n c y', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 9 _winogrande_full_object
+', ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 0 3 _ m c t a c o _ q u e s t i o n _ g e n e r a t i o n _ e v e n t _ d u r a t i o n', '
+n a t u r a l _ i n s t r u c t i o n s : subtask 0 4 5 _ mi s ce l l an e o us _ s en t e nc e _ pa r a ph r a si n g', '
+u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : reverse_to_natural_content' , ' a u t h o r s h i p _ v e r i f i c a t i o n : swapped' , '
+g oal _s te p_ wi kih ow : goal_inference ', ' m o d i f i e d _ a r i t h m e t i c : tw o_digit_ multipli cation_c ontrol ' , '
+bbq_lite_json : b b q _ l i t e _ j s o n _ p h y s i c a l _ a p p e a r a n c e _ d i s a m b i g' , ' figure_of_speech_detection ', ' color : hex
+', ' implicatures ' , ' ascii_word_recognition ' , ' l i n g u i s t i c _ m a p p i n g s : de_past_tense_regular_json ', '
+u n n a t u r a l _ i n _ c o n t e x t _ l e a r n i n g : dates_unnatural_content' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 6
+_drop_question_generation ' , ' hyperbaton ' , ' s y m b o l _ i n t e r p r e t a t i o n : plain', ' arithmetic : 5
+_digit_addition ', ' c h e s s _ s t a t e _ t r a c k i n g : synthetic_long' , ' s i m p _ t u r i n g _ c o n c e p t : additional_set_ 1', '
+physics ', ' cifar 1 0 _classification : base 6 4 ', ' i nt e r se c t _g e o me t r y : shapes_ 4', ' e le m e nt a r y_ m a th _ q a :
+question_with_language_hint ', ' g oal _s te p_ wik ih ow : step_inference ', ' unit_conversion :
+unit_identification ' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 5 6 _mu ltirc_cl assify_c orrect_a nswer ', '
+strange_stories : boolean ', ' discourse_marker_prediction ', ' bbq_lite_json :
+bbq_lite_json_religion_disambig ' , ' n a t u r a l _ i n s t r u c t i o n s : subtask 0 2 5
+_ c o s mo s q a _ i n c or r e c t _ a ns w e r _ g e ne r a t i o n'] "

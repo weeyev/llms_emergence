@@ -1,0 +1,935 @@
+
+
+===== PAGE 1 =====
+A Theory for Emergence of Complex Skills in
+Language Models
+Sanjeev Arora
+Princeton University∗
+Anirudh Goyal
+Google DeepMind
+Abstract
+A driver of current AI research is the fact that new skills emerge in language models
+when their parameter set and training corpora are scaled up. This phenomenon
+is poorly understood, and a mechanistic explanation via mathematical analysis of
+gradient-based training seems difficult. The current paper takes a different approach,
+analysing emergence using the famous (and empirical) Scaling Laws of LLMs and
+a simple statistical framework. Contributions include: (a) A statistical framework
+that relates cross-entropy loss of LLMs to competence on the basic skills that
+underlie language tasks. (b) Mathematical analysis showing that the Scaling Laws
+imply a strong form of inductive bias that allows the pre-trained model to learn very
+efficiently. We informally call thisslingshot generalization since, naively viewed, it
+appears to give competence levels at skills that violate usual generalization theory.
+(c) A key example of slingshot generalization, that competence at “complex skills,”
+which involve t-tuples of basic skills, emerges essentially at very similar scaling as
+competence on the elementary skills themselves.
+1 Introduction
+As language models scale up, via an increase in both the number of parameters and the size of the
+training datasets, they exhibit remarkable new behaviors Brown et al. [2020], Ganguli et al. [2022],
+Srivastava et al. [2022], Wei et al. [2022] —this phenomenon is often termed emergence. Some
+emergent properties were noticed by early model designers and have since been confirmed through
+experiments with substantially larger models such as GPT Brown et al. [2020], OpenAI [2023],
+PaLM Chowdhery et al. [2022] and PaLM-2 [Anil et al., 2023]. Ultimate forms of emergence are
+in-context Learning Brown et al. [2020] and zero-shot learning, whereby the model can understand
+task instructions given as part of its input and solve the task. Attempting to explain this range of
+phenomena solely through a mathematical analysis of gradient-based training appears challenging,
+and appears to call for new thinking.
+The model exhibiting new “behaviors” upon deployment is also of obvious interest in discussions
+about AI safety and alignment. A contrarian view downplaying such concerns is that all learned
+behaviors were already present somewhere in the (massive) training corpus —the so-called “stochastic
+parrots” view Bender et al. [2021].
+The current paper introduces new frameworks to derive mathematical understanding of such phenom-
+ena. But first we recall (well-known) challenges in such a line of inquiry.
+1. The phenomenon is not well-defined! Quantifying emergence of new “skills” requires
+formulating what “language skills” are, which is tricky. Formalizations using Probabilistic
+Context-Free Grammars, Boolean logic, Combinatorial Categorial Grammars, Dependency
+Grammars, Gricean theories, Frame Theory and Category Theory Chomsky [1957], Hippis-
+ley and Stump [2017], Grice [1975], Steedman [1996], Coecke et al. [2010], Tannen [ed]
+∗Work done while at Google DeepMind
+Preprint. Under review.
+arXiv:2307.15936v2  [cs.LG]  6 Nov 2023
+
+
+===== PAGE 2 =====
+capture essential aspects of this. But it seems difficult (perhaps impossible) to integrate all
+of these into a single framework and connect it to statistical frameworks undelying LLMs,
+namely, next-word prediction using cross-entropy loss.
+2. Multiple skills tend to emerge roughly together. The theory has to explain how they are
+connected.
+3. Finally, the model appears capable of flexibly combining its various capabilities during
+in-context learning. (See Appendix A.2 for examples.) Prior attempts to formalize “combi-
+nations” got highly technical, e.g. involving category theory .
+1.1 Our contributions
+We introduce new types of mathematically rigorous —yet elementary—frameworks and analyses that
+stay recognizably close to current statistical frameworks, and yet offer insights into above phenomena.
+Since analysis of training and generalization has proved difficult, our theory assumesLLM Scaling
+Laws, which are empirically relationships describing reduction in language modeling loss with model
+scale. The “language distribution” is conceptualized as a distribution over finite pieces of text, called
+text-pieces. The following are the key elements of the theory: (i) A framework for conceptualizing
+skills. The theory assumes there exists a set of ground-truth skills and that text-pieces are generated
+by an unknown process that takes random tuples of skills and converts them into a text-piece whose
+comprehension requires those skills. This is best visualized as a bipartite graph (“skill graph”) with
+skills on one side and text-pieces on the other. An edge (s, t) means that understanding of the
+text-piece t requires applying skill s. (See Figure 1.) The framework assumes that “understanding”
+of a text-piece is testable by simple multiple-choice (“cloze”) questions (see Section 3) inserted (by
+another unknown process) into the text at test time. The model does not need to predict the content of
+the questions —it only needs to predict the answer, and it is penalized for any incorrect guesses. (ii)
+Statistical tasks associated with skills and skill-tuples: Having cast language understanding as ability
+to answer cloze questions, we can define statistical tasks corresponding to “skills” and “skillk′-tuples”
+as follows. “Competence” on the skill is a fraction between 0 and 1 corresponding to the model’s
+success rate when presented with all cloze questions from text-piece selected randomly among all
+text-pieces adjacent to the particular skill node. Competence in k′-tuple of skills where k′ ≥ 1 is
+the ability to correctly answer cloze questions in a randomly selected text-piece that is connected to
+all skills in the k′-tuple. (iii) How competencies evolve with scaling. Random graph theory is used
+to give rates at which competencies in skills and skill-tuples improve with scaling. It is shown that
+competence in skill-tuples improves almost as fast as that in individual skills. (Theorem 14.)
+V2
+t
+Pieces 
+of text 
+t/uni223C/uni03BCV1
+Skills
+Figure 1: Skill Graph.
+Poverty of the stimulus angle: Reasonable com-
+petence at k′-tuples of skills is a simple example
+of compositional generalization. The phrase
+Poverty of the Stimulus is often used (Chomsky
+[1988]) to highlight that humans apply linguistic
+structures in new combinations. (See Section 2.)
+A similar issue also arises in our setting. Our
+analysis allows the set of skills to be almost as
+large as the training corpus, which implies all
+individual skills were likely to have been seen
+during training. However, the number of k′-tuples of skills scales as the k′th power of the number
+of skills, which is much larger than the size of the training corpus. Therefore if the model displays
+competency on even 10% of the k′-tuples of skills then it must have somehow acquired competence
+in k′-tuples that were not seen during training. If we think of the k′-tuple of skills as a “complex
+skills” then we must conclude that the model (through some internal combinational process) has
+acquired many such complex skills despite not having seen that combination in training data.
+Potential conceptual frameworks for next-generation AI models: The ongoing reworking of
+Language Models into AI agents is accompanied by a shift away from the old paradigm of simply
+training a model to predict the next word in a text corpus. Instead, the “corpus” is a carefully
+weighted/curated combination of data, which could include code, math/logical reasoning, images,
+synthetic text, etc. Training could involve new kinds of losses. Our conceptual framework seems
+applicable to these new settings, since it is agnostic about what “skills” and “text” are, and how they
+2
+
+
+===== PAGE 3 =====
+compose. The analysis is also adaptable to prediction losses other than cross-entropy. For simplicity,
+we choose to describe the framework in context of vanilla language modeling.
+Paper organization: Section 2 provides a brief introduction to scaling laws, emergence, and
+random bipartite graphs. Section 3 explores the connection between the reduction in excess cross-
+entropy and learning. Sections 5 and 6 give concrete results about emergence of skills as a result of
+scaling.
+2 Preliminaries
+Deep-learning based language models follows a statistical paradigm: occurrences of linguistic units
+(say, words, sentences, paragraphs) are assumed to fit a statistical profile, and thus pieces of text
+from a sufficiently large and diverse corpus are assumed to be samples from a probability distribution
+Bengio et al. [2000]. Language models are trained to solve next-word-prediction tasks: Given, say,
+the past 500 words2 in the text, predict the next word. Faced with such a task, humans may be able
+to give many completions, and the modeling assumes that frequencies of these completions can be
+modeled via probability. Thus the model M computes a probability PrM [wi+1 | w1w2 . . . wi] for all
+possible words wi+1’s. The goodness of a model is computed by itscross entropy loss, which for a
+sequence of words w1w2 . . . wt is:
+ℓ(M ) = −
+X
+i
+log Pr
+M
+[wi+1 | w1w2 . . . wi] (Cross Entropy) (1)
+Models are trained by minimizing (via gradient descent) this training loss on a text corpus, and their
+goodness is computed by their test loss—evaluating the same loss expression on a held-out text from
+the same corpus. Often the training corpus is so large that the model trains only once (or a few times)
+on each piece of text, and by the end, the test loss on held-out text is almost the same as the training
+loss.
+Scaling laws: These empirically-derived expressions describe how test cross entropy loss on held-
+out data scales (in experiments) with number of model parameters (N) and size of the dataset (D)
+Cortes et al. [1993], Hestness et al. [2017], Kaplan et al. [2020], Bahri et al. [2021]. For Chinchilla
+models Hoffmann et al. [2022] the law is as follows:
+L(N, D) = A + B
+N 0.34 + C
+D0.28 A = 1.61 B = 406.4 C = 410.7. (2)
+Here the constants A, B, C in 2 hold only for the specific architecture and training strategy —even
+the constant A depends upon the tokenization. This description of macro behavior using two basic
+parameters —reminiscent of 2nd Law of Thermodynamics— will help us circumvent the need for
+mechanistic understanding of training. Our theory will only rely upon the general form of the
+equations, specifically, that the dependence is inverse polynomial in N, D. So it applies to other
+frameworks of training (e.g., overtrained models Muennighoff et al. [2023]) where scaling laws have
+also been found.
+Emergence: Emergence refers to an interesting empirical phenomenon that as D, N are increased
+together then the model’s performance (zero shot or few-shot) on abroad range of language tasks
+improves in a correlated way. The improvement can appear as a quick transition when D, N are
+plotted on a log scale (which is often the case) but it is now generally accepted that for most tasks
+the performance improves gradually when D, N are scaled up. Thus the term slow emergence is
+more correct. Furthermore, it is known that emergence happens at different rates for different tasks,
+and is often quickest for tasks where the text is plausibly close to text found in training data Wei
+et al. [2022]. Plenty of tasks are known that stump current models, and they usually tend to be very
+different from what one would find in usual text corpora. See [Wei et al., 2022, Srivastava et al., 2022,
+Schaeffer et al., 2023] for experimental results on emergence rates of the broad range of language
+tasks. One might thus posit, with some justification from the above-mentioned studies, that the
+emergence of skills arises from training on related tasks that were implicitly solved while solving
+next-word prediction in the training dataset. This is indeed our starting point.
+2Actual training involves breaking up words into smaller tokens, which allows a single model to handle all
+human languages, math formulae, computer code, etc. For simplicity, our discussion will refer to “words.”
+3
+
+
+===== PAGE 4 =====
+Poverty of Stimulus with respect to skill combinations: Any expert who has conversed with
+popular chat agents quickly discovers that at the very least they seem to flexibly solve tasks that
+require combinations of simple skills. However, the number of k′-wise combinations of elementary
+skills feels too large (say, with k′ = 4 and the number of elementary skills is in the tens of thousands)
+for all of the combinations to even be present in the training dataset. In other words, if the model
+indeed acquires ability to solve tasks involving t-tuples of skills, we are looking at the familiar
+Poverty of the Stimulus issue3 which we return to in Section 5.1.1.
+2.1 Cross-Entropy, Entropy, and Excess entropy
+The conceptual framework underlying cross-entropy loss (1) is that there is a ground-truth (i.e.,
+humans’) distribution for generating the next word, which assigns probabilitypi(w | w1w2 . . . wi) to
+the event that the (i + 1)th word is w given that the previous words were w1w2 . . . wi. In interest of
+compact notation we shorten pi(w | w1w2 . . . wi) to pi(w), Thus the entropy of the (i + 1)th word
+X
+w
+pi(w) log 1
+pi(w) (ENTROPY ) (3)
+This entropy is an inherent property of language, due to existence of many possible choices human
+writers can make for the next word. Given sequence w1w2 . . . wi the model has a probability
+distribution q(w|w1w2 . . . wi) for the next word w. Extending our compact notation, we use qi(w)
+as a shorthand for this. The cross-entropy loss of the model on the i + 1th word is log 1
+q(wi+1), which
+should be seen as an empirical estimate of
+Ew∼pi()[log 1
+q(w) ] (EXPECTED C -E LOSS ) (4)
+KL divergence, also sometimes called excess entropy, is non-negative and defined as
+KL(pi||qi) = Ew∼pi()[log pi(w)
+qi(w) ] EXCESS ENTROPY (5)
+Thus on a per-word basis we have:
+EXPECTED C -E LOSS = ENTROPY + EXCESS ENTROPY (6)
+Summing over the entire held out corpus, one obtains a similar estimate for the entire corpus. One
+can make mild assumptions to the effect that the conditional probabilities pi(), qi() only depend only
+on (say) the previous 103 words, whereas the corpus size M is much bigger, e.g., M ≫ 107. So the
+corpus consists of a random walk of sorts, where every 104 words or so it switches to a different
+portion of the language distribution. Under such assumptions the above relationship, which holds in
+expectation at the word level, should hold fairly precisely at the corpus level.
+Understanding the Scaling Law in terms of excess entropy: In (2) the A term captures the
+entropy of language 4. No model, however good, can achieve lower cross-entropy loss than A
+for large corpora. The second and third terms of (2) capture excess entropy, and they decrease
+polynomially with N and D. For example when N, D are increased by a factor of 10 it reduces by
+roughly (10)0.28 ≈ 2.
+Section 3 will argue that reductions in excess entropy lead to improvements in model capabilities.
+But note that there is no way to compute excess entropy using just the corpus. Relationship (6) shows
+that estimating excess entropy requires knowing the inherent entropy of text, which requires humans
+in the picture. It is not possible to look at the model’s cross-entropy loss on the ith word according to
+(1) and know—without asking humans— how much is due to inherent cross-entropy and how much
+is excess.
+3Chomsky coined the phrase Poverty of the Stimulus to emphasize that babies do not have enough data to
+learn language, and concluded that evolution must have led to a “universal grammar” that humans must be be
+born with. In our framework, the language model (whose learning is initialized using Gaussian noise) also seems
+to defy paucity of stimulus with respect to skill combinations.
+4Here we’re assuming that as the model and data set size tend to infinity in tandem, the model will perfectly
+learn the language distribution.
+4
+
+
+===== PAGE 5 =====
+3 (Mis)understanding, Excess entropy, and Cloze Questions
+Thinking about emergence and Scaling Laws, it is possible to get confused as follows: “When we
+increase D from 1011 to 1012 then according to (2) this changes cross-entropy by a tiny amount. Why
+does it lead to big changes in macroscopic behavior?” The flaw in this reasoning is that most of
+the loss captures merely the inherent entropy of language (the A term in (2)). We argue now that
+the model’s mistakes on downstream tasks (i.e., its misunderstandings) are captured by theexcess
+entropy, which as noted in Section 2.1 reduces by a constant factor each time the model is scaled up
+by an order of magnitude5
+We illustrate using a classic example from Winograd [1971], which later inspired the Winograd
+Schema Challenge(WSC) Levesque et al. [2012]:
+The city councilmen refused the demonstrators a permit because they feared
+violence.
+Here the pronoun they is ambiguous— grammar rules allow it to refer to either demonstrators or
+city councilmen . Winograd pointed out that disambiguating it (i.e., anaphora resolution) requires
+world knowledge that is unavailable in the text itself, namely that demonstrations can get violent, and
+city councilmen don’t like violence.
+A key idea in designing test-beds for language understanding such as WSC is the Cloze Procedure6,
+popular also for testing language development in children Brown [2018]. To test the model’s
+understanding of they in this sentence, we can append a prompt: Q. Who feared violence? .
+This is followed by either a blank, or a choice of multiple answers: A. city councilmen. B.
+demonstrators. For WSC examples, even though a human would be hundred percent sure of the
+answer, language models circa 2016 were roughly 50/50 confused between the two options.
+In the above example, the human is 100% certain of the answer, which implies their entropy here
+is log 1, namely 0. However if the model is split 50-50 between the two options this implies it has
+cross-entropy log 2, all of which is excess entropy! Given the frequency of ambiguous pronouns in
+usual English, one concludes that a model that has not learned pronoun disambiguation will display
+huge excess entropy at many places in surrounding text. Thus reductions in excess entropy (which
+happen naturally due to scaling) will tend to squeeze out such errors. The rest of the paper tries to
+make this intuition mathematically precise.
+Of course, text corpora do not normally contain such artificial cloze questions. But one could imagine
+that the model’s basic misunderstanding of the above type could, often, lead to prediction mistakes in
+neighboring text. Our theory in Section 4 will assume that cloze questions can closely capture the
+model’s misunderstanding.
+4 Mathematical Framework
+We give a mathematical framework for thinking about skills and how they might relate to language
+comprehension tasks such as pronoun disambiguation. First, it is assumed that language comprehen-
+sion involves a set of skills, though the theory will not need to know a precise list. (Scholars have
+discovered and named thousands of skills. Well-trained transformers have undoubtedly discovered
+many more that remain unnamed.) Next, the theory will assume scaling laws such as (2) and thus not
+need to reason about training and generalization. Instead, it can reason directly about the model’s
+behavior on the test distribution, i.e., the distribution from which the training data was drawn. We as-
+5A recent empirical study Xia et al. [2023] also concludes with the finding that “language modeling perplexity
+correlates well with few-shot in-context learning performance along the trajectory, regardless of model sizes.” At
+the same time, it is known that two models with the same cross-entropy can differ somewhat in their performance
+on language tasks.
+6Cloze questions are multiple choice, which allows testing most language skills Brown et al. [2020]. Some
+skills such as understanding of irony don’t lend themselves well to cloze-based testing since one of the multiple
+choices already explains the joke. See Saunshi et al. [2021] for earlier use of Cloze prompts in developing a
+theory of LLMs.
+5
+
+
+===== PAGE 6 =====
+sume this test distribution is structured as a long unordered list of text-pieces, each with an associated
+measure7 Traditional cross-entropy loss is averaged using this associated measure.
+Definition 1 (Text piece). The test corpus for the model is viewed as being divided into text-pieces,
+each consisting of Ctest tokens. There is also a measureµ2() on these text-pieces, withµ2(t) denoting
+the measure of text-piece t. The usual cross-entropy loss is computed by weighting text-pieces with
+respect to this measure.
+Now we make some assumptions. We assume that the model’s “comprehension” of a text piece is
+testable via suitable cloze questions analogous to the Winograd example in Section 3. Specifically, we
+assume that an (unknown) process CLOZE has been used to add such cloze questions to the text pieces
+at test time. These are clearly-marked multiple-choice questions in simple English that the model has
+to answer. Note that the training corpus did not contain such cloze questions, so this is a simple form
+of distribution shift at test time. The prediction loss on cloze questions does not require predicting
+the location or contents of the cloze question —it only requires selecting the correct answer to the
+multiple-choice cloze question.
+We allow the process CLOZE to tailor the questions to the model being tested. Thus the next
+assumption is reasonable.
+Assumption 2. [Cloze Sufficiency Assumption:] The pre-trained model’s average (multiclass)
+prediction loss on Cloze questions — where the average is taken over the distribution of text
+pieces– closely tracks (within a small multiplicative factor like 1.1) the excess cross-entropy of the
+model on classical next-word prediction.
+Note: As discussed in Section 3, if the cloze question is assumed to be perfectly answerable by a
+human then any incorrect answers by the model can be interpreted analogously excess cross entropy.
+Our assumption amounts to saying that mistakes on cloze questions closely capture the excess entropy
+of the model as defined in (1). The next theorem, shows that there exists a set of cloze questions
+(albeit fairly artificial) where the excess cross-entropy of the model’s answer tracks the overall excess
+cross-entropy on next-word prediction.
+Theorem 3. If a model’s excess entropy at theith place in text is ϵ then there is a cloze question with
+binary answer such that the probability that the model answers it incorrectly is at most
+√
+2ϵ.
+Proof. The proof involves Pinsker’s Inequality (wikipedia version) which relates variation distance
+and KL divergence. As in Section 3 let pi() be the humans’ probability distribution for thei + 1th
+word in the text piece and qi() be the model’s distribution. The probability that the human and the
+model give different answers is the variation distance between the two distributions, which is the
+maximum (over all subsets A of words) ofP
+w∈A(pi(w) − qi(w)). Let Ai+1 denote the subset for
+which the previous expression is maximised. The cloze question consists of replacing word wi+1
+in the text with the question: Is the next word among the words listed in option (a) or in option (b),
+where option (a) lists words in Ai+1 and (b) lists words in Ai+1. The theorem now follows from
+Pinsker’s inequality.
+4.1 Skills: A Statistical View
+Language is assumed to have an underlying set S of skills. Every text-piece t has an associated set of
+skills that are required for comprehending it. The theory allows this set of skills to be quite large —it
+only needs to be (a fair bit) smaller than the number of text-pieces in the distribution (an enormous
+number).
+Definition 4 (skill graph). A skill graph is a bipartite graph (S, T, E) where nodes in S correspond
+to skills, nodes in T correspond to text-pieces, and (s, t) is in the edge set E if “comprehending”
+text-piece t (i.e., answering its associated cloze questions) requires using skill s. (See Figure 1)
+It is important to realize that we are interested in quantifying the model’s competence on a skill.
+For example, while the above definition assumes there the distribution of text-pieces includes those
+7Text-pieces should be thought of as having a size between a paragraph to a few pages, drawn from a longer
+corpus. To allow good prediction for the model, the text-piece could include ancillary text that preceded it the
+longer corpus. The model need not do predictions for the words in this ancillary text but can use it to make
+predictions on the text-piece.
+6
+
+
+===== PAGE 7 =====
+whose comprehension requires the skill “anaphora resolution,” a language model (or even human
+individuals!) will in general be unable to apply the skill correctly in all text pieces. Thus “competence
+on anaphora resolution” is not 0/1 —instead it is quantified as the fraction of text-pieces associated
+with this skill whose cloze questions were correctly answered by the model. Quantifying the success
+rate of this (in other words, the model’s capabilities) is the goal of the rest of the paper.
+The final element of our theory is that the skill-graph has random edges, as made precise in Defini-
+tion 5. To understand why this makes sense, we recall Winograd’s example: The city councilmen
+refused the demonstrators a permit because they feared violence. Winograd implicitly assumes that
+the trickiest skill needed here is pronoun/anaphora resolution, but of course, applying that skill in this
+context requires other skills: understanding of causality (i.e., interpretation of “because”) as well as
+world knowledge about “city councilmen,” “permit,” “demonstrators,” etc. This example highlights
+the fact that if we were to look at random text-pieces that require pronoun disambiguation, we would
+encounter random real-world scenarios, whose comprehension requires very different set of skills.
+Moreover, the scenarios (and hence the relevant skills) could have different probabilities of occurring
+in the corpus.
+For simplicity we assume that each text-piece requires exactly k skills for some k, and this set
+was drawn by iid sampling from an underlying measure on the set of skills. (Thinking of k as a
+random variable is natural but will not be considered here.) The next definition formalizes the above
+framework in form of a skill cluster.
+Definition 5 (Degree-k skill cluster). This is a skill graph (S, T, E) where the collection of text
+pieces is generated by “nature” by applying the following process: pick a subset of k skills via
+iid sampling from an underlying measure µ1 on skills, and then use a procedure GEN to create a
+text-piece t whose comprehension requires these skills, as well as a measure µ2(t) associated8 with
+this text piece t. Then nature uses process CLOZE to add cloze prompts to test comprehension on
+t. The prediction loss on the text-piece is the cross-entropy loss on predicting the answers to the
+cloze questions in it. The average prediction loss over all text-pieces is computed with respect to the
+measure µ2(). We call the skill-graph thus produced a degree-k skill cluster.
+Now we formalize a simple model of what the full text corpus looks like. More complicated extensions
+of this framework (e.g., considering a hierarchy among corpora) are left for future work.
+Definition 6. (Text corpus) The text corpus consists of many skill clusters (e.g., math, newspapers,
+science, coding, etc.) (S, T1, E1), (S, T2, E2), . . . which share the same underlying set of skills S
+but have disjoint sets of text-pieces T1, T2, . . . that are generated as in Definition 5.
+Definition 5 allows us to define “competence on a skill” in the more familiar setting of statistical
+learning theory, specifically by letting us associate a statistical task with it. The task involves
+predicting answers to cloze questions in a sub-distribution of text pieces that contain that skill. Our
+emergence theory will apply to the family of tasks of the next definition.
+Definition 7 (Competence on Skills). In the setting of Definition 5, for each skill cluster and each
+skill s ∈ S statistical task τs corresponding to s and this cluster is defined as follows. The learner is
+given a text-piece created by sampling s1, . . . , sk−1 via iid sampling (k − 1) times from measure µ1,
+and applying GEN and CLOZE to the skill-tuple (s, s1, . . . , sk−1) to convert it into a text piece t with
+an associated measure µ2(t) (but the measure is re-scaled so that the total measure of the inputs to
+this task τs is 1). The error rate of the model at the statistical tasks is the expected prediction loss on
+text-pieces drawn from the above distribution. Since error rate is between 0 and 1, the competence
+refers to (1 − error rate).
+For every k′-tuple of skills (s1, s2, . . . , sk′) (where k′ ≤ k) the statistical task τs1,s2,...,sk′ corre-
+sponding to that k’-tuple is similarly defined. The inputs to the task are generated by completing the
+k′-tuple to a k-tuple ⃗ sby iid sampling of k − k′ additional skills from µ1 and then using GEN and
+CLOZE to convert it into a text-piece.
+Competence on the k′-tuple is defined just as above.
+Note: The definition involves the k-tuple being picked by iid sampling from µ1 which, in principle,
+allows a skill to be picked twice. However, the probability of picking the same skill twice scales
+8Note that the measure on text-pieces has to have the correct marginals e.g., the µ2-measure of all text-pieces
+containing a skill s is µ1(s). There are many measures satisfying this weak condition, since the number of text
+pieces is way larger than the number of skills.
+7
+
+
+===== PAGE 8 =====
+as O(1/|S|). Since the set of skills S is assumed to be large, the distribution is almost the same as
+sampling distinct k-tuples of skills. The small difference of O(1/|S|) between the two methods will
+not affect any of the random graph theory calculations.
+To illustrate with an example, if comprehending a text-piece involves 5 skills, then that text-piece
+will appear in 5 statistical tasks corresponding to individual skills,
+ 5
+2
+
+tasks corresponding to pairs
+of skills, and so on. However, our method of measuring the loss incurred on these statistical
+tasks implicitly assumes that if the model incorrectly answered this cloze question (i.e., it assigned
+significant probability to the wrong answer), then that loss was incurred in all these statistical tasks.
+This accounting is conservative —it ignores the possibility that a model could have perfect on skills
+1 to 4 but still have incorrectly answered the cloze question because of, say, shaky understanding
+of skill 5. But this conservative accounting has the significant benefit of obviating the need for
+a mathematical formulation of what skills are, and what it means to combine skills —which is
+unformulated, as earlier noted. In summary, Definition 7 can be thought of as a lower bound on the
+model’s true “competence” individual skills. Note this notion of competence also does not capture
+out-of-distribution generalization (i.e. predict well when the distribution of text pieces changes).
+5 Analysis of Emergence (uniform cluster)
+Having set up a framework for modeling skills and (via Assumption 2) connecting them to the
+cross-entropy loss of the model, we have arrived at a core mathematical issue around emergence: As
+the model’s excess cross entropy goes down (due to scaling), this improves the model’s performance
+on cloze tasks inserted in the test stream. How does this improve competence on the skills as well as
+on tuples of skills –in other words, performance on the associated cloze questions?
+This section analyzes a simple setting where the test-stream consists of a single degree-k skill cluster,
+and the skills are uniformly distributed and so are the text-pieces—in other words, the distributions
+µ1 and µ2 in Definition 5 are uniform. Section 6 will extend the analysis to the general setting. The
+calculations below only require the total number of skills to be much less than the support size of the
+distribution of text—in other words, the set of skills can be extremely large.
+Key Hurdle: We point out the naive but incorrect way to reason about this. Since each text piece is
+connected to a random k-tuple of skills, say ⃗ s, one is tempted to reason about emergence via linearity
+of expectations, specifically, the following relation about prediction loss, where “expectation” is just
+average over text-pieces/skills with respect to their measure:
+k · Et[loss(t)] = Es[failure rate of statistical task τs]. (Incorrect!) (7)
+To see that this is incorrect, let Y be the subset of such text pieces where the model makes mistakes
+on cloze questions. This Y depends upon the skill graph, and the unknown processes GEN and CLOZE
+of Definition 5, which assign measure to text pieces in an unknown way that may introduce arbitrary
+correlations. Since the model “saw” part of the test stream (namely, the portion corresponding to
+training data) it has picked some information about the skill cluster. Thus at the end of training,
+locations of errors in the test stream –i.e., the set Y — depend upon the skill-cluster, and since we lack
+understanding of Y the analysis has to treat it as arbitrary. In other words, our analysis is allowed to
+assume an upper bound on the test loss, but the text-pieces on which this loss occurs form an arbitrary
+subset that depends upon the graph structure. In particular, (7) cannot be inferred. This is the key
+mathematical hurdle and our proof will surmount it using random graph theory.
+Let’s say the model makes a mistake on a text-piece if the total prediction loss on all the cloze-
+questions of that text-piece is at least1/2 (which is the kind of error incurred if the incorrect answer is
+chosen with noticeable probability on even a single cloze question). If the average cross-entropy loss
+for the text-pieces is δ we conclude Y consists of at most 2δ fraction of text pieces. The following
+result guarantees that statistical tasks corresponding to most skills do not assign significant probability
+to text pieces in Y –in other words, the model has good performance on statistical tasks connected
+with these skills. The theorem follows from (and is a simple rephrasing of) Lemma 15 in the appendix.
+Theorem 8 (Basic). Let α, β, θ > 0, β > 1, αβ < 1, θ < 1 satisfy
+H(θ) + kθ
+
+H(βα) − βα log 1
+α − (1 − βα) log( 1
+1 − α )
+
+< 0 (8)
+8
+
+
+===== PAGE 9 =====
+and the distribution on skills and text pieces be uniform in the skill-cluster. Then irrespective of the
+details of GEN and CLOZE processes, the following property holds for every subset Y of text pieces
+that contains at least θ fraction of text pieces: at least 1 − α fraction of skills have at mostβθkN 1/N2
+edges to Y (in other words, at most β times the number of edges a skill would be expected to have to
+text-pieces in Y ).
+Note that as the model is scaled up, θ will go down and the set Y containing erroneous answers
+on cloze questions will shrink. Our analysis kicks in only once θ drops below 1. In terms of the
+emergence phenomenon, this corresponds to first signs of improvement on downstream tasks once
+the model’s loss drops below some threshold.
+Since edges between a skill node s and set Y correspond to errors in the statistical task τs, Theorem 8
+is giving an upper bound on the prediction error in statistical tasks corresponding to (1 − α) fraction
+of skills.
+Definition 9 (performance curve). The contour plot (i.e., the boundary) of the region of α, β
+combinations satisfying Theorem 8 is called a performance curve and denoted C(k,θ). A performance
+curve C is better than another curve C ′ if for every α, β on C there is a corresponding point (α, β′)
+on C ′ for β′ > β .
+Figure 5 gives performance curves, i.e., the contour plot of the set of α, β combinations satisfying
+Theorem 8 for a given θ, k. The horizontal axis plots (1 − α) and the vertical axis plots βθ, so point
+(0.8, 0.16) on a curve means at least 0.8 fraction of skills have at most 0.16 fraction of their edges in
+the “error set” Y (hence 0.84 fraction of their edges are outside the error set). The emergence curves
+shift down noticeably (i.e., imply emergence of more skills) as we increase k. The next lemma shows
+this trend always holds; follows from the fact that H(θ)/θ is a decreasing function in the interval
+(0, 1).
+Lemma 10 (Monotonicity). If θ′ < θ then the performance curve for θ′, k lies below that for θ, k.
+If k′ > k then the performance curve of θ, k′ lies below that for k, θ.
+Figure 2: Performance Curves: Left plot has θ = 0 .1 and varies k = 2 , 4, 8, 16. Higher values of
+k greatly improve performance (for k = 2 valid α, β did not exist). The right plot has k = 8 and
+θ = 0 .05, 0.1, 0.2. Section 5.1.1 clarifies that it also describes the model’s performance curve for
+t-tuples of skills for for θ = 0.05 and t = 1, 2, 4 respectively (e.g., blue curve for 4-tuples).
+5.1 The tensorization argument
+While the above method yields performance curves, better curves can be derived via a tensorization
+argument. Consider the following k′-wise recombination operation on the test stream. First randomly
+partition the test stream into subsets of size k′, and then concatenate the k′ text pieces within each
+subset to create a larger piece of text that we refer to as a “k′-piece,” and whose measure is the sum
+of the measures of the component test-pieces. All cloze questions for the old test-pieces are retained
+and no new cloze questions are inserted. Clearly, if the error of the model per average text-piece was
+δ, then the error per average b-piece is k′δ. However, each k′-piece is now using a random k′k-tuple
+of skills. Importantly, this set of k′k skills consists of iid draws from the skill distribution. In other
+words, Theorem 8 now becomes the following.
+9
+
+
+===== PAGE 10 =====
+Corollary 11 (tensorization). In the same setting as Theorem 8, for integer k′ ∈ [2, 1/θ] the
+conclusion of that theorem holds also for α, β pairs satisfying
+H(k′θ) + kk′θ
+
+H(βα) − βα log 1
+α − (1 − βα) log( 1
+1 − α )
+
+< 0 (9)
+Furthermore, if H(k′θ) < k ′H(θ) the emergence curve from this expression dominates that derived
+from Theorem 8.
+5.1.1 Emergence for k′-tuples of skills
+Now we estimate the model’s emergence curve for statistical tasks corresponding to k′-tuples for
+k′ ≤ k. The basic idea is to consider k′-tuples of skills as ‘composite-skills,’ and then re-do the
+calculation.
+2nd estimate (better): Consider the following k′-wise recombination operation on the test stream.
+First randomly partition the test stream into subsets of size k′, and then concatenate the k′ text pieces
+within each subset to create a larger piece of text that we refer to as a “k′-piece.” All cloze questions
+for the old test-pieces are retained and no new cloze questions are inserted. Clearly, if the error of the
+model per average text-piece was δ, then the error per average b-piece is k′δ. However, each k′-piece
+is now using a random k′k-tuple of skills, which we can alternatively view as k random k′-tuples.
+Thus viewing k′-tuples of skills as ‘composite skills’ we can use this as the skill set in the setting of
+Theorem 8, which gives us an easy corollary quantifying the performance on tasks corresponding to
+k′-tuples of skills.
+Lemma 12 (Emergence for k′-tuples of skills). Consider the skill-graph (S′, T ′, E) where S′ consists
+of all k′-tuples of skills, T ′ consists of k′-pieces, and E consists of (s′, t′) where s′ is a k′-tuple of
+skills and t′ is a k′-piece where this tuple of skills is used. Let Y consist of θ fraction of k′-pieces.
+Then for any α, β > 0, β > 1, αβ < 1 satisfying (12) there are at least 1 − α fraction of k′-tuples of
+skills that have at most αβθθN 1 βθ fraction of their edges connected to Y .
+The next corollary presents a somewhat surprising general principle that’s also hinted at in caption
+of Figure 2. Assume (for simplicity) a Chinchilla-like scaling law that 10x up-scaling leads to
+factor 2 reduction in excess entropy. If a model is considered to have reasonable performance
+on individual skills at current scaling, then after further up-scaling of 10x one would see similar
+reasonable performance on skill-pairs, and scaling up by yet another 10x after that will yield similar
+reasonable performance on 4-tuples of skills, etc. Note that these are provable lower bounds on
+performance gains—actual gains could be higher. Figure 2 illustrates the phenomenon.
+Corollary 13. When the model M1 with loss δ is scaled up (e.g., as per equation (2)) so that the new
+model M2 has loss δ/k ′, then the performance curve inferred by our method for k′-tuples of skills
+using M2 is identical to the curve inferred for individual skills on model M1.
+Proof. As noted above, a loss of δ still allows the model to make significant mistakes on 2δ fraction
+of test pieces, which we denote by θ. Thus Theorem 8 describes the performance curve for skills.
+Making the loss drop to δ/k ′ but creating k′-pieces makes the fraction of errors θ = 2δ again. (Note
+that “error” now means an erroneous answer on any cloze question in the entire k′-piece —again,
+this is a conservative definition of error.) Applying Lemma 12 we get the same emergence curve as
+Theorem 8.
+6 Emergence analysis with general measure on text and skills
+Now we turn to analysis of the general setting of Definition 5 where text piece t has measure µ2(t)
+and skill s has measure µ1(s). In this setup, our lemma statements (e.g., Lemma 15 as well as
+the ones in Sections 5 and 5.1.1) hold —–the claim is the same but with cardinalities replaced by
+measure!
+Theorem 14 (Emergence of skills and k’-tuples of skills). Let Y be any subset of text pieces
+consisting of text pieces with total measure θ, and every text-piece has measure substantially less
+than θ. Let α, β > 0, β > 1, αβ < 1 satisfy
+H(θ) + kθ(H(βα) − βα log 1
+α − (1 − βα) log( 1
+1 − α )) < 0 (10)
+10
+
+
+===== PAGE 11 =====
+Then the measure of skills that have at most βθ fraction of their edges connected to Y is at least
+1 − α.
+For k′-tuples of skills the statement of Lemma 12 holds with the same modification of cardinality to
+“measure. ”
+Proof. The measure µ1 on skills is trivial to reason about by just replacing each skill s by a number
+of copies that is proportional to µ1(s). This converts the measure to a uniform measure —specifically,
+k iid draws from this uniform measure are equivalent to k iid draws from the µ1.
+For the measure µ2(·) on texts, the above trick doesn’t work. Recall that a text-piece is connected
+in the skill graph to a random k-tuple of skills. If we try to replace µ2() with a uniform measure by
+replacing the text piece with identical copies, then these copies must still all connect to the same
+subset of k skills —meaning these connections are correlated and not random. We need a more subtle
+argument. The key part in the proof of Lemma 15 is where we choose random subset of text-pieces,
+Y whose size is θ|T | and subset Z of skills of size α|S|, and then upper bound by () the expectation
+of the event that the latter has more than αβθk fraction of its edges going to Y . In presence of
+measure µ2() let’s pickY as follows: Independently pick text-pieces, choosing t with probability
+θµ2(t). (Note: |Y | is tightly concentrated around θ|T |.) We still pick Z randomly as before. Then
+we apply Jensen’s Inquality on the same calculation to end up with the same upper bound as before.
+See Lemma 16 in the Appendix.
+6.1 Extending theory to multiple clusters
+Above we assumed a single skill cluster in the language. Real-life text might contain multiple
+skill clusters. For example, standard corpora must contain a large skill cluster involving pieces of
+“everyday” text pieces and a set of basic language skills and world knowledge needed to comprehend
+them. Smaller clusters may correspond to specialized topics, e.g., finance, science, mathematical
+reasoning, etc. We assume each piece of text appears in only one cluster but skills may appear
+in different clusters. When each text-piece appears in a single cluster, the analysis of Section ??)
+continues to apply. The overall loss is the weighted sum of measure of text in the individual clusters.
+Thus overall reduction in loss will drive emergence within individual clusters. But lacking any
+mechanistic insight, our theory cannot predict the rate at which loss decrease (and hence emergence)
+happens within clusters. This pertains to the point made earlier in the paper about lack of detailed
+study of scaling laws for different kinds of corpora, as well as for training on mixes of corpora.
+We leave a more fine-grained analysis, including possibly allowing hierarchical structure in clusters,
+for future work. As usual, simpler settings probably give the main insight.
+7 Takeaways about skill emergence
+It may be useful to note the following takeaways about skill emergence as per our theory.
+1. How scaling improves competence on k′-tuples of skills: Theorem 14 and Corollary 13 implies
+that the effect of reducing θ by a factor 2 (which as per scaling laws corresponds to roughly one order
+of scaling up in model parameters) has the effect of raising competence on 2k′-tuples to at least the
+same level as what it was on k′-tuples before scaling.
+2. Effect of using “high quality” text: Theorem 8 shows that for a fixed prediction loss θ, using
+higher k implies better emergence of skills. Since k is the number of skills being used in a single
+text-piece, it intuitively measures how complex the text is —e.g., a college text would be expected to
+have higher k than a primary school text. If the scaling law is same for both types of text (i.e., how θ
+reduces from scaling) our theorem predicts that more complex text will be more effective at inducing
+skills. This prediction generally matches experts’ intuition, although we are not aware of a study of
+scaling laws that tries to separate out texts of different quality.
+3. More frequent skills tend to reach competence level quicker than less frequent skills: This
+effect is hidden in the proof of Theorem 14. Specifically, the proof reduces the case of skills appearing
+with different frequencies in the corpus to the uniform case by replacing a skill node with a set of
+nodes whose cardinality scales in proportion to the skill frequency. But note that by definition, the
+competence on all copies of the same skill must be the same. Thus essentially the calculation says
+that k′-tuples that include more frequent skills will tend to emerge faster.
+11
+
+
+===== PAGE 12 =====
+4. Learning despite Paucity of stimulus. We discuss how the improvement of competence on
+k′-tuple of skills (as discussed in item 1. above) leads to a paucity of stimulus situation. Suppose
+we trained a language model with D tokens. After scaling by k orders of magnitude (i.e., increasing
+dataset size to ck′
+D tokens, where in the Chinchilla framework c is around 10) the performance on
+k′-tuples of skills is as good as what the performance was on individual skills before the scaling.
+Note that the number of k′ tuples of skills is around |S|k′
+where S is the set of skills. This quickly
+leads to paucity of stimulus for some fixed k′, specifically, if Dck′
+≪ | S|k′
+. We give an example
+just for illustration. Suppose c = 10 and |S| = 10 4 and the model’s proficiency on individual skills
+was considered good when it was trained with D = 10 10 tokens (roughly the dataset size for GPT-2
+style models). Then a larger model trained with 10 trillion tokens ( 1013) – closer to the size of
+corpora used in training today’s models– would display proficiency in most8-tuples of skills, despite
+never not having seen most of those combinations in training (which we can be sure of because
+1010 × 108 ≪ (104)8).
+8 Conclusions
+We have proposed a theoretical framework for understanding emergence of skills when language
+models are scaled up. A key insight (see Figure 2) is that reduction in excess cross entropy loss drives
+skill acquisition, together with the assumption that normal language —down to short paragraph level—
+already utilizes multiple skills, mixed up randomly. Need for mechanistic insight is sidestepped using
+Scaling Law, which quantifies a powerful inductive bias in pre-trained models. One concrete example
+of this inductive bias is that in our framework proficiency in combinations of skills arises just as
+naturally as proficiency in the individual skills themselves, and need not require seeing examples
+of all (or even most) of these combinations in the training set. This has relevance to the ongoing
+debate about the extent of “understanding” that current models have, and their ability to address novel
+settings.
+We hope the simplicity of our framework will also encourage further experimental and theoretical
+study, including extensions to more general language skills such as generation and dialog; and
+modeling inductive bias at a finer level than the Scaling Laws. (For example, what are the scaling
+laws for interesting parts of language such as math or coding?) It is also possible that our theory
+underestimates the rate of emergence, due to unknown mechanisms —e.g., having to do with workings
+of transformers–that are left out in our theoretical framework.
+The simple and statistical nature of our theory should be seen as a plus — it helps identify which
+emergence phenomena should not be considered surprising, most notably emergence of competence
+on skills as well as on their combinations. But it shares limitations with other statistical frameworks.
+Competence is guaranteed only on text-pieces drawn from the data distribution, and governed by
+usual ϵ-δ) guarantees — many skills as well as combinations of skills may not get learnt, and the
+ones that do get learnt may incorrectly applied on some fraction of the data distribution. Nevertheless
+we hope this inspires more thorough experimental study (our simple experiments give a starting
+point) of whether or not current language models have capabilities that go beyond simple statistical
+explanations. Empirical properties or phenomena that are not derivable in our framework (or its
+natural extensions) may be of interest for AI alignment as well as better design and understanding of
+language models.
+Acknowledgements: We are very grateful to Jonah Brown-Cohen, Timothy Lillicrap and Melvin
+Joshnson for many discussions that motivated us to improve the theory and its expositions. We thank
+Boaz Barak, Rong Ge, Yuxi Liu, and Nikunj Saunshi for their feedback on the manuscript.
+References
+N Alon and J Spencer. The Probabilistic Method (4th Ed). Wiley, 2016.
+Rohan Anil, Andrew M Dai, Orhan Firat, Melvin Johnson, Dmitry Lepikhin, Alexandre Passos,
+Siamak Shakeri, Emanuel Taropa, Paige Bailey, Zhifeng Chen, et al. Palm 2 technical report.arXiv
+preprint arXiv:2305.10403, 2023.
+Yasaman Bahri, Ethan Dyer, Jared Kaplan, Jaehoon Lee, and Utkarsh Sharma. Explaining neural
+scaling laws. arXiv preprint arXiv:2102.06701, 2021.
+12
+
+
+===== PAGE 13 =====
+Emily Bender, Timnit Gebru, Andrea McMillan-Major, and Shmargaret Shmitchel. On the dangers
+of stochastic parrots: Can language models be too big? FACCT, 2021.
+Yoshua Bengio, Réjean Ducharme, and Pascal Vincent. A neural probabilistic language model.
+Advances in neural information processing systems, 13, 2000.
+HD Brown. Language Assessment: Principles and Classroom Practice (6th Ed). Pearson Education,
+2018.
+Tom Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared D Kaplan, Prafulla Dhariwal,
+Arvind Neelakantan, Pranav Shyam, Girish Sastry, Amanda Askell, et al. Language models are
+few-shot learners. Advances in neural information processing systems, 33:1877–1901, 2020.
+N Chomsky. Syntactic Structures. Mouton & Co., 1957.
+N Chomsky. Language and the problems of knowledge. MIT Press, 1988.
+Aakanksha Chowdhery, Sharan Narang, Jacob Devlin, Maarten Bosma, Gaurav Mishra, Adam
+Roberts, Paul Barham, Hyung Won Chung, Charles Sutton, Sebastian Gehrmann, et al. Palm:
+Scaling language modeling with pathways. arXiv preprint arXiv:2204.02311, 2022.
+B Coecke, M Sadrzadeh, and S Clark. Mathematical foundations for a compositional distributional
+model of meaning. Lambek Festschrift. Linguistic Analysis, 36:345–384, 2010.
+Corinna Cortes, Lawrence D Jackel, Sara Solla, Vladimir Vapnik, and John Denker. Learning curves:
+Asymptotic values and rate of convergence. Advances in neural information processing systems, 6,
+1993.
+Deep Ganguli, Danny Hernandez, Liane Lovitt, Amanda Askell, Yuntao Bai, Anna Chen, Tom
+Conerly, Nova Dassarma, Dawn Drain, Nelson Elhage, et al. Predictability and surprise in large
+generative models. In 2022 ACM Conference on Fairness, Accountability, and Transparency, pages
+1747–1764, 2022.
+H. P. Grice. Logic and conversation. Cole and Morgan, 1975.
+Joel Hestness, Sharan Narang, Newsha Ardalani, Gregory Diamos, Heewoo Jun, Hassan Kianinejad,
+Md Patwary, Mostofa Ali, Yang Yang, and Yanqi Zhou. Deep learning scaling is predictable,
+empirically. arXiv preprint arXiv:1712.00409, 2017.
+A Hippisley and G Stump. Cambridge Handbook of Morphology. Cambridge University Press, 2017.
+Jordan Hoffmann, Sebastian Borgeaud, Arthur Mensch, Elena Buchatskaya, Trevor Cai, Eliza
+Rutherford, Diego de Las Casas, Lisa Anne Hendricks, Johannes Welbl, Aidan Clark, et al.
+Training compute-optimal large language models. arXiv preprint arXiv:2203.15556, 2022.
+Jared Kaplan, Sam McCandlish, Tom Henighan, Tom B Brown, Benjamin Chess, Rewon Child, Scott
+Gray, Alec Radford, Jeffrey Wu, and Dario Amodei. Scaling laws for neural language models.
+arXiv preprint arXiv:2001.08361, 2020.
+Hector Levesque, Ernest Davis, and Leora Morgenstern. The winograd schema challenge. In
+Thirteenth international conference on the principles of knowledge representation and reasoning,
+2012.
+Niklas Muennighoff, Alexander M. Rush, Boaz Barak, Teven Le Scao, Aleksandra Piktus, Nouamane
+Tazi, Sampo Pyysalo, Thomas Wolf, and Colin Raffel. Scaling data-constrained language models,
+2023.
+OpenAI. GPT-4 technical report. CoRR, abs/2303.08774, 2023. doi: 10.48550/arXiv.2303.08774.
+URL https://doi.org/10.48550/arXiv.2303.08774.
+Nikunj Saunshi, Sadhika Malladi, and Sanjeev Arora. A mathematical exploration of why language
+models help solve downstream tasks. In ICLR 2021, 2021.
+Ryan Schaeffer, Brando Miranda, and Sanmi Koyejo. Are emergent abilities of large language models
+a mirage? ArXiv e-prints, April 2023.
+13
+
+
+===== PAGE 14 =====
+Aarohi Srivastava, Abhinav Rastogi, Abhishek Rao, Abu Awal Md Shoeb, Abubakar Abid, Adam
+Fisch, Adam R Brown, Adam Santoro, Aditya Gupta, Adrià Garriga-Alonso, et al. Beyond the
+imitation game: Quantifying and extrapolating the capabilities of language models. arXiv preprint
+arXiv:2206.04615, 2022.
+Mark Steedman. Surface Structure and Interpretation. MIT Press, 1996.
+D Tannen (ed). Framing in Discourse. Oxford University Press, 1994.
+Jason Wei, Yi Tay, Rishi Bommasani, Colin Raffel, Barret Zoph, Sebastian Borgeaud, Dani Yogatama,
+Maarten Bosma, Denny Zhou, Donald Metzler, et al. Emergent abilities of large language models.
+arXiv preprint arXiv:2206.07682, 2022.
+Terry Winograd. Procedures as a representation for data in a computer program for understanding nat-
+ural language. Technical report, MASSACHUSETTS INST OF TECH CAMBRIDGE PROJECT
+MAC, 1971.
+Mengzhou Xia, Mikel Artetxe, Chunting Zhou, Xi Lin, Ramakanth Pasunuru, Danqi Chen, Luke
+Zettlemoyer, and Ves Stoyanov. Training trajectories of language models across scales. ArXiv
+e-prints, May 2023.
+14
+
+
+===== PAGE 15 =====
+A Appendix
+A.1 Graphs of Emergence Phenomena
+For context, we include some graphs of emergence of capabilities from Wei et al. [2022].
+A.2 Example of current chatbots’ ability to combine skills
+We find that current chatbots, including those in the public domain, can take a list of language skills
+and produce text illustrating those skills. When the list includes harder (or less common) skills, this
+ability declines. We include an illustrative example but a more thorough evaluation is left to future
+work.
+Human question: Please give me a a couple lines of text that illustrate all of the following language
+understanding skills: Anaphora resolution, simple logical reasoning, simple understanding of physics,
+and understanding of sentiment.
+Model response: Sure! Here’s a couple of lines that illustrate the mentioned language understanding
+skills:
+"As the sun set, casting a warm glow over the horizon, John watched in awe. He couldn’t help but feel
+a sense of tranquility wash over him, as if all his worries had melted away with the fading daylight."
+Explanation:
+• Anaphora resolution: The pronoun "he" in the second sentence refers back to the antecedent
+"John" in the first sentence, resolving the anaphoric reference.
+• Simple logical reasoning: The logical reasoning here is based on the cause and effect
+relationship between the setting sun and John’s feeling of tranquility. The implied logical
+connection suggests that the calming effect of the sunset is responsible for John’s serene
+state of mind.
+• Simple understanding of physics: The mention of the sun setting and casting a warm
+glow over the horizon reflects a basic understanding of physics, as it relates to the natural
+phenomena of the Earth’s rotation and the resulting visual effect.
+• Understanding of sentiment: The phrase "a sense of tranquility" and the description of
+John’s worries melting away indicate a positive sentiment associated with the experience.
+The mention of John feeling awe and a sense of tranquility further emphasizes a positive
+emotional state.
+Human question: Okay. Can you change the above example to introduce the element of "hip-hop".
+Model response: Certainly! Here’s an updated example that incorporates the element of "hip-hop":
+"As the sun set, casting a warm glow over the city skyline, the rhythmic beats of hip-hop music filled
+the air. John stood mesmerized, his body instinctively moving to the infectious grooves. He couldn’t
+help but feel a surge of energy and joy, as if the music had unlocked a vibrant world within him."
+Explanation:
+• Anaphora resolution: The pronoun "he" in the second sentence still refers back to the
+antecedent "John" in the first sentence, resolving the anaphoric reference.
+• Simple logical reasoning: The logical connection here lies in the cause and effect relationship
+between the hip-hop music and John’s feeling of energy and joy. The music’s rhythmic
+beats and infectious grooves are responsible for his instinctive movement and the surge of
+positive emotions he experiences.
+• Simple understanding of physics: Although the example doesn’t directly mention physics,
+the phrase "As the sun set, casting a warm glow over the city skyline" still implies the natural
+phenomena of the sun’s descent and the resulting illumination of the environment.
+• Understanding of sentiment: The introduction of hip-hop music adds a vibrant and energetic
+sentiment to the example. John’s feeling of energy, joy, and being mesmerized by the music
+reflects a positive sentiment associated with the hip-hop genre.
+15
+
+
+===== PAGE 16 =====
+B Technical Theorems about Random Bipartite Graphs
+The theory will need some facts about random bipartite graph (V1, V2, E) with Ni denoting |Vi|, and
+N1 ≫ N2. When we say it has degree k, we mean that in E every vertex in N1 is connected to k
+vertices in N2, where those k vertices are chosen i.i.d. with replacement. Recall that V1 corresponded
+to text-pieces and V2 to skills in the main body of the paper.
+The next lemma uses the famous Probabilistic Method Alon and Spencer [2016]. In this method,
+one is trying to show that in a certain probability space, there are no bad outcomes. This is done
+by letting W be an integer random variable denoting the number of bad outcomes that happened,
+and showing that the E[W ] ≈ 0. Then it follows that W = 0 with probability at least 1 − E[W ].
+Concretely, in the next Lemma W will be the number of “bad” set pairs (Y, Z) of a certain size that
+violate the lemma.
+Lemma 15. For every positive integerk and θ ∈ [0, 1] there are α, β > 0 such that αβ ≤ 1 and the
+following holds with probability almost 1. For every Y ⊆ V1 of size θN1, there are at least (1 − α)
+fraction of vertices in V2 each of which has at most βθD edges going to Y , where D = kN1/N2 is
+the expected degree of a node in V2. The parameter values for which this occurs are specified by the
+condition
+H(θ) + kθ(H(βα) − βα log 1
+α − (1 − βα) log( 1
+1 − α )) < 0 (11)
+Proof. For Y ⊆ V1, |Y | = θN1 and Z ⊆ V2, |Z| ≤ αN2 we say that (Y, Z) are bad if Z has at least
+αβθkN 1 edges to Y . Let W denote the number of such Z’s. The expectation is upper bounded by
+N2N1
+ N2
+αN2
+
+×
+ N1
+θN1
+
+×
+ kθN1
+βαkθN 1
+
+× αβαθkN 1 × (1 − α)(1−βα)θkN1 (12)
+For (12) to be ≪ 1 it suffices for its logarithm to be negative. By Stirling’s approximation
+  N
+tN
+
+≤
+2(H(t)+ϵN )N where H(t) = −t log t − (1 − t) log(1 − t) is the binary entropy function and ϵN goes
+to zero rapidly as N → ∞. Applying this to (12) and taking logarithms, and assuming N2 ≪ N1,
+we arrive at the condition (13) for large N1.
+Note: Such arguments allow a fair bit of slop. The expectation was exponentially small, and then
+we took its logarithm and then divided out by a large number, N1 to reach (11). Thus additional
+polynomial factors in the expectation —such as N1N2 above— have no effect on asymptotics.
+B.1 Analysis of “General Measure” case in Section 6
+We give more details of the proof of Theorem 14 in Section 6. Again, we phrase it via a general
+lemma about bipartite graph (V1, V2, E) where each vertex in V1 has edges to k random vertices in
+V2. We use the shorthand Ni = |Vi|. As noted in proof of Theorem 14 it suffices to consider the case
+when V2 has uniform measure and there is a general measure µ() on vertices of V1, namely µ(v1)
+is nonnegative andP
+v1∈V1 µ(v1) = 1 . The measure of an edge (v1, v2) is defined as µ(v1). We
+assume all µ(v1) are sufficiently small.
+The proof will use a discretization of the measure. We conceptually divide V1 (and hence also the set
+of edges) into classes, where the ith class Ci consists of v1 such that µ(v1) ∈ [(1 +ϵ)−i−1, (1 +ϵ)−i)
+for ϵ an arbitrarily small constant. We assume allµ(v1) are sufficiently small (meaning some large-ish
+i0, class i is empty for i < i 0) and the number of nonempty levels is much smaller than N1. Thus
+each class has reasonable size —say, much larger than N2, the number of skills—which allows the
+asymptotic arguments appearing below to hold within each class. The above assumptions all seem
+reasonable for the probability measure associated with text pieces, which should be fairly well spread
+out.
+Lemma 16 (Main). For every positive integerk and θ ∈ [0, 1] and α, β > 0 satisfying αβ ≤ 1 and
+H(θ) + kθ(H(βα) − βα log 1
+α − (1 − βα) log( 1
+1 − α )) < 0 (13)
+the following holds with probability almost 1 in the random bipartite graph (V1, V2, E) of degree k:
+16
+
+
+===== PAGE 17 =====
+For every Y ⊆ V1 of total measure θ, there is a set of least (1 − α) fraction of vertices in V2 such
+that for each v2 in this set, X
+v1:(v1,v2)∈E,v2∈Y
+µ(v1) ≤ βθ. (14)
+Proof. Consider Y ⊆ V1 that has measure θ, and Z ⊆ V2 has size αN. We say (Y, Z) is bad if every
+v2 ∈ Z fails condition (14). (Consequently, the measure of edges between Z and Y is at least αβθ.)
+We will argue that in the random graph, the expected number of bad (Y, Z) is ≪ 1. In other words,
+for any fixed measure µ with high probability the graph contains no bad (Y, Z). (As explained in the
+note following Lemma 15, we can ignore the contribution to the expectation of Z’s that have size
+< αN .)
+For any fixed Y ⊆ V1 we denote Y ∩ Ci as Yi and let yi = |Yi|. If µ(Y ) = θ then the yi’s satisfy the
+following X
+i
+yi(1 + ϵ)−i ∈ [θ, (1 + ϵ)θ]. (15)
+For a fixed (Y, Z) let βi be such that the number of edges between Yi, Z is αβiyik. Then the
+probability (over the choice of the random graph) that (Y, Z) is bad is at most:
+Y
+i
+ kyi
+αβikyi
+
+(α)−αβikyi (1 − α)kyi(1−αβi) (16)
+SinceP
+i yi = |Y | and
+  kyi
+αβikyi
+
+≈ 2H(αβi)kyi, the left hand side is an expression of type
+Y
+i
+2kyi(H(αβi)−αβi log α
+1−α +α log 1
+1−α ).
+Using first order optimality wrt yi’s, this is maxiized when allβi’s are equal. So for deriving an upper
+bound it suffices to let all βi = β, which simplifies (16) to
+Y
+i
+ kyi
+αβky i
+
+(α)−αβyi (1 − α)kyi(1−αβ) ≈ 2H(αβ)k|Y |(α)−αβ|Y |(1 − α)k|Y |(1−αβ). (17)
+Now we finish the proof using reasoning similar to that in Lemma 15. The number of choices for
+y1, y2, . . . ,isQ
+i |Ci|, which is at most N P
+1 where P is the number of classes.
+For a fixed sequence of yi’s the number of setsY consistent with those intersections is
+Y
+i
+|Ci|
+yi
+
+≈
+Y
+2H(yi).
+Since yi’s satisfy(15) and H() is a concave function, this number is maximised when yi/|Ci| ∈
+[θ, θ(1 + ϵ)], and hence the number of possible Y ’s is upper bounded by
+Y
+i
+2H(θ|Ci|) = 2 H(θN1). (18)
+By the union bound, the probability that there exists a Y such that (Y, Z) is bad is at most 2H(θ)N1
+times (17) times (18). Since |Y | ≈ θN1 this completes the proof of Lemma 16.
+17

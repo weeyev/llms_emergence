@@ -1,0 +1,624 @@
+
+
+===== PAGE 1 =====
+Double Descent Demystiﬁed: Identifying, Interpreting &
+Ablating the Sources of a Deep Learning Puzzle
+Rylan Schaeﬀer1, Mikail Khona2, Zachary Robertson 1, Akhilan Boopathy 3, Kateryna
+Pistunova4, Jason W. Rocks 5, Ila Rani Fiete 6, and Oluwasanmi Koyejo1
+1Computer Science, Stanford University
+2Physics, Massachusetts Institute of Technology
+3EECS, Massachusetts Institute of Technology
+4Physics, Stanford University
+5Physics, Boston University
+6Brain & Cognitive Sciences, Massachusetts Institute of Technology
+March 2023
+Abstract
+Double descent is a surprising phenomenon in machine learning, in which as the number of
+model parameters grows relative to the number of data, test error drops as models grow ever
+larger into the highly overparameterized (data undersampled) regime. This drop in test error
+ﬂies against classical learning theory on overﬁtting and has arguably underpinned the success
+of large models in machine learning. This non-monotonic behavior of test loss depends on the
+number of data, the dimensionality of the data and the number of model parameters. Here, we
+brieﬂy describe double descent, then provide an explanation of why double descent occurs in an
+informal and approachable manner, requiring only familiarity with linear algebra and introductory
+probability. We provide visual intuition using polynomial regression, then mathematically analyze
+double descent with ordinary linear regression and identify three interpretable factors that, when
+simultaneously all present, together create double descent. We demonstrate that double descent
+occurs on real data when using ordinary linear regression, then demonstrate that double descent
+does not occur when any of the three factors are ablated. We use this understanding to shed light
+on recent observations in nonlinear models concerning superposition and double descent. Code is
+publicly available.
+1 What is double descent?
+Double descent is a phenomenon in machine learning describing the key observation that many classes
+of models can, under relatively broad conditions, exhibit seemingly perplexing changes in test loss as
+a function of three parameters: the number of data, the dimensionality of the data and the number
+of parameters in the model. For instance, as the number of model parameters increases, the test loss
+can fall, then rise, then fall again (Fig. 1). What causes such behavior?
+Double descent has a rich history, both empirically and analytically; for a non-exhaustive list, see
+[13, 2, 19, 11, 15, 2, 1, 10, 6]. The term “double descent” was coined by [3], and some of our favorite
+papers on the topic include [16, 17, 18]. One important note is that not every dataset and model pair
+exhibits two descents; under diﬀerent settings, there can be one, three or more descents [12, 5].
+1
+arXiv:2303.14151v1  [cs.LG]  24 Mar 2023
+
+
+===== PAGE 2 =====
+Figure 1: Double descent: test error falls, rises, then falls as a ratio of parameters to data. Fig. 3A
+from [18].
+Our goal in this tutorial is to explain why double descent occurs in an approachable manner, without
+resorting to advanced tools oftentimes employed to analyze double descent such as random matrix
+theory or statistical physics. To accomplish this, we provide (1) visual intuition via polynomial regres-
+sion, (2) mathematical analysis using ordinary linear regression, (3) empirical evidence from ordinary
+linear regression on real (tabular) data and (4) novel insights for nonlinear neural networks. To the
+best of our knowledge, we are the ﬁrst to take this approach. Although we focus on regression tasks,
+our insights hold more generally.
+2 Notation and Terminology
+Consider a supervised dataset of N training data for regression:
+D
+def
+=
+{
+(⃗ xn,yn)
+}N
+n=1
+with covariates ⃗ xn∈ RD and targets yn∈ R. We’ll sometimes use matrix-vector notation to refer to
+our training data, treating the features ⃗ xn as row vectors:
+X
+def
+=
+
+
+−⃗ x1−
+...
+−⃗ xN−
+
+∈ RN×D Y
+def
+=
+
+
+y1
+...
+yN
+
+∈ RN×1
+In general, our goal is to use our training dataset D ﬁnd a function f :X→Y that makes:
+f(x)≈y
+In the setting of ordinary linear regression, we assume that f is a linear function i.e. f(⃗ x) = ⃗ x· ⃗β,
+meaning our goal is to ﬁnd (estimate) linear parameters ˆ⃗β∈ RD that make:
+⃗ x·⃗β≈y
+Of course, our real goal is to hopefully ﬁnd a function that generalizes well to new data. As a matter
+of terminology, there are typically three key parameters:
+1. The number of model parameters P
+2. The number of training data N
+2
+
+
+===== PAGE 3 =====
+3. The dimensionality of the data D
+We say that a model is overparameterized (a.k.a. underconstrained) if N <P and underparameterized
+(a.k.a. overconstrained) if N >P . The interpolation threshold refers to where N =P , because when
+P≥N, the model can perfectly interpolate the training points.
+3 Visual Intuition from Polynomial Regression
+x
+interpolation threshold overparametrized
+x
+x
+underparametrized overparametrized
+underparametrized
+data
+fitted function
+true function
+x
+Figure 2: Intuition for double descent from polynomial regression. Top: Polynomial regression
+displays double descent. Bottom: When underparameterized, the model is unable to capture ﬁner-
+grained features in the training data, meaning bias is large but variance is small. As the interpolation
+threshold is approached, the training data can be ﬁt exactly, meaning bias is small; however, the
+particular realization of the training data signiﬁcantly aﬀects the learnt function, meaning variance
+is large. When overparameterized, the model can exactly ﬁt the training data, meaning bias is again
+small, but the model is also regularized towards a small-norm solution, making variance small.
+To oﬀer visual intuition for the cause of double descent, we turn to polynomial regression. Concretely,
+suppose we wish to predict y∈ R from x∈ [−1, 1], where the true (unknown) relationship is:
+y(x) = 2x + cos(25x)
+In polynomial regression, we take the approach of mapping each datum x to a P -dimensional space
+3
+
+
+===== PAGE 4 =====
+(corresponding to the P parameters) by using the following “feature” map ⃗φP : R1→ RP :
+⃗φP :x→
+
+
+φ1(x)
+φ2(x)
+...
+φP (x)
+
+∈ RP
+where φi denotes some polynomial 1. We’ll then ﬁt a linear model using parameters ⃗βP∈ RP :
+y≈ ⃗φP (x)·⃗βP
+We show the results of sweeping the number of parameters P (= the number of polynomials = the
+number of features) from 1 to 200 (Fig. 2). When P = 1, we can ﬁt a line to our data, which is
+insuﬃciently expressive to capture the true relationship between x and y; thus, the model has bias,
+but low variance. As the number of parametersP increases towards the number of training dataN, the
+model can more accurately ﬁt the training data but at the cost of inducing “wiggles” that depend on
+the particular realization of the training data and that incur a high test mean squared error; the bias
+decreases but the variance diverges. As the number of parameters P increases beyond the number of
+training dataN, the regression remains suﬃciently expressive to exactly ﬁt the training data, meaning
+it has low bias, but the model ﬁtting process prefers solutions with smaller norm that “wiggle“ less,
+meaning it has low variance as well. Next, we mathematically analyze under what conditions this
+double-descent phenomenon occurs.
+4 Mathematical Intuition from Ordinary Linear Regression
+To oﬀer an intuitive yet quantitative understanding of double descent, we turn to ordinary linear re-
+gression. Recall that in linear regression, the number of ﬁt parameters P must equal the dimension
+D of the covariates; consequently, rather than thinking about changing the number of parameters P ,
+we’ll instead think about changing the number of data N. Because double descent is fundamentally
+about the ratio of number of parameters P to number of data N, varying the number of data is as valid
+an approach as varying the number of parameters is. To understand where and why double descent oc-
+curs in linear regression, we’ll study how linear regression behaves in the two parameterization regimes.
+If the regression is underparameterized, we estimate the linear relationship between the covariates ⃗ xn
+and the target yn by solving the classical least-squares minimization problem:
+ˆ⃗βunder
+def
+= arg min
+⃗β
+1
+N
+∑
+n
+||⃗ xn·⃗β−yn||2
+2 = arg min
+⃗β
+||X⃗β−Y||2
+F
+The solution to this underparameterized optimization problem is the well-known ordinary least squares
+estimator that uses the second moment matrix XTX:
+ˆ⃗βunder = (XTX)−1XTY
+If the model is overparameterized, the above optimization problem is ill-posed since there are inﬁnitely
+many solutions; this is because we have fewer constraints than parameters. Consequently, we need to
+choose a diﬀerent (constrained) optimization problem:
+ˆ⃗βover
+def
+= arg min
+⃗β
+||⃗β||2
+2 s.t. ∀n∈{ 1,...,N} ⃗ xn·⃗β =yn
+1In our simulations, we choose φi to be the i-th Legendre polynomial
+4
+
+
+===== PAGE 5 =====
+Figure 3: Left: Double descent occurs in ordinary linear regression on the World Health Organization’s
+Life Expectancy dataset. Right: Double descent occurs when three quantities simultaneously grow
+extreme. One of the three is small-but-nonzero singular values in the training features X. The
+smallest non-zero singular value of X (probabilistically) obtains its lowest value when the number of
+parametersP equals the number of data N (the interpolation threshold), approaching from either the
+overparameterized regime (P >N ; left) or the underparameterized regime (P <N ; right).
+This constrained optimization problem asks for the smallest parameters ⃗β that guarantee ⃗ xn·⃗β =yn
+for all training data. One reason why we choose this optimization problem is that it is the optimiza-
+tion problem that gradient descent implicitly minimizes (App. A). The solution to this optimization
+problem is less well-known and instead uses the so-called Gram matrix XXT∈ RN×N:
+ˆ⃗βover =XT (XXT )−1Y
+One way to see why the Gram matrix appears is via constrained optimization. Deﬁne the Lagrangian
+with Lagrange multipliers ⃗λ∈ RN:
+L(⃗β,⃗λ)
+def
+=||⃗β||2
+2 +⃗λT (Y−X⃗β)
+Diﬀerentiating with respect to both the parameters and the Lagrange multipliers yields:
+∇⃗βL(⃗β,⃗λ) =⃗0 = 2 ˆ⃗β−XT⃗λ⇒ ˆ⃗βover = 1
+2XT⃗λ
+∇⃗λL(β,λ ) =⃗0 =Y−X ˆ⃗βover⇒Y = 1
+2XXT⃗λ
+⇒⃗λ = 2(XXT )−1Y
+⇒ ˆ⃗βover =XT (XXT )−1Y
+Here, we are able to invert the Gram matrix because it is full rank in the overparametrized regime.
+After ﬁtting its parameters, the model will make the following predictions for given test point ⃗ xtest:
+ˆytest,under =⃗ xtest· ˆ⃗βunder =⃗ xtest· (XTX)−1XTY
+ˆytest,over =⃗ xtest· ˆ⃗βover =⃗ xtest·XT (XXT )−1Y
+5
+
+
+===== PAGE 6 =====
+Hidden in the above equations is an interaction between three quantities that can, when all grow extreme,
+create double descent. To reveal the three quantities, we’ll rewrite the regression targets by introducing
+a slightly more detailed notation. Unknown to us, there are some ideal linear parameters⃗β∗∈ RP = RD
+that truly minimize the test mean squared error. We can write any regression target as the inner
+product of the data ⃗ xn and the ideal parameters β∗, plus an additional error term en that is an
+“uncapturable” residual from the “perspective” of the model class:
+yn =⃗ xn·⃗β∗ +en
+In matrix-vector form, we will equivalently write:
+Y =X⃗β∗ +E
+with E∈ RN×1. To be clear, we are not imposing assumptions on the model or data. Rather, we
+are introducing notation to express that there are (unknown) ideal linear parameters, and possibly
+residuals that even the ideal model might be unable to capture; these residuals could be random noise
+or could be fully deterministic patterns that this particular model class cannot capture. Using this
+new notation, we rewrite the model’s predictions to show how the test datum’s features ⃗ xtest, training
+data’s featuresX and training data’s regression targets Y interact. In the underparameterized regime:
+ˆytest,under =⃗ xtest· (XTX)−1XTY
+=⃗ xtest· (XTX)−1XT (Xβ∗ +E)
+=⃗ xtest· (XTX)−1XTXβ∗ +⃗ xtest· (XTX)−1XTE
+=⃗ xtest·β∗
+  
+def
+= y∗
+test
++⃗ xtest· (XTX)−1XTE
+ˆytest,under−y∗
+test =⃗ xtest· (XTX)−1XTE
+This equation is important, but opaque. To extract the intuition, we will replace X with its singular
+value decomposition2 X =UΣVT to reveal how diﬀerent quantities interact. Let R
+def
+= rank(X) and
+letσ1 >σ 2 >...>σ R > 0 be X’s (non-zero) singular values. Recalling E∈ RN×1, we can decompose
+the (underparameterized) prediction error ˆytest,under−y∗
+test along the orthogonal singular modes:
+ˆytest,under−y∗
+test =⃗ xtest·V Σ+UTE =
+R∑
+r=1
+1
+σr
+(⃗ xtest·⃗ vr)(⃗ ur·E)
+In the overparameterized regime, our calculations change slightly:
+ˆytest,over =⃗ xtest·XT (XXT )−1Y
+=⃗ xtest·XT (XXT )−1(Xβ∗ +E)
+=⃗ xtest·XT (XXT )−1Xβ∗ +⃗ xtest·XT (XXT )−1E
+ˆytest,over−⃗ xtest·β∗
+  
+def
+= y∗
+test
+=⃗ xtest·XT (XXT )−1Xβ∗−⃗ xtest·IDβ∗ +⃗ xtest· (XTX)−1XTE
+ˆytest,over−y∗
+test =⃗ xtest· (XT (XXT )−1X−ID)β∗ +⃗ xtest· (XTX)−1XTE
+2For those unfamiliar with the SVD, any real-valued X can be decomposed into the product of three matrices
+X =UΣV T whereU andV are both orthonormal matrices and Σ is diagonal; intuitively, any linear transformation can
+be viewed as composition of ﬁrst a rotoreﬂection, then a scaling, then another rotoreﬂection. Because Σ is diagonal and
+because U,V are orthonormal matrices, we can equivalently write X =UΣV T in vector-summation notation as a sum
+of rank-1 outer products X = ∑rank(X)
+r=1 σrurvT
+r . Each term in the sum is referred to as a “singular mode”, akin to
+eigenmodes.
+6
+
+
+===== PAGE 7 =====
+If we again replace X with its SVD USV T , we can again simplify ⃗ xtest· (XTX)−1XTE. This yields
+our ﬁnal equations for the prediction errors.
+ˆytest,over−y∗
+test =⃗ xtest· (XT (XXT )−1X−ID)β∗ +
+R∑
+r=1
+1
+σr
+(⃗ xtest·⃗ vr)(⃗ ur·E)
+ˆytest,under−y∗
+test =
+R∑
+r=1
+1
+σr
+(⃗ xtest·⃗ vr)(⃗ ur·E)
+What is the discrepancy between the underparameterized prediction error and the overparameterized
+prediction error, and from where does the discrepancy originate? The overparameterized prediction
+error ˆytest,over−y∗
+test has the extra term ⃗ xtest· (XT (XXT )−1X−ID)β∗. To understand where this
+term originates, recall that our goal is to understand how ﬂuctuations in the features ⃗ xcorrelate with
+ﬂuctuations in the targets y. In the overparameterized regime, there are more parameters than there
+are data. Consequently, for N data points in D =P dimensions, the model can “see” ﬂuctuations in
+at most N dimensions, but has no “visibility” into ﬂuctuations in the remaining P−N dimensions.
+This causes information about the optimal linear relationship ⃗β∗ to be lost, which in turn increases the
+overparameterized prediction error ˆytest,over−y∗
+test. Statisticians call this term⃗ xtest·(XT (XXT )−1X−
+ID)β∗ the “bias”. The other term (the “variance”) is what causes double descent:
+R∑
+r=1
+1
+σr
+(⃗ xtest·⃗ vr)(⃗ ur·E) (1)
+Eqn. 1 is critical . It reveals that our test prediction error (and thus, our test squared error!) will
+depend on an interaction between 3 quantities:
+1. How much the training features X vary in each direction; more formally, the inverse (non-zero)
+singular values of the training features X:
+1
+σr
+2. How much, and in which directions, the test features ⃗ xtest vary relative to the training features
+X; more formally: how ⃗ xtest projects onto X’s right singular vectors V :
+⃗ xtest·⃗ vr
+3. How well the best possible model can correlate the variance in the training features X with the
+training regression targets Y ; more formally: how the residuals E of the best possible model in
+the model class (i.e. insurmountable “errors” from the “perspective” of the model class) project
+ontoX’s left singular vectors U:
+⃗ ur·E
+Here, we use the terminology “vary” and “variance”, suggesting a connection to the statistical notion
+of variance. There is indeed one 3, although we slightly abuse terminology! These three quantities,
+3If we had centered the training features X to form ¯X, with corresponding SVD ¯X = ¯U ¯Σ ¯V T , then ¯X T ¯X would be
+the empirical covariance matrix, and its eigendecomposition would be:
+¯X T ¯X = ¯V ¯Σ2 ¯V T
+Each right singular vector of ¯X would be an orthogonal axis of variation, with the variance along each direction given
+by the squared singular values of ¯X. However, because we don’t center the features, X TX is the empirical second
+moment matrix, not the empirical covariance matrix. Thus, when we refer to “vary” and “variance”, we are slightly
+abusing terminology, but the intuition - how much the features are wiggling, and whether the wiggling is correlated with
+the regression targets - is the right way to understand the concepts. We could center our data features to refer to the
+variance, but we felt doing so might be pedagogically confusing since centering is not related to double descent.
+7
+
+
+===== PAGE 8 =====
+Figure 4: Geometric intuition for why the smallest non-zero singular value reaches its
+lowest value when approaching the interpolation threshold. As one nears the interpolation
+threshold (here, D =P =N = 3), N training data are unlikely to vary substantially in P orthogonal
+directions, meaning at least one orthogonal direction is likely to have small variance. If fewer data are
+observed, then the trailing directions have exactly zero variance, and if more data are observed, then
+the additional data reveal variance along these trailing directions.
+multiplied, determine how much the r-th singular mode contributes to the prediction error.
+Double descent occurs when these three quantities grow extreme: (i) the training features contain
+small-but-nonzero variance in some singular direction(s), (ii) from the “perspective” of the model
+class, residual errors in the training features and targets have large projection along this singular
+mode, and (iii) the test features vary signiﬁcantly along this singular mode. When (i) and (ii) co-
+occur, this means the model’s parameters along this mode are likely incorrect. Then, when (iii) is
+added to the mix by a test datum ⃗ xtest with a large projection along this mode, the model is forced to
+extrapolate signiﬁcantly beyond what it saw in the training data, in a direction where the training data
+had an error-prone relationship between its training predictions and the training regression targets,
+using parameters that are likely wrong. As a consequence, the test squared error explodes!
+Why does this explosion happen near the interpolation threshold? The answer is that the ﬁrst factor
+becomes more likely to occur when approaching the interpolation threshold from either parameteriza-
+tion regime. The reason why the smallest non-zero singular value is (probabilistically) likely to reach
+its lowest value at the interpolation threshold is a probabilistic one, based on the Marchenko–Pastur
+distribution from random matrix theory. Because the Marchenko–Pastur distribution is rather techni-
+cal, we instead focus on gaining intuition by thinking about how much variance we’ve seen along each
+orthogonal direction in the data feature space (Fig. 4).
+8
+
+
+===== PAGE 9 =====
+Figure 5: Double Descent in Ordinary Linear Regression on California Housing Dataset.
+Suppose we’re given a single training datum ⃗ x1. So long as this datum isn’t exactly zero, that datum
+varies in a single direction, meaning we gain information about the data distribution’s variance in
+that direction. Of course, the variance in all orthogonal directions is exactly 0, which the linear
+regression ﬁt will ignore. Now, suppose we’re given a second training datum ⃗ x2. Again, so long as
+this datum isn’t exactly zero, that datum varies, but now, some fraction of ⃗ x2 might have a positive
+projection along ⃗ x1; if this happens (and it likely will, since the two vectors are unlikely to be exactly
+orthogonal), the shared direction of the two vectors gives us more information about the variance in
+this shared direction, but gives us less information about the second orthogonal direction of variation.
+This means that the training data’s smallest non-zero singular value after 2 samples is probabilistically
+smaller than after 1 sample. As we gain more training data, thereby approaching the interpolation
+threshold, the probability that each additional datum has large variance in a new direction orthogonal
+to all previously seen directions grows increasingly unlikely. At the interpolation threshold, where
+N = P = D, in order for the N-th datum to avoid adding a small-but-nonzero singular value to the
+training data, two properties must hold: (1) there must be one dimension that none of the preceding
+N− 1 training data varied in, and (2) the N-th datum needs to vary signiﬁcantly in this single
+dimension. That’s pretty unlikely! As we move beyond the interpolation threshold, the variance in
+each covariate dimension becomes increasingly clear, and the smallest non-zero singular values moves
+away from 0. This is displayed visually in Fig. 4.
+5 Empirical Evidence on Real Data with Linear Regression
+Does our claim that ordinary linear regression can exhibit double descent hold empirically? We show
+that it indeed does, using three datasets: WHO Life Expectancy, California Housing, Diabetes. These
+three datasets were randomly selected on the basis of being easily accessible, e.g., through sklearn [14].
+All display a sharp spike in test mean squared error at the interpolation threshold (Left panels of Figs.
+3, 5, 6). We additionally substantiate our previous claim that the smallest non-zero singular value of
+the training features X obtains its lowest value as one nears the interpolation threshold (Right panels
+of Figs. 3, 5, 6). Code is publicly available.
+9
+
+
+===== PAGE 10 =====
+Figure 6: Double Descent in Ordinary Linear Regression on Diabetes Dataset.
+6 When Does Double Descent Not Occur?
+Double descent will not occur if any of the three factors are absent. What could cause that?
+• Small-but-nonzero singular values do not appear in the training data features . One way to ac-
+complish this is by switching from ordinary linear regression to ridge regression, which eﬀectively
+adds a gap separating the smallest non-zero singular value from 0.
+• The test datum does not vary in diﬀerent directions than the training features . If the test datum
+lies entirely in the subspace of just a few of the leading singular directions, then double descent
+is unlikely to occur.
+• The best possible model in the model class makes no errors on the training data. For instance,
+suppose we use a linear model class on data where the true relationship is a noiseless linear one.
+Then, at the interpolation threshold, we will have D = P data, P = D parameters, our line of
+best ﬁt will exactly match the true relationship, and no double descent will occur.
+To conﬁrm our understanding, we causally test the predictions of when double descent will not occur
+by ablating each of the three factors individually. Speciﬁcally, we do the following:
+1. No Small Singular Values in Training Features: As we run the ordinary linear regression ﬁtting
+process, as we sweep the number of training data, we also sweep diﬀerent singular value cutoﬀs
+and remove all singular values of the training features X below the cutoﬀ.
+2. Test Features Lie in the Training Features Subspace: As we run the ordinary linear regression
+ﬁtting process, as we sweep the number of training data, we project the test features ⃗ xtest onto
+the subspace spanned by the training features X singular modes.
+3. No Residual Errors in the Optimal Model: We ﬁrst use the entire dataset to ﬁt a linear model
+⃗β∗, then replace Y with X⃗β∗ and y∗
+test with ⃗ xtest·⃗β∗ to ensure the true relationship is linear.
+We then rerun our typical ﬁtting process, sweeping the number of training data.
+We ﬁrst conduct experiments on a synthetic dataset in a student-teacher setup, and ﬁnd that causally
+ablating each of the three factors prevents double descent from occurring (Fig. 7, top row). Next, we
+apply the same ablations to real world datasets (California Housing, Diabetes, WHO Life Expectancy)
+and ﬁnd in all three that removing any of the three factors prevents double descent (Fig. 7, rows 2-5).
+10
+
+
+===== PAGE 11 =====
+Figure 7: Double descent will not occur if any of the three critical quantities are absent.
+We demonstrate this via ablations (Sec. 6). Left to Right: Double descent appears in ordinary
+linear regression. Removing small singular values in the training features X prevents double descent.
+Preventing the test features ⃗ xtest from varying in the trailing singular modes of the training features
+X prevents double descent. Ensuring that the optimal model in the model class has zero residual
+prediction errors E prevents double descent. Top to Bottom: Synthetic data generated in a Student-
+Teacher framework, California Housing dataset, Diabetes dataset, WHO Life Expectancy dataset
+11
+
+
+===== PAGE 12 =====
+7 Intuition Extends to Nonlinear Models
+Although we mathematically studied ordinary linear regression, the intuition for why double descent
+occurs extends to nonlinear models, including deep neural networks. For instance, we can conduct
+the same analysis we did for linear regression but instead for polynomial regression by considering the
+training covariatesX projected into a (typically much higher dimensional) polynomial feature space:
+ΦP (X)
+def
+=
+
+
+−⃗φP (⃗ x1)−
+−⃗φP (⃗ x2)−
+...
+−⃗φP (⃗ xN)−
+
+
+For certain classes of inﬁnitely wide deep neural networks (e.g., as studied [8, 9, 4]), the output
+predictions of the network are equivalent to a linear regression performed on a particular set of features.
+Diﬀerent inﬁnite width limits correspond to diﬀerent sets of features; for instance, one such limit (known
+as the Neural Network Gaussian Process limit [9]), studies the training covariates X represented in
+the penultimate layer of the deep neural network ⃗fθ(x):
+Fθ(X)
+def
+=
+
+
+−⃗fθ(⃗ x1)−
+−⃗fθ(⃗ x2)−
+...
+−⃗fθ(⃗ xN)−
+
+
+For a concrete example about how our intuition can shed light on the behavior of nonlinear models,
+[7] recently discovered interesting properties of shallow nonlinear autoencoders: depending on the
+number of training data, (1) autoencoders either store data points or features, and (2) double descent
+occurs between these two regimes. Our tutorial helps explains the results, and also sheds light on two
+comments the authors make:
+1. [7] write, “[Our work] suggests a naive mechanistic theory of overﬁtting and memorization: mem-
+orization and overﬁtting occur when models operate on “data point features” instead of ”gener-
+alizing features”. We expect this naive theory to be overly simplistic, but it seems possible that
+it’s gesturing at useful principles!” Our tutorial hopefully clariﬁes that this choice of terminology
+(“data point features” vs. ”generalizing features”) can be made more precise. When overparam-
+eterized, the “data point features” are akin to the data-by-data Gram matrixXXT∈ RN×N and
+when underparameterized, the “generalizing features” are akin to the feature-by-feature second
+moment matrix XTX∈ RD×D. Our tutorial hopefully shows that “data point features” can
+(and very often do) generalize, and that there is a deep connection between the two, e.g., their
+shared spectra.
+2. [7] write, “It’s interesting to note that we’re observing double-descent in the absence of label
+noise. That is to say: the inputs and targets are exactly the same. Here, the “noise” arises from
+the lossy compression happening in the down projection.” Our tutorial clariﬁes that noise in the
+sense of a random unpredictable quantity is not necessary to produce double descent. Rather,
+what is necessary is residual errors from the perspective of the model class . Those residual errors
+could be entirely deterministic, such as a nonlinear model attempting to ﬁt a noiseless linear
+relationship.
+8 Acknowledgements
+We thank David K. Zhang, Matthew Sotoudeh, Victor Lecomte, Krista Opsahl-Ong, Aaron Scher,
+Max Lamparth, Zane Durante, Gabriel Mukobi, Brando Miranda and Laureline Logiaco for feedback.
+12
+
+
+===== PAGE 13 =====
+References
+[1] Ben Adlam and Jeﬀrey Pennington. Understanding double descent requires a ﬁne-grained bias-
+variance decomposition. Advances in neural information processing systems , 33:11022–11032,
+2020.
+[2] Madhu S Advani, Andrew M Saxe, and Haim Sompolinsky. High-dimensional dynamics of gener-
+alization error in neural networks. Neural Networks, 132:428–446, 2020.
+[3] Mikhail Belkin, Daniel Hsu, Siyuan Ma, and Soumik Mandal. Reconciling modern machine-
+learning practice and the classical bias–variance trade-oﬀ. Proceedings of the National Academy
+of Sciences, 116(32):15849–15854, 2019.
+[4] Blake Bordelon, Abdulkadir Canatar, and Cengiz Pehlevan. Spectrum dependent learning curves
+in kernel regression and wide neural networks. In International Conference on Machine Learning,
+pages 1024–1034. PMLR, 2020.
+[5] Lin Chen, Yifei Min, Mikhail Belkin, and Amin Karbasi. Multiple descent: Design your own
+generalization curve. Advances in Neural Information Processing Systems , 34:8898–8912, 2021.
+[6] Trevor Hastie, Andrea Montanari, Saharon Rosset, and Ryan J Tibshirani. Surprises in high-
+dimensional ridgeless least squares interpolation. The Annals of Statistics , 50(2):949–986, 2022.
+[7] Tom Henighan, Shan Carter, Tristan Hume, Nelson Elhage, Robert Lasenby, Stanislav Fort,
+Nicholas Schiefer, and Christopher Olah. Double descent in the condition number. Transformer
+Circuits Thread, 2023.
+[8] Arthur Jacot, Franck Gabriel, and Cl´ ement Hongler. Neural tangent kernel: Convergence and
+generalization in neural networks. Advances in neural information processing systems , 31, 2018.
+[9] Jaehoon Lee, Yasaman Bahri, Roman Novak, Samuel S Schoenholz, Jeﬀrey Pennington,
+and Jascha Sohl-Dickstein. Deep neural networks as gaussian processes. arXiv preprint
+arXiv:1711.00165, 2017.
+[10] Song Mei and Andrea Montanari. The generalization error of random features regression: Precise
+asymptotics and the double descent curve. Communications on Pure and Applied Mathematics ,
+75(4):667–766, 2022.
+[11] Preetum Nakkiran, Gal Kaplun, Yamini Bansal, Tristan Yang, Boaz Barak, and Ilya Sutskever.
+Deep double descent: Where bigger models and more data hurt. Journal of Statistical Mechanics:
+Theory and Experiment, 2021(12):124003, 2021.
+[12] Preetum Nakkiran, Prayaag Venkat, Sham Kakade, and Tengyu Ma. Optimal regularization can
+mitigate double descent. arXiv preprint arXiv:2003.01897 , 2020.
+[13] Manfred Opper. Statistical mechanics of learning: Generalization. The handbook of brain theory
+and neural networks , pages 922–925, 1995.
+[14] F. Pedregosa, G. Varoquaux, A. Gramfort, V. Michel, B. Thirion, O. Grisel, M. Blondel, P. Pret-
+tenhofer, R. Weiss, V. Dubourg, J. Vanderplas, A. Passos, D. Cournapeau, M. Brucher, M. Perrot,
+and E. Duchesnay. Scikit-learn: Machine learning in Python. Journal of Machine Learning Re-
+search, 12:2825–2830, 2011.
+[15] Tomaso Poggio, Gil Kur, and Andrzej Banburski. Double descent in the condition number. arXiv
+preprint arXiv:1912.06190, 2019.
+[16] Jason W Rocks and Pankaj Mehta. The geometry of over-parameterized regression and adversarial
+perturbations. arXiv preprint arXiv:2103.14108 , 2021.
+13
+
+
+===== PAGE 14 =====
+[17] Jason W Rocks and Pankaj Mehta. Bias-variance decomposition of overparameterized regression
+with random linear features. Physical Review E, 106(2):025304, 2022.
+[18] Jason W Rocks and Pankaj Mehta. Memorizing without overﬁtting: Bias, variance, and interpo-
+lation in overparameterized models. Physical Review Research, 4(1):013201, 2022.
+[19] Stefano Spigler, Mario Geiger, St´ ephane d’Ascoli, Levent Sagun, Giulio Biroli, and Matthieu
+Wyart. A jamming transition from under-to over-parametrization aﬀects loss landscape and
+generalization. arXiv preprint arXiv:1810.09665 , 2018.
+14
+
+
+===== PAGE 15 =====
+A Why Gradient Descent Implicitly Regularizes
+This is a sketch of why gradient descent implicitly regularizes. Suppose we have a model Xw for a
+vector of data y∈ Rn and want to minimize the norm of the error,
+L(w) =∥Xw−y∥2
+2 =∥e∥2
+2
+where we introduce some short-hand notation. We use the gradient learning rule,
+w(t + 1) =w(t)−ηXTe(t)
+⇒e(t + 1) =e(t)−ηXXTe(t)
+⇒e(t + 1) = (I−ηXXT )e(t)
+Each matrix satisﬁes X∈ Rn×d1 where n is the number of samples and d1 is the dimension of each
+sample. In the overparameterized setting we have d1 >n and so XXT will generically have full-rank
+and the error will go to zero.
+This lies in the diﬀerence between XXT which appears here in the error analysis and XTX which
+appears in the solution. So we can have XXT ∈ Rn×n generically full-rank only if we have more
+parameters than there is data. On the other hand, we only have XTX full-rank if also it’s satisﬁed
+that there is more data than parameters. This is important because in this case we can compute the
+pseudo-inverse easily. Generically, we can show that if we use gradient descent we have something like
+the following,
+(XTX)−1X  
+left inverse
+X−1
+
+inverse
+XT (XXT )−1
+  
+right inverse
+for the cases where we are under-parameterized, minimally parameterized, or over-parameterized to
+model the data.
+So under gradient ﬂow we’ll suppose the parameters update according to,
+˙w =−ηXTe
+w(0) = 0
+Observe that the gradient ˙w is invariantly in the span ofXT so we may conclude thatw(t) is always in
+the span of XT . Generically, any solution in the over-parameterized setting is a global optimizer such
+that Xw =y. This means that the limit of the ﬂow can be written as w∗ =XTα for some coeﬃcient
+vector with the constraint that Xw∗ =y. After some manipulations we ﬁnd that,
+y =Xw∗ =XXTα
+⇒α = (XXT )−1y
+⇒w∗ =XT (XXT )−1y =X +y
+This means that the solution X + picked from gradient ﬂow is the Moore-Penrose psuedoinverse. This
+can be deﬁned as the matrix,
+X + = lim
+λ→0+
+XT (XXT +λI)−1
+Also observe that there is a unique minimizer for the regularized problem,
+min
+w
+L(w) +λ∥w∥2
+2
+with valuewλ =XT (XXT +λI)−1y. Perhaps, Xw =y has a set of solutions, but it is clear this set is
+convex so there is a unique minimum norm solution. On the other hand, eachwλ corresponds to a best
+solution with norm below vλ, which is less than the minimum. However, we have w∗ = limλ→0+wλ
+from continuity. Since w∗ is an exact solution it can’t have less than the minimum-norm and it is
+clear w∗ can’t have above the minimum-norm either since this is not the case for any of the wλ. We
+conclude that gradient descent does indeed ﬁnd the minimum norm solution.
+15

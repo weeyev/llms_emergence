@@ -1,0 +1,694 @@
+
+
+===== PAGE 1 =====
+Evidence from counterfactual tasks supports emergent
+analogical reasoning in large language models
+Taylor Webb1,*, Keith J. Holyoak 1, and Hongjing Lu 1,2
+1Department of Psychology
+2Department of Statistics
+University of California, Los Angeles, CA, USA
+*Correspondence to: taylor.w.webb@gmail.com
+Abstract
+We recently reported evidence that large language models are capable of solving a wide range
+of text-based analogy problems in a zero-shot manner, indicating the presence of an emergent
+capacity for analogical reasoning [1]. Two recent commentaries [2, 3] have challenged these re-
+sults, citing evidence from so-called ‘counterfactual’ tasks in which the standard sequence of the
+alphabet is arbitrarily permuted so as to decrease similarity with materials that may have been
+present in the language model’s training data. Here, we reply to these critiques, clarifying some
+misunderstandings about the test materials used in our original work, and presenting evidence
+that language models are also capable of generalizing to these new counterfactual task variants.
+1 Original test materials
+Hodel & West (HW) [2] argue that the test problems employed in our original paper [1] may be similar
+to materials available on the internet, and that such overlap may explain the ability of GPT-3 and
+GPT-4 to solve these problems. This argument, however, ignores the fact that many of the tests em-
+ployed in the original study were designed from scratch, specifically for the purpose of testing language
+models on unusual problems dissimilar to materials commonly found on the internet. Most importantly,
+our tests included a completely novel task, the Digit Matrices. Notably, the Digit Matrices involve
+counterfactual reorderings of the most common numerical sequence (digits 1-9). GPT-3 outperformed
+human participants on this text-based matrix reasoning task, and displayed several behavioral signa-
+tures consistent with human-like reasoning. We also investigated several novel letter-string analogy
+variants, including an especially challenging set of problems involving zero-shot generalization from
+letter strings to real-world concepts (e.g., p q r : p q s :: cold cool warm : ? ). It is simply not plausi-
+ble that these specific materials, or highly similar ones, were already present on the internet prior to
+our study. Accordingly, the ability of language models to solve these and many other problems (see
+Supplementary Section S3 of the original paper [1] for discussion of our other test materials), at a level
+on par with human participants, cannot be easily dismissed as simple mimicry of the training data.
+2 Counterfactual tasks
+HW also present evidence from a specific variant of the letter-string analogy task, involving both
+a permuted alphabet and a larger interval size (Figure 1a), on which GPT-3 and GPT-4 display
+degraded performance. A similar task was also investigated by Lewis & Mitchell (LM) [3], who similarly
+found that language models display worse performance on these problems than on those involving the
+standard alphabet. LM refer to this as a ‘counterfactual task’ – a term that was recently introduced
+to refer to unusual task variants, designed to deviate from common problems on which language
+models may have been trained [4]. HW and LM argue that degraded performance on this particular
+task variant suggests that the ability of language models to solve other types of analogy problems is
+based only on the similarity of those problems to the training data. This conclusion, however, ignores
+1
+arXiv:2404.13070v2  [cs.CL]  29 Apr 2024
+
+
+===== PAGE 2 =====
+a
+Use the following fictional alphabet:
+[x y l k w b f z t n j r q a h v g m u o p d i c s e]
+[l k w b] [l k w z]
+[p d i c] [    ?    ] b
+1 2
+Interval size
+0
+0.2
+0.4
+0.6
+0.8
+1
+Accuracy
+GPT-4
+GPT-4 + code execution
+Human
+Figure 1: Results for letter-string analogies with shuffled alphabet. (a) Example problem from
+Hodel & West [2]. Letter-string analogies are constructed based on a permuted alphabet. This example
+involves a successor relation with an interval size of 1, applied to the final letter of the string. Other problems
+involved an interval size of 2. See Methods (Supplementary Section S1) for more details. (b) Results for
+human participants, GPT-4, and a variant of GPT-4 augmented with the capacity to write and execute code
+(which the model used to identify the positions of letters in the permuted alphabet). Both humans and GPT-
+4 showed greater difficulty on problems involving an interval of size 2 (main effect of interval size, human
+participants: P = 1.5 × 10−11, GPT-4: P < 2 × 10−16). This effect did not reach significance for GPT-4 +
+code execution ( P = 0.066). Human participants outperformed GPT-4 (main effect of human participants vs.
+GPT-4: P = 8 .9 × 10−13), but GPT-4 + code execution performed on par with human participants (main
+effect of human participants vs. GPT-4 + code execution: P = 0 .496). When correct, GPT-4’s responses
+were also accompanied by accurate explanations of the underlying rule, and incorrect responses were often
+based on a valid alternative rule (see Supplementary Results). Human results reflect average performance for
+N = 99 participants for interval-size-1 and N = 97 separate paticipants for interval-size-2. Black error bars
+represent standard error of the mean across participants. Grey error bars represent 95% binomial CIs for
+average performance across multiple problems.
+alternative potential explanations for the poor performance of these models on this particular task
+variant. Most notably, such problems require that letters be converted into the corresponding indices
+in the permuted alphabet, a process that depends on the ability to precisely count the items in a list.
+It is well known that language models have difficulty with counting, a phenomenon that may in fact be
+related to the capacity-limited nature of rapid numerical estimation in visual displays by humans (i.e.,
+‘subitizing’) [5, 6]. Thus, one potential alternative interpretation of these results is that they reflect
+not a general inability to perform analogical reasoning, but simply a specific difficulty with problems
+that require counting.
+To test this alternative interpretation, we evaluated a more recently released variant of GPT-4,
+augmented with the capacity to write and execute code. This code execution capacity is often invoked
+by the model when performing tasks that require precise indexing within a list. Consistent with our
+alternative interpretation, GPT-4 was able to solve these ‘counterfactual’ letter-string analogies at a
+roughly human level of performance when given the ability to count using code execution (Figure 1b),
+whereas without this functionality GPT-4 performed significantly worse, on par with the results of
+HW and LM.
+Importantly, GPT-4 only relied on code execution to convert letters into their corresponding indices,
+using code that GPT-4 generated on its own. Moreover, it was not necessary to instruct GPT-4 to
+use code execution in this manner, nor to provide any task-specific instructions (e.g., regarding the
+importance of position or interval size). Furthermore, correct responses were typically accompanied
+by a coherent and accurate explanation (see example in Supplementary Results Section S2.2). In
+addition, many incorrect responses were based on a less abstract but nevertheless valid rule, at a rate
+similar to that observed for human participants (46% of GPT-4’s errors involved a valid alternative rule,
+compared with 39% of errors in the human behavioral results reported by LM [3]). Of course, the use of
+code execution to solve these particular problems is not a human-like solution (humans do not need to
+2
+
+
+===== PAGE 3 =====
+write code to count the items in a list). But these results suggest that the inability of language models
+to solve these particular reasoning problems stems from a specific difficulty with counting, rather than
+a general inability to solve analogy problems. Given the deliberate ‘counterfactual’ design of this task
+(see Supplementary Results Section S2.4 for similar results from an additional counterfactual task),
+GPT-4’s ability to solve these problems at a roughly human level, and to provide accurate explanations
+of its solutions, cannot be explained by the presence of these problems in the training data.
+More generally, these results illustrate an important point about the evaluation of cognitive ca-
+pacities in artificial systems. A central lesson of cognitive science is that cognition is comprised of
+interacting, but dissociable, processes. There is no particular reason to expect that these processes
+will similarly covary in artificial systems, especially those with radically different developmental ori-
+gins from our own. Thus, as we previously argued [1], it is important to disambiguate domain-specific
+failures in processes such as physical reasoning – or, in this case, counting – from the evaluation of core
+competencies such as analogical reasoning. Indeed, human reasoners also display dramatic variability
+in their capacity to deploy analogical reasoning in specific domains, based on their expertise in those
+domains [7]. This observation echoes recently articulated concerns about the potential confounding
+influence of auxiliary task demands when evaluating large language models [8]. Just as when testing
+young children or nonhuman animals, it is important to design evaluations that probe the capacity of
+interest while avoiding confounds resulting from auxiliary task demands.
+3 Mechanisms underlying emergent analogical reasoning
+A full account of emergent analogical reasoning in large language models, and of its relationship
+to human reasoning, will require us to go beyond behavioral evaluations by examining the internal
+mechanisms that support this capacity. While there is still much to learn, a growing body of evidence
+suggests that this capacity may be supported by a set of structured operations and emergent relational
+representations [9, 10, 11, 12]. Indeed, in-context learning – the capacity of large language models to
+rapidly learn new tasks by conditioning their predictions on a small set of in-context task examples [13]
+– may itself depend on analogical reasoning (or more generally, schema induction). This possibility
+is suggested by the dependence of in-context learning on the emergence of structured mechanisms
+for similarity-based inductive inference [14, 15]. Thus, the core mechanisms of few-shot learning and
+inference in transformer-based language models may depend on reasoning over patterns of similarity,
+mirroring the central role of similarity in human reasoning [16, 17, 18, 19]. It remains an important
+priority for future work to determine whether and how the mechanisms that support this capacity in
+large language models relate to those that implement reasoning in the human brain.
+Acknowledgements
+This research has been supported by an award from Microsoft Azure as part of the Accelerating
+Foundation Models Research initiative.
+References
+[1] Taylor Webb, Keith J Holyoak, and Hongjing Lu. “Emergent analogical reasoning in large lan-
+guage models”. In: Nature Human Behaviour 7.9 (2023), pp. 1526–1541.
+[2] Damian Hodel and Jevin West. “Response: Emergent analogical reasoning in large language
+models”. In: arXiv preprint arXiv:2308.16118 (2023).
+[3] Martha Lewis and Melanie Mitchell. “Using counterfactual tasks to evaluate the generality of
+analogical reasoning in large language models”. In: arXiv preprint arXiv:2402.08955 (2024).
+[4] Zhaofeng Wu et al. “Reasoning or reciting? exploring the capabilities and limitations of language
+models through counterfactual tasks”. In: arXiv preprint arXiv:2307.02477 (2023).
+[5] Edna L Kaufman et al. “The discrimination of visual number”. In: The American journal of
+psychology 62.4 (1949), pp. 498–525.
+3
+
+
+===== PAGE 4 =====
+[6] Steven M Frankland, Taylor Webb, and Jonathan D Cohen. “No coincidence, George: Capacity-
+limits as the Curse of Compositionality”. In: PsyArXiv preprint (2021). doi: https://doi.org/
+10.31234/osf.io/cjuxb.
+[7] Micah B Goldwater et al. “Analogy generation in science experts and novices”. In: Cognitive
+Science 45.9 (2021), e13036.
+[8] Jennifer Hu and Michael C Frank. “Auxiliary task demands mask the capabilities of smaller
+language models”. In: arXiv preprint arXiv:2404.02418 (2024).
+[9] Eric Todd et al. “Function vectors in large language models”. In: 12th International Conference
+on Learning Representations (2024).
+[10] Roee Hendel, Mor Geva, and Amir Globerson. “In-context learning creates task vectors”. In:
+arXiv preprint arXiv:2310.15916 (2023).
+[11] Evan Hernandez et al. “Linearity of relation decoding in transformer language models”. In: 12th
+International Conference on Learning Representations (2024).
+[12] Jiahai Feng and Jacob Steinhardt. “How do language models bind entities in context?” In: 12th
+International Conference on Learning Representations (2024).
+[13] Tom Brown et al. “Language models are few-shot learners”. In: Advances in neural information
+processing systems 33 (2020), pp. 1877–1901.
+[14] Catherine Olsson et al. “In-context learning and induction heads”. In: arXiv preprint arXiv:2209.11895
+(2022).
+[15] Ekin Aky¨ urek et al. “In-Context Language Learning: Arhitectures and Algorithms”. In: arXiv
+preprint arXiv:2401.12973 (2024).
+[16] Dedre Gentner. “The mechanisms of analogical learning.” In: Similarity and analogical reasoning.
+Ed. by S. Vosniadou and A. Ortony. Cambridge University Press, 1989. doi: https://doi.org/
+10.1017/CBO9780511529863.011.
+[17] Hongjing Lu, Nicholas Ichien, and Keith J Holyoak. “Probabilistic analogical mapping with
+semantic relation networks.” In: Psychological review 129.5 (2022), p. 1078.
+[18] Taylor Webb et al. “Zero-shot visual reasoning through probabilistic analogical mapping”. In:
+Nature Communications 14.1 (2023), p. 5144.
+[19] Taylor Webb et al. “The relational bottleneck as an inductive bias for efficient abstraction”. In:
+Trends in Cognitive Sciences (in press).
+4
+
+
+===== PAGE 5 =====
+Supplementary Materials
+S1 Methods
+S1.1 Code
+Code for all simulations can be downloaded from:
+https://github.com/taylorwwebb/counterfactual analogies
+Most code was written in Python v3.11.4, using the following packages: NumPy v1.25.0 [1], SciPy
+v1.11.1 [2], statsmodels v0.14.0 [3], and Matplotlib v3.7.1 [4]. Logistic regression analyses were carried
+out in R v3.6.3 [5]. Experimental stimuli for human behavioral experiments were written in JavaScript
+using jsPsych v7.2.1 [6].
+S1.2 Problem Set
+Letter string analogy problems were created using the following permuted alphabet, also used by Hodel
+& West (HW) [7]:
+[x y l k w b f z t n j r q a h v g m u o p d i c s e]
+Each letter string analogy problem involved one of six transformation types: sequence extension,
+successor, predecessor, removing a redundant letter, fixing a sequence, and sorting. These are the
+same transformation types used in our original study [8]. In the sequence extension transformation,
+the source involved an ordered sequence of four letters (based on the ordering in the permuted alphabet)
+followed by an extension of this sequence involving five letters (including the next letter in the permuted
+alphabet), as in the following example:
+[x y l k] [x y l k w]
+In the successor transformation, the source involved an ordered sequence of four letters, followed by
+that same sequence, but with the final letter replaced by its successor in the permuted alphabet, as in
+the following example:
+[x y l k] [x y l w]
+In the predecessor transformation, the source involved an ordered sequence of four letters, followed by
+that same sequence, but with the first letter replaced by its predecessor in the permuted alphabet, as
+in the following example:
+[y l k w] [x l k w]
+In the transformation involving removal of a redundant letter, the source involved an ordered sequence
+of five letters with one letter repeated, followed by that same sequence with the redundant letter
+removed, as in the following example:
+[x y y l k w] [x y l k w]
+In the transformation involving fixing a sequence, the source involved an ordered sequence of five
+letters with one out-of-place letter (violating the ordering in the permuted alphabet), followed by that
+same sequence with the out-of-place letter replaced, as in the following example:
+[x y l g w] [x y l k w]
+In the sorting transformation, the source involved an ordered sequence of five letters with the position
+of two letters swapped, followed by a sorted version of the same sequence (sorted based on the ordering
+in the permuted alphabet), as in the following example:
+[x k l y w] [x y l k w]
+S1
+
+
+===== PAGE 6 =====
+Similar to HW, we only investigated problems referred to as ‘zero-generalization’ in our original study,
+meaning that the only difference between source and target sequences was the use of different letters.
+An example problem (involving a successor relation) is presented below:
+[x y l k] [x y l w]
+[j r q a] [j r q h]
+We investigated problems involving an interval size of either 1 or 2. The problems with an interval size
+of 1 are exactly as described above. The interval size of 2 was employed in different ways, depending on
+the transformation type. In the sequence extension transformation, the first sequence was presented
+as usual, but the extension of that sequence involved the addition of a letter separated by a successor
+interval of 2 in the permuted alphabet, as in the following example:
+[x y l k] [x y l k b]
+Similarly, in the successor transformation, the final letter in the first sequence was replaced by a letter
+separated by a successor interval of 2, as in the following example:
+[x y l k] [x y l b]
+In the predecessor transformation, the first letter in the sequence was replaced by a letter that preceded
+it by an interval of 2, as in the following example:
+[l k w b] [x k w b]
+In the transformation involving removal of a redundant letter, fixing a sequence, and sorting, the
+source involved an ordered sequence of five letters, in which each letter was separated by an interval
+of 2 in the permuted alphabet. The following example illustrates this for the transformation involving
+removal of a redundant letter:
+[x l l w f t] [x l w f t]
+The following example illustrates this for the transformation involving fixing a sequence:
+[x l w g t] [x l w f t]
+The following example illustrates this for the sorting transformation:
+[x f w l t] [x l w f t]
+Problems with an interval of size 2 were the same as those used by HW, and problems with an interval
+size of 1 were generated using code from HW, both downloaded from the following repository:
+https://github.com/hodeld/emergent analogies LLM fork
+There were 600 problems with an interval size of 1, and 600 problems with an interval size of 2 (each
+involving 100 problems with each transformation type). The same problem sets were used for testing
+GPT-4 and human participants.
+S1.3 Evaluating GPT-4
+We queried GPT-4 in an automated fashion using the OpenAI Chat Completions API. Experiments
+were performed using the ‘gpt-4-0125-preview’ engine, with temperature and top-p set both set to 0.
+Prompts and analogy problems were presented using the ‘User’ role, with the default message from
+the ‘System’ role (‘You are a helpful assistant.’). The prompt format that we used is illustrated in the
+following example:
+S2
+
+
+===== PAGE 7 =====
+Use this fictional alphabet: [x y l k w b f z t n j r q a h v g m u o p d i c s e].
+Let’s try to complete the pattern:
+[x y l k] [x y l w]
+[j r q a] [ ? ]
+Please only provide the answer. Do not provide any additional explanation.
+Answer:
+This prompt was employed to ensure that responses adhered to a regular format, thus avoiding the
+difficulty involved in parsing the verbose responses that GPT-4 typically provides. Line breaks were
+indicated using the ‘\n’ character. We evaluated GPT-4 on 300 problems with an interval size of 1, and
+300 problems with an interval size of 2 (each involving 50 problems with each transformation type).
+S1.4 Evaluating GPT-4 with code execution
+We also evaluated a variant of GPT-4 that was augmented with a capacity to write and execute code.
+These experiments were performed with the OpenAI Assistants API, using the same engine (‘gpt-4-
+0125-preview’) as the experiment without code execution. Temperature and top-p were both set to
+their default values of 1. The prompt format that we used is illustrated in the following example:
+Let’s solve a puzzle problem involving the following fictional alphabet:
+[x y l k w b f z t n j r q a h v g m u o p d i c s e]
+Here is the problem:
+[x y l k] [x y l w]
+[j r q a] [ ? ]
+This is the only prompt that was provided to GPT-4. We did not provide any specific instructions to
+use code execution to solve the problem, nor did we indicate the importance of the position or interval
+size between letters in the permuted alphabet. GPT-4 typically responded with an extended ‘chain-
+of-thought’ response [9], often invoking the code execution function. Code execution was typically
+invoked to identify the corresponding position of the letters in the permuted alphabet.
+GPT-4 sometimes refused to provide an answer, insisting that there was too much uncertainty
+about the pattern underlying the analogy problem. In these cases, GPT-4’s response was re-generated
+until it provided an answer. When GPT-4 did provide an answer, this was counted as final, even if
+GPT-4 expressed uncertainty.
+GPT-4’s chain-of-thought responses typically had a highly variable format, making it difficult to
+automate evaluation. We therefore manually inspected the responses to determine accuracy. Due to
+the time involved in manually assessing these responses, these experiments involved a smaller subset
+of 60 problems with an interval size of 1, and 60 problems with an interval size of 2 (each involving 10
+problems with each transformation type). GPT-4’s complete response, including any code generated,
+was recorded.
+S1.5 Human Behavioral Experiment
+Human behavioral data was collected in an online experiment. The experiment was approved by
+the UCLA Institutional Review Board (IRB protocol #22-000841, approved May 17, 2022), and all
+participants provided informed consent. Participants were recruited through the Prolific platform.
+Ninety-nine participants (32 female, 19-60 years old, average age = 29 years old) completed the ex-
+periment in the interval-size-1 condition, and ninety-seven participants (40 female, 18-54 years old,
+average age = 29 years old) completed the experiment in the interval-size-2 condition. All participants
+spoke fluent English and had normal or corrected-to-normal vision. No statistical methods were used
+S3
+
+
+===== PAGE 8 =====
+to pre-determine sample sizes. Participants were paid $3.00 to participate, and the experiment took a
+maximum of 10 minutes to complete.
+Participants were first presented with a set of instructions, and the following example problem (not
+involving the permuted alphabet or any of the transformations employed in the actual experiment):
+[a a a] [b b b]
+[c c c] [ ? ]
+Each participant completed 6 problems, including 1 problem for each transformation type. The
+specific problem instances were randomly sampled for each participant, and participants received these
+problems in a random order. Participants generated a free response for each problem. Participants
+performed the experiment in full-screen mode, and were instructed to turn off any music or other
+potential sources of distraction. After completing the problems, participants completed an attention
+check involving a simple categorical judgment (they were presented with a list of items and asked
+to identify which one was categorized as a vegetable). All participants successfully completed the
+attention check.
+S1.5.1 Statistical analyses
+Logistic regression analyses were carried out at the individual trial level, with each data point corre-
+sponding to a particular trial from a particular participant (or GPT-4). The dependent variable in
+all regression analyses was a binary variable coding for whether a particular response was correct or
+incorrect.
+One regression analysis compared human participants with GPT-4. This analysis included three
+predictors: a binary predictor coding for interval size (1 vs. 2), a binary predictor coding for GPT-
+4 vs. human participants, and an interaction term. A second regression analysis compared human
+participants with GPT-4 + code execution, using the same predictors. Three separate regression
+analyses were then performed looking only at data from human participants, GPT-4, or GPT-4 +
+code execution, with a single binary predictor coding for interval size.
+S2 Supplementary Results
+S2.1 Data Availability
+Data for the human behavioral experiment and GPT-4 evaluations, along with the letter string problem
+sets, can be downloaded from:
+https://github.com/taylorwwebb/counterfactual analogies
+S2.2 Example GPT-4 response involving code execution
+The following example illustrates the behavior of GPT-4 when augmented with the ability to execute
+code. This example is in response to the following analogy problem:
+Let’s solve a puzzle problem involving the following fictional alphabet:
+[x y l k w b f z t n j r q a h v g m u o p d i c s e]
+Here is the problem:
+[q a h v] [q a h m]
+[k w b f] [ ? ]
+This problem involves a successor relation with an interval size of 2. The correct answer is [k w b t].
+GPT-4’s response is as follows (typewriter font indicates code generated and executed by GPT-4):
+S4
+
+
+===== PAGE 9 =====
+This puzzle appears to revolve around matching sequences of characters from the provided
+fictional alphabet. To solve the puzzle, we’ll need to determine the relationship between
+the given sequences and then apply that relationship to find the missing sequence. Let’s
+identify the pattern or rule that connects the first pair of sequences ([q a h v] and [q a h
+m]) and then use this pattern to solve for the missing sequence corresponding to [k w b f].
+Let’s go through the fictional alphabet and the given sequences to identify the pattern.
+Looking at the sequences:
+1. ([q a h v]) changes to ([q a h m]).
+By examining the given fictional alphabet, let’s find the positioning of each character and
+identify the transformation applied from the first sequence to the second:
+Fictional Alphabet: ([x y l k w b f z t n j r q a h v g m u o p d i c s e])
+Let’s start by determining the index of each character in the first sequence and then see
+how it transforms into the second sequence.
+# Fictional alphabet as a list of characters for indexing purposes
+fictional alphabet = [‘x’, ‘y’, ‘l’, ‘k’, ‘w’, ‘b’, ‘f’, ‘z’, ‘t’, ‘n’, ‘j’,
+‘r’, ‘q’, ‘a’, ‘h’, ‘v’, ‘g’, ‘m’, ‘u’, ‘o’, ‘p’, ‘d’, ‘i’, ‘c’, ‘s’, ‘e’]
+# Given sequences
+sequence1 = [‘q’, ‘a’, ‘h’, ‘v’]
+sequence2 = [‘q’, ‘a’, ‘h’, ‘m’]
+# Let’s find the indexes of each character in both sequences
+sequence1 indexes = [fictional alphabet.index(char) for char in sequence1]
+sequence2 indexes = [fictional alphabet.index(char) for char in sequence2]
+sequence1 indexes, sequence2 indexes
+The indexes of the characters in the first sequence ([q a h v]) are ([12, 13, 14, 15]) and in
+the second sequence ([q a h m]) are ([12, 13, 14, 17]).
+Observing the transformation from the first sequence to the second, it looks like all but the
+last item remain the same. The last character changes from having an index of (15) to an
+index of (17).
+Now let’s apply this observed transformation rule to the sequence ([k w b f]) and find the
+corresponding missing sequence. We will maintain the first three characters and find the
+character two positions after the last character in the fictional alphabet.
+# Sequence to transform
+sequence to transform = [‘k’, ‘w’, ‘b’, ‘f’]
+# Getting indexes of the characters in the sequence to transform
+transform indexes = [fictional alphabet.index(char) for char in sequence to transform]
+# Change the last character as per observed transformation: 2 positions after
+the original
+new last char index = (transform indexes[-1] + 2) % len(fictional alphabet) #
+Using modulo in case of overflow
+# create the new sequence with the transformation applied
+new sequence = sequence to transform[:3] + [fictional alphabet[new last char index]]
+new sequence
+The missing sequence corresponding to ([k w b f]) after applying the observed transforma-
+tion rule is ([k w b t]).
+So the solution to the puzzle is:
+• ([q a h v]) transforms to ([q a h m])
+• ([k w b f]) transforms to ([k w b t])
+S5
+
+
+===== PAGE 10 =====
+A number of observations can be made about this response. First, GPT-4 spontaneously uses chain-of-
+thought reasoning [9] to decompose the problem, developing a plan that involves first identifying the
+change between the first and second sequences, and then applying that change to the third sequence.
+GPT-4 then uses code execution to convert the letters in the source sequences to their indices in the
+fictional alphabet, and identifies the rule based on these indices (that the first three letters stay the
+same, while the last letter is incremented by an interval of 2). Finally, GPT-4 again uses code execution
+to apply this rule to the target sequence and generate an answer. GPT-4’s responses typically involved
+a similar combination of chain-of-thought reasoning and code execution, and correct answers were
+always accompanied by an accurate explanation of the underlying rule. Incorrect answers were often
+accompanied by an analysis that identified a valid alternative rule. The complete set of responses is
+available at:
+https://github.com/taylorwwebb/counterfactual analogies/gpt-4-0125-preview code execution
+S6
+
+
+===== PAGE 11 =====
+S2.3 Results by problem type
+a
+Extend
+sequence
+Successor Predecessor Remove
+redundant
+letter
+Fix
+alphabetic
+sequence
+Sort
+Transformation type
+0
+0.2
+0.4
+0.6
+0.8
+1
+Accuracy
+Interval size = 1
+GPT-4
+GPT-4 + code execution
+Human
+b
+Extend
+sequence
+Successor Predecessor Remove
+redundant
+letter
+Fix
+alphabetic
+sequence
+Sort
+Transformation type
+0
+0.2
+0.4
+0.6
+0.8
+1
+Accuracy
+Interval size = 2
+GPT-4
+GPT-4 + code execution
+Human
+Supplementary Figure 1: Results for letter-string analogies with shuffled alphabet, sorted by
+transformation type and interval size. (a) Results for human participants (N = 99), GPT-4, and GPT-4
++ code execution on problems with an interval size of 1. (b) Results for human participants (N = 97), GPT-4,
+and GPT-4 + code execution on problems with an interval size of 2. Black error bars represent standard error
+of the mean across participants. Grey error bars represent 95% binomial CIs for average performance across
+multiple problems.
+S7
+
+
+===== PAGE 12 =====
+Supplementary Figure 1 show results broken down by problem type. GPT-4 + code execution
+matched the pattern of human performance reasonably well, although the sample size for each problem
+type is small. A notable exception was for problems involving the extend-sequence transformation and
+an interval size of 2, where GPT-4 + code execution answered 9/10 problems incorrectly. On these
+problems, GPT-4 did not invoke code execution to identify the interval between the letters in the
+source sequences, and mistakenly identified an interval size of 1, then using the wrong interval size
+to complete the analogy. This performance contrasts with the one problem of this type that GPT-
+4 answered correctly, for which GPT-4 correctly identified the source interval using code execution.
+These findings further underscore the extent to which GPT-4’s performance on these problems is
+constrained by its difficulty with counting.
+S2.4 Evaluating the impact of training data cutoff date
+The GPT-4 engine employed in these experiments (‘gpt-4-0125-preview’) has a training data cutoff
+date of December 2023. This is after the publication of HW’s commentary [7], which included the
+problem set used in these experiments, raising the concern that these problems might in principle be
+present in the training data for the version of GPT-4 used in our experiments. It is worth noting first
+that this possibility could not explain how GPT-4 was able to provide accurate explanations for its
+responses, nor how it was able to generate code for solving these problems, neither of which are present
+in the publicly available dataset. However, we also performed two additional experiments to directly
+address this concern. First, we evaluated GPT-4 + code execution with a novel problem set using the
+following alternative synthetic alphabet:
+[n h v b o p y z t m r w x f i q d j l c a s k g e u]
+Performance on these problems was nearly identical to the performance observed for the original syn-
+thetic alphabet (Supplementary Figure 2). Second, we performed the experiments on GPT-4 without
+code execution using an older GPT-4 engine, ‘gpt-4-1106-preview’, with a training data cutoff date
+of April 2023, prior to the publication of HW’s commentary and problem set. Performance was very
+similar for the two engines (Supplementary Figure 3). Thus, performance was driven almost entirely
+by the presence or absence of code execution. With code execution, GPT-4 performed well on both the
+original problems and new problems with a unique alphabet; whereas without code execution, GPT-4
+performed poorly, regardless of the training data cutoff date. This pattern of results is inconsistent
+with the presence of these problems in GPT-4’s training data.
+S8
+
+
+===== PAGE 13 =====
+a
+Extend
+sequence
+Successor Predecessor Remove
+redundant
+letter
+Fix
+alphabetic
+sequence
+Sort
+Transformation type
+0
+0.2
+0.4
+0.6
+0.8
+1
+Accuracy
+Interval size = 1
+GPT-4 + code execution
+GPT-4 + code execution
+w/ new synthetic alphabet
+b
+Extend
+sequence
+Successor Predecessor Remove
+redundant
+letter
+Fix
+alphabetic
+sequence
+Sort
+Transformation type
+0
+0.2
+0.4
+0.6
+0.8
+1
+Accuracy
+Interval size = 2
+GPT-4 + code execution
+GPT-4 + code execution
+w/ new synthetic alphabet
+Supplementary Figure 2: Results for GPT-4 + code execution on the original vs. new synthetic
+alphabets. (a) Results for problems with an interval size of 1. (b) Results for problems with an interval
+size of 2. Performance was comparable for the two alphabets (logistic regression with binary predictor coding
+for old vs. new alphabet: P = 0.52). Error bars represent 95% binomial CIs for average performance across
+multiple problems.
+S9
+
+
+===== PAGE 14 =====
+a
+Extend
+sequence
+Successor Predecessor Remove
+redundant
+letter
+Fix
+alphabetic
+sequence
+Sort
+Transformation type
+0
+0.2
+0.4
+0.6
+0.8
+1
+Accuracy
+Interval size = 1
+GPT-4 (0125)
+GPT-4 (1106)
+b
+Extend
+sequence
+Successor Predecessor Remove
+redundant
+letter
+Fix
+alphabetic
+sequence
+Sort
+Transformation type
+0
+0.2
+0.4
+0.6
+0.8
+1
+Accuracy
+Interval size = 2
+GPT-4 (0125)
+GPT-4 (1106)
+Supplementary Figure 3: Results for GPT-4 using engines with different training data cutoff
+dates. (a) Results for problems with an interval size of 1. (b) Results for problems with an interval size of
+2. Performance was comparable for the two engines (logistic regression with binary predictor coding for old
+vs. new engine: P = 0.12). Error bars represent 95% binomial CIs for average performance across multiple
+problems.
+S10
+
+
+===== PAGE 15 =====
+S2.5 Errors based on alternate rules
+For some problem types, it is possible to define an alternative rule that validly describes the problems.
+These alternative rules are typically less abstract than the intended rule. For example, consider the
+following example problem, based on a sort rule:
+Fictional alphabet: [x y l k w b f z t n j r q a h v g m u o p d i c s e].
+[x k l y w] [x y l k w]
+[h r q a j] [ ? ]
+In this problem, the second sequence ([x y l k w]) can be obtained by sorting the first sequence ([x
+k l y w]) according to the ordering in the permuted alphabet. The correct answer is [j r q a h],
+which is obtained by applying this rule to the third sequence ([h r q a j]). However, an alternative
+interpretation is that the rule involves swapping the second and fourth entries in a sequence. Applying
+this alternative rule yields the answer [h a q r j].
+We quantified the number of errors made by GPT-4 + code execution that could be classified as
+involving a valid alternative rule (Tables 1 and 2). Errors based on alternative rule use were especially
+common for problems involving fixing an alphabetic sequence or sorting. Altogether, errors based
+on alternative rules constituted 46% (23/50) of GPT-4’s errors, consistent with the rate observed
+in the human behavioral data from Lewis & Mitchell [10]. This result suggests that, in addition to
+improving overall performance, the ability to count using code execution also leads GPT-4 to make
+more human-like errors.
+Table 1: Fraction of errors involving valid alternative rules, interval size = 1
+T ransformation type V alid errors
+Extend sequence 0\0
+Successor 0\0
+Predecessor 0\2
+Remove redundant letter 1\1
+Fix alphabetic sequence 6\10
+Sort 3\7
+Table 2: Fraction of errors involving valid alternative rules, interval size = 2
+T ransformation type V alid errors
+Extend sequence 0\9
+Successor 0\1
+Predecessor 0\2
+Remove redundant letter 0\1
+Fix alphabetic sequence 10\10
+Sort 3\7
+S11
+
+
+===== PAGE 16 =====
+Supplementary References
+[1] Charles R. Harris et al. “Array programming with NumPy”. In: Nature 585.7825 (Sept. 2020),
+pp. 357–362. doi: 10.1038/s41586- 020-2649-2 . url: https://doi.org/10.1038/s41586-
+020-2649-2.
+[2] Pauli Virtanen et al. “SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python”.
+In: Nature Methods 17 (2020), pp. 261–272. doi: 10.1038/s41592-019-0686-2 .
+[3] Skipper Seabold and Josef Perktold. “statsmodels: Econometric and statistical modeling with
+python”. In: 9th Python in Science Conference . 2010.
+[4] J. D. Hunter. “Matplotlib: A 2D graphics environment”. In: Computing in Science & Engineering
+9.3 (2007), pp. 90–95. doi: 10.1109/MCSE.2007.55.
+[5] R Core Team. R: A Language and Environment for Statistical Computing . R Foundation for
+Statistical Computing. Vienna, Austria, 2021. url: https://www.R-project.org/.
+[6] Joshua R De Leeuw. “jsPsych: A JavaScript library for creating behavioral experiments in a Web
+browser”. In: Behavior research methods 47.1 (2015), pp. 1–12.
+[7] Damian Hodel and Jevin West. “Response: Emergent analogical reasoning in large language
+models”. In: arXiv preprint arXiv:2308.16118 (2023).
+[8] Taylor Webb, Keith J Holyoak, and Hongjing Lu. “Emergent analogical reasoning in large lan-
+guage models”. In: Nature Human Behaviour 7.9 (2023), pp. 1526–1541.
+[9] Jason Wei et al. “Chain-of-thought prompting elicits reasoning in large language models”. In:
+Advances in neural information processing systems 35 (2022), pp. 24824–24837.
+[10] Martha Lewis and Melanie Mitchell. “Using counterfactual tasks to evaluate the generality of
+analogical reasoning in large language models”. In: arXiv preprint arXiv:2402.08955 (2024).
+12

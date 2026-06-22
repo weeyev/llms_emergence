@@ -1,0 +1,7198 @@
+
+
+===== PAGE 1 =====
+Phase Transitions in Attention:
+A Bayesian Theory of Copy Head Emergence
+Itay Lavie1,2∗ † Kirsten Fischer3, 4∗ Andrey Lekov5 Frederic Van Maele5
+Zohar Ringel1 Moritz Helias3,6
+1Racah Institute of Physics, Hebrew University of Jerusalem, Jerusalem 91904, Israel
+2John A. Paulson School of Engineering and Applied Sciences, Harvard University,
+Cambridge, MA 02138, USA
+3Institute for Advanced Simulation (IAS-6), Computational and Systems Neuroscience,
+J¨ulich Research Center, J¨ulich 52428, Germany
+4Institute of AI for Health, Helmholtz Munich, Munich, Germany
+5RWTH Aachen University, Aachen, Germany
+6Department of Physics, Faculty 1, RWTH Aachen University, Aachen, Germany
+Abstract
+Attention is the key mechanism underlying in-context learning in transformers,
+and attention patterns have been observed empirically to emerge abruptly during
+training. We present a Bayesian theory of feature learning in attention; we then
+focus on how the copy subcircuit in the first layer of an induction head is learned
+by analyzing a single-layer softmax attention network trained on a copy task. We
+derive a closed-form posterior over the attention matrix and reduce it to a low-
+dimensional order parameter space. This reduction reveals a phase transition in
+the amount of training data, which we verify using both Bayesian sampling and
+standard training with Adam. We contrast our results with linear attention and find
+that softmax attention exhibits afirst-order phase transitionwhile in linear atten-
+tion an initialsecond-order phase transitionis followed by a smooth, continuous
+evolution toward the structured attention pattern (crossover). Our work provides a
+first-principles theoretical account of the abrupt emergence of the copy subcircuit,
+reminiscent of the one observed in training large language models.
+1 Introduction
+In-context learning (ICL) has become a cornerstone of modern large language models (LLMs) and
+coding agents [1], enabling models to solve and learn tasks at inference time without explicit train-
+ing. Yet, while loss scaling with model size and data is well understood empirically [2, 3], the ability
+to predict the development of capabilities such as ICL lags far behind [4].
+Whether such capabilities emerge abruptly or gradually has sparked much debate in recent years,
+with some works claiming some capabilities are emergent and evolve abruptly [5, 4] and others
+arguing that these results may be artifacts of the evaluation metric [6, 7]. The former possibility
+has far-reaching consequences: if capabilities are acquired without prior signal, models may move
+between different risk classes [8] abruptly without giving the opportunity to prepare appropriately.
+This possibility has motivated a line of work seeking progress measures that track capability acqui-
+sition continuously [9, 10, 11, 12].
+ICL capabilities have been extensively studied in two tractable synthetic settings: in-context regres-
+sion, where, given input-output pairs of sequences in context, the model has to predict the output for
+∗Equal contribution.
+†Correspondence to:itaylavie@g.harvard.edu.
+Preprint.
+arXiv:2606.12058v1  [stat.ML]  10 Jun 2026
+
+
+===== PAGE 2 =====
+LinearSoftmax
+Experiment
+Query
+Theory
+Query
+Experiment
+Query
+Theory
+Query
+P = 20
+Key
+P = 100
+Key
+P = 300
+Key
+P = 800
+Key
+0 200 400 600 800
+Training sequences P
+0.1
+0.2
+0.3
+0.4
+0.5Loss per token
+Theory
+Experiment
+Linear
+Softmax
+Figure 1: Copy head formation unfolds in multiple stages, with qualitatively distinct behavior for
+linear and softmax attention.Left:Attention patterns for linear (purple) and softmax (blue) attention
+from the trained model (top per color) and theory (bottom per color) for different amounts of training
+dataP. (i)P= 20: the attention layer does not contribute in the linear case and softmax attention
+remains at its uniform pooling default; (ii)P= 100: after the second-order phase transition for
+linear attention, all tokens are attended to equally; (iii)P= 300: the copy pattern begins to appear;
+(iv)P= 800: it sharpens into the correct shift-by-one pattern.Right:Loss per token as a function
+of training set sizePfor linear (purple) and softmax (blue) attention. Softmax attention exhibits a
+sharp, discontinuous loss drop nearP≈300corresponding to a first-order phase transition. Linear
+attention shows a fast continuous decrease at smallP(second-order transition) followed by a plateau
+and a slower decrease (gradual crossover). Crosses mark points on the left.
+a new input [13, 14, 15, 16]
+[x1, f(x 1), x 2, f(x 2)... x L]→f(x L),(1)
+and in-context bigrams
+[... A, B...A]→B,(2)
+where the model learns context-dependent token statistics via induction heads [17]. Remarkably, the
+latter was observed to be essential for a variety of ICL capabilities in LLMs [17, 18, 19] and their
+formation has been observed to exhibit an abrupt evolution, often termedemergentand associated
+with aphase transition[17, 12, 20, 21, 22, 23].
+In this work, we present a Bayesian theory of feature learning in a single-head attention network
+and analyze how the first layer of an induction head, namely the copying subcircuit,[... A, B]→A
+is learned. Marginalizing over the network weights yields a posterior over attention patterns whose
+dominant behavior is captured by two scalar order parameters measuring the competition between
+uniform and copy attention. Softmax and linear attention undergo qualitatively different transitions
+(first-order in the former, second-order followed by a crossover in the latter) each producing distinct
+loss signatures (see Fig. 1).
+Our main contributions are:
+• We develop a novel analytical approach to Bayesian feature learning for a single attention
+head: We derive a closed-form posterior over the attention matrix and reduce it to a low-
+dimensional order parameter space, revealing how competing attention patterns drive a
+phase transition in the amount of training data.
+• We find that the attention activation determines the order of the transition and thus the char-
+acter of the capability emergence: softmax exhibits an abrupt first-order phase transition
+while linear attention shows a continuous second-order transition followed by a gradual
+crossover, providing a first-principles account of the abrupt emergence of the copy subcir-
+cuit in softmax transformers and predicting less sharp behavior in linear transformers.
+• The order parameters map directly onto measurable loss signatures, connecting the theo-
+retical transition types to empirically observable training metrics including the unigram-to-
+bigram learning progression reported in prior work [20].
+2
+
+
+===== PAGE 3 =====
+1.1 Related Work
+Theoretical limits of transformers.A first line of work studies transformers in the lazy limit,
+where no feature learning occurs: [24] extended the NNGP correspondence to attention, showing
+single-head attention departs from Gaussianity, withµP scaling or many heads restoring it. [25]
+characterized the spectral bias in the lazy limit through symmetry. [26, 27] studied signal propaga-
+tion in transformers and [28] the diversity of attention heads at infinite width and heads.
+Bayesian feature learning in attention.Bayesian treatments of feature learning have studied
+Gaussian kernels that adapt to data [29, 30, 31] and mean-field theories of strong feature learning,
+including grokking phase transitions [32]. Closer in spirit is [33] which focused on the interplay
+of multiple heads while freezing the attention patterns themselves. In contrast, our analysis goes
+beyond Gaussian features: we find a non-Gaussian distribution for attention activations and treat the
+layer coupling exactly, taking the attention pattern of an individual head as the primary degree of
+freedom rather than freezing it.
+Training dynamics of transformers on synthetic tasks.[20] showed that two-layer transformers
+trained on Markov sequences undergo three learning stages: (i) no in-context information used; (ii)
+in-context unigram statistics used; (iii) in-context bi-gram statistics used. Our theoretical results
+echo these empirical findings: (i) the attention is ineffective; (ii) we see a pooling like behavior
+where all the context is attended equally, matching unigram statistics; (iii) only the specific position
+is attended to, matching the bigram statistics stage (see Fig 1). [34] found similar stagewise dynam-
+ics (no context; in-context unigrams; in-context bigrams) in two-layer transformers on Omniglot.
+[35, 36] proved that transformers learn the causal Markov chain structure, with [35] identifying
+learning the first attention layer of an induction head, i.e. the copy subcircuit, as the main challenge.
+[37] studied the tradeoff between in-context and in-weights learning through associative memory.
+Phase transitions and emergence of copy heads.[17] coined the terminduction headand pro-
+vided extensive empirical evidence for their abrupt emergence and causal role in ICL in LLMs
+across scales, with [12] analyzing this in a minimal setting. Recently, [38] gave sharp asymptotic
+timescales for the appearance of an induction head in a two-layer simplified linear transformer, find-
+ing two stages with tight timescalesΘ(L)andΘ(L 2), corresponding to the same stages we find
+here. Such timescale characterization, however, cannot distinguish a true phase transition from a
+crossover, as both would have tight asymptotic timescales.
+2 A Minimal Model for the Emergence of Copy Heads
+Motivated by the emergence of induction heads in transformers [17], we focus on the copy or shift-
+by-one subcircuit that constitutes their first layer. To this end, we study the following copy task:
+inputs are sequences of i.i.d. one-hot encoded tokensx a
+j ∈ {0,1} L×V , where1≤a≤LwithL
+being the sequence length, andVthe vocabulary size. The target labels arey a
+i (x) =x a−1
+i with
+periodic boundary condition.
+We consider a simplified model of a single-layer attention network:
+ha
+i =
+X
+j
+W emb
+ij xa
+j +p a
+i ;G ab
+H =ϕ
+ ha⊤ W G
+H hb
+√dmodel
+
+b
+;f a
+i (x) =
+X
+j,H
+W O
+ij,H
+LX
+b=1
+Gab
+H hb
+j,(3)
+whereϕdenotes the attention activation:ϕ= softmaxfor softmax attention, andϕ(·) b = 1
+L(·)b
+for linear attention with a normalization factor1/L. The matrixW emb embeds the tokens into the
+model space of dimensiond model andp a
+i is the positional encoding. We fuse the standard matrices
+W Q⊤W K into a single matrixW G as commonly done in theoretical works [37, 20, 35, 38]; in
+Appendix B we show that as long asd model ≫Lthe resulting prior over attention patterns when
+parameterizing with two separate matricesW K,W Q is the same, even though the prior over the
+product of weightsW K⊤
+W Q is different (see Appendix I). We do not include causal masking as it
+is not needed for the copying task.
+Linear attention has become a widely adopted setting for theoretical studies of transformers [39, 40]
+as it retains the token-mixing structure of softmax attention and reproduces many aspects of its
+3
+
+
+===== PAGE 4 =====
+optimization landscape [41, 15]. In this work, it serves as a controlled reference point: by studying
+both softmax and linear attention on the same task, we can isolate the effect of the attention activation
+on the phase transition order.
+The full setup can be seen as a teacher-student problem with a teacher attention pattern given by
+G∗
+ab =δ a−1,b for both softmax and linear attention. The copy operation is the minimal circuit
+that is necessary for induction heads and other ICL capabilities [19], and our task isolates it by
+construction. While induction heads empirically emerge under unsupervised next-token prediction
+[17], we adopt a supervised setting to enable a tractable Bayesian analysis [30, 42], consistent with
+theoretical work using synthetic tasks to study transformers [15, 39, 40]. As we show below even
+this minimal subcircuit exhibits a rich phenomenology.
+Scaling.We take a parametrization similar toµP scaling [43]: we downscale the attention weight
+scaleg W = ¯gW /χ, the output weight scaleg O = ¯gO/χ, and the observation noiseσ 2 →σ 2/χfor
+largeχ≫1. We also adopt the equivalent-kernel (EK) approximation, replacing the finite-dataset
+likelihood with the population likelihood, valid whenσ 2 ≫PL
+a=1(ya −f a(x))2 [44, 42]. We first
+taked model → ∞, then takeL, σ 2 → ∞jointly with˜σ2 :=σ 2/Lto maintain EK validity. Applying
+theχtransformation, we have¯σ 2 :=σ 2/(Lχ)in total. Finally, we keepχlarge while remaining
+agnostic to its scaling withL. As shown below, the scale ofPw.r.t.Lvaries across the problem;
+identifying the sample complexity of each transition is one of our main theoretical findings.
+3 Bayesian Theory of Copy Head Emergence as a Phase Transition
+We develop a Bayesian framework over the attention matrixG: marginalizing the network weights
+yields a closed-form posterior whose mode or maximum a-posteriori estimate (MAP) is the attention
+pattern most favored by data and prior at a given training-set sizeP, separately from whether an
+optimizer reaches it. The negative log-posteriorS(G), which we refer to as theaction, plays the
+role of an effective loss landscape onG, which accounts for the number of microscopic weight
+configurations that produce the same attention pattern. We develop the framework for multi-layer
+attention in App. J and specialize here to a single-layer network.
+The copy task’s inherent permutation symmetry singles out two irreducible representations of the
+symmetric group, corresponding to two structurally distinct attention patterns: attending uniformly
+versus attending to the token that predicts the next one. This structure reduces the posterior over the
+attention matrixGto two corresponding scalar order parametersˆc 1 andˆcG from first principles; the
+order parameters are low-dimensional collective coordinates on which the posterior concentrates in
+the large-χLlimit, so that the dominant attention pattern is determined by the minima of an effective
+log-likelihood over(ˆc1,ˆcG). These order parameters exhibit phase transitions as a function of the
+training data amountP, ultimately driving the emergence of a copy subcircuit; see App. A for a
+primer on order parameters and phase transitions. We first derive the theory for linear attention
+and characterize its phenomenology, then obtain the results for softmax attention by taking the
+pushforward of the resulting posterior under the softmax map.
+3.1 Network Prior as a Gaussian Process over the Attention Pattern
+Marginalizing the embeddingW emb and positional encodingp a (full derivation in App. B) shows
+that the token embeddingsh a
+i,α are i.i.d. Gaussian in the model dimensioniwith zero mean, condi-
+tioned on their covariance (kernel). By a large-deviation argument, its empirical covariance concen-
+trates in thed model → ∞limit
+Qab
+αβ := 1
+dmodel
+dmodelX
+i=1
+ha
+iαhb
+iβ →C (xx)
+ab,αβ =g emb
+X
+j
+xa
+jα xb
+jβ +g p δab.(4)
+Integrating outW G gives again a conditional Gaussian prior on the attention scoresG ab
+α with co-
+variance
+C(GG)
+ab,cd,αβ = gKgQ
+L2d2
+model
+ 
+ha
+α ·h c
+β
+ 
+hb
+α ·h d
+β
+
+→ gKgQ
+L2 C(xx)
+ac,αβ C(xx)
+bd,αβ,(5)
+4
+
+
+===== PAGE 5 =====
+where we again invoke the concentration ofQtoC (xx). The result is a Gaussian prior onG
+p(G|X)∝exp
+ 
+−1
+2
+X
+ab,cd,αβ
+Gab
+α
+h gW
+L2 C(xx)
+ac,αβC(xx)
+bd,αβ
+i−1
+Gcd
+β
+!
+, g W :=g KgQ.(6)
+Finally, integrating outW O the conditional output distribution yields
+p(F|G)∝
+Z
+D ˜fexp
+
+− ˜f a
+iαf a
+iα + gO
+2
+˜f a
+iα ˜f c
+iβ Gab
+α Gcd
+β C(xx)
+bd,αβ
+
+,(7)
+with ˜fbeing the conjugate Fourier variable tofand using the notationF= (f a
+α)α=1,...,P;a=1,...,L .
+The latter expression (7) shows that the distribution offfactorizes overi.
+3.2 Network Posterior over the Attention Patterns
+Assuming Gaussian noise on the outputsy α =f α +ξwithξ∼ N(0, σ 2I), the posterior then is
+p(G| {x α,y α}α)∝p(G|X)
+Z
+Dfexp
+
+− 1
+2σ2
+X
+α
+∥yα −f α∥2
+2
+
+p(F|G),(8)
+where we dropped the normalization constant (full derivation in App. C). Inserting the results for
+the network prior and integrating out the network outputsfand their conjugate variables ˜f, we get
+p(G| {x α,y α})∝exp
+ 
+−S(G)
+
+,(9)
+with the negative log-posterior oractionbeing
+S(G) = 1
+2 y⊤
+gO G⊤C(xx)G+σ 2I
+−1
+y+ 1
+2 ln det
+
+gO G⊤C(xx)G+σ 2I
+
++ 1
+2 G
+ gW
+L2 C(xx)C(xx)−1
+G+ 1
+2 ln det
+h
+gW
+L2 C(xx)C(xx)
+i
+.
+(10)
+From this, we observe a competition between the network prior (last two terms) and the conditioning
+on the training labels (first two terms).
+3.3 Reduction of the Posterior to Interpretable Order Parameters
+Based on the permutation equivariance of the problem, we make the following representation theory-
+inspired ansatz for the attention matrix
+G= ˆc1
+1L
+L + ˆcG
+G∗
+√
+L
+,(11)
+where1 L is theL×Lall-ones matrix andG ∗
+ab =δ a−1,b is thecopyorshift-by-oneoperator. Each
+term is weighted by a coefficient(ˆc1,ˆcG), which we identify as the order parameters of the problem:
+ˆcG ≫ˆc1 implements previous token copying, whileˆcG ≪ˆc1 implements uniform pooling over the
+whole context, seeing only the single token empirical frequencies in context (in-context unigrams).
+The normalization factors give both modes unit Frobenius norm.
+NNGP Prior Term.We evaluateS NNGP = L2
+2gW
+P
+ab,cd,αβ Gab
+α
+
+C(xx)C(xx)−1
+ac;bd
+αβ
+Gcd
+β by com-
+puting the summed pseudo-inverseΣ (ab),(cd) =P
+αβ(M†)abα,cdβ ofM abα,cdβ =C (xx)
+ac,αβC(xx)
+bd,αβ
+(full derivation in App. D). For one-hot encoded inputs,C (αβ) ⊗C (αβ) admits a stable Kronecker–
+Gram factorization forP≳⌈(L+V−1) 2/L2⌉, which is typically small. Symmetry under permu-
+tation of token positions constrainsΣto a three-parameter form, whose coefficients we determine
+numerically. Contracting the attention patterns with the summed pseudo-inverse gives
+SNNGP(ˆc1,ˆcG) = χL
+2¯gW
+h 1
+L
+V 2
+(1 +V /L)2 ˆc2
+1+ 2
+L3/2
+V 2
+(1 +V /L)2 ˆc1ˆcG+L (1 +V /L)2 −L −1 −2V L −2
+(1 +V /L)2 ˆc2
+G
+i
+.
+(12)
+5
+
+
+===== PAGE 6 =====
+2.0
+ 1.5
+ 1.0
+ 0.5
+ 0.0 0.5 1.0 1.5 2.0
+ˆc1
+1
+0
+1
+ˆcG
+P = 20
+1481.1
+1481.1
+2711.6
+2711.6
+3942.2
+3942.2
+5172.7
+5172.7
+6403.3
+6403.3
+7633.8
+7633.8
+8864.4
+8864.4
+10094.9
+10094.9
+11325.5
+11325.5
+12556.0
+12556.0
+13786.6
+13786.6
+15017.2
+15017.2
+16247.7
+16247.7
+17478.3
+17478.3
+18708.8
+18708.8
+19939.4
+19939.4
+21169.9
+21169.9
+2
+ 0 2
+ˆc1
+ˆcG = 0.000
+2
+ 0 2
+ˆcG
+ˆc1 = 0.000
+2.0
+ 1.5
+ 1.0
+ 0.5
+ 0.0 0.5 1.0 1.5 2.0
+ˆc1
+1
+0
+1
+ˆcG
+P = 100
+2305.6
+2305.6
+3513.5
+3513.5
+4721.4
+4721.4
+5929.2
+5929.2
+7137.1
+7137.1
+8345.0
+8345.0
+9552.9
+9552.9
+10760.8
+10760.8
+11968.7
+11968.7
+13176.5
+13176.5
+14384.4
+14384.4
+15592.3
+15592.3
+16800.2
+16800.2
+18008.1
+18008.1
+19215.9
+19215.9
+20423.8
+20423.8
+21631.7
+21631.7
+2
+ 0 2
+ˆc1
+ˆcG = 0.006
+2
+ 0 2
+ˆcG
+ˆc1 = 0.420
+2.0
+ 1.5
+ 1.0
+ 0.5
+ 0.0 0.5 1.0 1.5 2.0
+ˆc1
+1
+0
+1
+ˆcG
+P = 800
+7061.2
+7061.2
+8280.7
+8280.7
+9500.2
+9500.2
+10719.7
+10719.7
+11939.3
+11939.3
+13158.8
+13158.8
+14378.3
+14378.3
+15597.8
+15597.8
+16817.3
+16817.3
+18036.8
+18036.8
+19256.3
+19256.3
+20475.8
+20475.8
+21695.3
+21695.3
+21695.3 21695.3
+22914.8 22914.8
+22914.8 22914.8
+24134.4 24134.4
+24134.4
+24134.4
+25353.9
+25353.9
+2
+ 0 2
+ˆc1
+ˆcG = 0.462
+2
+ 0 2
+ˆcG
+ˆc1 = 0.156
+0.0 0.5 1.0 1.5 2.0
+ˆaG
+100
+200
+300
+400
+500
+600
+700
+800P
+Figure 2: Different topologies of actionsS lin(ˆc1,ˆcG)andS softmax(ˆaG;P).Linear attention (left):
+Contour plots of action at increasing dataset sizeP, corresponding to the attention stages (i), (ii),
+(iv) in Fig 1. From left to right: (i) the action has a single minimum at the origin - the model does
+not use the context; (ii) after the second-order phase transition, a minimum at nonzeroˆc 1 emerges,
+corresponding to uniform pooling attention where the model attends to the entire context equally;
+(iv) finally, the landscape reorganizes and largeˆcG is preferred. The minimum deepens and splits,
+and two possible solutions are formed, but one is preferred and leads to lower loss values. Bottom
+row: one-dimensional sections through the global minimum (marked with a star in the contour
+plot). The plot reveals a clear Landau-type phase transition from (i) to (ii). Curves show the training
+trajectories projected onto(ˆc1,ˆcG); these do not follow the gradient ofSas optimization occurs in
+weight space.Softmax attention (right):Contour plot of the actionS softmax(ˆaG)at varying values
+ofP. The white solid line indicates the location of the global minimum and dashed lines indicate
+local minima. AtP≈300both minima become equally deep, the global minimum jumps from the
+local minimum at smallerˆaG to the one at largerˆaG, leading to a first-order phase transition.
+Data TermWe evaluateS data = 1
+2 y⊤[gOG⊤C(xx)G+σ 2I] −1yby diagonalizing the operator
+G⊤C(xx)G(full derivation in App. E). We choose a Fourier basis adapted to the copy task:
+
+v0,0
+a
+α = 1√
+P L
+,
+
+v0,k≥1
+a
+α = 1√
+P L2
+X
+b
+X
+j
+ei 2π
+V kj xb
+j,α,
+
+v1,k≥1
+a
+α = 1p
+P L(1−L −1)
+X
+j
+ei 2π
+V kj
+ 
+xa−1
+j,α − 1
+L
+X
+b
+xb
+j,α
+!
+.
+(13)
+wherek= 1, . . . , V−1and we notev 1,0 = 0. The modev 0,0 is uniform in both position and
+data; the modesv 0,k≥1 are uniform in position but carry Fourier structure over the vocabulary; and
+the modesv 1,k≥1 capture position-to-position correlations by isolating the deviation of tokena−1
+from the positional mean. We denote the data-dependent kernel without the noise termsσ 2Ias
+Kac
+αβ :=g O
+P
+bd Gab
+α Gcd
+β C(xx)
+bd,αβ.
+The projection of the kernelKonto the uniform modev 0,0 reduces to a scalarK 0 given below. For
+eachk≥1, the kernel acts on the two-dimensional space(v 0,k,v 1,k)as a2×2matrix. Computing
+the action of each of the four operator pairs(1L,1 L),(1 L,G ∗),(G ∗,1 L),(G ∗,G ∗)on both modes
+and assembling with weightsˆc2
+1,ˆc1ˆcG,ˆcGˆc1,ˆc2
+G respectively yields
+K0 =g OP
+ L
+V + 1
+
+ˆc1 + ˆcG√
+L
+2
+;K k = gOP
+V uu⊤;u=
+ 
+ˆc1 + ˆcG/
+√
+L
+ˆcG
+p
+(L−1)/L
+!
+.(14)
+By inverting with the Sherman–Morrison formula and summing over all Fourier modes, we get
+Sdata (ˆc1,ˆcG) = χL
+2
+
+ 1
+L
+1
+¯gO
+
+ˆc1 + ˆcG/
+√
+L
+2 
+1 + V
+L
+
++ ¯σ
+P
+2V
+− P
+L¯σ2
+V−1
+V
+
+
+¯gO
+
+ˆcG + ˆc1/
+√
+L
+2
+¯gO∥u∥2 + ¯σ2LV
+P
+−1
+
+
+
+ .
+(15)
+Together, Eqs. (15) and (12) reduce the high-dimensional inference problem to a two-dimensional
+posterior without information loss. Next, we study the behavior of the action in terms of the order
+parameters for both linear and softmax attention. In addition to the order parameters, we obtain the
+network loss from the action directly, as detailed in App. H.
+Linear attention action, order parameters, and sample complexities.Pulling out a com-
+mon scaling factor ofχL, we see that in the limitL, χ≫1the action simplifies toS=
+6
+
+
+===== PAGE 7 =====
+0 200 400 600 800
+Training sequences P
+0.0
+0.1
+0.2
+0.3
+0.4
+0.5Order parameter magnitude
+ˆc1
+ˆcG
+ 
+Adam
+SGLD
+Theory
+0 200 400 600 800
+Training sequences P
+10
+20
+30
+40
+50Sequence length L
+0 200 400 600 800
+Training sequences P
+6
+8
+10
+12
+14
+16
+18
+20Vocabulary size V
+0.1
+0.2
+0.3
+0.4
+0.5
+Loss per token
+Figure 3:Linear attentionexhibits a second-order phase transition and subsequent gradual crossover.
+Left:Scalar order parametersˆc1,ˆcG measured from models trained with Adam (circles) and SGLD
+(diamonds) compared to the theory predictions (dashed) as a function of the amount of training data
+or sample complexityP. At the phase transition,ˆc 1 rises sharply from zero, whileˆcG remains near
+zero; beyondP≈400,ˆc 1 declines whileˆcG rises, marking the crossover from uniform pooling to
+copy attention; theory tracks the empirically observed behavior closely.Center and right:Phase
+diagram of copy subcircuit emergence. We show the loss per token as a function of training se-
+quencesPvs. sequence lengthLforV= 5fixed (center), and vs. vocabulary sizeVfor fixed
+L= 25(right). The two phases identified from the order parametersˆc 1,ˆcG manifest as distinct loss
+plateaus separated by two transition regions; the phase boundaries are predicted by our theory as a
+function ofP ∗(L, V)in Eqs. (16) (solid white) and (17) (dashed white).
+(SNNGP +S data) +O(χ −1)where the log-determinant term (see App. F) is subleading and can
+be dropped. We note that the leading terms are not strictly organized by powers ofLorPasˆc 1,ˆcG
+naturally have differentLandPscales, as we show below. Crucially, theχLscaling in front ofS
+means(ˆc1,ˆcG)concentrate on deterministic values determined by a saddle point approximation.
+Notably, this action has aZ 2 symmetry(ˆc1,ˆcG)→(−ˆc 1,−ˆcG), which governs its second-order
+phase transition. Interestingly, this action has a larger approximateZ 2 ×Z 2 symmetry that allows
+sign flips ofˆc1,ˆc2 independently. The presence of this approximate symmetry leads to the second
+plateau and the subsequent crossover; we formalize this in a field-theoretic toy model in App. L.
+Expanding the action around the origin gives two sample-complexity scales. The phase transition
+occurs when theZ 2 symmetry is first broken, where the curvature in theˆc1 direction changes sign
+P ∗
+ˆc1 = L2V 2¯σ2
+L+V
+s
+1
+¯gO¯gW (L+ 1) (L+V−1) ∼V 2.(16)
+The crossover is estimated from the point where the curvature along theˆcG direction changes sign
+P ∗
+ˆcG = L2¯σ2
+L+V
+s
+V(L(L−1) + 2(L−1)V+V 2)
+(L+ 1)¯gO¯gW
+∼L 3/2V 1/2.(17)
+Fig. 2 (left panels) illustrates the topology of the actionS(ˆc 1,ˆcG)for differentPvalues. AtP <
+P ∗
+ˆc1, the action has a single minimum at the origin. AtP=P ˆc1 ≈23, a new minimum at nonzero
+ˆc1 emerges continuously and the sections reveal the characteristic flat-then-tilted shape of a Landau-
+type second-order phase transition (see App. A); enabling the model to exploit in-context unigram
+statistics. Beyond this, asPincreases towardP ˆcG ≈322, the saddle at the origin becomes a
+maximum, drivingˆcG away from zero and the crossover from context pooling to copying. Critically,
+this reorganization is not a second phase transition: the symmetry is already broken atP ˆc1.
+Softmax attention action, order parameter, and sample complexity.We now take the push-
+forward of the posterior under the softmax map. We useˆa 1,ˆaG for the order parameters past the
+softmax and define them as projections onto our base function; mirroringˆc1,ˆcG. First, the row-wise
+normalization of softmax eliminates theˆa1 order parameter, as
+ˆa1 = 1− ˆaG√
+L
+.(18)
+Furthermore, the softmax activation is invariant under overall shifts of the inputs, which makes
+ˆa1,ˆaG independent ofˆc1; therefore it will be fixed solely by the weight decay / prior term and
+7
+
+
+===== PAGE 8 =====
+ˆc1 = 0at the saddle point. Next, since the data term is insensitive to how the attention pattern is
+parameterized, it requires no adaptation and we can simply plug in(ˆa1,ˆaG) = (ˆc1,ˆcG). Finally an
+explicit calculation of the mapping betweenˆcG andˆaG gives (full derivation in App. G)
+ˆcG = 1√
+L
+log
+"1 + L−1√
+L ˆaG
+1− 1√
+LˆaG
+#
+.(19)
+Substituting Eq. (18) andˆc1 = 0into the prior term Eq. (12), and replacing(ˆc 1,ˆcG)→(ˆa1,ˆaG)in
+the data term Eq. (15) (which depends only on the post-softmax attention matrix), gives the action
+for softmax attention. Dropping constants and subleading terms we find
+Ssoftmax(ˆaG) = χL
+2
+
+ 1
+¯gW
+log2
+ 
+1 +
+√
+LˆaG
+1−ˆaG/
+√
+L
+!
+− P
+¯σ2L
+V−1
+V
+
+ˆaG + 1√
+L
+2
+¯gO
+(ˆa2
+G + 1) ¯gO + ¯σ2L
+P V
++O
+ 1
+L
+
+
+ .
+(20)
+The self-consistent equation∂ ˆaGS
+!
+= 0has to be solved numerically forˆa ∗
+G to obtain the MAP
+values. Investigating the topology of the action in Fig. 2 (right), we find two competing minima,
+with the global minimum jumping from one to the other at a critical amount of training dataP ∗
+ˆaG,
+indicating a first-order phase transition. We can get an analytical approximation for the sample
+complexityP ∗
+ˆaG by solvingS(0) =S(ˆa)forPand plugging inˆa=O(1)at largeL
+P ∗
+ˆaG ≈ 1
+4¯gW
+L V
+V−1 ¯σ2 ln2(L)
+ s
+1 + 4 V−1
+ln2(L)
+¯gW
+¯gO
++ 1
+!
+∼Lln 2(L),(21)
+constituting an improvement ofO(
+√
+LV)in the sample complexity compared to linear attention.
+4 Experiments
+We validate our theoretical predictions against networks trained with Adam [45] and sampled with
+SGLD [46, 47] in Fig. 1. Theory and experiment agree quantitatively across all stages. The two
+attention mechanisms differ qualitatively: linear attention exhibits a second-order phase transition
+atP≈100, whereˆc 1 departs from zero and the model begins pooling uniformly over the context,
+followed by a crossover asˆc G grows and the copy pattern gradually sharpens. Softmax attention
+instead undergoes a first-order transition atP≈300, with a discontinuous loss drop from the initial
+uniform pooling solution directly to a copy solution. In both cases, the pooling stage likely corre-
+sponds to learning the first-order statistics of the data while the second stage reflects the landscape
+topology change as discussed in Fig. 2: the uniform pooling minimum destabilizes and the copy
+minimum deepens.
+Remarkably, while our predictions are for the MAP values, we find excellent agreement with models
+trained using Adam: minimizing the action (10) at largeχcorresponds to training with gradient flow
+with weight decay (see App. K for derivation and refined statement). Since gradient descent may
+converge to local minima, we ran an ensemble of models perPvalue and report results from runs that
+reached the global minimum (see App. N.1; for softmax all runs converge to the global minimum);
+SGLD instead targets the Bayesian posterior as its stationary distribution and, given sufficient mixing
+time, would sample basins by their posterior weights without requiring such explicit filtering.
+Next, we examine the two transitions in detail through the order parametersˆc 1,ˆcG. For linear
+attention, Fig.3 (left panel) shows that both Adam and SGLD results track the theoretical predictions
+closely across different amounts of training dataP. The transient deviation of SGLD near the
+crossover is attributable to large fluctuations as the uniform pooling minimum destabilizes and the
+copy minimum emerges (Fig. 2), causing the posterior to broaden and the network to transiently
+explore directions outside the two-dimensional order parameter subspace; we quantify this coverage
+in App. M. The three-phase structure is confirmed in the(P, L)and(P, V)phase diagrams (Fig. 3
+center and right): the order parameter transitions manifest as distinct loss plateaus, with the two
+boundaries scaling withLandVas predicted by Eqs. (16),(17). The first boundary marks the onset
+of structured attention, the second the emergence of the copy pattern.
+Softmax attention in Fig. 4 presents a strikingly different picture: rather than the three-phase struc-
+ture of linear attention,ˆa G jumps discontinuously at a single phase boundary and the loss drops
+8
+
+
+===== PAGE 9 =====
+0 200 400 600 800
+Training sequences P
+0.0
+0.5
+1.0
+1.5Order parameter magnitude
+ˆa1
+ˆaG
+ 
+Adam
+SGLD
+Theory
+0 200 400 600 800
+Training sequences P
+10
+20
+30
+40
+50Sequence length L
+0 200 400 600 800
+Training sequences P
+6
+8
+10
+12
+14
+16
+18
+20Vocabulary size V
+0.1
+0.2
+0.3
+0.4
+Loss per token
+Figure 4:Softmax attentionexhibits a first-order phase transition.Left:Scalar order parameters
+ˆa1,ˆaG measured from models trained with Adam (circles) and SGLD (diamonds) compared to the
+theory predictions (dashed lines) as a function of the amount of training data or sample complexity
+P. At the phase transition the value ofˆaG jumps marking a first-order phase transition. Note that the
+dots corresponding to SGLD are often covered by the diamonds corresponding to Adam due to their
+precise agreement.Center and right:Phase diagram of copy subcircuit emergence. We show the
+loss per token as a function of training sequencesPvs. sequence lengthLforV= 5fixed (center),
+and vs. vocabulary sizeVfor fixedL= 25(right). The transition from a phase of uniform attention
+to a phase of copy attention manifests as a sharp drop in the loss; the phase boundaryP ∗(L, V)
+(white) is predicted by our theory in Eq. (21).
+abruptly, with no initial learning phase. The boundary is predicted by Eq. (21) across the full(P, L)
+and(P, V)planes, with the theory tracking the empirical transition remarkably well. The sharp
+separation between the two phases is a direct signature of the first-order phase transition.
+5 Discussion
+We presented a novel Bayesian theory of feature learning in a single attention head, obtaining a first-
+principles theory explaining how the copy subcircuit emerges as a phase transition in the amount of
+training data. By reducing the posterior over attention patterns to a low-dimensional order parameter
+space, we obtain quantitative predictions for the phase boundary and the attention pattern evolution.
+A key finding is that the transition order depends on the attention mechanism. For linear atten-
+tion, an initialsecond-order phase transitionto uniform pooling attention is followed by a smooth,
+continuous crossover toward the copy attention; this is not a second phase transition, since the sym-
+metry is already broken at the first transition and no additional singularity can occur. For softmax
+attention, we instead find afirst-order phase transition: a discontinuous onset of structured attention
+with no precursor signal. That the same Bayesian framework yields qualitatively different transition
+orders for the two mechanisms is a demonstration of its discriminative power: it resolves mechanis-
+tic differences that coarser analyses would miss. Together, these results provide a fine-grained and
+quantitative account of copy subcircuit emergence.
+Implications to predictability of emergent phenomena.Our results show that the transition or-
+der has direct consequences for whether capability emergence can be anticipated. The first-order
+phase transition of softmax attention is discontinuous: the system provides no precursor signal be-
+fore the phase boundary is crossed, making the onset of copying behavior intrinsically unpredictable
+from observable quantities. In contrast, the second-order phase transition of linear attention is pre-
+ceded by diverging fluctuations [48] (we are aware of one work that utilizes these [49]), and the
+subsequent gradual crossover allows capabilities to be tracked before they are fully expressed. This
+makes understanding which type of transition governs a given capability in a given architecture cru-
+cial for designing a monitoring strategy, and suggests fundamental limits to what can be monitored.
+Limitations and Outlook.To reduce the posterior to a low-dimensional order parameter space,
+we make several assumptions: While our Bayesian framework admits a multi-layer generalization
+outlined in App. J, we focus here on the single-head, single-layer setting and the supervised copy
+task to isolate the copy subcircuit, which is our main subject of interest. The most natural next step
+is a two-layer transformer with causal masking to study how the copy head feeds into the induction
+head and, in particular, whether that changes the transition character. The phase boundaryP∗(L, V)
+9
+
+
+===== PAGE 10 =====
+derived here could further serve as a basis for scaling laws predicting copy subcircuit emergence as
+a function of model and data scale. Extending from i.i.d. uniform to structured or natural-language
+token distributions will be interesting to investigate qualitative changes in the transition and shifts
+in the sample complexityP ∗. Finally, our derivation relies on the equivalent-kernel approximation
+and thed model → ∞limit, suppressing finite-size corrections of the data distribution and of the
+Gaussian prior on the attention pattern, respectively. These approximations are accurate in the strong
+regularization regime and for large model dimensions, respectively, but a systematic treatment of
+small regularization or finitePand finited model corrections similar to [30, 31] will be an interesting
+direction for future work.
+Acknowledgments
+We thank Noa Rubin for the insightful discussion and comments on the manuscript. I.L. acknowl-
+edges the Helmholtz Information & Data Science Academy (HIDA) for providing financial support
+that enabled a short-term research stay at IAS-6, during which this project was initiated. Z.R. and
+I.L. acknowledge support from ISF Grant 2250/19. The authors gratefully acknowledge the com-
+puting time granted by the JARA Vergabegremium and provided on the JARA Partition part of the
+supercomputer JURECA at Forschungszentrum J¨ulich (computation grant JINB33).
+Societal Impact Statement
+This paper works towards understanding the emergence of copy heads in transformers, thus aiming
+to advance mechanistic explainability of transformers. While the latter surely has societal impacts,
+these will be much further down the line.
+10
+
+
+===== PAGE 11 =====
+References
+[1] Tom Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, Jared D Kaplan, Prafulla Dhari-
+wal, Arvind Neelakantan, Pranav Shyam, Girish Sastry, Amanda Askell, Sandhini Agarwal,
+Ariel Herbert-V oss, Gretchen Krueger, Tom Henighan, Rewon Child, Aditya Ramesh, Daniel
+Ziegler, Jeffrey Wu, Clemens Winter, Chris Hesse, Mark Chen, Eric Sigler, Mateusz Litwin,
+Scott Gray, Benjamin Chess, Jack Clark, Christopher Berner, Sam McCandlish, Alec Radford,
+Ilya Sutskever, and Dario Amodei. Language models are few-shot learners. In H. Larochelle,
+M. Ranzato, R. Hadsell, M.F. Balcan, and H. Lin, editors,Advances in Neural Information
+Processing Systems, volume 33, pages 1877–1901. Curran Associates, Inc., 2020.
+[2] Jared Kaplan, Sam McCandlish, Tom Henighan, Tom B. Brown, Benjamin Chess, Rewon
+Child, Scott Gray, Alec Radford, Jeffrey Wu, and Dario Amodei. Scaling Laws for Neural
+Language Models, January 2020. arXiv:2001.08361 [cs].
+[3] Jordan Hoffmann, Sebastian Borgeaud, Arthur Mensch, Elena Buchatskaya, Trevor Cai, Eliza
+Rutherford, Diego de Las Casas, Lisa Anne Hendricks, Johannes Welbl, Aidan Clark, Thomas
+Hennigan, Eric Noland, Katherine Millican, George van den Driessche, Bogdan Damoc, Aure-
+lia Guy, Simon Osindero, Kar´en Simonyan, Erich Elsen, Oriol Vinyals, Jack Rae, and Laurent
+Sifre. An empirical analysis of compute-optimal large language model training. In S. Koyejo,
+S. Mohamed, A. Agarwal, D. Belgrave, K. Cho, and A. Oh, editors,Advances in Neural Infor-
+mation Processing Systems, volume 35, pages 30016–30030. Curran Associates, Inc., 2022.
+[4] Nicholas Lourie, Michael Y . Hu, and Kyunghyun Cho. Scaling Laws Are Unreliable for Down-
+stream Tasks: A Reality Check, October 2025. arXiv:2507.00885 [cs].
+[5] Jason Wei, Yi Tay, Rishi Bommasani, Colin Raffel, Barret Zoph, Sebastian Borgeaud, Dani
+Yogatama, Maarten Bosma, Denny Zhou, Donald Metzler, Ed H. Chi, Tatsunori Hashimoto,
+Oriol Vinyals, Percy Liang, Jeff Dean, and William Fedus. Emergent Abilities of Large Lan-
+guage Models.Transactions on Machine Learning Research, June 2022.
+[6] Rylan Schaeffer, Brando Miranda, and Sanmi Koyejo. Are emergent abilities of large language
+models a mirage? In A. Oh, T. Naumann, A. Globerson, K. Saenko, M. Hardt, and S. Levine,
+editors,Advances in Neural Information Processing Systems, volume 36, pages 55565–55581.
+Curran Associates, Inc., 2023.
+[7] Leonardo Berti, Flavio Giorgi, and Gjergji Kasneci. Emergent Abilities in Large Language
+Models: A Survey, March 2025. arXiv:2503.05788 [cs].
+[8] Anthropic. Anthropic’s responsible scaling policy. Policy document, Anthropic, September
+2023.
+[9] Boaz Barak, Benjamin Edelman, Surbhi Goel, Sham Kakade, Eran Malach, and Cyril Zhang.
+Hidden progress in deep learning: Sgd learns parities near the computational limit. In
+S. Koyejo, S. Mohamed, A. Agarwal, D. Belgrave, K. Cho, and A. Oh, editors,Advances in
+Neural Information Processing Systems, volume 35, pages 21750–21764. Curran Associates,
+Inc., 2022.
+[10] Kenzo Clauw, Daniele Marinazzo, and Sebastiano Stramaglia. Information-theoretic progress
+measures reveal grokking is an emergent phase transition. InICML 2024 Workshop on Mech-
+anistic Interpretability, 2024.
+[11] Neel Nanda, Lawrence Chan, Tom Lieberum, Jess Smith, and Jacob Steinhardt. Progress mea-
+sures for grokking via mechanistic interpretability. InThe Eleventh International Conference
+on Learning Representations, 2023.
+[12] Gautam Reddy. The mechanistic basis of data dependence and abrupt learning in an in-context
+classification task. InThe Twelfth International Conference on Learning Representations,
+2024.
+[13] Shivam Garg, Dimitris Tsipras, Percy S Liang, and Gregory Valiant. What can transformers
+learn in-context? a case study of simple function classes. In S. Koyejo, S. Mohamed, A. Agar-
+wal, D. Belgrave, K. Cho, and A. Oh, editors,Advances in Neural Information Processing
+Systems, volume 35, pages 30583–30598. Curran Associates, Inc., 2022.
+11
+
+
+===== PAGE 12 =====
+[14] Ekin Aky ¨urek, Dale Schuurmans, Jacob Andreas, Tengyu Ma, and Denny Zhou. What learning
+algorithm is in-context learning? investigations with linear models. InThe Eleventh Interna-
+tional Conference on Learning Representations, 2023.
+[15] Johannes V on Oswald, Eyvind Niklasson, Ettore Randazzo, Joao Sacramento, Alexander
+Mordvintsev, Andrey Zhmoginov, and Max Vladymyrov. Transformers Learn In-Context by
+Gradient Descent. InProceedings of the 40th International Conference on Machine Learning,
+pages 35151–35174. PMLR, July 2023.
+[16] Yue M. Lu, Mary Letey, Jacob A. Zavatone-Veth, Anindita Maiti, and Cengiz Pehlevan.
+Asymptotic theory of in-context learning by linear attention.Proceedings of the National
+Academy of Sciences, 122(28):e2502599122, 2025.
+[17] Catherine Olsson, Nelson Elhage, Neel Nanda, Nicholas Joseph, Nova DasSarma, Tom
+Henighan, Ben Mann, Amanda Askell, Yuntao Bai, Anna Chen, Tom Conerly, Dawn Drain,
+Deep Ganguli, Zac Hatfield-Dodds, Danny Hernandez, Scott Johnston, Andy Jones, Jackson
+Kernion, Liane Lovitt, Kamal Ndousse, Dario Amodei, Tom Brown, Jack Clark, Jared Kaplan,
+Sam McCandlish, and Chris Olah. In-context Learning and Induction Heads, September 2022.
+arXiv:2209.11895 [cs].
+[18] Vivien Cabannes, Charles Arnal, Wassim Bouaziz, Xingyu Alice Yang, Francois Charton, and
+Julia Kempe. Iteration head: A mechanistic study of chain-of-thought. InThe Thirty-eighth
+Annual Conference on Neural Information Processing Systems, 2024.
+[19] Johannes von Oswald, Eyvind Niklasson, Maximilian Schlegel, Seijin Kobayashi, Nicolas
+Zucchet, Nino Scherrer, Nolan Miller, Mark Sandler, Blaise Ag¨uera y Arcas, Max Vladymyrov,
+Razvan Pascanu, and Jo ˜ao Sacramento. Uncovering mesa-optimization algorithms in Trans-
+formers, September 2023. arXiv:2309.05858 [cs].
+[20] Ezra Edelman, Nikolaos Tsilivis, Benjamin L. Edelman, eran malach, and Surbhi Goel. The
+evolution of statistical induction heads: In-context learning markov chains. InThe Thirty-
+eighth Annual Conference on Neural Information Processing Systems, 2024.
+[21] Mingze Wang, Ruoxi Yu, Weinan E, and Lei Wu. How Transformers Get Rich: Approximation
+and Dynamics Analysis, January 2025. arXiv:2410.11474 [cs] version: 3.
+[22] Gouki Minegishi, Hiroki Furuta, Shohei Taniguchi, Yusuke Iwasawa, and Yutaka Matsuo. Be-
+yond induction heads: In-context meta learning induces multi-phase circuit emergence. In
+Aarti Singh, Maryam Fazel, Daniel Hsu, Simon Lacoste-Julien, Felix Berkenkamp, Tegan
+Maharaj, Kiri Wagstaff, and Jerry Zhu, editors,Proceedings of the 42nd International Confer-
+ence on Machine Learning, volume 267 ofProceedings of Machine Learning Research, pages
+44372–44395. PMLR, 13–19 Jul 2025.
+[23] Tatsuya Aoyama, Ethan Gotlieb Wilcox, and Nathan Schneider. Predicting the Emergence of
+Induction Heads in Language Model Pretraining, February 2026. arXiv:2511.16893 [cs].
+[24] Jiri Hron, Yasaman Bahri, Jascha Sohl-Dickstein, and Roman Novak. Infinite attention: NNGP
+and NTK for deep attention networks. In Hal Daum´e III and Aarti Singh, editors,Proceedings
+of the 37th International Conference on Machine Learning, volume 119 ofProceedings of
+Machine Learning Research, pages 4376–4386. PMLR, 13–18 Jul 2020.
+[25] Itay Lavie, Guy Gur-Ari, and Zohar Ringel. Towards Understanding Inductive Bias in Trans-
+formers: A View From Infinity. InProceedings of the 41st International Conference on Ma-
+chine Learning, pages 26043–26069. PMLR, July 2024.
+[26] Aditya Cowsik, Tamra Nebabu, Xiaoliang Qi, and Surya Ganguli. Geometric dynamics of
+signal propagation predict trainability of transformers.Phys. Rev. E, 112:055301, Nov 2025.
+[27] Lorenzo Noci, Chuning Li, Mufan Li, Bobby He, Thomas Hofmann, Chris Maddison, and
+Dan Roy. The shaped transformer: Attention models in the infinite depth-and-width limit. In
+A. Oh, T. Naumann, A. Globerson, K. Saenko, M. Hardt, and S. Levine, editors,Advances in
+Neural Information Processing Systems, volume 36, pages 54250–54281. Curran Associates,
+Inc., 2023.
+12
+
+
+===== PAGE 13 =====
+[28] Blake Bordelon, Hamza Chaudhry, and Cengiz Pehlevan. Infinite limits of multi-head trans-
+former dynamics. In A. Globerson, L. Mackey, D. Belgrave, A. Fan, U. Paquet, J. Tomczak,
+and C. Zhang, editors,Advances in Neural Information Processing Systems, volume 37, pages
+35824–35878. Curran Associates, Inc., 2024.
+[29] Inbar Seroussi, Gadi Naveh, and Zohar Ringel. Separation of scales and a thermodynamic
+description of feature learning in some CNNs.Nature Communications, 14(1):908, 2023.
+[30] Kirsten Fischer, Javed Lindner, David Dahmen, Zohar Ringel, Michael Kr ¨amer, and Moritz
+Helias. Critical feature learning in deep neural networks. In Ruslan Salakhutdinov, Zico Kolter,
+Katherine Heller, Adrian Weller, Nuria Oliver, Jonathan Scarlett, and Felix Berkenkamp, ed-
+itors,Proceedings of the 41st International Conference on Machine Learning, volume 235 of
+Proceedings of Machine Learning Research, pages 13660–13690. PMLR, 21–27 Jul 2024.
+[31] Noa Rubin, Kirsten Fischer, Javed Lindner, Inbar Seroussi, Zohar Ringel, Michael Kr ¨amer,
+and Moritz Helias. From kernels to features: A multi-scale adaptive theory of feature learning.
+In Aarti Singh, Maryam Fazel, Daniel Hsu, Simon Lacoste-Julien, Felix Berkenkamp, Tegan
+Maharaj, Kiri Wagstaff, and Jerry Zhu, editors,Proceedings of the 42nd International Confer-
+ence on Machine Learning, volume 267 ofProceedings of Machine Learning Research, pages
+52225–52257. PMLR, 13–19 Jul 2025.
+[32] Noa Rubin, Inbar Seroussi, and Zohar Ringel. Grokking as a first order phase transition in two
+layer networks. InThe Twelfth International Conference on Learning Representations, 2024.
+[33] Lorenzo Tiberi, Francesca Mignacco, Kazuki Irie, and Haim Sompolinsky. Dissecting the
+interplay of attention paths in a statistical mechanics theory of transformers. In A. Globerson,
+L. Mackey, D. Belgrave, A. Fan, U. Paquet, J. Tomczak, and C. Zhang, editors,Advances in
+Neural Information Processing Systems, volume 37, pages 72710–72753. Curran Associates,
+Inc., 2024.
+[34] Aaditya K Singh, Ted Moskovitz, Felix Hill, Stephanie C.Y . Chan, and Andrew M Saxe. What
+needs to go right for an induction head? A mechanistic study of in-context learning circuits and
+their formation. In Ruslan Salakhutdinov, Zico Kolter, Katherine Heller, Adrian Weller, Nuria
+Oliver, Jonathan Scarlett, and Felix Berkenkamp, editors,Proceedings of the 41st International
+Conference on Machine Learning, volume 235 ofProceedings of Machine Learning Research,
+pages 45637–45662. PMLR, 21–27 Jul 2024.
+[35] Eshaan Nichani, Alex Damian, and Jason D. Lee. How transformers learn causal structure with
+gradient descent. In Ruslan Salakhutdinov, Zico Kolter, Katherine Heller, Adrian Weller, Nuria
+Oliver, Jonathan Scarlett, and Felix Berkenkamp, editors,Proceedings of the 41st International
+Conference on Machine Learning, volume 235 ofProceedings of Machine Learning Research,
+pages 38018–38070. PMLR, 21–27 Jul 2024.
+[36] Siyu Chen, Heejune Sheen, Tianhao Wang, and Zhuoran Yang. Unveiling induction heads:
+Provable training dynamics and feature learning in transformers. In A. Globerson, L. Mackey,
+D. Belgrave, A. Fan, U. Paquet, J. Tomczak, and C. Zhang, editors,Advances in Neural Infor-
+mation Processing Systems, volume 37, pages 66479–66567. Curran Associates, Inc., 2024.
+[37] Alberto Bietti, Vivien Cabannes, Diane Bouchacourt, Herve Jegou, and Leon Bottou. Birth of a
+transformer: A memory viewpoint. In A. Oh, T. Naumann, A. Globerson, K. Saenko, M. Hardt,
+and S. Levine, editors,Advances in Neural Information Processing Systems, volume 36, pages
+1560–1588. Curran Associates, Inc., 2023.
+[38] Tiberiu Musat, Tiago Pimentel, Lorenzo Noci, Alessandro Stolfo, Mrinmaya Sachan, and
+Thomas Hofmann. On the Emergence of Induction Heads for In-Context Learning, January
+2026. arXiv:2511.01033 [cs].
+[39] Yuandong Tian, Yiping Wang, Beidi Chen, and Simon Du. Scan and snap: Understanding
+training dynamics and token composition in 1-layer transformer. In A. Oh, T. Naumann,
+A. Globerson, K. Saenko, M. Hardt, and S. Levine, editors,Advances in Neural Information
+Processing Systems, volume 36, pages 71911–71947. Curran Associates, Inc., 2023.
+13
+
+
+===== PAGE 14 =====
+[40] Yedi Zhang, Aaditya K Singh, Peter E. Latham, and Andrew M Saxe. Training dynamics of in-
+context learning in linear attention. In Aarti Singh, Maryam Fazel, Daniel Hsu, Simon Lacoste-
+Julien, Felix Berkenkamp, Tegan Maharaj, Kiri Wagstaff, and Jerry Zhu, editors,Proceedings
+of the 42nd International Conference on Machine Learning, volume 267 ofProceedings of
+Machine Learning Research, pages 76047–76087. PMLR, 13–19 Jul 2025.
+[41] Kwangjun Ahn, Xiang Cheng, Minhak Song, Chulhee Yun, Ali Jadbabaie, and Suvrit Sra.
+Linear attention is (maybe) all you need (to understand transformer optimization). InThe
+Twelfth International Conference on Learning Representations, 2024.
+[42] Zohar Ringel, Noa Rubin, Edo Mor, Moritz Helias, and Inbar Seroussi. Applications of statis-
+tical field theory in deep learning.arXiv:2502.18553, 2025.
+[43] Ge Yang, Edward Hu, Igor Babuschkin, Szymon Sidor, Xiaodong Liu, David Farhi, Nick
+Ryder, Jakub Pachocki, Weizhu Chen, and Jianfeng Gao. Tuning large neural networks via
+zero-shot hyperparameter transfer. In M. Ranzato, A. Beygelzimer, Y . Dauphin, P.S. Liang, and
+J. Wortman Vaughan, editors,Advances in Neural Information Processing Systems, volume 34,
+pages 17084–17097. Curran Associates, Inc., 2021.
+[44] B. W. Silverman. Spline smoothing: The equivalent variable kernel method.The Annals of
+Statistics, 12(3):898–916, 1984.
+[45] Diederik P. Kingma and Jimmy Ba. Adam: A method for stochastic optimization. InInterna-
+tional Conference on Learning Representations (ICLR), 2015.
+[46] Max Welling and Yee Whye Teh. Bayesian learning via stochastic gradient langevin dynamics.
+InProceedings of the 28th International Conference on International Conference on Machine
+Learning, ICML’11, page 681–688, Madison, WI, USA, 2011. Omnipress.
+[47] Gadi Naveh, Oded Ben David, Haim Sompolinsky, and Zohar Ringel. Predicting the outputs
+of finite deep neural networks trained with noisy gradients.Phys. Rev. E, 104:064301, Dec
+2021.
+[48] Mehran Kardar.Statistical Physics of Fields. Cambridge University Press, Cambridge, 2007.
+[49] Max Hennick and Guillaume Corlouer. From density matrices to phase transitions in deep
+learning: Spectral early warnings and interpretability.arXiv:2603.29805, 2026.
+[50] E. Gardner. The space of interactions in neural network models.Journal of Physics A: Math-
+ematical and General, 21(1):257, January 1988.
+[51] E. Gardner and B. Derrida. Optimal storage properties of neural network models.Journal of
+Physics A: Mathematical and General, 21(1):271, January 1988.
+[52] Moritz Helias and David Dahmen.Statistical Field Theory for Neural Networks, volume 970
+ofLecture Notes in Physics. Springer International Publishing, Cham, 2020.
+[53] Yasaman Bahri, Jonathan Kadmon, Jeffrey Pennington, Sam S. Schoenholz, Jascha Sohl-
+Dickstein, and Surya Ganguli. Statistical Mechanics of Deep Learning.Annual Review of
+Condensed Matter Physics, 11(V olume 11, 2020):501–528, March 2020.
+[54] Hugo Cui. High-dimensional learning of narrow neural networks.Journal of Statistical Me-
+chanics: Theory and Experiment, 2025(2):023402, February 2025.
+[55] Hugo Touchette. The large deviation approach to statistical mechanics.Physics Reports,
+478(1):1–69, 2009.
+[56] Alexander van Meegen and Haim Sompolinsky. Coding schemes in neural networks learning
+classification tasks.Nature Communications, 16:3354, 2025.
+[57] Jan P. Bauer, Kirsten Fischer, Moritz Helias, and Agostina Palmigiano. A unified theory of
+feature learning in rnns and dnns.arXiv:2602.15593, 2026.
+[58] Radford M. Neal.Bayesian Learning for Neural Networks, volume 118 ofLecture Notes in
+Statistics. Springer, 1996.
+14
+
+
+===== PAGE 15 =====
+[59] Jaehoon Lee, Jascha Sohl-dickstein, Jeffrey Pennington, Roman Novak, Sam Schoenholz, and
+Yasaman Bahri. Deep neural networks as gaussian processes. InInternational Conference on
+Learning Representations, 2018.
+[60] Heejune Sheen, Siyu Chen, Tianhao Wang, and Harrison H. Zhou. Implicit Regularization of
+Gradient Flow on One-Layer Softmax Attention, March 2024. arXiv:2403.08699 [cs] version:
+1.
+[61] Davoud Ataee Tarzanagh, Yingcong Li, Christos Thrampoulidis, and Samet Oymak. Trans-
+formers as Support Vector Machines, February 2024. arXiv:2308.16898 [cs, math].
+[62] Hannes Risken.Fokker-Planck Equation, pages 63–95. Springer Berlin Heidelberg, Berlin,
+Heidelberg, 1996.
+[63] Anders Krogh and John Hertz. A simple weight decay can improve generalization. In J. Moody,
+S. Hanson, and R.P. Lippmann, editors,Advances in Neural Information Processing Systems,
+volume 4. Morgan-Kaufmann, 1991.
+15
+
+
+===== PAGE 16 =====
+Appendix
+A A short introduction to Landau Theory and Phase Transitions
+This appendix gives a self-contained statistical physics background for some of the ideas used in the
+text. We focus on Landau theory, order parameters, symmetries, first- and second-order phase tran-
+sitions, and crossovers. Phase transitions and statistical mechanics have a long history in machine
+learning, beginning with work on the phase transition in the capacity of the perceptron [50, 51].
+This appendix, however, does not aim to cover that rich history, some recent reviews of the field
+include [52, 53, 54, 42]. We discuss the most directly related work in Section 1.1.
+A.1 Phases, Control Parameters, and Large-System Limits
+Aphaseis a macroscopic regime characterized by qualitatively stable behavior. In this paper, the
+phases are regimes of the learned attention pattern: for example, a regime where the attention mech-
+anism does not use the context, a regime where it pools uniformly over all positions, and a regime
+where it implements the copy pattern.
+Acontrol parameteris a quantity whose variation can drive the system between phases. In our
+setting the central control parameter is the amount of training dataP, while other quantities such as
+sequence lengthL, vocabulary sizeV, and noise scaleσ 2 also affect the phase boundaries.
+A true phase transition is strictly defined only in a large-system limit. For finite systems, observ-
+ables are typically smooth functions of the control parameter. Sharp nonanalytic behavior, which
+is required for a phase transition, appears only after taking an asymptotic limit. In our theory, the
+analogous large parameter is the overall scale multiplying the reduced action, in particular theχL
+scaling appearing in the posterior. At finiteχand finiteL, transitions are softened; in the large-χL
+limit, the posterior concentrates around the minima of the action and sharp transitions can appear.
+A.2 Macroscopic Actions and Concentration
+The central mathematical structure behind Landau theory of phase transitions, which we be ex-
+plained below, is a probability distribution of the form
+p(m)∝exp[−Λs(m)],(22)
+wheremis a low-dimensional macroscopic variable,s(m)is an action density, andΛis a large
+coefficient; naturally this is intimately related to the theory of large deviations [55]. In our setting,
+Λis represented by the large factorχLmultiplying the reduced action.
+The normalization of this distribution is
+Z=
+Z
+dmexp[−Λs(m)].(23)
+The associated free energy is
+F=−logZ.(24)
+WhenΛis large, the integral is dominated by the minimum of the action density:
+m⋆ = arg min
+m
+s(m).(25)
+The saddle-point approximation then gives
+F=−logZ≃Λs(m ⋆) +subleading fluctuation terms.(26)
+Thus the phase selected by the posterior is determined by the minimum of the reduced action, while
+the free energy is obtained by evaluating the corresponding marginal integral.
+The large coefficient in Eq. (22) has two roles. First, it justifies a saddle-point approximation. Ifm⋆
+is a global minimum, then expanding around it gives
+s(m) =s(m ⋆) + 1
+2 s′′(m⋆)(m−m ⋆)2 +· · ·.(27)
+16
+
+
+===== PAGE 17 =====
+Substituting this into Eq. (22) gives
+p(m)≈exp[−Λs(m ⋆)] exp
+
+−Λ
+2 s′′(m⋆)(m−m ⋆)2
+
+.(28)
+Thus typical fluctuations around the minimum scale as
+|m−m ⋆| ∼ 1√
+Λ
+.(29)
+AsΛ→ ∞, the distribution collapses onto the minimizing value of the macroscopic variable.
+Second, Eq. (22) is a sign that a successful macroscopic description has emerged. The original
+system may have many microscopic degrees of freedom, such as network weights and hidden acti-
+vations. After marginalizing or averaging over them, the dominant behavior is governed by a small
+number of collective variables and a scalar action. In this paper, the collective variables are the
+attention order parameters, and the large factorχLmakes their saddle-point values sharply defined.
+In our Bayesian setting, the posterior over attention patterns has the form
+p(G|data)∝exp[−S(G)].(30)
+After reducing to the relevant order-parameter space, this becomes
+p(ˆc1,ˆcG |data)∝exp[−S(ˆc 1,ˆcG)].(31)
+In the scaling regime used in the main text,
+S(ˆc1,ˆcG) =χL S(ˆc1,ˆcG) +subleading terms.(32)
+Therefore the dominant learned attention pattern is determined, to leading order, by the minima of
+the reduced actionS.
+A.3 Order Parameters
+Anorder parameteris a low-dimensional quantity that distinguishes phases. It is chosen to capture
+the collective degree of freedom that changes qualitatively across a transition.
+In this paper, the order parameters are scalar projections of the attention matrix onto interpretable
+attention patterns. For linear attention, we have
+G= ˆc1
+1L
+L + ˆcG
+G∗
+√
+L
+.(33)
+The coefficientˆc1 measures the strength of uniform pooling over the context, whileˆcG measures the
+strength of the copy or shift-by-one pattern. In the softmax case, row normalization removes one
+independent direction, leaving the copy order parameterˆaG.
+The key point is that an order parameter is not merely a summary statistic. It is the macroscopic
+coordinate in which the posterior concentrates. In the present work, the order parameters distinguish
+whether the network ignores context, pools over context, or selectively attends to the previous token.
+A.4 Landau Polynomials, Minima, and Phase Transitions
+Landau theory studies the reduced action as a function of the order parameter. Near a transition, the
+action is often expanded as a polynomial. For a single scalar order parameterm, one writes
+S(m) =S 0 +hm+ r
+2 m2 + w
+3 m3 + u
+4 m4 +· · ·.(34)
+This polynomial is a local expansion of the macroscopic action after the microscopic degrees of
+freedom have been integrated out. The coefficients depend on the control parameter. In our setting,
+they depend onPand on problem parameters such asL,V, andσ 2.
+The phases are determined by the minima of this polynomial action. If the global minimum is at
+m= 0, then the corresponding order parameter is absent. If the global minimum is atm̸= 0, then
+the corresponding structure is present. A phase transition occurs when the identity or location of the
+global minimum changes nonanalytically in the large-χLlimit.
+17
+
+
+===== PAGE 18 =====
+For example, suppose symmetry forbids odd powers ofm, giving
+S(m) = r
+2 m2 + u
+4 m4, u >0.(35)
+Whenr >0, the unique minimum is at
+m⋆ = 0.(36)
+Whenr <0, the pointm= 0becomes unstable and two new minima appear at
+m⋆ =±
+r
+−r
+u .(37)
+Thus a change in the sign of a polynomial coefficient changes the structure of the minima, and hence
+changes the phase selected by the posterior.
+In our Bayesian setting, the reduced action is the negative log-posterior restricted to the rele-
+vant order-parameter subspace. The learned attention pattern is determined by the minimum of
+Slinear(ˆc1,ˆcG)for linear attention, orS softmax(ˆaG)for softmax attention. The phase transition is
+therefore a change in the global minimum of the action as the amount of training dataPis varied.
+The structure of the action reflects a competition between two effects. The prior term favors simple,
+small-norm attention patterns. The data term favors attention patterns that correctly predict the copy
+labels. A phase transition occurs when increasing the dataset sizePmakes a structured attention
+pattern favorable enough to overcome the prior cost.
+A.5 Symmetry and Symmetry Breaking
+Symmetry is central to the classification of phase transitions. A system has a symmetry if the action
+is unchanged under a transformation of the order parameter. For example, the polynomial in Eq. (35)
+is invariant under
+m7→ −m.(38)
+This is aZ 2 symmetry. Whenr >0, the minimum is atm= 0, which is invariant under this
+symmetry. Whenr <0, the minima are at nonzero values ofm, and choosing one of them breaks
+the symmetry.
+Symmetry also determines which polynomial terms are allowed. If the action is invariant under
+m7→ −m, then odd powers such asmandm 3 are forbidden. If this symmetry is absent, odd
+powers may appear, and the transition structure can change.
+In the linear-attention theory, the reduced action has an exact diagonal sign symmetry
+(ˆc1,ˆcG)7→(−ˆc1,−ˆcG).(39)
+The second-order transition corresponds to the spontaneous selection of a nonzero ordered direction
+in this order-parameter space. The action also has an approximate larger symmetry that nearly allows
+independent sign flips ofˆc1 andˆcG. This approximate structure is responsible for the later confined
+reorganization toward the copy mode, but because the exact symmetry has already been broken, this
+later reorganization is a crossover rather than a second phase transition.
+In the softmax-attention case, the softmax map changes the effective geometry of the order-
+parameter space. Row normalization removes the uniform attention direction as an independent
+degree of freedom, and the resulting one-dimensional action develops two competing minima. The
+transition occurs when the global minimum jumps from the weak-copy solution to the strong-copy
+solution.
+A.6 Second-Order Phase Transitions
+Asecond-orderorcontinuousphase transition is one in which the order parameter turns on contin-
+uously at the critical point. In the Landau polynomial of Eq. (35), minimizingS(m)gives
+m⋆ = 0forr >0,|m ⋆|=
+r
+−r
+u forr <0.(40)
+18
+
+
+===== PAGE 19 =====
+Thusm ⋆ approaches zero continuously asr→0 −. The curvature at the origin,
+d2S
+dm2
+
+m=0
+=r,(41)
+vanishes at the transition. This vanishing curvature means that fluctuations in the order parameter
+become large near the critical point:
+⟨(m−m ⋆)2⟩ ∼ 1
+ΛS ′′(m⋆) .(42)
+When the curvature tends to zero, the distribution becomes broad in the ordering direction before
+the ordered solution fully develops.
+For linear attention in the main text, the first transition is of this kind. AsPcrosses the critical
+valueP ∗
+ˆc1, the minimum at the origin loses stability and the pooling order parameterˆc 1 turns on
+continuously. The network begins to exploit in-context information, but it initially does so through
+uniform pooling rather than through a sharp copy pattern.
+This distinction matters for predictability. A second-order transition has precursor signals: the action
+becomes increasingly flat along the unstable direction, and fluctuations in the corresponding order
+parameter grow. In principle, this can make the approach to the transition detectable before the
+ordered capability is fully expressed.
+A.7 First-Order Phase Transitions
+Afirst-orderordiscontinuousphase transition occurs when the global minimum of the action jumps
+discontinuously from one local minimum to another. Unlike a second-order transition, the original
+minimum need not lose local stability at the transition. Instead, two locally stable phases coexist at
+the critical point, and the transition occurs when their action values become equal.
+A minimal Landau polynomial with two competing minima is
+S(m) = r
+2 m2 − w
+4 m4 + v
+6 m6, w >0, v >0.(43)
+The sixth-order term stabilizes the polynomial, while the negative quartic term allows a nonzero
+local minimum to appear before the zero-order-parameter minimum becomes unstable. At the tran-
+sition point, the two minima have equal action and the global minimizer jumps.
+The exponential concentration makes this jump sharp. If two local minima are located atm ⋆
+1 and
+m⋆
+2, then their posterior weights scale as
+p(m⋆
+1)
+p(m⋆
+2) ≈exp[−Λ (S(m ⋆
+1)−S(m ⋆
+2))].(44)
+For largeΛ, even a small difference in action is exponentially amplified. Therefore, when the two
+action values cross, the dominant saddle switches abruptly.
+The corresponding free energy is controlled by the lower of the two saddle values:
+F=−logZ≃Λ min{S(m ⋆
+1), S(m⋆
+2)}+subleading terms.(45)
+At the crossing point, this saddle-point approximation becomes nonanalytic in the large-Λlimit.
+This nonanalyticity is the phase transition. The polynomial action itself is smooth; the nonanalyticity
+arises from selecting the dominant minimum.
+In the softmax-attention theory, this is precisely the qualitative structure. The actionS softmax(ˆaG)
+has two competing minima: one with weak copy structure and one with strong copy structure.
+AsPincreases, the strong-copy minimum becomes deeper. At the critical sample sizeP ∗
+ˆaG, the
+global minimizer changes from one local minimum to the other and the MAP value ofˆa G jumps
+discontinuously.
+This jump in the order parameter produces an abrupt loss drop. It also means there need not be a
+smooth precursor in the order parameter itself. The weak-copy phase can remain locally stable until
+the moment the global optimum switches to the copy phase. This is the sense in which the softmax
+transition is more abrupt and harder to anticipate from smooth progress measures.
+19
+
+
+===== PAGE 20 =====
+A.8 Crossovers
+Acrossoveris a rapid but smooth change in behavior that is not a true phase transition. In a
+crossover, no quantity becomes nonanalytic in the large-system limit, and no symmetry is broken.
+Nevertheless, the system may show a pronounced change over a narrow range of the control param-
+eter.
+This is the interpretation of the later stage of linear-attention learning in the main text. The first
+true transition turns on the pooling order parameterˆc1. At largerP, the copy directionˆc G becomes
+increasingly favorable and the attention pattern reorganizes from uniform pooling toward copying.
+This reorganization can be sharp in finite experiments and can produce a visible loss decrease.
+A.9 Phase Diagrams
+Aphase diagramshows which phase is realized as a function of control parameters. In this paper,
+we plot quantities such as the loss as a function ofPandL, or as a function ofPandV.
+The theoretical phase boundaries are obtained by analyzing the reduced action. For linear attention,
+the first boundary is where the curvature in the pooling direction changes sign, giving the second-
+order transition atP ∗
+ˆc1. The second boundary marks the scale where the copy direction becomes
+favorable and the crossover begins. For softmax attention, the phase boundary is determined by
+equality of the two competing minima ofS softmax(ˆaG).
+The phase diagrams in the main text should therefore be read as maps of attention behavior: below
+the boundary, the model is in an unstructured or weakly structured phase; above it, the learned
+attention pattern implements the copy subcircuit.
+A.10 Interpretation for Attention and Emergence
+The statistical-physics terminology used in this paper can be summarized as follows. The attention
+matrix is a high-dimensional object, but the task symmetry identifies a small number of collective di-
+rections that matter. These directions are the order parameters. The Bayesian posterior over attention
+patterns induces an effective action over these order parameters. Because the action is multiplied by
+a large factor, the posterior concentrates near the minima of this action. As the number of training
+examples increases, the action changes shape. A phase transition occurs when the dominant saddle,
+equivalently the global MAP solution in the concentrated limit, changes qualitatively.
+For linear attention, the action first undergoes a second-order transition into a pooling phase. The
+copy component then grows through a crossover. Thus the emergence of copying is preceded by
+an intermediate, partially useful context-aggregation regime. For softmax attention, the nonlinearity
+changes the effective action so that two minima coexist. The global minimum jumps directly to the
+copy phase, yielding a first-order transition and an abrupt loss drop.
+This distinction is the main conceptual role of Landau theory in the paper. It explains why two
+attention mechanisms can solve the same task but display qualitatively different emergence profiles:
+the mechanism determines the structure of the reduced action, whose saddle points determine the
+order of the transition.
+B Deriving the network prior as a function of the attention
+We are ultimately interested in the network posterior conditioned on the training data. Our approach
+follows a recent line of studies describing the network in terms of the feature kernels [30, 33, 31, 56,
+57]. We start by deriving the network prior given inputsX= (x a
+α)α=1,...,P;a=1,...,L and network
+outputsF= (f a
+α)α=1,...,P;a=1,...,L :
+p(F|X) =
+Z Y
+α,a
+p(f a
+α|xa
+α,θ)p(θ)dθ.(46)
+For fixed network parametersθ :={W emb, W O, W K, W Q}, the probabilityp(F|X,θ)is given
+by enforcing the network model
+ha
+α =W embxa
+α +p a,G ab
+α = 1
+L√dmodel
+haT
+α W Ghb
+α,f a
+α =W OGab
+α hb
+α, (47)
+20
+
+
+===== PAGE 21 =====
+with Diracδ-distributions as
+p(F|X,θ) =
+Y
+a,b,α
+Z
+dha
+α δ(−ha
+α +W embxa
+α +p a)
+×δ(−G ab
+α + 1
+L√dmodel
+haT
+α W Ghb
+α)
+×δ(−f a
+α +W OGab
+α hb
+α).
+(48)
+We use the Fourier representation of the Diracδ-distribution
+δ(z) =
+Z
+exp
+ ˜zTz
+
+d˜z(49)
+with ˜zthe conjugate variable tozand ˜zTz= PN
+i=1 ˜zizi, where we integrate along the imaginary
+axis
+R
+d˜z= Q
+k
+R
+iR
+d˜zk
+2πi for notational convenience, and rewrite
+p(F|X,θ) =
+Z
+Dh
+Z
+D˜hexp(−
+X
+a,α
+˜haT
+α ha
+α +
+X
+a,α
+˜haT
+α W embxa
+α +
+X
+a,α
+˜haT
+α pa)
+×
+Z
+DG
+Z
+D ˜Gexp(−
+X
+ab,α
+˜GabT
+α Gab
+α + 1
+L√dk
+X
+ab,α
+˜GabT
+α haT
+α W Ghb
+α)
+×
+Z
+D ˜fexp(−
+X
+a,α
+˜f aT
+α f a
+α +
+X
+ab,α
+˜f aT
+α W OGab
+α hb
+α),
+(50)
+where we have used the shorthandsDh= Q
+a,α dha
+α,DG= Q
+ab,α dGab
+α , and similarly for the
+conjugate fields.
+Embedding Layer
+Next, we perform the marginalization over network parameters. In the following, we denote the
+expectation value over the statistics of network parametersW ◦ as⟨. . .⟩ W ◦. For the embedding
+layer, we have the following
+p(H|X) =
+Z
+D˜hp(h a
+α|xa
+α,W emb,p)p(W emb,p)dW embdp(51)
+=
+Z
+D˜h⟨exp(−
+X
+a,α,i
+˜ha
+i,αha
+i,α +
+X
+a,α,ij
+˜ha
+i,αW emb
+ij xa
+j,α +
+X
+a,α,i
+˜ha
+i,αpa
+i )⟩W emb
+ij ,pi (52)
+=
+Z
+D˜hexp(−
+X
+a,α,i
+˜ha
+i,αha
+i,α)⟨exp(
+X
+a,α,ij
+˜ha
+i,αW emb
+ij xa
+j,α)⟩W emb
+ij
+⟨exp(
+X
+a,α,i
+˜ha
+i,αpa
+i )⟩pi
+(53)
+=
+Z
+D˜hexp(−
+X
+a,α,i
+˜ha
+i,αha
+i,α) exp
+1
+2
+gemb
+V
+X
+ab,αβ,ij
+˜ha
+i,α˜hb
+i,βxa
+j,αxb
+j,β
+
+(54)
+×exp
+1
+2 gp
+X
+ab,αβ,i
+˜ha
+i,αδab˜hb
+i,β
+
+=
+Z
+D˜hexp(−
+X
+a,α,i
+˜ha
+i,αha
+i,α) exp
+1
+2
+X
+ab,αβ,ij
+˜ha
+i,α˜hb
+i,β
+ gemb
+V xa
+j,αxb
+j,β +g pδab
+
+.
+(55)
+Integrating the conjugate variables ˜h, we find that the token embeddingsh a
+i,α are i.i.d. Gaussian
+distributed in model spaceiwith zero mean and covariance matrix
+C(xx)
+ab,αβ =g emb
+X
+j
+xa
+j,αxb
+j,β +g pδab.(56)
+21
+
+
+===== PAGE 22 =====
+Attention Layer
+The attention mechanism is given by
+Gab
+α = 1
+L√dmodel
+haT
+α W Ghb
+α .(57)
+We now marginalize with respect to a single network parameterW G, yielding
+p(G|H) =
+Z
+D ˜G
+D
+exp
+X
+ab,α
+− ˜Gab
+α Gab
+α +
+X
+ab,α,ij
+1
+L√dmodel
+˜Gab
+α ha
+i,αW G
+ij hb
+j,α
+E
+W G
+ij
+(58)
+=
+Z
+D ˜Gexp
+
+−
+X
+ab,α
+˜Gab
+α Gab
+α
+
+exp
+1
+2
+dmodel gK gQ
+d2
+model
+1
+L2dmodel
+X
+ab,cd,αβ
+˜Gab
+α ˜Gcd
+β (ha
+α ·h c
+β)(hb
+α ·h d
+β)
+
+(59)
+=N
+ 
+G|0, C (GG)
+ab,cd,αβ
+
+(60)
+with covariance given by
+C(GG)
+ab,cd,αβ = gK gQ
+L2d2
+model
+(ha
+α ·h c
+β)(hb
+α ·h d
+β)(61)
+To decouple the appearing terms(h a
+α ·h c
+β)in the covariance, we introduce an auxiliary variable as
+Qab
+αβ := 1
+dmodel
+X
+i
+ha
+i,αhb
+i,β.(62)
+To obtain the distribution ofQ, we will make use of the G ¨artner-Ellis theorem [55]. For this, we
+first compute its cumulant-generating functionW Q as
+WQ( ˜Q) = ln
+Z
+Dhexp
+
+˜Qab
+αβ
+1
+dmodel
+X
+i
+ha
+i,αhb
+i,β
+
+N(h|0,C (xx))(63)
+=d model ln
+Z
+Dhexp
+
+˜Qab
+αβ
+1
+dmodel
+ha
+αhb
+β
+
+N(h|0,C (xx))(64)
+=d model ln
+Z
+Dhexp
+
+− 1
+2 ha
+α
+h
+− 2
+dmodel
+˜Qab
+αβ +
+ 
+C(xx)
+ab,αβ
+−1i
+hb
+β
+
+(65)
+×
+
+det
+ 
+C(xx)
+ab,αβ
+−1/2
+=d model ln
+
+det
+ 
+− 2
+dmodel
+˜Qab
+αβ +
+ 
+C(xx)
+ab,αβ
+−1−1/2
+det
+ 
+C(xx)
+ab,αβ
+−1/2
+(66)
+=− dmodel
+2 ln det
+
+I− 2
+dmodel
+˜QC(xx)
+
+.(67)
+Since the cumulant-generating function has a scaling formW Q( ˜Q) =d model λ( ˜Q/dmodel)withλ
+being ad model-independent function, we may obtain the distribution of the auxiliary variableQby
+a large deviation principle as
+lnp(Q|C (xx)) = sup
+˜Q
+Tr
+
+QT ˜Q
+
+− WQ( ˜Q)(68)
+=: Γ(Q),(69)
+expressed in terms of the rate functionΓ[55].
+We compute the rate function via the supremum condition
+0
+!
+=Q sz
+µν − dmodel
+2
+h
+I− 2
+dmodel
+˜QC(xx)
+i−1
+sa,µα
+C(xx)
+az,αν ,(70)
+yielding
+˜Q= dmodel
+2
+
+C(xx)−1
+−
+
+Q
+−1
+.(71)
+22
+
+
+===== PAGE 23 =====
+This gives for the rate function
+Γ(Q) = Tr
+h
+Q dmodel
+2
+
+C(xx)−1
+−
+
+Q
+−1i
+(72)
++ dmodel
+2 ln det
+
+I− 2
+dmodel
+dmodel
+2
+
+C(xx)−1
+−
+
+Q
+−1
+C(xx)
+
+= dmodel
+2 Tr
+
+Q
+
+C(xx)−1
+−I
+
++ dmodel
+2 ln det
+
+Q
+−1
+C(xx)
+
+.(73)
+Ford model → ∞, the first term dominates the rate functionΓ(Q)andQconcentrates onC (xx), so
+we may replaceQin (60) withC (xx). Thus, we obtain
+p(G|X) =
+Z
+D ˜Gexp
+
+−
+X
+ab,α
+˜Gab
+α Gab
+α
+
+exp
+1
+2
+gK gQ
+L2
+X
+ab,cd,αβ
+˜Gab
+α ˜Gcd
+β C(xx)
+ac,αβC(xx)
+bd,αβ
+
+(74)
+= exp
+
+− 1
+2
+X
+ab,cd,αβ
+Gab
+α
+h gK gQ
+L2 C(xx)
+ac,αβC(xx)
+bd,αβ
+i−1
+Gcd
+β −ln det
+h gK gQ
+L2 C(xx)
+ac,αβC(xx)
+bd,αβ
+i1/2
+.
+(75)
+For notational brevity, we denoteg W :=g KgQ in the following.
+Attention Layer Parameterized withW K, W Q
+The attention mechanism is given by
+Gab
+α = 1
+L√dmodel
+ha
+i,αW Q
+li W K
+lj hb
+j,α.(76)
+We now marginalize with respect to theW K andW Q,
+p(G|H) =
+Z
+D ˜G
+D
+exp
+
+−
+X
+ab,α
+˜Gab
+α Gab
+α + 1
+L√dmodel
+X
+ab,α,ijl
+˜Gab
+α ha
+i,αW Q
+li W K
+lj hb
+j,α
+E
+W Q,W K
+.
+(77)
+Using independence in the indexl, this becomes
+p(G|H) =
+Z
+D ˜Gexp
+
+−
+X
+ab,α
+˜Gab
+α Gab
+α +W G( ˜G)
+
+,(78)
+where
+WG( ˜G) =d k ln
+DD
+exp
+ 1
+L√dmodel
+X
+ab,α,ij
+˜Gab
+α ha
+i,αW Q
+li W K
+lj hb
+j,α
+E
+W K
+E
+W Q
+.(79)
+Performing first the Gaussian integral over the rowW K
+lj gives
+WG( ˜G) =d k ln
+D
+exp
+ gK
+2L2d2
+model
+X
+ab,cd,αβ,ijk
+˜Gab
+α ˜Gcd
+β ha
+i,αW Q
+li hb
+j,αhd
+j,βhc
+k,β W Q
+lk
+E
+W Q
+.(80)
+To decouple the appearing hidden-state contractions, we introduce an auxiliary variable as
+Qab
+αβ := 1
+dmodel
+X
+i
+ha
+i,αhb
+i,β.(81)
+Then
+WG( ˜G) =d k ln
+D
+exp
+ gK
+2L2dmodel
+X
+ab,cd,αβ,ik
+˜Gab
+α ˜Gcd
+β Qbd
+αβha
+i,αW Q
+li hc
+k,β W Q
+lk
+E
+W Q
+.(82)
+The remaining Gaussian integral is over the feature-indexed row vectorW Q
+li , and therefore gives a
+determinant over the feature indicesi, k:
+WG( ˜G) =− dk
+2 ln det
+ik
+
+δik − gQgK
+L2d2
+model
+X
+ab,cd,αβ
+˜Gab
+α Qbd
+αβ ˜Gcd
+β ha
+i,αhc
+k,β
+
+ .(83)
+23
+
+
+===== PAGE 24 =====
+We now rewrite this determinant in the token-sample space. Let the combined token-sample index
+be denoted by(aα), and define
+Hi,aα :=h a
+i,α, b˜Gaα,bβ := ˜Gab
+α δαβ, Q aα,bβ :=Q ab
+αβ.(84)
+Then Eq. (83) can be written in matrix form as
+WG( ˜G) =− dk
+2 ln det
+i
+
+I− gQgK
+L2d2
+model
+Hb˜GQb˜G
+T
+H T
+
+.(85)
+The matrix inside the feature-space determinant is symmetric. We factor it as
+Hb˜GQb˜G
+T
+H T =
+
+Hb˜GQ1/2
+
+Hb˜GQ1/2
+T
+.(86)
+Using the Weinstein–Aronszajn identity,
+det(I−AA T) = det(I−A TA),(87)
+together with
+H TH=d model Q,(88)
+we obtain
+WG( ˜G) =− dk
+2 ln det
+
+I− gQgK
+L2dmodel
+Q1/2b˜G
+T
+Qb˜GQ1/2
+
+.(89)
+To obtain the distribution ofQ, we will make use of the G ¨artner-Ellis theorem [55]. For this, we
+first compute its cumulant-generating functionW Q as
+WQ( ˜Q) = ln
+Z
+Dhexp
+
+˜Qab
+αβ
+1
+dmodel
+X
+i
+ha
+i,αhb
+i,β
+
+N(h|0,C (xx))(90)
+=d model ln
+Z
+Dhexp
+
+˜Qab
+αβ
+1
+dmodel
+ha
+αhb
+β
+
+N(h|0,C (xx))(91)
+=d model ln
+Z
+Dhexp
+
+− 1
+2 ha
+α
+h
+− 2
+dmodel
+˜Qab
+αβ +
+ 
+C(xx)
+ab,αβ
+−1i
+hb
+β
+
+detC (xx)
+−1/2
+(92)
+=− dmodel
+2 ln det
+
+I− 2
+dmodel
+˜QC(xx)
+
+.(93)
+Since the cumulant-generating function has a scaling form
+λQ = 1
+dmodel
+WQ(dmodel ˜Q) =− 1
+2 ln det
+
+I−2 ˜QC(xx)
+
+(94)
+we may obtain the distribution of the auxiliary variableQby a large deviation principle as
+lnp(Q|C (xx)) =−d modelΓ(Q),(95)
+Γ(Q) = sup
+˜Q
+n
+Tr[QT ˜Q]−λ Q( ˜Q)
+o
+.(96)
+We compute the rate functionΓby evaluating the supremum condition
+0 =Q sz
+µν − dmodel
+2
+
+I− 2
+dmodel
+˜QC(xx)
+−1
+sa,µα
+2
+dmodel
+C(xx)
+az,αν ,(97)
+yielding
+˜Q= dmodel
+2
+
+[C(xx)]−1 −[Q] −1
+
+.(98)
+This gives for the rate function
+Γ(Q) = dmodel
+2 Tr
+
+Q[C(xx)]−1 −I
+
++ dmodel
+2 ln det
+
+[Q]−1C(xx)
+
+.(99)
+24
+
+
+===== PAGE 25 =====
+Ford model → ∞,Qconcentrates onC (xx), so we may replaceQin Eq. (89) withC (xx). Defining
+Caα,bβ :=C (xx)
+ab,αβ,(100)
+we obtain
+WG( ˜G) =− dk
+2 ln det
+
+I− gQgK
+L2dmodel
+C1/2b˜G
+T
+Cb˜GC1/2
+
+.(101)
+We now evaluate the remaining integral over ˜Gby the same large-deviation argument. Define
+bGaα,bβ :=G ab
+α δαβ.(102)
+We define the ”whiten” matrices
+¯G :=C −1/2bGC −1/2, ¯˜G :=C 1/2b˜GC1/2.(103)
+Then X
+ab,α
+˜Gab
+α Gab
+α = Tr[¯˜GT ¯G],(104)
+and
+WG( ¯˜G) =− dk
+2 ln det
+
+I− gQgK
+L2dmodel
+¯˜GT ¯˜G
+
+.(105)
+Usingk= dmodel
+dk
+=O(1), wherekis often taken to be equal to the number of heads, so for
+our single-head attention we specialize to the casek= 1⇒d model =d k 3. We can expand the
+cumulant-generating function in a power series usingln det = Tr ln
+dk
+2 Tr
+" ∞X
+n=1
+1
+n
+ gQgK
+L2dmodel
+¯˜GT ¯˜G
+n#
+= dk
+2
+ 
+gQgK
+L2dmodel
+Tr
+h ¯˜GT ¯˜G
+i
++O
+ 
+Tr
+" gQgK
+L2dmodel
+¯˜GT ¯˜G
+2#!!
+(106)
+So the expansion’s control parameter isϵ:= gQgK
+L2dmodel
+ ¯˜G
+
+2
+op
+and we may truncate the series at
+Gaussian order if it is small. We thus turn to estimate
+ ¯˜G
+
+2
+op
+self-consistently. At this Gaussian
+order we see
+¯G∼ gQgK
+L2 ⇒ ¯˜G∼L
+s
+1
+gQgK
+.(107)
+Since ¯˜Gis anL×Lmatrix it operator norm is of order
+ ¯˜G
+
+2
+op
+∼ L3
+gQgK
+(108)
+we find our expansion parameterϵis of order
+ϵ∼ L
+dmodel
+.(109)
+We see that under our scaling, whered model ≫Lthe expansion is consistent and we may approxi-
+mate
+WG( ¯˜G)≈ dkgQgK
+2L2dmodel
+Tr
+h ¯˜GT ¯˜G
+i
+(110)
+which agrees with the central limit theorem intuition that when we sum a large number of modes
+dmodel into a small matrixLwe should get Gaussian behavior. We conclude the prior distribution
+for the attention patternGis
+p(G|X) = exp
+
+− 1
+2
+X
+ab,cd,αβ
+Gab
+α
+h dkgK gQ
+dmodelL2 C(xx)
+ac,αβC(xx)
+bd,αβ
+i−1
+Gcd
+β −ln det
+h dkgK gQ
+dmodelL2 C(xx)
+ac,αβC(xx)
+bd,αβ
+i1/2
+.
+(111)
+For notational brevity, we denoteg W :=g KgQdk/dmodel in the following.
+3the result is unchanged for anyk=O(1)
+25
+
+
+===== PAGE 26 =====
+Readout Layer
+Finally, we look at the network output and marginalize over the network parameters as
+p(F|G) =
+Z
+D ˜f
+
+exp
+
+−
+X
+a,α,i
+˜f a
+i,αf a
+i,α +
+X
+ab,α,ij
+˜f a
+i,αW O
+ij Gab
+α hb
+j,α
+
+W O
+ij
+(112)
+=
+Z
+D ˜fexp
+
+−
+X
+a,α,i
+˜f a
+i,αf a
+i,α
+
+exp
+1
+2
+gO
+dmodel
+X
+abcd,αβ,i
+˜f a
+i,α ˜f c
+i,β Gab
+α Gcd
+β
+X
+j
+hb
+j,αhd
+j,β
+
+(113)
+=
+Z
+D ˜fexp
+
+−
+X
+a,α,i
+˜f a
+i,αf a
+i,α
+
+exp
+1
+2 gO
+X
+abcd,αβ,i
+˜f a
+i,α ˜f c
+i,β Gab
+α Gcd
+β Qbd
+αβ
+
+,(114)
+where we have identified the last sum term as the auxiliary variableQdefined in (81). Fordmodel ≫
+1,Qconcentrates and we may replace byC (xx) as in (111), yielding
+p(F|G) =
+Z
+D ˜fexp
+
+−
+X
+a,α,i
+˜f a
+i,αf a
+i,α
+
+exp
+1
+2 gO
+X
+abcd,αβ,i
+˜f a
+i,α ˜f c
+i,β Gab
+α Gcd
+β C(xx)
+bd,αβ
+
+.(115)
+C Deriving the Network Posterior
+We are interested in the posterior attention matrix ¯G. For the posterior, we assume Gaussian noise
+on the network outputsy α =f α +ξ α withξ α
+i.i.d.
+∼ N(0, σ 2I). Then, we obtain
+p(G|{xα,y α}α)∝p(G|X)
+Z
+Dfp({y α}|F)p(F|G)(116)
+∝p(G|X)
+Z
+Dfexp
+
+− 1
+2σ2
+X
+α
+∥yα −f α∥2
+2
+
+p(F|G)(117)
+=
+Z
+Df
+Z
+D ˜fexp
+
+− 1
+2σ2
+X
+α
+∥yα −f α∥2
+2 − ˜f T
+α fα
+
+(118)
+×exp
+1
+2 gO
+X
+abcd,αβ,i
+˜f a
+i,α ˜f c
+i,β Gab
+α Gcd
+β C(xx)
+bd,αβ
+
+p(G|X),(119)
+where we drop the normalization constant throughout since we are ultimately interested in the most
+likely values of the attention in the posterior. Integrating out the network outputsfin the first term
+yields
+Z
+Dfexp
+
+− 1
+2σ2
+X
+α
+∥yα −f α∥2
+2 − ˜f T
+α fα
+
+∝exp
+X
+α
+σ2
+2
+˜f T
+α ˜fα − ˜f T
+α yα
+
+.(120)
+Overall, this gives
+p(G|{xα,y α}α)∝
+Z
+D ˜fexp
+
+−
+X
+α
+˜f T
+α yα
+
+(121)
+×exp
+1
+2
+X
+abcd,αβ,i
+˜f a
+i,α
+h
+gOGab
+α Gcd
+β C(xx)
+bd,αβ +σ 2I
+i
+˜f c
+i,β
+
+p(G|X)(122)
+= exp
+
+− 1
+2
+X
+abcd,αβ,i
+ya
+i,α
+h
+gOGab
+α Gcd
+β C(xx)
+bd,αβ +σ 2I
+i−1
+yc
+i,β
+− 1
+2 ln det
+h
+gOGab
+α Gcd
+β C(xx)
+bd,αβ +σ 2I
+i
+p(G|X).(123)
+Since we are interested in the dominant attention behavior of the posterior, we may focus on the
+negative exponent or actionS(G) :=−lnp(G|{x α,y α}α). Inserting the result forp(G|X)from
+26
+
+
+===== PAGE 27 =====
+(111), we have
+S(G) = 1
+2
+X
+abcd,αβ,i
+ya
+i,α
+h
+gOGab
+α Gcd
+β C(xx)
+bd,αβ +σ 2I
+i−1
+yc
+i,β + 1
+2 ln det
+h
+gOGab
+α Gcd
+β C(xx)
+bd,αβ +σ 2I
+i
++ 1
+2
+X
+ab,cd,αβ
+Gab
+α
+h gW
+L2 C(xx)
+ac,αβC(xx)
+bd,αβ
+i−1
+Gcd
+β + 1
+2 ln det
+h gW
+L2 C(xx)
+ac,αβC(xx)
+bd,αβ
+i
+.
+(124)
+The first term in the log probability is the prior term, identical to the one found in NNGP theory [58,
+59]. The second term in the log probability is the likelihood term of the labels given the data.
+We now look at the scaling of the different terms. We downscale the output weights, the attention
+weights and the noise by a factorχ∼L, similar to takingµPscaling (so-called ”rich regime”) [43],
+such that the transformation is
+gW → gW
+χ , g O → gO
+χ , σ 2 → σ2
+χ . (125)
+Intuitively, the scaling withχsuppresses fluctuations in directions that are irrelevant to performing
+the task. Consequently, we may neglect the termln det, which is a direct result of the Gaussian
+fluctuations of ˜f. This scaling also increases the overall scale of the action and thus the sharpness
+of the probability landscape inG.
+Explicitly, we have with these scalings
+S(G) =χ 1
+2
+X
+abcd,αβ,i
+ya
+i,α
+h
+gOGab
+α Gcd
+β C(xx)
+bd,αβ +σ 2I
+i−1
+yc
+i,β + 1
+2 ln det
+h
+gOGab
+α Gcd
+β C(xx)
+bd,αβ +σ 2I
+i
++L 2χ1
+2
+X
+ab,cd,αβ
+Gab
+α
+
+gW C(xx)
+ac,αβC(xx)
+bd,αβ
+−1
+Gcd
+β + 1
+2 ln det
+
+gW C(xx)
+ac,αβC(xx)
+bd,αβ
+
++const.(G)
+(126)
+D Projecting the NNGP term onto the order parameters
+We first look at the term
+SNNGP(G) =
+X
+ab, cd, αβ
+Gab gW
+L2 Mabα, cdβ
+†
+Gcd ,(127)
+whereM abα, cdβ =C (xx)
+ac,αβ C(xx)
+bd,αβ is the NNGP kernel built from the input kernelC (xx)
+ac,αβ =P
+j xa
+jα xc
+jβ +δ ac. We will project this operator onto the attention patterns(1 L,G)and in the
+end transform to the normalized attention patterns with coefficients(ˆc1,ˆcG)as in (130) of the main
+text. We use the pseudo-inverse denoted by†here to account for zero eigenvalues of the matrix.
+Since the attention patterns that we are interested in have no dependence onαorβ, we can directly
+look at the summed pseudo-inverse
+Σ(ab),(cd) =
+PX
+α,β=1
+ 
+M†
+abα, cdβ .(128)
+Each data sampleαis a sequenceσ α :{1, . . . , L} → {1, . . . , V}, one-hot encoded asx a
+jα =
+δj,σα(a). The data overlap matrixD (αβ)
+ac =δ σα(a),σβ(c) gives the input kernel asC (αβ)
+ac =
+D(αβ)
+ac +δ ac. Introducing the embedding matrixΦ α = [Id L |X α], which extends each data vec-
+tor(X α)aj =δ j,σα(a) by the identity matrixId L to represent the positional encoding, we have
+C(αβ) = ΦαΦT
+β, and the(α, β)-block of the forward operator takes the Kronecker form
+Sαβ =C (αβ) ⊗C (αβ) = (Φ α ⊗Φ α) (Φβ ⊗Φ β)T .(129)
+SettingΨ α = Φ α ⊗Φ α and stacking over samples givesS= ΨΨ T. The rank ofSsaturates at
+(L+V−1) 2 onceP≥ ⌈(L+V−1) 2/L2⌉(typicallyP≥2–4), after which bothSandΣare
+P-independent.
+27
+
+
+===== PAGE 28 =====
+Symmetry constraints onΣ.For sequences drawn uniformly over the vocabulary, the data dis-
+tribution is invariant under permutations of token labels and of position indices that are applied
+simultaneously to rows and columns. The summed pseudoinverseΣinherits these symmetries. The
+most generalL 2 ×L 2 operator consistent with position-permutation symmetry and the exchange
+symmetry(ab)↔(cd)is
+Σ =aI L2 +bJ L2 +c
+ 
+IL ⊗J L +J L ⊗I L
+
+,(130)
+whereJ L is theL×Lall-ones matrix. The three unknowns(a,b,c)are fixed by evaluating
+SNNGP(G) = vec(G) TΣ vec(G)on three linearly independent test matrices and matching against
+the brute-force pseudoinverse of the fullL 2P×L 2Pmatrix, givinga= 1,b= (L+V) −2,
+c=−(L+V) −1, and therefore
+Σ(ab),(cd) =δ ac δbd − δac
+L+V − δbd
+L+V + 1
+(L+V) 2 = Π ac Πbd ,(131)
+withΠ =I L− 1
+L+V JL. We verified this result numerically for all3≤L≤11,2≤V≤min(L,6),
+acrossP∈ {1, . . . ,25}and multiple random seeds.
+Remark.The summed pseudoinverseΣ = P
+αβ(M†)abα,cdβ isnotthe inverse of the summed
+forward operator ¯S −1 =
+ P
+αβ Sαβ
+−1
+, because pseudoinversion and summation over sample pairs
+(α, β)do not commute. The coefficients(a,b,c)are determined by matching against the brute-force
+pseudoinverse of the fullL 2P×L 2Pmatrix. We were unable to derive the coefficients analytically
+and therefore resorted to numerics.
+Determining the projections onto the attention patterns
+Using the expression for (131), we computeS NNGP(G, G′) =P
+abcd Gab Σ(ab),(cd) G′
+cd explicitly
+gW
+L2 SNNGP(G, G′) =
+X
+abcd
+Gab
+h
+δacδbd − δac
+L+V − δbd
+L+V + 1
+(L+V) 2
+i
+G′
+cd
+=
+X
+ab
+GabG′
+ab − 1
+L+V
+X
+abd
+Gab G′
+ad − 1
+L+V
+X
+abc
+Gab G′
+cb (132)
++ 1
+(L+V) 2
+X
+ab
+Gab
+X
+ab
+G′
+ab
+
+=
+X
+ab
+GabG′
+ab −
+P
+a rar′
+a +P
+b cbc′
+b
+L+V + ss′
+(L+V) 2 ,(133)
+wherer a =P
+b Gab andr ′
+a =P
+b G′
+ab are the row sums,c b =P
+a Gab andc ′
+b =P
+a G′
+ab are the
+column sums, ands= P
+ab Gab ands ′ =P
+ab G′
+ab are the total sums.
+We use this expression to compute the projections onto the basis{1 L, G ∗}, yielding
+1
+(L+V) 2
+
+L2V 2 LV 2
+LV 2 L
+
+(L+V) 2 −(L+ 2V)
+
+
+.(134)
+We project onto the attention patterns normalized with respect to the Frobenius norm 1
+L 1L, 1√
+L G∗,
+so making the ansatzG= ˆc1 1
+L 1L + ˆcG 1√
+L G∗, we overall get
+1
+(L+V) 2
+h
+V 2 ˆc2
+1 + 2 V 2
+√
+L
+ˆc1 ˆcG +
+ 
+(L+V) 2 −L−2V
+
+ˆc2
+G
+i
+.(135)
+E Projecting the Data Term onto the Order Parameters
+We now look at the data term
+yT
+h
+gOGTC(xx)G+σ 2I
+i−1
+y(136)
+28
+
+
+===== PAGE 29 =====
+and make the ansatzG=c 11L +c GG∗. In the end, we transform to the normalized operators basis
+with coefficients(ˆc1,ˆcG). Due to the contraction with the target valuesy, we will use its Fourier
+modes as a base. For the copy task, the targets are the inputs shifted by one, so we choose
+
+v0,0
+a
+α = 1√
+P L
+1
+L
+X
+b
+X
+j
+xb
+j,α = 1√
+P L
+,(137)
+
+v0,k≥1
+a
+α = 1√
+P L2
+X
+b
+X
+j
+ei 2π
+V kj xb
+j,α,(138)
+
+v1,k
+a
+α = 1p
+P L(1−L −1)
+X
+j
+ei 2π
+V kj
+
+xa−1
+j,α − 1
+L
+X
+b
+xb
+j,α
+
+.(139)
+Note thatv 1,0 = 0and that the entries of
+
+v0,k
+a
+are independent ofa. The different normalization
+constants for
+
+v0,0
+a
+α and
+
+v0,k≥1
+a
+α result from the application of the equivalent kernel approxima-
+tion. Fork≥1, we will use the Fourier orthogonality relation P
+j ei 2π
+V kj = 0and the decomposition
+identity
+X
+j
+ei 2π
+V kj xa−1
+j,α =
+p
+P L(1−L −1) [v1,k]a
+α +
+√
+P[v 0,k]a
+α.(140)
+Throughout, we will use the equivalent kernel approximation replacing P
+α ◦ ≈PE x[◦]and the
+one-hot expectations:
+E[xa
+i,βxa
+j,β] = δij
+V ,E[x a
+i,βxb
+j,β] = 1
+V 2 (a̸=b),E[x a
+j,β] = 1
+V .(141)
+Decomposition of labels
+We start by computing the spanning coefficients ofy
+yT
+i v0,0 = 1√
+P L
+X
+α,a
+xa−1
+iα ≈
+√
+P L 1
+V ,(142)
+yT
+i v0,k≥1 = 1√
+P L2
+X
+α,a
+xa−1
+i,α
+X
+j
+ei 2π
+V kjX
+b
+xb
+j,α (143)
+= 1√
+P
+X
+α,a
+X
+j
+ei 2π
+V kj
+ 1
+L
+X
+b
+δa−1,bxa−1
+i,α xa−1
+j,α +
+ 
+1−δ a−1,b
+xa−1
+i,α xb
+j,α
+
+(144)
+≈ 1√
+P
+P
+X
+a
+X
+j
+ei 2π
+V kj 1
+L
+ δij
+V + (L−1) 1
+V 2
+
+=
+√
+P ei 2π
+V ki 1
+V ,(145)
+yT
+i v1,k≥1 = 1p
+P L(1−L −1)
+X
+α,a
+X
+j
+ei 2π
+V kj xa−1
+i,α
+
+xa−1
+j,α − 1
+L
+X
+b
+xb
+j,α
+
+(146)
+= 1p
+P L(1−L −1)
+X
+α,a
+X
+j
+ei 2π
+V kj
+
+xa−1
+i,α xa−1
+j,α (147)
+− 1
+L
+X
+b
+ 
+δa−1,bxa−1
+i,α xa−1
+j,α +
+ 
+1−δ a−1,b
+xa−1
+i,α xb
+j,α
+
+(148)
+≈ 1p
+P L(1−L −1)
+P
+X
+a
+X
+j
+ei 2π
+V kj
+ δij
+V − 1
+L
+ δij
+V + (L−1) 1
+V 2
+
+(149)
+=
+r
+P L
+1−L −1 ei 2π
+V ki 1
+V
+
+1− 1
+L
+
+.(150)
+29
+
+
+===== PAGE 30 =====
+Decomposition of operator-matrix-contraction
+We look at the termG TC(xx)Gand make the ansatzG=c 11L +c GG∗. Inserting this ansatz, we
+haveX
+bd
+GabGcdC(xx)
+bd,αβ =c 2
+1
+X
+bd
+Cbd +c 1cG
+X
+b
+Cb,c−1 +c Gc1
+X
+d
+Ca−1,d +c 2
+GCa−1,c−1,(151)
+corresponding to the four operator pairs(1 L,1 L),(1 L,G ∗),(G ∗,1 L),(G ∗,G ∗). We compute
+the action of each on the Fourier basis vectorsv 0,0,v 0,k≥1,v 1,k≥1 from the right, i.e. we evaluateP
+β,c
+P
+bd M ab
+L C(xx)
+bd,αβM cd
+R [v]c
+β.
+We first look at the term corresponding to(1L,1 L), so the application ofP
+bd Cbd,αβ to the Fourier
+basis.
+Forv 0,0, we have
+X
+β,c
+X
+bd
+C(xx)
+bd,αβ
+
+v0,0
+c
+β =
+X
+β,c
+X
+bd
+X
+i
+xb
+i,αxd
+i,β +δ bd
+ 1√
+P L
+(152)
+≈ P√
+P L
+X
+c
+X
+bd
+X
+i
+xb
+i,α
+1
+V +δ bd
+
+(153)
+= P L2
+√
+P L
+ L
+V + 1
+
+=P L 2
+ L
+V + 1
+
+v0,0
+a
+α.(154)
+Forv 0,k≥1, we get
+X
+β,c
+X
+bd
+C(xx)
+bd,αβ
+
+v0,k≥1
+c
+β (155)
+=
+X
+β,c
+X
+bd
+X
+i
+xb
+i,αxd
+i,β +δ bd
+ 1√
+P L2
+X
+a
+X
+j
+ei 2π
+V kj xa
+j,β (156)
+= L√
+P L2
+X
+β
+X
+bd
+X
+i
+xb
+i,αxd
+i,β
+X
+a
+X
+j
+ei 2π
+V kj xa
+j,β +L
+X
+a
+X
+j
+ei 2π
+V kj xa
+j,β
+
+(157)
+= 1√
+P
+X
+β
+X
+bda
+X
+ij
+ei 2π
+V kj xb
+i,α
+ 
+δadxa
+i,βxa
+j,β +
+ 
+1−δ ad
+xd
+i,βxa
+j,β
+
++L
+X
+a
+X
+j
+ei 2π
+V kj xa
+j,β
+
+(158)
+≈ 1√
+P
+P
+X
+b
+X
+ij
+ei 2π
+V kj xb
+i,αL
+ δij
+V + L−1
+V 2
+
++L
+X
+a
+X
+j
+ei 2π
+V kj 1
+V
+
+(159)
+=
+√
+P
+X
+b
+X
+j
+ei 2π
+V kj xb
+j,αL 1
+V
+
+= P L2
+V
+
+v0,k≥1
+a
+α,(160)
+where the1/V 2 and1/Vterms vanish by Fourier orthogonality fork≥1.
+Finally, forv 1,k≥1 it is
+X
+β,c
+X
+bd
+C(xx)
+bd,αβ
+
+v1,k≥1
+c
+β (161)
+=
+X
+β,c
+X
+bd
+X
+i
+xb
+i,αxd
+i,β +δ bd
+ 1p
+P L(1−L −1)
+X
+j
+ei 2π
+V kj
+
+xc−1
+j,β − 1
+L
+X
+a
+xa
+j,β
+
+(162)
+= 1p
+P L(1−L −1)
+X
+β,c
+X
+j
+ei 2π
+V kj
+X
+i
+X
+bd
+xb
+i,αxd
+i,βxc−1
+j,β − 1
+L
+X
+abd
+xb
+i,αxd
+i,βxa
+j,β
+
++L
+
+xc−1
+j,β − 1
+L
+X
+a
+xa
+j,β
+
+(163)
+30
+
+
+===== PAGE 31 =====
+≈ Pp
+P L(1−L −1)
+X
+c
+X
+j
+ei 2π
+V kj
+X
+i
+X
+bd
+xb
+i,α
+
+δd,c−1 δij
+V +
+
+1−δ d,c−1
+ 1
+V 2
+
+− 1
+L
+X
+abd
+xb
+i,α
+
+δad δij
+V +
+ 
+1−δ ad 1
+V 2
+
++L
+ 1
+V − 1
+L
+X
+a
+1
+V
+
+(164)
+= Pp
+P L(1−L −1)
+X
+c
+X
+ij
+ei 2π
+V kj
+ X
+b
+xb
+i,α
+ δij
+V + (L−1) 1
+V 2
+
+−
+X
+b
+xb
+i,α
+ δij
+V + (L−1) 1
+V 2
+!
+(165)
+= 0.(166)
+Next, we consider the term from(1 L,G ∗)corresponding to P
+b Cb,c−1,αβ.
+Forv 0,0, we get
+X
+β,c
+X
+bd
+C(xx)
+bd,αβδc−1,d
+v0,0
+c
+β =
+X
+β,c
+X
+b
+X
+i
+xb
+i,αxc−1
+i,β +δ b,c−1
+ 1√
+P L
+(167)
+≈ P√
+P L
+X
+bc
+X
+i
+xb
+i,α
+1
+V +δ b,c−1
+
+(168)
+= P L√
+P L
+ L
+V + 1
+
+=P L
+ L
+V + 1
+
+v0,0
+a
+α.(169)
+Forv 0,k≥1, it is
+X
+β,c
+X
+bd
+C(xx)
+bd,αβδc−1,d
+v0,k≥1
+c
+β (170)
+=
+X
+β,c
+X
+b
+X
+i
+xb
+i,αxc−1
+i,β +δ b,c−1
+ 1√
+P
+1
+L
+X
+a
+X
+j
+ei 2π
+V kj xa
+j,β (171)
+= 1√
+P
+1
+L
+X
+β
+X
+bd
+X
+i
+xb
+i,αxd
+i,β
+X
+a
+X
+j
+ei 2π
+V kj xa
+j,β +L
+X
+a
+X
+j
+ei 2π
+V kj xa
+j,β
+
+(172)
+= 1√
+P
+1
+L
+X
+β
+X
+bda
+X
+ij
+ei 2π
+V kj xb
+i,α
+
+δadxa
+i,βxa
+j,β +
+ 
+1−δ ad
+xd
+i,βxa
+j,β
+
++L
+X
+a
+X
+j
+ei 2π
+V kj xa
+j,β
+
+(173)
+≈ 1√
+P
+1
+L P
+X
+b
+X
+ij
+ei 2π
+V kj xb
+i,αL
+ δij
+V + L−1
+V 2
+
++L
+X
+a
+X
+j
+ei 2π
+V kj 1
+V
+
+(174)
+= 1√
+P
+1
+L LP
+X
+b
+X
+j
+ei 2π
+V kj xb
+j,α
+1
+V
+
+= P L
+V
+
+v0,k≥1
+a
+α.(175)
+Applied tov 1,k≥1, we have
+X
+β,c
+X
+bd
+C(xx)
+bd,αβδc−1,d
+v1,k≥1
+c
+β (176)
+=
+X
+β,c
+X
+b
+X
+i
+xb
+i,αxc−1
+i,β +δ b,c−1
+ 1p
+P L(1−L −1)
+X
+j
+ei 2π
+V kj
+
+xc−1
+j,β − 1
+L
+X
+a
+xa
+j,β
+
+(177)
+= 1p
+P L(1−L −1)
+X
+β,c
+X
+j
+ei 2π
+V kj
+X
+i
+X
+b
+xb
+i,αxc
+i,βxc
+j,β − 1
+L
+X
+ab
+xb
+i,αxc
+i,βxa
+j,β
+
+31
+
+
+===== PAGE 32 =====
++
+
+xc
+j,β − 1
+L
+X
+a
+xa
+j,β
+
+,(178)
+where we relabelledc−1→c. Applying the equivalent kernel:
+≈ Pp
+P L(1−L −1)
+X
+c
+X
+j
+ei 2π
+V kj
+X
+i
+X
+b
+xb
+i,α
+δij
+V
+− 1
+L
+X
+ab
+xb
+i,α
+
+δac δij
+V +
+
+1−δ ac
+ 1
+V 2
+
++
+ 
+1
+V − 1
+L
+X
+a
+1
+V
+!
+(179)
+= Pp
+P L(1−L −1)
+X
+c
+X
+ij
+ei 2π
+V kj
+ X
+b
+xb
+i,α
+δij
+V − 1
+L
+X
+b
+xb
+i,α
+ δij
+V + (L−1) 1
+V 2
+!
+(180)
+= Pp
+P L(1−L −1)
+L
+V
+
+1− 1
+L
+X
+j
+ei 2π
+V kjX
+b
+xb
+j,α (181)
+= P L
+V
+r
+L
+
+1− 1
+L
+ 1√
+P
+1
+L
+X
+b
+X
+j
+ei 2π
+V kj xb
+j,α
+
+= P L
+√
+L−1
+V
+
+v0,k≥1
+a
+α.(182)
+For the terms switched in order(G ∗,1 L), we haveδ a−1,bP
+d Cbd,αβ.
+Forv 0,0, this yields
+X
+β,c
+X
+bd
+δa−1,bC(xx)
+bd,αβ
+
+v0,0
+c
+β =
+X
+β,c
+X
+d
+X
+i
+xa−1
+i,α xd
+i,β +δ a−1,d
+ 1√
+P L
+(183)
+≈ P√
+P L
+X
+c
+X
+d
+X
+i
+xa−1
+i,α
+1
+V +δ a−1,d
+
+(184)
+= P L√
+P L
+ L
+V + 1
+
+=P L
+ L
+V + 1
+
+v0,0
+a
+α.(185)
+Forv 0,k≥1, it is
+X
+β,c
+X
+bd
+δa−1,bC(xx)
+bd,αβ
+
+v0,k≥1
+c
+β (186)
+=
+X
+β,c
+X
+d
+X
+i
+xa−1
+i,α xd
+i,β +δ a−1,d
+ 1√
+P
+1
+L
+X
+a′
+X
+j
+ei 2π
+V kj xa′
+j,β (187)
+= 1√
+P
+X
+β
+X
+d
+X
+i
+xa−1
+i,α xd
+i,β
+X
+a′
+X
+j
+ei 2π
+V kj xa′
+j,β +
+X
+a′
+X
+j
+ei 2π
+V kj xa′
+j,β
+
+(188)
+= 1√
+P
+X
+β
+X
+da′
+X
+ij
+ei 2π
+V kj xa−1
+i,α
+ 
+δda′
+xa′
+i,βxa′
+j,β +
+ 
+1−δ da′
+xd
+i,βxa′
+j,β
+
++
+X
+a′
+X
+j
+ei 2π
+V kj xa′
+j,β
+
+(189)
+≈ P√
+P
+X
+da′
+X
+ij
+ei 2π
+V kj xa−1
+i,α
+
+δda′ δij
+V +
+
+1−δ da′ 1
+V 2
+
++
+X
+a′
+X
+j
+ei 2π
+V kj 1
+V
+
+(190)
+=
+√
+P L
+V
+X
+j
+ei 2π
+V kj xa−1
+j,α .(191)
+Now we decompose using (140), insertingx a−1
+j,α = (xa−1
+j,α − 1
+L
+P
+a′ xa′
+j,α) + 1
+L
+P
+a′ xa′
+j,α:
+= P L
+V
+p
+L(1−L −1)
+
+v1,k≥1
+a
+α + P L
+V
+
+v0,k≥1
+a
+α.(192)
+32
+
+
+===== PAGE 33 =====
+Forv 1,k≥1, we have
+X
+β,c
+X
+bd
+δa−1,bC(xx)
+bd,αβ
+
+v1,k≥1
+c
+β (193)
+=
+X
+β,c
+X
+d
+X
+i
+xa−1
+i,α xd
+i,β +δ a−1,d
+ 1p
+P L(1−L −1)
+X
+j
+ei 2π
+V kj
+
+xc−1
+j,β − 1
+L
+X
+a′
+xa′
+j,β
+
+(194)
+= 1p
+P L(1−L −1)
+X
+β,c
+X
+j
+ei 2π
+V kj
+X
+i
+X
+d
+xa−1
+i,α xd
+i,βxc−1
+j,β − 1
+L
+X
+da′
+xa−1
+i,α xd
+i,βxa′
+j,β
+
++
+
+xc−1
+j,β − 1
+L
+X
+a′
+xa′
+j,β
+
+(195)
+≈ Pp
+P L(1−L −1)
+X
+c
+X
+j
+ei 2π
+V kj
+X
+i
+
+xa−1
+i,α
+ δij
+V +
+
+L−1
+ 1
+V 2
+
+− 1
+L
+X
+a′
+xa−1
+i,α
+ δij
+V +
+
+L−1
+ 1
+V 2
+
++
+ 1
+V − 1
+L
+X
+a′
+1
+V
+
+(196)
+= 0,(197)
+since the two terms in the parentheses cancel identically after summing overc.
+Finally, for(G ∗,G ∗)we determine howC a−1,c−1,αβ acts onto the Fourier basis.
+Forv 0,0, we get
+X
+β,c
+X
+bd
+δa−1,bC(xx)
+bd,αβδc−1,d
+v0,0
+c
+β =
+X
+β,c
+X
+i
+xa−1
+i,α xc−1
+i,β +δ a−1,c−1
+ 1√
+P L
+(198)
+≈ P√
+P L
+X
+c
+X
+i
+xa−1
+i,α
+1
+V +δ a−1,c−1
+
+(199)
+= P√
+P L
+ L
+V + 1
+
+=P
+ L
+V + 1
+
+v0,0
+a
+α.(200)
+Forv 0,k≥1, we write
+X
+β,c
+X
+bd
+δa−1,bC(xx)
+bd,αβδc−1,d
+v0,k≥1
+c
+β (201)
+=
+X
+β,c
+X
+i
+xa−1
+i,α xc−1
+i,β +δ a−1,c−1
+ 1√
+P L2
+X
+a′
+X
+j
+ei 2π
+V kj xa′
+j,β (202)
+= 1√
+P L2
+X
+β
+X
+c
+X
+i
+xa−1
+i,α xc−1
+i,β
+X
+a′
+X
+j
+ei 2π
+V kj xa′
+j,β +
+X
+a′
+X
+j
+ei 2π
+V kj xa′
+j,β
+
+(203)
+= 1√
+P L2
+X
+β
+X
+ca′
+X
+ij
+ei 2π
+V kj xa−1
+i,α
+ 
+δc−1,a′
+xa′
+i,βxa′
+j,β
++
+ 
+1−δ c−1,a′
+xc−1
+i,β xa′
+j,β
+
++
+X
+a′
+X
+j
+ei 2π
+V kj xa′
+j,β
+
+(204)
+≈ P√
+P L2
+X
+ca′
+X
+ij
+ei 2π
+V kj xa−1
+i,α
+
+δc−1,a′ δij
+V +
+
+1−δ c−1,a′ 1
+V 2
+
++
+X
+a′
+X
+j
+ei 2π
+V kj 1
+V
+
+(205)
+= P√
+P L2
+L
+V
+X
+j
+ei 2π
+V kj xa−1
+j,α =
+√
+P
+V
+X
+j
+ei 2π
+V kj xa−1
+j,α .(206)
+33
+
+
+===== PAGE 34 =====
+Decomposing via (140):
+= P
+V
+p
+L(1−L −1)
+
+v1,k≥1
+a
+α + P
+V
+
+v0,k≥1
+a
+α.(207)
+Forv 1,k≥1, it is
+X
+β,c
+X
+bd
+δa−1,bC(xx)
+bd,αβδc−1,d
+v1,k≥1
+c
+β (208)
+=
+X
+β,c
+X
+i
+xa−1
+i,α xc−1
+i,β +δ a−1,c−1
+ 1p
+P L(1−L −1)
+X
+j
+ei 2π
+V kj
+
+xc−1
+j,β − 1
+L
+X
+a′
+xa′
+j,β
+
+(209)
+= 1p
+P L(1−L −1)
+X
+β,c
+X
+j
+ei 2π
+V kj
+X
+i
+
+xa−1
+i,α xc−1
+i,β xc−1
+j,β − 1
+L
+X
+a′
+xa−1
+i,α xc−1
+i,β xa′
+j,β
+
++
+
+xc−1
+j,β − 1
+L
+X
+a′
+xa′
+j,β
+
+.
+(210)
+Applying the equivalent kernel approximation:
+≈ Pp
+P L(1−L −1)
+X
+c
+X
+j
+ei 2π
+V kj
+X
+i
+
+xa−1
+i,α
+δij
+V − 1
+L
+X
+a′
+xa−1
+i,α
+
+δc−1,a′ δij
+V +
+
+1−δ c−1,a′
+ 1
+V 2
+
++
+ 1
+V − 1
+L
+X
+a′
+1
+V
+
+(211)
+= Pp
+P L(1−L −1)
+X
+c
+X
+ij
+ei 2π
+V kj
+
+xa−1
+i,α
+δij
+V − 1
+L xa−1
+i,α
+ δij
+V + (L−1) 1
+V 2
+
+(212)
+= Pq
+P L(1− 1
+L)
+L
+V
+
+1− 1
+L
+X
+j
+ei 2π
+V kj xa−1
+j,α .(213)
+Now decomposingx a−1
+j,α via (140):
+= Pq
+P L(1− 1
+L)
+L
+V
+
+1− 1
+L
+p
+P L(1−L −1) [v1,k]a
+α +
+√
+P[v 0,k]a
+α
+
+(214)
+= P(L−1)
+V
+
+v1,k≥1
+a
+α + P
+√
+L−1
+V
+
+v0,k≥1
+a
+α.(215)
+Explicit expression for the data term
+Collecting the results from all previous derivations, we have:
+Term v0,0 v0,k≥1 v1,k≥1
+(1L,1 L) P L2( L
+V + 1)v 0,0 P L2
+V v0,k 0
+(1L,G ∗) P L( L
+V + 1)v 0,0 P L
+V v0,k
+P L√L−1
+V v0,k
+(G∗,1 L) P L( L
+V + 1)v 0,0 P L
+V v0,k + P L√L−1
+V v1,k 0
+(G∗,G ∗) P( L
+V + 1)v 0,0 P
+V v0,k + P √L−1
+V v1,k
+P √L−1
+V v0,k + P(L−1)
+V v1,k
+We now assemble the full kernelg O
+P
+bd GabGcdC(xx)
+bd,αβ in the Fourier basis. SinceG=c 11L +
+cGG∗, we have
+GabGcd =c 2
+1 +c 1cGδc−1,d +c Gc1δa−1,b +c 2
+Gδa−1,bδc−1,d,(216)
+34
+
+
+===== PAGE 35 =====
+so the kernel is a weighted sum of the four terms computed in the previous section.
+Fork= 0, onlyv 0,0 contributes sincev 1,0 = 0. Reading off thev 0,0 →v 0,0 eigenvalue from each
+term in the summary table, we get
+K0 =g O
+
+c2
+1 ·P L 2
+ L
+V + 1
+
++c 1cG ·P L
+ L
+V + 1
+
++c Gc1 ·P L
+ L
+V + 1
+
++c 2
+G ·P
+ L
+V + 1
+
+(217)
+=g OP
+ L
+V + 1
+ 
+c1L+c G
+2
+.(218)
+Switching to normalized operators withˆc1 = c1
+L andˆcG = cG√
+L, we get
+K0 =g OP
+ L
+V + 1
+
+ˆc1 + ˆcG√
+L
+2
+.(219)
+Fork≥1, the kernel acts on the two-dimensional space(v 0,k,v 1,k). We can read off the2×2
+matrix representation of each term from the summary table.
+(1L,1 L):v 0,k → P L2
+V v0,k,v 1,k →0, so
+P
+V
+
+L2 0
+0 0
+
+.(220)
+(1L,G ∗):v 0,k → P L
+V v0,k,v 1,k → P L√L−1
+V v0,k, so
+P
+V
+
+L L
+√
+L−1
+0 0
+
+.(221)
+(G∗,1 L):v 0,k → P L
+V v0,k + P L√L−1
+V v1,k,v 1,k →0, so
+P
+V
+ L0
+L
+√
+L−1 0
+
+.(222)
+(G∗,G ∗):v 0,k → P
+V v0,k + P √L−1
+V v1,k,v 1,k → P √L−1
+V v0,k + P(L−1)
+V v1,k, so
+P
+V
+
+1
+√
+L−1√
+L−1L−1
+
+.(223)
+The full kernel matrix fork≥1is
+Kk =g O
+
+c2
+1
+P
+V
+
+L2 0
+0 0
+
++c 1cG
+P
+V
+
+L L
+√
+L−1
+0 0
+
++c Gc1
+P
+V
+ L0
+L
+√
+L−1 0
+
++c 2
+G
+P
+V
+
+1
+√
+L−1√
+L−1L−1
+
+(224)
+= gOP
+V
+
+c2
+1L2 + 2c1cGL+c 2
+G c1cGL
+√
+L−1 +c 2
+G
+√
+L−1
+cGc1L
+√
+L−1 +c 2
+G
+√
+L−1c 2
+G(L−1)
+
+.(225)
+Altogether, we obtain
+Kk = gOP
+V
+
+(c1L+c G)2 (c1L+c G)cG
+√
+L−1
+(c1L+c G)cG
+√
+L−1c 2
+G(L−1)
+
+= gOP
+V u uT,(226)
+where
+u=
+ c1L+c G
+cG
+√
+L−1
+
+=
+
+ˆc1 + ˆcG/
+√
+L
+ˆcG
+p
+(L−1)/L
+
+.(227)
+We again replaced the bare operators by normalized operatorsc 11L 7→ˆc1 1
+L 1L andc GG∗ 7→
+ˆcG 1√
+L G∗. The final result is a rank-1 matrix, which will allow closed-form inversion via Sherman–
+Morrison.
+35
+
+
+===== PAGE 36 =====
+Inversion of kernel using Sherman-Morrison
+We want to express
+Sdata = 1
+2
+X
+ac,αβ,i
+ya
+i,α
+
+K+σ 2I
+−1
+yc
+i,β,(228)
+which in the Fourier basis becomes a sum over modes.
+First, we look at the contributions of modes withk= 0. Sincev 1,0 = 0, only the scalar modev 0,0
+contributes with
+Sdata,0 = 1
+2
+X
+i
+|yT
+i v0,0|2
+K0 +σ 2 = 1
+2 · V·P L/V 2
+K0 +σ 2 = 1
+2 · P L/V
+K0 +σ 2 ,(229)
+where we used|y T
+i v0,0|2 =P L/V 2 (independent ofi) and P
+i 1 =V. SubstitutingK 0:
+Sdata,0 = P L/V
+2
+h
+gOP
+ 
+ˆc1 + ˆcG/
+√
+L
+2
+(L/V+ 1) +σ 2
+i .(230)
+For modes withk≥1, the matrix to invert isK k +σ 2I= gOP
+V uuT +σ 2I. Since this is a rank-1
+update ofσ 2I, the Sherman–Morrison formula gives
+ 
+σ2I+Auu T−1
+= 1
+σ2 I− A
+σ2(σ2 +A|u| 2) uuT,(231)
+whereA=g OP/V. We now compute|u| 2:
+|u|2 = (c1L+c G)2 +c 2
+G(L−1)(232)
+=
+
+ˆc1 + ˆcG√
+L
+2
++ ˆc2
+G
+L−1
+L .(233)
+The quadratic formy †
+i,k(Kk +σ 2I) −1yi,k becomes
+y†
+i,k(Kk +σ 2I) −1yi,k = 1
+σ2 |yi,k|2 − A
+σ2(σ2 +A|u| 2) |uTyi,k|2.(234)
+The first term gives
+|yi,k|2 = P
+V 2 (1 +L−1) = P L
+V 2 .(235)
+Next, the inner productu Tyi,k yields
+uTyi,k =
+√
+P
+V ei 2π
+V ki
+h
+(c1L+c G)·1 +c G
+√
+L−1·
+√
+L−1
+i
+(236)
+=
+√
+P
+V ei 2π
+V ki
+c1L+c G +c G(L−1)
+
+(237)
+=
+√
+P
+V ei 2π
+V ki ·L(c 1 +c G).(238)
+In normalized coordinates,L(c 1 +c G) =L(ˆc1/L+ ˆcG/
+√
+L) = ˆc1 +
+√
+LˆcG, so
+|uTyi,k|2 = P
+V 2 (ˆc1 +
+√
+LˆcG)2.(239)
+Substituting into the quadratic form yields
+y†
+i,k(Kk +σ 2I) −1yi,k = P L
+V 2σ2 − (gOP/V)·P(ˆc 1 +
+√
+LˆcG)2
+V 2σ2(σ2 + (gOP/V)|u| 2) .(240)
+36
+
+
+===== PAGE 37 =====
+This is independent ofisince|e i2πki/V |2 = 1. Summing overi= 0, . . . , V−1gives a factor ofV,
+and summing overk= 1, . . . , V−1givesV−1identical terms (using thatK k is independent ofk
+fork≥1):
+Sdata,k≥1 = 1
+2
+V−1X
+k=1
+V−1X
+i=0
+y†
+i,k(Kk +σ 2I) −1yi,k (241)
+= (V−1)V
+2
+ P L
+V 2σ2 − gOP 2(ˆc1 +
+√
+LˆcG)2
+V 3σ2(σ2 + gOP
+V |u|2)
+
+(242)
+= V−1
+2
+ P L
+V σ2 − gOP 2(ˆc1 +
+√
+LˆcG)2
+V 2σ2(σ2 + gOP
+V |u|2)
+
+.(243)
+Combining all terms, we get
+Sdata(ˆc1,ˆcG) = P L/V
+2
+
+gOP(ˆc1 + ˆcG/
+√
+L)2(L/V+ 1) +σ 2+ V−1
+2
+ P L
+V σ2 − gOP 2(ˆc1 +
+√
+LˆcG)2
+V 2σ2 
+σ2 + gOP
+V |u|2
+
+,
+(244)
+where|u| 2 = (ˆc1 + ˆcG/
+√
+L)2 + ˆc2
+G(L−1)/L.
+F Fluctuation Term
+In this section, we derive an expression for
+ln det
+h
+gO
+X
+b,d
+GabGcd C(xx)
+bd,αβ +σ 2I
+i
+,(245)
+in the basisG=c 11L +c GG∗ and then transform to the normalized basis(ˆc1,ˆcG)in the end. We
+denote the matrix inside the determinant asK+σ 2I.
+Identifying all eigenspaces and eigenvalue structure
+The Fourier basis{v0,0,v 0,k≥1,v 1,k≥1}used in the previous section spans a(2V−1)-dimensional
+subspace ofR LP . For the fluctuation term, we must carefully check what happens on the orthog-
+onal complement, because theδ bd term inC (xx)
+bd,αβ = P
+i xb
+i,αxd
+i,β +δ bd can produce non-trivial
+eigenvalues there.
+Consider vectors of the form
+[wm]c
+β = 1√
+P
+fm(c), m= 1, . . . , L−1,(246)
+that are constant in the data indexβwhile being traceless in the sequences index P
+c fm(c) = 0.
+These giveL−1independent directions and they are orthogonal to all Fourier basis vectors:
+•v 0,0:P
+c,β[wm]c
+β[v0,0]c
+β ∝P
+c fm(c) = 0.
+•v 0,k≥1:P
+c,β[wm]c
+β[v0,k]c
+β ∝P
+c fm(c)P
+β
+P
+j ei 2π
+V kj xa
+j,β ∝0 P
+β
+P
+j ei 2π
+V kj xa
+j,β = 0.
+•v 1,k≥1: P
+c,β[wm]c
+β[v1,k]c
+β ∝ P
+β
+P
+j ei 2π
+V kjP
+c fm(c)(xc−1
+j,β − 1
+L
+P
+a xa
+j,β). Under the
+equivalent kernel,P
+β xc
+j,β ≈P/V, so P
+β(xc−1
+j,β − 1
+L
+P
+a xa
+j,β)≈0.
+We now compute[Kw m]a
+α =g O
+P
+c,β
+P
+bd GabGcdC(xx)
+bd,αβ[wm]c
+β, separating the two parts of
+C(xx).
+For the data termP
+i xb
+i,αxd
+i,β, we get
+gO
+X
+c,β
+X
+bd
+GabGcd
+X
+i
+xb
+i,αxd
+i,β
+ fm(c)√
+P
+(247)
+37
+
+
+===== PAGE 38 =====
+= gO√
+P
+X
+bd
+Gab
+X
+i
+xb
+i,α
+X
+β
+xd
+i,β
+X
+c
+Gcdfm(c).(248)
+Under the equivalent kernel,P
+β xd
+i,β ≈P/V, so the factor P
+i xb
+i,α ·P/V=P x b
+·,α/Vis indepen-
+dent ofd. ThenX
+d
+X
+c
+Gcdfm(c) =
+X
+c
+fm(c)
+X
+d
+Gcd =
+X
+c
+fm(c)
+ 
+c1L+c G
+
+= (c1L+c G)
+X
+c
+fm(c) = 0,
+(249)
+sinceP
+d Gcd =c 1L+c G is independent ofcand P
+c fm(c) = 0. So the data part vanishes.
+For the identity termδ bd part, we get
+gO
+X
+c,β
+X
+bd
+GabGcdδbd fm(c)√
+P
+= gO√
+P
+X
+β
+1
+|{z}
+=P
+X
+b
+GabX
+c
+Gcbfm(c).(250)
+We computeP
+b GabGcb explicitly. SinceG ab =c 1 +c Gδa−1,b:
+X
+b
+GabGcb =
+X
+b
+(c1 +c Gδa−1,b)(c1 +c Gδc−1,b)(251)
+=c 2
+1L+c 1cG +c Gc1 +c 2
+Gδa−1,c−1 (252)
+=c 2
+1L+ 2c 1cG +c 2
+Gδac.(253)
+The first two terms are independent ofc, so contracting withf m(c)with P
+c fm(c) = 0kills them:
+X
+c
+(c2
+1L+ 2c 1cG +c 2
+Gδac)fm(c) =c 2
+Gfm(a).(254)
+Therefore
+[Kw m]a
+α =g OP c2
+G · fm(a)√
+P
+=g OP c2
+G [wm]a
+α,(255)
+with eigenvalueλ w =g OP c2
+G = gOPˆc2
+G
+L .
+Deriving the full log-determinant
+Taking together the results from the previous section, we have that theLP-dimensional space de-
+composes as:
+Subspace Multiplicity Eigenvalue ofK+σ 2I
+v0,0 1 K0 +σ 2
+(v0,k,v 1,k), non-trivial direction V−1 σ2 + gOP
+V |u|2
+(v0,k,v 1,k), trivial direction V−1 σ2
+wm L−1 gOP c2
+G +σ 2
+Null space LP−L−2V+ 2 σ2
+We now switch to the normalized coordinatesc 1 7→ ˆc1
+L andc G 7→ ˆcG√
+L.
+Forv 0,0, we get a scalar:
+ln(K0 +σ 2) = ln
+
+gOP
+
+ˆc1 + ˆcG√
+L
+2 L
+V + 1
+
++σ 2
+
+.(256)
+Next, we determine thev i,k≥1 component. Each2×2block has the formσ 2I2 +Auu T where
+A=g OP/V. By the matrix determinant lemma:
+det(σ2I2 +Auu T) = det(σ2I2)·
+ 
+1 +Au T(σ2I2)−1u
+
+=σ 4
+
+1 + A
+σ2 |u|2
+
+.(257)
+38
+
+
+===== PAGE 39 =====
+Taking the logarithm and summing overk= 1, . . . , V−1(the kernel is independent ofk), we
+obtain
+V−1X
+k=1
+ln det
+h gOP
+V uuT +σ 2I2
+i
+= (V−1)
+
+2 lnσ2 + ln
+
+1 + gOP
+V σ2 |u|2
+
+.(258)
+Forw m, each of the(L−1directions contributes the same term, yielding:
+(L−1) ln
+ gOPˆc2
+G
+L +σ 2
+
+.(259)
+From the remainingLP−L−2V+2directions of the null-space, each contributeslnσ 2. Combining
+all terms, we get
+ln det[K+σ 2I] = (LP−L) lnσ 2 + ln
+
+gOP
+
+ˆc1 + ˆcG√
+L
+2 L
+V + 1
+
++σ 2
+
++ (V−1) ln
+
+σ2 + gOP
+V |u|2
+
++ (L−1) ln
+ gOPˆc2
+G
+L +σ 2
+
+,
+(260)
+where|u| 2 = (ˆc1 + ˆcG/
+√
+L)2 + ˆc2
+G(L−1)/L.
+The term(LP−L) lnσ 2 is independent of(ˆc 1,ˆcG)and can be dropped. The term(L−
+1) ln(gOPˆc2
+G/L+σ 2)arises from theδ bd part ofC (xx) acting on directions that are constant in
+the data indexαbut traceless in the copy indexa.
+G Mapping the Posterior Through the Softmax
+We derive here the one-dimensional posterior for softmax attention theory, withsoftmaxexplicitly
+defined as
+softmaxa(x) = exa
+PL
+a=1 exa .(261)
+The starting point is the posterior over the pre-softmax attention scores from linear attention re-
+stricted to the two-dimensional order-parameter ansatz
+G= ˆc1
+1L
+L + ˆcG
+G∗
+√
+L
+, G ∗
+ab =δ a−1,b.(262)
+For softmax attention, the actual attention matrix is the row-wise softmax of the score matrix. With
+the normalization used in the main text, this means
+A= softmax(LG).(263)
+The posterior overAis therefore the pushforward of the posterior overG,
+p(A) =
+Z
+dˆc1 dˆcG δ(A−softmax(LG(ˆc1,ˆcG)))p(ˆc1,ˆcG)(264)
+Eliminating the uniform mode.The softmax is invariant under adding a constant to every entry
+in a row. In the ansatz above, theˆc1 direction shifts all entries in each row by the same amount, and
+therefore drops out of the softmax. Explicitly,
+softmax(LG) = e
+√
+LˆcG+ˆc1
+(L−1)e ˆc1 +e
+√
+LˆcG+ˆc1
+,(265)
+so that the common factore ˆc1 cancels between numerator and denominator. Thus the softmax
+attention pattern depends only onˆcG. Thus, each row can be taken to have one copy entry, where
+Gab = ˆcG/
+√
+L, andL−1non-copy entries, whereG ab = 0, hence
+AG(ˆcG) = e
+√
+LˆcG
+L−1 +e
+√
+LˆcG
+, A 1(ˆcG) = 1
+L−1 +e
+√
+LˆcG
+,(266)
+39
+
+
+===== PAGE 40 =====
+whereA G denotes the attention weight on the copy position andA 1 the weight on each of the other
+L−1positions. These variables obey the row-normalization constraint
+AG + (L−1)A 1 = 1.(267)
+Consequently, the pushforward posterior is supported on a one-dimensional manifold in the space
+of row-normalized attention matrices.
+Let
+p(ˆcG) =
+Z
+dˆc1 p(ˆc1,ˆcG)(268)
+be the marginal posterior over the softmax-relevant score direction. Then the induced distribution
+over the copy entry is
+p(AG) =
+Z
+dˆcG δ
+ 
+AG − e
+√
+LˆcG
+L−1 +e
+√
+LˆcG
+!
+p(ˆcG)(269)
+and,
+p(AG, A1) =δ
+
+A1 − 1−A G
+L−1
+
+p(AG).(270)
+Inverse map.The map in Eq. (266) is monotone inˆc G, so we can invert it explicitly. Starting from
+AG = e
+√
+LˆcG
+L−1 +e
+√
+LˆcG
+,(271)
+we obtain
+AG(L−1) =e
+√
+LˆcG(1−A G),(272)
+and therefore
+ˆcG(AG) = 1√
+L
+log
+(L−1)A G
+1−A G
+
+.(273)
+The corresponding Jacobian is
+dˆcG
+dAG
+= 1√
+L AG(1−A G)
+,(274)
+so the one-dimensional pushforward density can be written as
+p(AG) = p(ˆcG(AG))√
+L AG(1−A G)
+.(275)
+Softmax order parameter .In the main text we express the post-softmax attention matrix in the
+same structural basis as the linear-attention ansatz
+A= ˆa1
+1L
+L + ˆaG
+G∗
+√
+L
+.(276)
+SinceAis row-normalized, the two coefficients are not independent:
+ˆa1 + ˆaG√
+L
+= 1,ˆa 1 = 1− ˆaG√
+L
+.(277)
+The entries of the attention matrix are therefore
+AG = ˆa1
+L + ˆaG√
+L
+=
+1 + L−1√
+L ˆaG
+L , A 1 = ˆa1
+L =
+1− 1√
+LˆaG
+L .(278)
+Substituting Eq. (278) into Eq. (273) gives the softmax inverse map used in the main text:
+ˆcG(ˆaG) = 1√
+L
+log
+"1 + L−1√
+L ˆaG
+1− 1√
+LˆaG
+#
+.(279)
+The allowed range is
+−
+√
+L
+L−1 <ˆaG <
+√
+L,(280)
+40
+
+
+===== PAGE 41 =====
+which is exactly the condition that bothA G andA 1 are positive.
+For completeness, the Jacobian in theˆaG coordinate is
+dˆcG
+dˆaG
+= 1
+1 + L−1√
+L ˆaG
+
+1− 1√
+LˆaG
+ .(281)
+Thus the exact one-dimensional pushforward density contains a Jacobian contribution
+p(ˆaG)∝exp[−S softmax(ˆaG)],(282)
+Ssoftmax(ˆaG) =S prior(ˆcG(ˆaG)) +S data(ˆa1(ˆaG),ˆaG)−log
+
+dˆcG
+dˆaG
+ .(283)
+The Jacobian term is subleading in the large-χLsaddle-point limit because the prior and data terms
+scale asχL, while the Jacobian contributes only an additive logarithmic correction. We therefore
+drop it in the saddle-point analysis in the main text.
+Softmax action.We now substitute the map above into the reduced action. The prior term is
+obtained from Eq. (12) by settingˆc 1 = 0, sinceˆc 1 is a uniform mode that gets absorbed by the
+softmax and is fixed to zero by the prior at the saddle point. Using Eq. (279), this gives
+Ssoftmax
+prior (ˆaG) = χL
+2
+(L+V) 2 −L−2V
+gW (L+V) 2 log2
+"1 + L−1√
+L ˆaG
+1− 1√
+LˆaG
+#
+.(284)
+The data term depends only on the post-softmax attention matrix itself. Therefore, in Eq. (15) we
+substitute
+ˆc1 7→ˆa1 = 1− ˆaG√
+L
+,ˆc G 7→ˆaG.(285)
+Under this substitution,
+ˆa1 + ˆaG√
+L
+= 1,(286)
+so the uniform-mode contribution is independent ofˆaG and can be dropped when determining the
+saddle point. The nontrivial copy-sensitive part gives
+Ssoftmax
+data (ˆaG) =− χL
+2
+P
+σ2
+V−1
+V
+
+1 +
+√
+LˆaG − ˆaG√
+L
+2
+gO
+ 
+1 + L−1
+L ˆa2
+G
+
+gO + σ2
+P V
+,(287)
+up to terms independent ofˆaG.
+Combining Eqs. (284) and (287), and dropping constants and the subleading Jacobian term, yields
+Ssoftmax(ˆaG) = χL
+2
+"
+(L+V) 2 −L−2V
+gW (L+V) 2 log2
+ 1 + L−1√
+L ˆaG
+1− 1√
+LˆaG
+!
+− P
+σ2
+V−1
+V
+
+1 +
+√
+LˆaG − ˆaG√
+L
+2
+gO
+ 
+1 + L−1
+L ˆa2
+G
+
+gO + σ2
+P V
+#
+.
+(288)
+Finally, writingσ 2 = ¯σ2Land keeping the leading large-Lterms gives the expression in the main
+text:
+Ssoftmax(ˆaG) = χL
+2
+
+ 1
+gW
+log2
+ 
+1 +
+√
+LˆaG
+1−ˆaG/
+√
+L
+!
+− P
+¯σ2L
+V−1
+V
+
+ˆaG + 1√
+L
+2
+gO
+(ˆa2
+G + 1)gO + ¯σ2L
+P V
++O
+ 1
+L
+
+
+ .
+(289)
+41
+
+
+===== PAGE 42 =====
+H From the Reduced Action to the Training Loss
+We start from the marginal likelihood of the labels before integrating out the network outputs:
+Z(σ2) :=p({y α} | {x α}α)∝
+Z
+DG
+Z
+Dfp(G|X)p(F|G) exp
+
+− 1
+2σ2
+PX
+α=1
+∥yα −f α∥2
+2
+
+.
+(290)
+Differentiating (290) with respect toσ 2 gives
+∂Z
+∂σ2 =
+Z
+DG
+Z
+Dfp(G|X)p(F|G) ∂
+∂σ2 exp
+
+− 1
+2σ2
+PX
+α=1
+∥yα −f α∥2
+2
+
+= 1
+2σ4
+Z
+DG
+Z
+Df
+ PX
+α=1
+∥yα −f α∥2
+2
+
+p(G|X)p(F|G) exp
+
+− 1
+2σ2
+PX
+α=1
+∥yα −f α∥2
+2
+
+.
+(291)
+Dividing byZ(σ 2), we obtain
+σ4 ∂
+∂σ2 lnZ(σ 2) = 1
+2
+* PX
+α=1
+∥yα −f α∥2
+2
++
+,(292)
+where⟨· · · ⟩denotes the posterior average with respect to the measure in (290). Thus, differentiating
+the log-marginal likelihood with respect toσ 2 brings down the quadratic data-fit term.
+Relation to the reduced action.After integrating outFand projecting onto the two-dimensional
+ansatz
+G= ˆc1
+1L
+L + ˆcG
+G∗
+√
+L
+,(293)
+the same marginal likelihood takes the form
+Z(σ2)∝
+Z
+dˆc1 dˆcG e−S(ˆc1,ˆcG;σ2).(294)
+Differentiating (294) yields
+∂
+∂σ2 lnZ(σ 2) =
+R
+dˆc1 dˆcG
+ 
+∂σ2 S(ˆc1,ˆcG;σ 2)
+
+e−S(ˆc1,ˆcG;σ2)
+R
+dˆc1 dˆcG e−S(ˆc1,ˆcG;σ2) =
+D
+∂σ2 S
+E
+ˆc1,ˆcG
+,(295)
+where the average is now taken with respect to the reduced posterior over(ˆc1,ˆcG).
+In the large-χlimit used in the main text, the reduced posterior is sharply peaked and the integral
+(294) is dominated by its saddle point. Writing
+(ˆc⋆
+1,ˆc⋆
+G) = arg min
+ˆc1,ˆcG
+S(ˆc1,ˆcG;σ 2),(296)
+we have, to leading order in the saddle-point approximation,
+lnZ(σ 2)≃ S(ˆc⋆
+1,ˆc⋆
+G;σ 2), ∂
+∂σ2 lnZ(σ 2)≃ d
+dσ2 S(ˆc⋆
+1,ˆc⋆
+G;σ 2).(297)
+Using the chain rule,
+d
+dσ2 S(ˆc⋆
+1,ˆc⋆
+G;σ 2) = ∂S
+∂σ2 + ∂S
+∂ˆc1
+dˆc⋆
+1
+dσ2 + ∂S
+∂ˆcG
+dˆc⋆
+G
+dσ2 .(298)
+At the saddle point, however,
+∂S
+∂ˆc1
+
+(ˆc⋆
+1 ,ˆc⋆
+G)
+= 0, ∂S
+∂ˆcG
+
+(ˆc⋆
+1 ,ˆc⋆
+G)
+= 0,(299)
+so the implicit derivatives of the order parameters drop out and
+d
+dσ2 S(ˆc⋆
+1,ˆc⋆
+G;σ 2) = ∂S(ˆc1,ˆcG;σ 2)
+∂σ2
+
+(ˆc1,ˆcG)=(ˆc⋆
+1 ,ˆc⋆
+G)
+.(300)
+42
+
+
+===== PAGE 43 =====
+Combining (292), (297), and (300), we obtain the relation
+1
+2
+* PX
+α=1
+∥yα −f α∥2
+2
++
+≃σ 4 ∂S(ˆc1,ˆcG;σ 2)
+∂σ2
+
+(ˆc1,ˆcG)=(ˆc⋆
+1 ,ˆc⋆
+G)
+.(301)
+Under the equivalent-kernel (EK) approximation ( P
+α ◦ ≈PE x[◦]), which is valid whenσ 2 ≫P
+a(ya −f a(x))2, the generalization gap is small [44, 42] and we find
+1
+2
+
+Ex∥y(x)−f(x)∥ 2
+2
+
+≃ σ4
+P
+∂S(ˆc1,ˆcG;σ 2)
+∂σ2
+
+(ˆc1,ˆcG)=(ˆc⋆
+1 ,ˆc⋆
+G)
+.(302)
+I Probability Distribution of Gaussian Matrix ProductW QTW K
+The probability distribution of the matrix productW G =W QTW K in the attention layer is given
+by
+p(W G) =
+Z
+DW Q
+Z
+DW K Y
+nm
+δ
+ 
+W G
+nm −
+X
+l
+W Q
+lnW K
+lm
+
+p(W K)p(W Q)(303)
+=
+Z
+D ˜W G
+Z
+DW Q
+Z
+DW K exp
+ X
+nm
+˜W G
+nm
+ 
+W G
+nm −
+X
+l
+W Q
+lnW K
+lm
+
+p(W K)p(W Q)
+(304)
+=
+Z
+D ˜W G exp
+X
+nm
+˜W G
+nmW G
+nm −ln
+D
+exp
+X
+nml
+˜W G
+nmW Q
+lnW K
+lm
+E
+W Q,W K
+
+,(305)
+where we rewrite theδ-function using its Fourier representation as in previous sections.
+We identify the second term as the cumulant-generating function ofW G and calculate it to obtain
+its statistics
+W( ˜W G) = ln
+D
+exp
+X
+nml
+˜W G
+nmW Q
+lnW K
+lm
+E
+W Q,W K
+(306)
+= ln
+Y
+l
+DD
+exp
+X
+nm
+˜W G
+nmW Q
+lnW K
+lm
+E
+W K
+E
+W Q
+(307)
+= ln
+Y
+l
+D
+exp
+1
+2
+gK
+dmodel
+X
+nmk
+˜W G
+nm ˜W G
+kmW Q
+lnW Q
+lk
+E
+W Q
+(308)
+=d k ln
+D
+exp
+1
+2
+gK
+dmodel
+X
+nmk
+˜W G
+nm ˜W G
+kmW Q
+n W Q
+k
+E
+W Q
+.(309)
+In the last line, we used the independence inlto pull out a factord k. Explicitly inserting the prior
+ofW Q, we get
+W( ˜W G) =d k ln exp
+
+− 1
+2
+X
+nm
+W Q
+n
+
+− gK
+dmodel
+X
+m
+˜W G
+nm ˜W G
+nm + dmodel
+gQ
+δnm
+
+W Q
+m
+
+×det
+ dmodel
+gQ
+I
+1/2
+(310)
+=d k ln
+
+det
+X
+nm
+dmodel
+gQ
+δnm − gK
+dmodel
+X
+nm
+˜W G
+nm ˜W G
+nm
+−1/2
+det
+ dmodel
+gQ
+I
+1/2
+(311)
+=d k ln
+
+det
+X
+nm
+δnm − gKgQ
+d2
+model
+X
+nm
+˜W G
+nm ˜W G
+nm
+−1/2
+(312)
+=− dk
+2 ln det
+
+I− gKgQ
+d2
+model
+˜W G ˜W GT
+
+(313)
+Thus, up to normalization constants and prefactors,
+I(W G) :=−lnp(W G)(314)
+43
+
+
+===== PAGE 44 =====
+= sup
+˜W G
+
+Tr
+ ˜W GTW G
+− W( ˜W G)
+
+(315)
+= sup
+˜W G
+
+Tr
+ ˜W GTW G
++ dk
+2 ln det
+
+I− gKgQ
+d2
+model
+˜W G ˜W GT
+
+.(316)
+Since the second term depends only on the singular values of ˜W G, the saddle point aligns the
+singular vectors of ˜W G with those ofW G. Writing
+W G =Udiag(σ i)V T, ˜W G =Udiag(˜σi)V T,(317)
+we obtain
+I(W G) = sup
+˜σi
+X
+i
+
+˜σiσi + dk
+2 ln
+
+1− gKgQ
+d2
+model
+˜σ2
+i
+
+.(318)
+The saddle point satisfies
+0 = ∂
+∂˜σj
+ X
+i
+˜σiσi + dk
+2
+X
+i
+ln
+
+1− gKgQ
+d2
+model
+˜σ2
+i
+!
+(319)
+=σ j −d k
+gKgQ
+d2
+model
+˜σj
+1− gK gQ
+d2
+model
+˜σ2
+j
+.(320)
+Equivalently,
+σj ˜σ2
+j +d k˜σj −σ j
+d2
+model
+gKgQ
+= 0.(321)
+The maximizing branch is
+˜σ⋆
+j =
+−dk +
+q
+d2
+k + 4σ2
+j
+d2
+model
+gK gQ
+2σj
+=
+s
+d2
+k
+4σ2
+j
++ d2
+model
+gKgQ
+− dk
+2σj
+.(322)
+Substituting this saddle point back into the Legendre transform gives
+I(W G) = dk
+2
+X
+i
+
+
+s
+1 + 4d2
+modelσ2
+i
+d2
+kgKgQ
+−1 + ln
+
+
+2
+1 +
+r
+1 + 4d2
+modelσ2
+i
+d2
+kgK gQ
+
+
+
+ .(323)
+At small singular values, the exact rate function expands as
+I(W G) = d2
+model
+2dkgKgQ
+X
+i
+σ2
+i +O
+ X
+i
+σ4
+i
+!
+≈ d2
+model
+2dkgKgQ
+∥W G∥2
+F (324)
+Thus, near the origin, the effective regularization induced by the Gaussian product prior is standard
+ℓ2 weight decay / Gaussian prior on the combined matrixW G.
+At large singular values, the leading term is linear in the singular values,
+I(W G) = dmodel
+√gKgQ
+X
+i
+|σi|+O(lnσ i)≈ dmodel
+√gKgQ
+∥W G∥∗.(325)
+Therefore, for generald k, the exact product prior interpolates between Frobenius-norm regulariza-
+tion at small singular values and nuclear-norm regularization in the tails.
+The Gaussian approximation is valid when the typical singular values ofW G are small compared
+to the crossover scaleσ ∗ =d k
+√gKgQ/(2dmodel)at which correction to Eq. (324) become large.
+Since the entries ofW G have varianced kgKgQ/d2
+model andW G is ad model ×d model matrix, its
+typical singular values scale asσ typ ∼
+p
+dkgKgQ/dmodel. The ratio to the crossover scale is
+σtyp
+σ∗
+∼2
+r
+dmodel
+dk
+,(326)
+44
+
+
+===== PAGE 45 =====
+which is independent ofg KgQ – rescaling the variances shifts both scales identically, so they cancel.
+The Gaussian approximation is therefore self-consistently valid only whendk ≫d model, and breaks
+down whend k ≈d model, where typical singular values sit right at the crossover between theℓ 2 and
+nuclear-norm regimes.
+This nuclear-norm behavior aligns with recent work showing that factorizing the key and query ma-
+trices changes the implicit regularization of attention. For one-layer softmax attention, [60] showed
+that gradient flow with separately trained key and query matrices implicitly minimizes the nuclear
+norm of their product. Similarly, [61] showed that the factorized(W K,W Q)parametrization in-
+duces a nuclear-norm SVM over the combined matrixW=W QW K⊤, rather than the Frobenius-
+norm objective obtained by optimizingWdirectly. Relatedly, [40] analyzed the in-context regres-
+sion setting and compared the saddle-point structure of the fused and factorized dynamics.
+Nevertheless, many theoretical works replace the key-query product by a single fused matrix [37, 20,
+35, 38]. Our results above clarify that this replacement is benign whend k ≫d model and pinpoint
+when the effective regularization crosses over fromℓ 2 weight decay to nuclear norm. Remarkably,
+at the level of attention patterns instead of on the level of the weights this approximation hold when
+dmodel, dk ≫Las we show in Appendix B.
+J Extension to multiple attention layers
+To extend the theory to linear transformers withMlayers, each with a single attention head, we
+generalize the single layer case as
+h(ℓ+1)a
+i (x) =G (ℓ)ab B(ℓ)
+ij h(ℓ)b
+j ,1≤ℓ≤M−1,(327)
+G(ℓ)ab = 1
+L
+√
+d
+h(ℓ)a
+i W (ℓ)
+ij h(ℓ)b
+j ,(328)
+together with the conventionh (0) =xandh (M+1) =f. We here again combine the key and the
+query matrix into a single matrixWwith priorW (ℓ)
+ij
+i.i.d.
+∼ N
+ 
+0, gW d−1
+and denote the output
+matrixW O of each layer asB (ℓ)
+ij
+i.i.d.
+∼ N(0, g B d−1) here. We also use the shorthandd=d model in
+the following.
+As the priors onW (ℓ) andB (ℓ) are independent across different layersℓ, we may consider one layer
+at a time. Performing the analogous steps as in App. B, we get by enforcing the definition of the
+attention layer (328)
+Z
+d ˜G(ℓ)
+D
+exp
+ 
+−tr ˜G(ℓ)TG(ℓ) + ˜G(ℓ)ab
+α
+1
+L
+√
+d
+h(ℓ)a
+αi W (ℓ)
+ij h(ℓ)b
+αj
+E
+W (ℓ)
+ij
+i.i.d.
+∼ N(0,g W 1/d)
+=
+Z
+d ˜G(ℓ) exp
+ 
+−tr ˜G(ℓ)TG(ℓ) + ˜G(ℓ)ab
+α ˜G(ℓ)a′b′
+β
+gW
+2L2 C(ℓ)aa′
+αβ C(ℓ)bb′
+αβ
+
+,
+where we defined
+C(ℓ)ab
+αβ =d −1 h(ℓ)a
+αi h(ℓ)b
+βi .
+Enforcing the equation (327) which projects the activity from one layer to the next, we likewise have
+Z
+d˜h(ℓ+1)
+D
+exp
+ 
+−tr ˜h(ℓ+1)Th(ℓ+1) + ˜h(ℓ+1)a
+αi G(ℓ)ab
+α B(ℓ)
+ij h(ℓ)b
+αj
+E
+B(ℓ)
+ij
+i.i.d.
+∼ N(0,g B d−1)
+=
+Z
+d˜h(ℓ+1) exp
+ 
+−tr ˜h(ℓ+1)Th(ℓ+1) + 1
+2 gB ˜h(ℓ+1)a
+αi ˜h(ℓ+1)a′
+βi G(ℓ)ab
+α G(ℓ)a′b′
+β C(ℓ)bb′
+αβ
+
+,
+where again the attention-weighted input kernel appears in each layerℓ
+K(ℓ)aa′
+αβ :=G (ℓ)ab
+α G(ℓ)a′b′
+β C(ℓ)bb′
+αβ .
+45
+
+
+===== PAGE 46 =====
+The appearance ofP
+i
+˜h(ℓ+1)a
+αi ˜h(ℓ+1)a′
+βi shows that, givenG (ℓ) andC (ℓ), the distribution of the pre-
+activationsh αi factorizes overi, so that the kernelCis expected to concentrate also at intermediate
+layers. Its definition is enforced by
+C(0)ab
+αβ =d −1xa
+αixb
+βi +g p ,
+p(C(ℓ)|C(ℓ−1), G(ℓ−1))
+=
+Z
+d ˜C(ℓ)
+D
+exp
+ 
+−tr ˜C(ℓ)TC(ℓ) + ˜C(ℓ)ab
+αβ d−1 h(ℓ)a
+αi h(ℓ)b
+βi
+E
+h(ℓ)a
+αi
+i.i.d. ini
+∼ N
+ 
+0,gB K(ℓ−1)ab
+αβ
+
+=
+Z
+d ˜C(ℓ) exp
+
+−tr ˜C(ℓ)TC(ℓ) +dln
+D
+exp
+  ˜C(ℓ)ab
+αβ d−1 h(ℓ)a
+α h(ℓ)b
+β
+E
+h(ℓ)a
+α ∼N
+ 
+0,gB K(ℓ−1)ab
+αβ
+
+
+,
+where we exploited the independence overiin the last step. The appearance of the scaling form
+dln⟨exp
+ 
+d−1 ˜C . . .
+
+⟩of the cumulant-generating function shows thatCconcentrates. In the limit
+of larged, we may thus approximate its distribution with the rate function
+−lnp(C (ℓ)|C(ℓ−1))/d≃sup
+˜C(ℓ)
+tr ˜C(ℓ)TC(ℓ) −d W C
+  ˜C(ℓ)|K(ℓ−1)
+,(329)
+WC( ˜C) := ln
+D
+exp
+  ˜C(ℓ)ab
+αβ d−1 h(ℓ)a
+α h(ℓ)b
+β
+E
+h(ℓ)a
+α ∼N
+ 
+0,gB K(ℓ−1)ab
+αβ
+ .(330)
+Evaluating the supremum condition yields
+0 =C (ℓ)ab
+αβ − ⟨h(ℓ)a
+α h(ℓ)b
+β ⟩,
+which shows that the second order statistics ofhis fixed byC (ℓ), the argument of the left hand
+side of (329). This implies that the quadratic formAin the exponent− 1
+2 hTAhappearing in (330)
+satisfies
+
+C(ℓ)−1
+=A=−2d −1 ˜C(ℓ)ab
+αβ +
+
+gBK(ℓ−1)−1
+,(331)
+so that
+˜C(ℓ)ab
+αβ = d
+2
+ 
+gBK(ℓ−1)−1
+−
+
+C(ℓ)−1
+.
+Likewise it implies that the Gaussian integral overhinW C (330) yields 1
+2 ln det
+ 
+C(ℓ)
+and has the
+normalization constant− 1
+2 ln det
+ 
+gBK(ℓ−1)
+, so that together we get
+−lnp(C (ℓ)|C(ℓ−1))/d≃ 1
+2tr
+
+gBK(ℓ−1)−1
+C(ℓ) − 1
+2 ln det
+ 
+C(ℓ)
++ 1
+2 ln det
+ 
+gBK(ℓ−1)
++ const. ,
+(332)
+≡KL
+ 
+N(0, C (ℓ))∥N(0, g BK(ℓ−1))
+
+,(333)
+where we dropped the constant term− 1
+2tr
+
+C(ℓ)−1
+C(ℓ)
+=− P L
+2 . The expression (332) is that of
+a KL divergence between two Gaussian distributions with covariance matricesg BK(ℓ−1) andC (ℓ).
+Since the KL divergence is minimal forC (ℓ) =g BK(ℓ−1), this shows that this term tries to keep
+these two kernels close; the point where the distance vanishes is the neural network Gaussian process
+solution. So together with the likelihood of the labels asN(y|f, σ 2), we have
+−lnp(y|C (0)) + const.≃inf
+G
+inf
+C
+(334)
+M−1X
+ℓ=1
+1
+2 C(ℓ)
+gBK(ℓ−1)−1
+− 1
+2 ln det
+ 
+C(ℓ)
++ 1
+2 ln det
+ 
+gBK(ℓ−1)
++ sup
+˜G
+M−1X
+ℓ=1
+tr ˜G(ℓ)TG(ℓ) − ˜G(ℓ)ab
+α ˜G(ℓ)a′b′
+β
+gW
+2L2 C(ℓ)aa′
+αβ C(ℓ)bb′
+αβ (335)
+46
+
+
+===== PAGE 47 =====
++ sup
+˜f
+n
+˜fTy− σ2
+2
+X
+i
+˜f a
+αi ˜f a
+αi + gB
+2
+X
+i
+˜f a
+αi ˜f b
+βi K(M)ab
+αβ
+o
+(336)
+A more compact form is achieved by performing the Gaussian integrals over ˜Gand ˜finstead of
+taking their supremum; this yields a slightly better approximation, since a normalization determinant
+is contained and yields
+−lnp(y|C (0)) = inf
+G
+inf
+C
+(337)
+M−1X
+ℓ=1
+KL
+ 
+N(0, C (ℓ))∥N(0, g BK(ℓ−1))
+
+−
+M−1X
+ℓ=0
+lnN(G (ℓ)|0, gW L−2 C(ℓ)C(ℓ))
+−lnN(y|0, g BK(M) +σ 2I)
+
+C(ℓ)C(ℓ)
+(αab),(βa′b′) :=C (ℓ)aa′
+αβ C(ℓ)bb′
+αβ ,
+K(ℓ)aa′
+αβ :=G (ℓ)ab
+α G(ℓ)a′b′
+β C(ℓ)bb′
+αβ .
+This expression shows the different tendencies of the network:
+• The first line aims to minimize the KL-divergence between the attention-weighted Gaussian
+kernel matrixg BK(ℓ−1) of the previous layer and the Gaussian kernel matrix of the next
+layerC (ℓ). The KL-divergence measures the information loss, when approximating the
+Gaussian withC (ℓ) by the Gaussian withg BK(ℓ−1).
+• The second line is minimal, if the attention matrixGis most likely under the Gaussian with
+covarianceg W L−2C(ℓ)C(ℓ); the structure of the indices shows that the attention patterns
+Gab
+α andG a′b′
+β tend to be correlated if the sequencesαandβof the previous layer are
+similar at positionsaanda ′ and at positionsbandb ′. The sign of the resulting correlation
+depends on the product of the signs of the correlations in each factorC(ℓ). This term shows
+the tendency of the attention patterns to focus attention on positions with similar entries.
+• The third line is minimal, if the targetyis most likely under the Gaussian with covariance
+K(M) +σ 2I.
+The state after learning is a compromise between these three forces.
+K Stochastic Gradient Langevin Dynamics
+To numerically validate theoretical predictions against real networks, we draw samples from the
+posterior over networks conditioned on training dataX= (x α)α=1,...,P , Y= (y α)α=1,...,P .
+We assume Gaussian priors on the network weights at initialization asW emb
+ij
+i.i.d.
+∼ N(0, g emb),
+pa
+i
+i.i.d.
+∼ N(0, g p/dmodel),W Q
+ij
+i.i.d.
+∼ N(0, g Q/dmodel),W K
+ij
+i.i.d.
+∼ N(0, g K/dmodel),W O
+ij
+i.i.d.
+∼
+N(0, g O/dmodel)withd model being the model dimension. We setg emb =g P = 1. Further, we
+assume Gaussian readout noisey α =f α +ξwithξ∼ N(0, σ 2I).
+Sampling from the Bayesian posteriors then corresponds to training the network via stochastic gra-
+dient Langevin dynamics (SGLD) [46]. Following [47], the parametersΘare evolved according to
+the stochastic differential equation
+∂tΘ(t) =−γΘ(t)− ∇ ΘL(Θ(t);Y) +
+√
+2T ζ(t),(338)
+ζi(t)ζj(s)
+
+=δ ijδ(t−s),
+where the squared error loss isL(Θ;Y) = PP
+α=1(fα(Θ)−y α)2 andf α(Θ)denotes the network
+output for inputα. At large timest, this dynamics converges to the equilibrium distribution overΘ,
+47
+
+
+===== PAGE 48 =====
+given by
+lim
+t→∞
+p(Θ(t))∼exp
+
+− γ
+2T ∥Θ∥2 − 1
+T L(Θ;Y)
+
+.(339)
+This stationary distribution follows from the Fokker-Planck equation [62] governing the evolution
+of the density ofΘ. The corresponding marginal density over network outputs takes the form
+p(Y|X)∝
+Z
+dΘ exp
+ 
+− γ
+2T ∥Θ∥2 − 1
+T ∥f−Y∥ 2
+(340)
+∝
+D
+exp
+ 
+− 1
+T ∥f−Y∥ 2E
+Θk
+i.i.d.
+∼ N(0,T /γ)
+∝N(Y|f, T /2)⟨δ
+
+f−f(Θ)
+
+⟩Θk
+i.i.d.
+∼ N(0,T /γ) ,
+which, upon identifyingp(f|X)≡ ⟨δ
+
+f−f(Θ)
+
+⟩Θk
+i.i.d.
+∼ N(0,T /γ) , coincides with the network prior
+under the identificationsσ 2 =T /2for the regularization noise andT /γ=g/dfor the variance of
+parameterΘ k. In practice, realizing distinct variances per parameter requires assigning a separate
+weight decayγto each parameter. The time-discretized form of (338) reads
+Θt = Θt−1 −η(γΘ t−1 +∇ ΘL(Θt−1;Y)) +
+p
+2T η ζt,(341)
+⟨ζtζs⟩=δ ts,
+withζ t drawn from a standard normal distribution andηa finite step size serving as the learning
+rate. Faithful discretization of the continuous-time dynamics in (338) requiresηto remain small. In
+this form, SGLD is equivalent to full-batch gradient descent augmented with i.i.d. standard normal
+noise and weight decay regularization [63]. The parameterσ 2, which enters the main text as the
+regularization term on the diagonal of the output kernel, controls the relative weight of the prior
+against the likelihood. Largeσ 2 implies largeT= 2σ 2, amplifying the stochastic noise in SGLD
+and thereby upweighting the parameter prior. In contrast, smallσ 2 suppresses the noise and directs
+the optimization towards minimizing the loss of training.
+The rescaling by the factorχused in the main text in Section 3.2 for largeχcorresponds to training
+with gradient flow. To see this, note that the prior variance of the parametersθis given byg=T /γ.
+Rescaling the regularization noiseσ 2 =T /2asT /χand simultaneously rescalingg/χtherefore
+downscales the noise in the gradient update (338) but maintains the same weight decayγ. In the limit
+of largeχthe update equation (338) thus tends to gradient flow without noise but with regularization
+by weight decay.
+A sublety arises when taking the limit of Langevin noise to zero, which concerns the stationary
+distribution, because the limitlim χ→∞ and the limitlim t→∞ do not necessarily commute: The
+stationary state reached with gradient flow corresponds tolim t→∞ limχ→∞, while considering the
+(stationary) Bayesian posterior distribution in the limitχ→ ∞, corresponds tolim χ→∞ limt→∞.
+The two limits may not commute in cases in which ergodicity is broken in gradient flow; that is, if
+the training dynamics gets stuck within a local minimum. In the Bayesian setting this cannot happen
+as long asT >0, or correspondingly,χ <∞. The reason why training with Adam and our theory
+obtained from the limitlim χ→∞lim t→∞ still agree relies on our training procedure, which filters
+training runs that got stuck at sub-optimal minima, as described in App. N.1. Thus we avoid this
+form of ergodicity breaking in the noiseless training procedure, which is equivalent to having an
+infinitesimal noise in the Bayesian posterior.
+L Field-Theoretic Toy Model of the A voided Second Phase Transition
+It is useful to formulate a minimal Landau theory that captures the same qualitative phenomenon
+as in the main text: one genuine symmetry-breaking transition, followed by a second lower scale at
+which the subleading structure changes rapidly without an additional thermodynamic singularity.
+Consider two real scalar fieldsϕ 1, ϕ2 with Euclidean action
+Stoy[ϕ1, ϕ2] = r1(T)
+2 ϕ2
+1 + r2(T)
+2 ϕ2
+2 −J ϕ 1ϕ2 + u1
+4 ϕ4
+1 + u2
+4 ϕ4
+2,(342)
+withu 1, u2 >0for stability. The bilinear couplingJbreaks the independent sign-flip symmetry
+Z2 ×Z 2 down to the diagonalZ 2 symmetry(ϕ 1, ϕ2)7→(−ϕ 1,−ϕ 2). This symmetry already
+suggests that forJ̸= 0there is generically onlyonetrue symmetry-breaking transition.
+48
+
+
+===== PAGE 49 =====
+To make contact with a control parameter such as temperature, we take
+ri(T) =a i(T−T 0
+i ), a i >0.(343)
+If the fields were decoupled, each would become critical at its own bare scaleT 0
+i . For the analogy
+to the main text we takeT 0
+1 > T 0
+2 , so thatϕ 1 is the mode that would order first upon cooling, while
+ϕ2 becomes soft only at a lower scale.
+One true phase transition.Around the symmetric saddleϕ 1 =ϕ 2 = 0, the quadratic form is
+M(T) =
+
+r1(T)−J
+−J r 2(T)
+
+,(344)
+with eigenvalues
+m2
+±(T) = r1(T) +r 2(T)
+2 ± 1
+2
+p
+(r1(T)−r 2(T)) 2 + 4J2.(345)
+The disordered phase loses stability when the lower eigenvaluem 2
+− vanishes, equivalently when
+r1(Tc)r 2(Tc) =J 2.(346)
+Thus the transition is controlled by the mixed normal mode rather than by either field separately.
+For weak mixing and well-separated bare scales, one finds
+Tc ≃T 0
+1 + J2
+a1 r2(T 0
+1 ) ,(347)
+so the true transition occurs close to the higher bare scaleT 0
+1 .
+The mean-field equations in the ordered phase are
+r1(T) ¯ϕ1 −J ¯ϕ2 +u 1 ¯ϕ3
+1 = 0,(348)
+r2(T) ¯ϕ2 −J ¯ϕ1 +u 2 ¯ϕ3
+2 = 0.(349)
+BecauseJ̸= 0, once one component condenses the other is immediately induced. Near the transi-
+tion, where ¯ϕ2 is still small, Eq. (349) gives
+¯ϕ2 ≃ J ¯ϕ1
+r2(T) .(350)
+So the lower-scale field is not waiting for an independent symmetry-breaking transition; it is sourced
+explicitly by the condensate of the first field.
+A second lower scale without a second singularity.Even though there is only one exact transi-
+tion, there is generally still a second physically important scale. As the control parameter is varied
+deeper into the ordered phase, the effective massr 2(T)in (350) can become small near the lower
+bare scaleT 0
+2 . When that happens, ¯ϕ2 grows rapidly and the composition of the ordered state reor-
+ganizes sharply.
+The fluctuations around the ordered state are controlled by the Hessian
+H( ¯ϕ1, ¯ϕ2) =
+
+r1 + 3u1 ¯ϕ2
+1 −J
+−J r 2 + 3u2 ¯ϕ2
+2
+
+.(351)
+At the true critical point, the smaller eigenvalue ofHvanishes. The other eigenvalue, however, stays
+strictly positive for genericJ̸= 0. This means that the second mode can becomesoftbut not truly
+critical. Correspondingly, the associated susceptibility and correlation length,
+χsoft ∼λ −1
+soft, ξ soft ∼λ −1/2
+soft ,(352)
+can become large but remain finite when the second eigenvalueλ soft develops a pronounced mini-
+mum.
+This is the standard avoided-critical-point scenario: forJ= 0, the lower-scale field could undergo
+its own independent transition, but any nonzeroJrounds this into a crossover. Thermodynamically
+there is only one nonanalyticity, yet dynamically and phenomenologically the second scale can look
+highly transition-like, with large fluctuations, long relaxation times, and a rapid change of the order-
+parameter composition.
+49
+
+
+===== PAGE 50 =====
+Relation to the main text.This toy model provides a useful analogy for the behavior of the two
+attention order parameters(ˆc1,ˆcG)in the main text. The first instability corresponds to a genuine
+phase transition into a state with nontrivial attention structure. The later sharp growth of the copy
+component is analogous to the lower-scale fieldϕ 2: it is strongly enhanced when its effective mass
+becomes small, but because it is already linearly coupled to the ordered phase, this enhancement is a
+crossover rather than a second symmetry-breaking transition. In this sense, the later reorganization
+of the attention pattern is naturally interpreted as anavoidedsecond transition.
+Finally, we note that if the bilinear coupling is set to zero,J= 0, the symmetry is enlarged back to
+Z2 ×Z 2, and two distinct transitions are generically possible when the bare scalesT 0
+1 andT 0
+2 are
+well separated. The absence of such an additional singularity forJ̸= 0is precisely the point of the
+present toy model.
+M Attention Pattern Coverage by Order Parameters
+Fig.5 shows the fraction of the full attention pattern that is captured by the patterns in the(ˆc1,ˆcG)and
+(ˆa1,ˆaG)subspace for linear and softmax attention. We quantified the coverage by cosine similarity
+and norm ratio between the full empirical attention pattern and the attention pattern projected down
+to the two-dimensional subspace.
+For linear attention(Fig. 5 left panel), the two-dimensional order parameter space faithfully captures
+the degrees of freedom used by the network during training. The agreement for Adam means that the
+competition between pooling and copy attention accounts for essentially all of the learned attention
+structure, with no significant orthogonal components. SGLD samples show more variance than
+Adam in the crossover region300≤P≤600, where the coverage plot reveals leakage to attention
+patterns outside the two-dimensional subspace but remains above80%for allPvalues after the
+attention pattern departs from zero (P≳20). We attribute this effect to the large fluctuations
+expected near the point where the pooling minimum destabilizes and the copy minimum emerges
+(Fig. 2): as the saddle structure dissolves and the copy minimum deepens, the posterior broadens and
+the network transiently explores directions outside out 2d space. Away from this region, coverage
+recovers, confirming that the two-parameter reduction is accurate throughout the ordered phase.
+For softmax attention(Fig. 5 right panel), we see perfect agreement for both Adam and SGLD for
+the full range ofP.
+50
+
+
+===== PAGE 51 =====
+0 200 400 600 800
+Training Sequences P
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0Attention Coverage
+Linear Attention
+Norm Ratio
+Cosine Similarity
+Adam
+SGLD
+0 200 400 600 800
+Training Sequences P
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0Attention Coverage
+Softmax Attention
+Norm Ratio
+Cosine Similarity
+Adam
+SGLD
+Figure 5:Attention-pattern coverage by order-parameter projections.We quantify how much
+of the empirical attention pattern lies in the two-dimensional subspace spanned by the pooling and
+copy order-parameter directions, using the projected norm ratio and cosine similarity.Left:Linear
+attentionis nearly fully described by this subspace for Adam across training set sizesP; throughout
+much of the panel, Adam markers are hidden behind SGLD markers, and the norm-ratio points are
+hidden behind the cosine-similarity points. SGLD shows the only visible loss of coverage, with
+larger fluctuations in the crossover region300≤P≤600, consistent with transient attention
+components outside the order-parameter plane.Right:Softmax attentionshows essentially perfect
+coverage for both Adam and SGLD over the full range ofP, with all metrics and optimizers nearly
+overlapping at one.
+51
+
+
+===== PAGE 52 =====
+N Details of Numerical Experiments
+Experimental details.Unless stated otherwise, all numerical experiments use the single-layer,
+single-head linear attention model introduced in Section 2 with fused attention and readout matrices.
+Training data consist of length-Lsequences of one-hot encoded tokens drawn uniformly from a
+vocabulary of sizeV, with shift-by-one copy labels. Across experiments, we vary only the number
+of training sequences
+P∈ {1,10,20,60,100,250,275,200,300,400,500,600,700,800},
+and linear/softmax attention while keeping all other settings fixed.
+For each value ofP, we train an ensemble of10models. Optimization is performed in two stages.
+We first run an Adam warmup phase for2,000epochs with learning rate10 −5. For softmax we
+use learning rate warmup from10 −7 to10 −5 over10%of the Adam epochs. Early stopping is used
+with patience100and minimum improvement threshold0. We then continue training with Langevin
+updates using learning rate5×10 −10, noise levelσ 2 = 30, and batch size1,000, for at most15,000
+epochs in total. Unless noted otherwise, reported results are averaged over the ensemble at fixedP.
+Each run of the full ensemble required roughly 5 hours on an H100, such that in total the experiments
+required100H100 hours.
+Hyperparameter Value
+Sequence lengthL25
+V ocabulary sizeV5
+Training set sizeP{1,10,20,60,100,200,250,275,300,400,500,600,700,800}
+Test set size100
+Ensemble size10
+Architecture single-layer linear/softmax attention
+Number of heads1
+Model dimensiond model 10,000
+χ30
+Warmup optimizer Adam
+Warmup epochs2,000
+Warmup learning rate10 −5
+Second-stage optimizer Langevin / SGLD
+Second-stage learning rate5×10 −10
+Batch size1,000
+Maximum number of epochs15,000
+Noise levelσ 2 30
+Early stopping patience100
+Early stopping minimum improvement0
+Table 1: Hyperparameters used in the numerical experiments. The only swept quantity is the number
+of training sequencesP; all other settings are kept fixed across runs.
+N.1 Training Trajectories and Filtering
+To expedite the posterior sampling, we warm start all our SGLD [46] runs from the Adam early stop-
+ping minimum. We note again that the equilibrium distribution sampled by SGLD is independent
+of the initial conditions. Since optimizing with Adam is a more common practice, we also show the
+results at the end of the Adam training stage; in these cases, we filter out training runs that reached a
+local minimum (which is not the global minimum). Importantly, filtering was performed only on the
+basis of convergence to the global loss minimum, and not on the resulting order parameters or their
+agreement with theory. Figs. 6 and 7 show the trajectories of all runs using Adam as a function of
+the epoch (equiv. step, batch). For each setting, we trained an ensemble of10networks.
+52
+
+
+===== PAGE 53 =====
+0 500 1000 1500 2000
+Epochs
+4.6 × 10 1
+4.8 × 10 1
+5 × 10 1
+5.2 × 10 1
+5.4 × 10 1
+5.6 × 10 1
+Loss / token / member
+Test loss / token / member, P = 1
+mean over members
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+4 × 10 1
+5 × 10 1
+6 × 10 1
+Loss / token / member
+Test loss / token / member, P = 20
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+4 × 10 1
+5 × 10 1
+Loss / token / member
+Test loss / token / member, P = 100
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+4 × 10 1
+5 × 10 1
+Loss / token / member
+Test loss / token / member, P = 200
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+4 × 10 1
+5 × 10 1
+Loss / token / member
+Test loss / token / member, P = 300
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+4 × 10 1
+5 × 10 1
+Loss / token / member
+Test loss / token / member, P = 400
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+3 × 10 1
+4 × 10 1
+Loss / token / member
+Test loss / token / member, P = 500
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+2 × 10 1
+3 × 10 1
+4 × 10 1
+Loss / token / member
+Test loss / token / member, P = 600
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+2 × 10 1
+3 × 10 1
+4 × 10 1
+Loss / token / member
+Test loss / token / member, P = 700
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+10 1
+2 × 10 1
+3 × 10 1
+4 × 10 1
+6 × 10 1
+Loss / token / member
+Test loss / token / member, P = 800
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+Figure 6: Test loss forlinear attentiontrained with Adam. We show the test loss as a function of
+the number of epochs for different values ofPon models trained with Adam. We clearly see two
+clusters with one reaching a lower loss value. Since the Bayesian posterior, and hence SGLD in
+principle, is insensitive to the initial conditions and would, in principle, reach the global minimum
+given sufficient time, we include only converged runs in the cluster with lower loss in the results in
+the main text.
+53
+
+
+===== PAGE 54 =====
+0 500 1000 1500 2000
+Epochs
+5 × 10 1
+6 × 10 1
+Loss / token / member
+Test loss / token / member, P = 1
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+4.6 × 10 1
+4.8 × 10 1
+5 × 10 1
+5.2 × 10 1
+5.4 × 10 1
+5.6 × 10 1
+Loss / token / member
+Test loss / token / member, P = 20
+mean over members
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+4 × 10 1
+5 × 10 1
+6 × 10 1
+Loss / token / member
+Test loss / token / member, P = 100
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+4 × 10 1
+5 × 10 1
+6 × 10 1
+Loss / token / member
+Test loss / token / member, P = 200
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+4 × 10 1
+5 × 10 1
+6 × 10 1
+Loss / token / member
+Test loss / token / member, P = 250
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+4 × 10 1
+5 × 10 1
+6 × 10 1
+Loss / token / member
+Test loss / token / member, P = 275
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+2 × 10 1
+3 × 10 1
+4 × 10 1
+6 × 10 1
+Loss / token / member
+Test loss / token / member, P = 300
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+10 1
+2 × 10 1
+3 × 10 1
+4 × 10 1
+6 × 10 1
+Loss / token / member
+Test loss / token / member, P = 400
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+10 1
+Loss / token / member
+Test loss / token / member, P = 500
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+10 1
+Loss / token / member
+Test loss / token / member, P = 600
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+10 1
+Loss / token / member
+Test loss / token / member, P = 700
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+0 500 1000 1500 2000
+Epochs
+10 1
+Loss / token / member
+Test loss / token / member, P = 800
+mean over low-loss cluster
+±1 std
+equilibrium prediction
+Figure 7: Test loss forsoftmax attentiontrained with Adam. We show the test loss as a function of
+the number of epochs for different values ofPon models trained with Adam. With softmax Adam
+converged to the global minimum in all of our seeds.
+54

@@ -1,0 +1,133 @@
+
+
+===== PAGE 1 =====
+introduction
+primer on emergence
+conditions for emergence:
+definition of emergence -> higher level properties coming into existence when multiple
+separate components are scaled, eg. ant swarm
+more is different -> individual behaviour might be unpredictable/same but when a lot of them
+are scaled different global behaviour emerges, eg all ants travel in random directions but
+overall they are able to move the object through the maze
+less is more -> when we know that an emergent phenomenon exists, easier to use a higher
+level theory that ignores microscopic details rather than use a lower dimension theory that
+has millions of variables/data points, eg. each ants behaviour is harder to track but as a
+colony it can be studied
+LLM lit and scaling laws support certain abilities arising suddenly when neurons are scaled
+to deep nns -> shows emergent behavior
+questions: what is emergence, why it matters -> covered above, it matters as it leads to cost
+saving by predicting easier higher level theory of generalisation and without it we would
+have to observe the separate microscopic interactions and components rendering the
+process tedious.
+evidence for emergence -> new representations being formed, abstractions leading to
+better efficiency
+what is emergent though?? capabilities vs intelligence!! --> MAIN POINT: LLMs have
+emergent capabilities but not intelligence
+eg. calculator -> it can solve the engineered tasks that it was made for but cannot
+intelligently form new capabilities.
+1. same higher level theory is guaranteed for emergence to be there, coarse graining or
+ignorance of less important features is key, eg given is molecular vs fluid dynamics
+(local -> less effective vs global predictions-> more effective)
+emergence claim = coarse graining (efficient selection) + compression of system (comes at
+free cost as a result to energy minimization via less is more.
+1. scaling: new capabilities become suddenly visible or a new internal organisation gets
+formed due to either scaling data or compute
+2. criticality: rapid changes are observed in the behaviour, the new formed organisation
+changes its description to something else
+
+
+===== PAGE 2 =====
+types of emergence : knowledge in vs knowledge out
+framework to analyse emergence
+emergence through scaling
+eg1. double descent - it occurs in large llms where loss first goes down then overfits and then
+again goes down is said to be emergent in nature through scaling but even linear and
+polynomial regression show the same phenomenon
+hence not emergent
+eg2. ON THE UNIVERSALITY OF NEURAL ENCODINGS IN CNNS paper - they show that the
+peak of the double descent appears synonymously with the change in the internal
+representations of the model where it starts to hold only important features and discards the
+other ones -> finds a more novel base for representation learning.
+therefore this is emergent as it shows -> scaling induces phase transition taking place due to
+novel bases being discovered
+emergence through compression
+3. compression: the models internal representation is compressed to increase efficiency
+4. novel bases: new methods for better representation learning are found.
+5. generalisation: capabilities of solving a completely new task B emerging when training is
+done on task A
+knowledge out emergence: if a complex behaviour emerges from the local interactions of
+multiple individual components for free. simple rule following at scale = completely different
+behaviour is seen. eg. colony of ants moving food through an obstruction
+knowledge in emergence: instead of simple rule following individual agents if the separate
+entity is complex and are trained/evolved from the information present in the environment.
+when these interact together a different type of emergence phenomenon is observed. eg
+LLMs -> neurons interacting at different layers
+main argument that is presented with scaling and emergence -> as you scale the data and
+params there are discontinuous jumps observed in accuracy of certain tasks much like
+phase transition compared with physical transitions of water, however they say this
+comparison is unfair as we don't whether the jump is actually discontinuous in nature or just
+appears so due to selection of that specific portion or task
+with loss functions we are implicitly programming a certain property through scaling training
+therefore it cannot be termed as emergent inherently.
+
+
+===== PAGE 3 =====
+eg1. othello gpt -> where the model creates a compressed internal world model and emergence
+is claimed to refer to the creation of a coarse-grained internal representations. The problem with
+this was however the internal wm formed was more like a "bag of heuristics" rather than having
+a coherent latent space representation
+therefore cannot be termed emergent
+emergence through novel bases and manifolds
+manifolds serve as an efficient data representation method and emergence in this context
+would be having a newer elegant structures for these, however our limited understanding of
+how LLMs actually build and utilise these structures for their efficiency leads us to ambiguity
+and therefore any claims about this need more information for proper verification.
+generalisation through emergence
+emergence in its form can automatically give rise to generalisation over varied tasks through
+the formation of coarse grained higher level theory, again though there exist multiple
+frameworks to test the gaps of generalisation(VC dimension check, Probably Approximately
+Correct framework etc.) but we don't have enough task specific internal mechanisms and data
+to judge this fairly upon.
+conclusions
+emergence claims judgement summarised
+a lot of claims are called emergence on the basis of the misinterpreted meaning and with
+the number of variables that are included when we talk about the current LLMs are too
+many (eg.parameters, non linear interactions between components, size of training data
+etc.) hence for any specific claims the ability to actually place the finger on is limited and
+therefore cannot be verified. Using the word hence requires a higher level of understanding
+and must be done with more responsibility.
+eg. 3 digit addition-> not possible on 8b, 12b but gets 80% acc on 175b
+the current emergence definition in context of LLMs -> if they acquire sudden jump in
+capabilities/accuracy through scaling data/compute/params etc.
+this is not the correct definition of emergent and therefore we need a scientific
+grounding of the word to avoid misinterpretation
+double descent - it occurs in large llms where loss first goes down then overfits and then
+again goes down is said to be emergent in nature through scaling but even linear and
+polynomial regression show the same phenomenon
+othello gpt -> where the model creates a compressed internal world model and emergence
+is claimed to refer to the creation of a coarse-grained internal representations. The problem
+
+
+===== PAGE 4 =====
+to do
+a nice experiment on the basis of this paper would be to give out an agent the constraints from
+the paper for quantifying emergence then give it a /goal for searching through all the relevant
+literature upto '26, a thorough output would depend on it checking through the criterias of
+coarse-grained internal representations, compression, novel bases/manifolds, phase-transition-
+like reorganization, causal use of the representation, and generalization in a check pass
+manner.
+with this was however the internal wm formed was more like a "bag of heuristics" rather
+than having a coherent latent space representation, therefore not emergent
+ON THE UNIVERSALITY OF NEURAL ENCODINGS IN CNNS paper - they show that the
+peak of the double descent appears synonymously with the change in the internal
+representations of the model where it starts to hold only important features and discards the
+other ones -> finds a more novel base for representation learning.
+therefore this is emergent as it shows -> scaling induces phase transition taking place due
+to novel bases being discovered
+the output: a list of the found works that qualify under the said constraints of emergence in
+the paper and why (in a brief note format)
+the input: codex with /goal + detailed AGENTS.md which forces the agent to check the abs
++ results first and then the mechanisms for evidence grounding and proper claim testing.
+ambitious goal: under turn of events maybe an automated pipeline where every new
+relevant paper gets passed through this sieve and added to a public community index which
+can serve as reference for the community and researchers.

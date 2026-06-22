@@ -1,0 +1,3520 @@
+
+
+===== PAGE 1 =====
+Journal of Machine Learning Research 25 (2024) 1-59 Submitted 11/23; Revised 10/24; Published 10/24
+A Rainbow in Deep Network Black Boxes
+Florentin Guth∗ florentin.guth@nyu.edu
+Center for Data Science, New York University, 60 5th Avenue, New York, NY 10011, USA
+Flatiron Institute, 162 5th Avenue, New York, NY 10010, USA
+Brice Ménard menard@jhu.edu
+Department of Physics & Astronomy, Johns Hopkins University
+Baltimore, MD 21218, USA
+Gaspar Rochette gaspar.rochette@ens.fr
+Département d’informatique, École Normale Supérieure, CNRS, PSL University
+45 rue d’Ulm, 75005 Paris, France
+Stéphane Mallat stephane.mallat@ens.fr
+Collège de France, 11, place Marcelin-Berthelot 75231 Paris, France
+Flatiron Institute, 162 5th Avenue, New York, NY 10010, USA
+Editor: Lorenzo Rosasco
+Abstract
+A central question in deep learning is to understand the functions learned by deep networks.
+What is their approximation class? Do the learned weights and representations depend on
+initialization? Previous empirical work has evidenced that kernels deﬁned by network acti-
+vations are similar across initializations. For shallow networks, this has been theoretically
+studied with random feature models, but an extension to deep networks has remained elu-
+sive. Here, we provide a deep extension of such random feature models, which we call the
+rainbow model. We prove that rainbow networks deﬁne deterministic (hierarchical) kernels
+in the inﬁnite-width limit. The resulting functions thus belong to a data-dependent RKHS
+which does not depend on the weight randomness. We also verify numerically our mod-
+eling assumptions on deep CNNs trained on image classiﬁcation tasks, and show that the
+trained networks approximately satisfy the rainbow hypothesis. In particular, rainbow net-
+works sampled from the corresponding random feature model achieve similar performance
+as the trained networks. Our results highlight the central role played by the covariances
+of network weights at each layer, which are observed to be low-rank as a result of feature
+learning.
+Keywords: deep neural networks, inﬁnite-width limit, random features, representation
+alignment, weight covariance.
+1. Introduction
+The weight matrices of deep networks are learned by performing stochastic gradient descent
+from a random initialization. Each training run thus results in a diﬀerent set of weights,
+which can be considered as a random realization of some probability distribution. This
+randomness is a major challenge in analyzing the learned weights. Finding deterministic
+∗Work done while at École Normale Supérieure.
+c⃝2024 Florentin Guth, Brice Ménard, Gaspar Rochette, and Stéphane Mallat.
+License: CC-BY 4.0, see https://creativecommons.org/licenses/by/4.0/. Attribution requirements are provided
+at http://jmlr.org/papers/v25/23-1573.html.
+
+
+===== PAGE 2 =====
+Guth, Ménard, Rochette, and Mallat
+Figure 1: A deep rainbow network cascades random feature maps whose weight distributions are
+learned. They typically have a low-rank covariance. Each layer can be factorized into
+a linear dimensionality reduction determined by the “colored” (i.e., non-identity) covari-
+ance, followedbyanon-linearhigh-dimensionalembeddingwith“white”randomfeatures.
+At each layer, the hidden activations deﬁne a kernel which converges to a deterministic
+rainbow kernel in the inﬁnite-width limit. The activations are however randomly rotated,
+which induces a similar rotation of the next layer weights.
+quantities which are independent of the details of the initialization and training is thus of
+great importance to study deep learning.
+A prominent example is the kernels deﬁned by hidden activations of wide networks, as
+has been empirically shown by Raghu et al. (2017); Kornblith et al. (2019). That is, if we
+denote ˆφj(x) and ˆφ′
+j(x) the j-th layer feature maps of two wide networks,
+⟨ˆφj(x), ˆφj(x′)⟩≈⟨ ˆφ′
+j(x), ˆφ′
+j(x′)⟩, ∀j, x, x′. (1)
+This concentration of kernels has been studied in one-hidden-layer networks in the “mean-
+ﬁeld” limit. Under this limit, neuron weightsw1, . . . , wd1 can be modeled as independent
+samples from a distribution π1. The ﬁrst layer thus computes random features ˆφ1(x) =
+1√
+d1
+(σ(⟨wi, x⟩))i≤d1, whose kernel concentrates as a consequence of the law of large numbers
+(Rahimi and Recht, 2007):
+⟨ˆφ1(x), ˆφ1(x′)⟩ = 1
+d1
+d1∑
+i=1
+σ(⟨wi, x⟩) σ(⟨wi, x′⟩)−−−−→
+d1→∞
+Ew∼π1
+[
+σ(⟨w, x⟩) σ(⟨w, x′⟩)
+]
+. (2)
+Although diﬀerent networks may have diﬀerent weightsw′
+i̸= wi (even up to permutations),
+the key point is that they are sampled from the same distributionπ1. Equation (1) is then a
+consequence of eq. (2). However, it is not clear a priori how to extend this analysis beyond
+the ﬁrst layer.
+In this paper, we introduce a deep extension of the shallow random feature model above
+to explain eq. (1) at all layers. It rests on the observation that weight distributions in hidden
+2
+
+
+===== PAGE 3 =====
+A Rainbow in Deep Network Black Boxes
+layers need to bealigned based on the previous layer weights. Indeed, the concentration of
+kernels is equivalent to the concentration of activationsup to rotations: a restatement of
+eq. (1) is that there exists orthogonal transformsˆAj such that
+ˆφj(x)≈ ˆAj ˆφ′
+j(x), ∀j, x.
+In the one-layer random feature model,ˆA1̸= Id arises from the diﬀerences between indi-
+vidual neuron weightsw′
+i̸= wi. We empirically observe that weights in hidden layers also
+rotate together with their input activations: that is, the distribution of weights at layerj +1
+are the sameafter a rotation by ˆAj. When taken as an assumption, this allows iterating
+the argument in eq. (2) to establish eq. (1) at all layers. In summary, kernels concentrate
+because the underlying weight distributions are the same, and activations rotate because
+the individual neurons are diﬀerent samples from these common distributions. The rain-
+bow model captures the interaction between these two properties across layers, shedding a
+theoretical light on the phenomenological eq. (1).
+The rainbow model is parameterized by random feature distributions for each layer.
+A special case of interest arises when these distributions are assumed to be Gaussian and
+centered, so that the model is entirely speciﬁed by weight covariance matrices. While the
+resulting Gaussian rainbow model appears too restrictive to model all trained networks, we
+show that it can approximately hold for architectures which incorporate prior information
+and restrict their learned weights. In some of our numerical experiments, we will thus
+consider learned scattering networks (Zarka et al., 2021; Guth et al., 2022), which have
+ﬁxed wavelet spatial ﬁlters and learn weights along channels only.
+Under the Gaussian rainbow model, the weight covariances completely specify the net-
+work output. The eigenvectors of these weight covariances can be interpreted as learned fea-
+tures, rather than individual neuron weights which are random. We show numerically that
+weights of trained networks typically have low-rank covariances. The corresponding rain-
+bow networks thus implement dimensionality reductions in-between the high-dimensional
+random feature embeddings. We further demonstrate that input activation covariances pro-
+vide eﬃcient approximations of the eigenspaces of the weight covariances. The number of
+model parameters and hence the supervised learning complexity can thus be considerably
+reduced by unsupervised information.
+This paper makes the following main contributions:
+• We numerically demonstrate that both hidden activations and weight distributions
+(speciﬁcally, their covariances) of deep networks trained from diﬀerent initializations
+concentrate up to rotations when the width increases. This complements previous
+observations of concentration of the kernels deﬁned by the activations.
+• We prove that networks sampled from the rainbow model deﬁne activations which
+converge to a random rotation of a deterministic kernel feature vector in the inﬁnite-
+width limit. In random feature models, the concentration of kernels and activations
+up to rotations is thus a consequence of the rotation of the weight distributions.
+• We validate empirically the stronger Gaussian rainbow model for scattering networks
+trained on CIFAR-10. We verify that the learned weights are approximately Gaus-
+sian. Their covariances are suﬃcient to sample new networks that achieve comparable
+3
+
+
+===== PAGE 4 =====
+Guth, Ménard, Rochette, and Mallat
+classiﬁcation accuracy when the width is large enough. Further, we show that SGD
+training only updates the weight covariances while nearly preserving the white random
+feature initializations, suggesting a possible dynamical explanation for the Gaussian
+rainbow assumption in this setting.
+• We show that the weight covariances of trained deep networks are approximately
+low-rank, and their dimensionality can be reduced without harming performance by
+performing PCA on the weights. Further, this can be well-approximated by a PCA
+on the input activations. In the context of the Gaussian rainbow model, this shows
+that feature learning amounts to ﬁnding an informative subspace, which can be ap-
+proximated with unsupervised information. More generally, these observations reveal
+properties of the weight distributions in trained networks that can also be of indepen-
+dent interest.
+The rainbow model is illustrated in Figure 1. In Section 2, we introduce rainbow net-
+works and the associated kernels that describe their inﬁnite-width limit. We validate numer-
+ically the above properties and results in Section 3. Code to reproduce all our experiments
+can be found athttps://github.com/FlorentinGuth/Rainbow.
+1.1 Related work
+Several strands of research have studied functional properties of neural networks. However,
+they only apply to networks around their initialization, or to shallow networks. We brieﬂy
+review these lines of research, and show how our work addresses some of the gaps in the
+literature.
+Lazy versus feature learning. For some weight initialization schemes, Jacot et al.
+(2018) and Lee et al. (2019) have shown that trained weights have vanishing deviations
+from their initialization. In these cases, learning is in a “lazy” regime (Chizat et al., 2019)
+speciﬁedbyaﬁxedkernel. Ithasbeenopposedtoa“rich”orfeature-learningregime(Chizat
+and Bach, 2020; Woodworth et al., 2020), which achieves higher performance on complex
+tasks (Lee et al., 2020; Geiger et al., 2020). While we do not model training dynamics,
+the rainbow model captures weight distributions that are signiﬁcantly diﬀerent from their
+initialization. These weight distributions depend on the training data, and thus induce a
+data-dependent kernel, indirectly incorporating feature learning.
+Random features and neural network Gaussian processes.In a diﬀerent but re-
+lated direction, many works have considered networks where all but the last layers are
+frozen to their initialization, starting from (Jarrett et al., 2009; Pinto et al., 2009). Such
+networks compute random features, which specify a kernel that becomes deterministic in
+the inﬁnite-width limit. This was ﬁrst studied by Rahimi and Recht (2007) for the one-
+layer case and generalized to deep architectures by Daniely et al. (2016). As a result, in
+the inﬁnite-width, networks at initialization represent a function sampled randomly from
+a Gaussian process (Neal, 1996; Williams, 1996; Lee et al., 2018; Matthews et al., 2018).
+Training is then modeled as performing Bayesian inference by conditioning this prior on the
+training data. These approaches thus correspond to performing regression with a ﬁxed ker-
+nel, again precluding feature learning (though ﬁnite-width corrections can be incorporated,
+4
+
+
+===== PAGE 5 =====
+A Rainbow in Deep Network Black Boxes
+see Seroussi et al., 2023). Our theoretical results extend this line of work by considering
+much more general weight distributions, which incorporate dependencies across layers as a
+result of feature learning.
+Mean-ﬁeld models. Feature learning has been precisely studied for one-hidden-layer
+networks, again in the inﬁnite-width limit (Chizat and Bach, 2018; Mei et al., 2018; Rot-
+skoﬀ and Vanden-Eijnden, 2018; Sirignano and Spiliopoulos, 2020). These “mean-ﬁeld”
+approaches analyze the neuron weight distribution as it evolves away from the normal ini-
+tialization during training. However, generalizing this result to deeper networks has been
+challenging due to the dependence between weights across layers (Sirignano and Spiliopou-
+los, 2022; E and Wojtowytsch, 2020; Nguyen and Pham, 2020; Chen et al., 2022; Yang and
+Hu, 2021). In this work, we propose a model of such a dependence through the use of
+representation alignment.
+Representation alignment and hierarchical kernels. A key observation for gener-
+alizing mean-ﬁeld random feature models to deeper networks was made by Raghu et al.
+(2017); Kornblith et al. (2019). They demonstrated empirically that after an alignment
+procedure, activations of deep networks trained on the same task from diﬀerent initializa-
+tions become increasingly similar as the width increases, at all layers. Equivalently, the
+activations at a given layer asymptotically deﬁne the same deterministic kernel indepen-
+dently of the initialization (Kriegeskorte et al., 2008; Williams et al., 2021). The network
+thus belongs to a hierarchical reproducing kernel Hilbert space similar to the ones studied
+by Cho and Saul (2009); Anselmi et al. (2015); Mairal (2016); Bietti (2019). However,
+characterizing these kernels requires understanding how they depend on the data distribu-
+tion in order to capture feature learning. This was done for the one-layer case by Pandey
+et al. (2022) by considering structured (non-isotropic) random feature kernels. Bordelon
+and Pehlevan (2022) characterized the evolution of activation and gradient kernels in deep
+networks during training with self-consistent equations from dynamical mean-ﬁeld theory,
+which are often challenging to solve. Our rainbow model builds on these ideas to give an
+integrated picture of the approximation class of deep neural networks.
+2. Rainbow networks
+Weight matrices of learned deep networks are strongly dependent across layers. Deep rain-
+bow networks deﬁne a mathematical model of these dependencies through rotation matrices
+that align input activations at each layer. We review in Section 2.1 the properties of random
+features, which are the building blocks of the model. We then introduce in Section 2.2 deep
+fully-connected rainbow networks, which cascade aligned random feature maps. We show
+in Section 2.3 how to incorporate inductive biases in the form of symmetries or local neuron
+receptive ﬁelds. We also extend rainbow models to convolutional networks.
+2.1 Rotations in random feature maps
+We being by reviewing the properties of one-hidden layer random feature networks. We then
+prove that random weight ﬂuctuations produce a random rotation of the hidden activations
+in the limit of inﬁnite width (in a sense made precise in Theorem 1 below). The rainbow
+model will allow us to apply this result at all layers of a deep network in Section 2.2.
+5
+
+
+===== PAGE 6 =====
+Guth, Ménard, Rochette, and Mallat
+Random feature network. A one-hidden layer network computes a hidden activation
+layer with a matrixW of size d1× d0 and a pointwise non-linearityσ:
+ˆϕ(x) = σ(W x) for x∈ Rd0.
+We consider a random feature network (Rahimi and Recht, 2007). The rows ofW, which
+contain the weights of diﬀerent neurons, are independent and have the same probability
+distribution π:
+W = (wi)i≤d1 with i.i.d. wi∼ π.
+In many random feature models, each row vector has a known distribution with uncorrelated
+coeﬃcients (Jarrett et al., 2009; Pinto et al., 2009). Learning is then reduced to calculating
+the output weightsˆθ, which deﬁne
+ˆf(x) =⟨ˆθ, ˆϕ(x)⟩.
+In contrast, we consider general distributionsπ which will be estimated from the weights
+of trained networks in Section 3. Considering more general random feature distributions
+with non-identity covariance has been shown to greatly improve modeling of sensory neuron
+receptive ﬁelds (Pandey et al., 2022).
+Our network does not include any bias for simplicity. Bias-free networks have been
+shown to achieve comparable performance as networks with biases for denoising (Mohan
+et al., 2019) and image classiﬁcation (Zarka et al., 2021; Guth et al., 2022). However, biases
+can easily be incorporated in random feature models and thus rainbow networks.
+We consider a normalized network, whereσ includes a division by√d1 so that∥ ˆϕ(x)∥
+remains of the order of unity when the widthd1 increases. We shall leave this normalization
+implicit to simplify notations, except when illustrating mathematical convergence results.
+Note that this choice diﬀers from the so-called standard parameterization (Yang and Hu,
+2021). In numerical experiments, we perform SGD training with this standard parameteri-
+zation which avoids getting trapped in the lazy training regime (Chizat et al., 2019). Our
+normalization convention is only applied at the end of training, where the additional factor
+of√d1 is absorbed in the next-layer weightsˆθ.
+We require that the input data has ﬁnite energy:Ex[∥x∥2] < +∞. We further assume
+that the non-linearity σ is Lipschitz continuous, which is veriﬁed by many non-linearities
+used in practice, including ReLU. Finally, we require that the random feature distribution
+π has ﬁnite fourth-order moments.
+Kernel convergence. We now review the convergence properties of one-hidden layer
+random feature networks. This convergence is captured by the convergence of their kernel
+(Rahimi and Recht, 2007, 2008),
+ˆk(x, x′) =⟨ ˆϕ(x), ˆϕ(x′)⟩ = 1
+d1
+d1∑
+i=1
+σ(⟨wi, x⟩) σ(⟨wi, x′⟩),
+where we have made explicit the factord−1
+1 coming from our choice of normalization. Since
+the rows wi are independent and identically distributed, the law of large numbers implies
+6
+
+
+===== PAGE 7 =====
+A Rainbow in Deep Network Black Boxes
+that when the widthd1 goes to inﬁnity, this empirical kernel has a mean-square convergence
+to the asymptotic kernel
+k(x, x′) = Ew∼π
+[
+σ(⟨w, x⟩) σ(⟨w, x′⟩)
+]
+. (3)
+This convergence means that even though ˆϕ is random, its kernel is asymptotically de-
+terministic. As we will see, this imposes that random ﬂuctuations ofˆϕ(x) are reduced to
+rotations in the larged1 limit.
+Let ϕ(x) be an inﬁnite-dimensional deterministic feature vector in a separable Hilbert
+space H, which satisﬁes
+⟨ϕ(x), ϕ(x′)⟩H = k(x, x′). (4)
+Such feature vectors always exist (Aronszajn, 1950, see also Schölkopf and Smola, 2002). For
+instance, one can chooseϕ(x) = ( σ(⟨w, x⟩))w, the inﬁnite-width limit of random features
+σW. In that case,H = L2(π), that is, the space of square-integrable functions with respect
+to π, with dot-product⟨g, h⟩H = Ew∼π[g(w) h(w)]. This choice is however not unique:
+one can obtain other feature vectors deﬁned in other Hilbert spaces by applying a unitary
+transformation toϕ, which does not modify the dot product in eq. (4). In the following, we
+choose the kernel PCA (KPCA) feature vector, whose covariance matrixEx[ϕ(x) ϕ(x)T] is
+diagonal with decreasing values along the diagonal, introduced by Schölkopf et al. (1997). It
+is obtained by expressing any feature vectorϕ in its PCA basis relative to the distribution
+of x. In this caseH = ℓ2(N).
+Finally, we denote byH the reproducing kernel Hilbert space (RKHS) associated to the
+kernel k in eq. (3). It is the space of functionsf which can be writtenf(x) =⟨θ, ϕ(x)⟩H,
+with norm∥f∥H =∥θ∥H.1 A random feature network deﬁnes approximations of functions
+in this RKHS. WithH = L2(π), these functions can be written
+f(x) = Ew∼π[θ(w) σ(⟨w, x⟩)] =
+∫
+θ(w) σ(⟨w, x⟩) dπ(w).
+This expression is equivalent to the mean-ﬁeld limit of one-hidden-layer networks (Chizat
+andBach,2018;Meietal.,2018;RotskoﬀandVanden-Eijnden,2018;SirignanoandSpiliopou-
+los, 2020), which we will generalize to deep networks in Section 2.2.
+Rotational alignment. We now introduce rotations which align approximate kernel fea-
+ture vectors. By abuse of language, we use rotations as a synonym for orthogonal transfor-
+mations, and also include improper rotations which are the composition of a rotation with
+a reﬂection. Here, we prove thataligned features vectors ˆϕ converge to their inﬁnite-width
+counterpart ϕ.
+We begin by an informal derivation of our main result. We have seen that the kernel
+ˆk(x, x′) =⟨ ˆϕ(x), ˆϕ(x′)⟩convergestothekernel k(x, x′) =⟨ϕ(x), ϕ(x′)⟩. Wethusexpect, and
+will later prove, that for large widths there exists a rotationˆA such that ˆA ˆϕ≈ ϕ (in a sense
+made precise by Theorem 1 below), because all feature vectors of the kernelk are rotations
+of one another. The rotation ˆA is dependent on the random feature realizationW and is
+thus random. The network activationsˆϕ(x)≈ ˆATϕ(x) are therefore a random rotation of
+1We shall always assume thatθ is the minimum-norm vector such thatf (x) = ⟨θ, ϕ(x)⟩H.
+7
+
+
+===== PAGE 8 =====
+Guth, Ménard, Rochette, and Mallat
+the deterministic feature vectorϕ(x). For the KPCA feature vectorϕ, ˆA approximately
+computes an orthonormal change of coordinate ofˆϕ(x) to its PCA basis.
+For any functionf(x) =⟨θ, ϕ(x)⟩H inH, if the output layer weights of the network are
+ˆθ = ˆATθ, then the network output is
+ˆf(x) =⟨ ˆATθ, ˆϕ(x)⟩ =⟨θ, ˆA ˆϕ(x)⟩H≈ f(x).
+This means that the ﬁnal layer coeﬃcientsˆθ can cancel the random rotationˆA introduced
+by W, so that the random network outputˆf(x) converges when the widthd1 increases to a
+ﬁxed function inH. This propagation of rotations across layers is key to understanding the
+weight dependencies in deep networks. We now make the above arguments more rigorous
+and prove thatˆϕ and ˆf respectively converge toϕ and f, for an appropriate choice ofˆA.
+We writeO(d1) the set of linear operators ˆA from Rd1 to H = ℓ2(N) which satisfy
+ˆAT ˆA = Idd1. Each ˆA∈O (d1) computes an isometric embedding ofRd1 into H, while ˆAT is
+an orthogonal projection onto ad1-dimensional subspace ofH which can be identiﬁed with
+Rd1. The alignment ˆA of ˆϕ to ϕ is deﬁned as the minimizer of the mean squared error:
+ˆA = arg min
+ˆA∈O(d1)
+Ex
+[
+∥ ˆA ˆϕ(x)− ϕ(x)∥
+2
+H
+]
+. (5)
+This optimization problem, known as the (orthogonal) Procrustes problem (Hurley and
+Cattell, 1962; Schönemann, 1966), admits a closed-form solution, computed from a singular
+value decomposition of the (uncentered) cross-covariance matrix betweenϕ and ˆϕ:
+ˆA = U V T with Ex
+[
+ϕ(x) ˆϕ(x)T]
+= U SV T. (6)
+The mean squared error (5) of the optimalˆA (6) is then
+Ex
+[
+∥ ˆA ˆϕ(x)− ϕ(x)∥
+2
+H
+]
+= tr Ex
+[
+ˆϕ(x) ˆϕ(x)T]
++tr Ex
+[
+ϕ(x) ϕ(x)T]
+−2
+Ex
+[
+ϕ(x) ˆϕ(x)T]
+1
+, (7)
+where∥·∥1 is the nuclear (or trace) norm, that is, the sum of the singular values. Equa-
+tion (7) deﬁnes a distance between the representationsˆϕ and ϕ which is related to various
+similarity measures used in the literature.2
+The alignment rotation (5,6) was used by Haxby et al. (2011) to align fMRI response
+patterns of human visual cortex from diﬀerent individuals, and by Smith et al. (2017)
+2By normalizing the variance of ϕ and ˆϕ, eq. (7) can be turned into a similarity measure
+∥Ex[ϕ(x) ˆϕ(x)T]∥1/
+√
+Ex[∥ϕ(x)∥2]Ex[∥ ˆϕ(x)∥2]. It is related to the kernel alignment used by Cristianini et al.
+(2001); Cortes et al. (2012); Kornblith et al. (2019), although the latter is based on the Frobenius norm
+of the cross-covariance matrixEx[ϕ(x) ˆϕ(x)T] rather than the nuclear norm. Both similarity measures are
+invariant to rotations of eitherϕ or ˆϕ and therefore only depend on the kernelsk and ˆk, but the nuclear
+norm has a geometrical interpretation in terms of an explicit alignment rotation (6). Further, Appendix A
+shows that the formulation (7) has connections to optimal transport through the Bures-Wasserstein dis-
+tance (Bhatia et al., 2019). Canonical correlation analysis also provides an alignment, although not in
+the form of a rotation. It is based on a singular value decomposition of the cross-correlation matrix
+Ex[ϕ(x) ϕ(x)T]−1/2 Ex[ϕ(x) ˆϕ(x)T] Ex[ ˆϕ(x) ˆϕ(x)T]−1/2 rather than the cross-covariance, and is thus sensi-
+tive to noise in the estimation of the covariance matrices (Raghu et al., 2017; Morcos et al., 2018). Equiv-
+alently, it corresponds to replacing ϕ and ˆϕ with their whitened counterparts Ex[ϕ(x) ϕ(x)T]−1/2 ϕ and
+Ex[ ˆϕ(x) ˆϕ(x)T]−1/2 ˆϕ in eqs. (5) to (7).
+8
+
+
+===== PAGE 9 =====
+A Rainbow in Deep Network Black Boxes
+to align word embeddings from diﬀerent languages. Alignment between network weights
+has also been considered in previous works, but it was restricted to permutation matrices
+(Entezari et al., 2022; Benzing et al., 2022; Ainsworth et al., 2022). Permutations have the
+advantage of commuting with pointwise non-linearities, and can therefore be introduced
+while exactly preserving the network output function. However, they are not suﬃciently
+rich to capture the variability of random features. It is shown in Entezari et al. (2022)
+that the error after permutation alignment converges to zero with the number of random
+features d1 at a polynomial rate which is cursed by the dimensiond0 of x. On the contrary,
+the following theorem proves that the error after rotational alignment has a convergence
+rate which is independent of the dimensiond0.
+Theorem 1 Assume that Ex[∥x∥2] < +∞, σ is Lipschitz continuous, and π has ﬁnite
+fourth order moments. Then there exists a constantc > 0 which does not depend ond0 nor
+d1 such that
+EW,x,x′
+[
+|ˆk(x, x′)− k(x, x′)|2]
+≤ c d−1
+1 ,
+where x′ is an i.i.d. copy ofx. Suppose that the sorted eigenvaluesλ1≥···≥ λm≥···
+of Ex[ϕ(x) ϕ(x)T] satisfy λm = O(m−α) with α > 1. Then the alignment ˆA deﬁned in (5)
+satisﬁes
+EW,x
+[
+∥ ˆA ˆϕ(x)− ϕ(x)∥
+2
+H
+]
+≤ c d−η
+1 with η = α− 1
+2(2α− 1) > 0.
+Finally, for any f(x) =⟨θ, ϕ(x)⟩H inH, if ˆθ = ˆATθ then
+EW,x
+[
+| ˆf(x)− f(x)|2]
+≤ c∥f∥2
+H d−η
+1 .
+The proof is given in Appendix A. The convergence of the empirical kernelˆk to the
+asymptotic kernel k is a direct application of the law of large numbers. The mean-square
+distance (7) betweenˆA ˆϕ and ϕ is then rewritten as the Bures-Wasserstein distance (Bhatia
+et al., 2019) between the kernel integral operators associated toˆk and k. It is controlled
+by their mean-square distance via an entropic regularization of the underlying optimal
+transport problem (Cuturi, 2013, see also Peyré and Cuturi, 2019). The convergence rate
+is then obtained by exploiting the eigenvalue decay of the kernel integral operator.
+Theorem 1 proves that there exists a rotationˆA which nearly aligns the hidden layer of
+a random feature network with any feature vector of the asymptotic kernel, with an error
+which converges to zero. The network output converges if that same rotation is applied on
+the last layer weights. We will use this result in the next section to deﬁne deep rainbow
+networks, but we note that it can be of independent interest in the analysis of random
+feature representations. The theorem assumes a power-law decay of the covariance spectrum
+of the feature vectorϕ (which is independent of the choice ofϕ satisfying eq. 4). Because∑∞
+m=1 λm = Ex[∥ϕ(x)∥2] < +∞ (as shown in the proof), a standard result implies that
+λm = o(m−1), so the assumptionα > 1 is not too restrictive. The constantc is explicit and
+depends polynomially on the constants involved in the hypotheses (except for the exponent
+α). The convergence rateη = α−1
+2(2α−1) is an increasing function of the power-law exponent
+α. It vanishes in the critical regime whenα→ 1, and increases to 1
+4 when α→∞ . This
+bound might be pessimistic in practice, as a heuristic argument suggests a rate of1
+2 when
+9
+
+
+===== PAGE 10 =====
+Guth, Ménard, Rochette, and Mallat
+α→∞ based on the rate1 on the kernels. A comparison with convergence rates of random
+features KPCA (Sriperumbudur and Sterge, 2022) indeed suggests it might be possible to
+improve the convergence rate toα−1
+2α−1. Finally, although we give results in expectation for
+the sake of simplicity, we note that bounds in probability can be obtained using Bernstein
+concentration bounds for operators (Tropp, 2012; Minsker, 2017) in the spirit of Rudi et al.
+(2013); Bach (2017).
+2.2 Deep rainbow networks
+The previous section showed that the hidden layer of a random feature network converges
+to an inﬁnite-dimensional feature vector, up to a rotation deﬁned by the alignmentˆA. This
+section deﬁnes deep fully-connected rainbow networks by cascading conditional random
+features, whose kernels also converge in the inﬁnite-width limit. It provides a model of the
+joint probability distribution of weights of trained networks, whose layer dependencies are
+captured by alignment rotation matrices.
+We consider a deep fully-connected neural network withJ hidden layers, which itera-
+tively transforms the input datax∈ Rd0 with weight matricesWj of size dj× dj−1 and a
+pointwise non-linearity σ, to compute each activation layer of depthj:
+ˆφj(x) = σWj··· σW1 x.
+σ includes a division by
+∑
+dj, which we do not write explicitly to simplify notations. After
+J non-linearities, the last layer outputs
+ˆf(x) =⟨ˆθ, ˆφJ(x)⟩.
+Inﬁnite-width rainbow networks. The rainbow model deﬁnes eachWj conditionally
+on the previous(Wℓ)ℓ<j as a random feature matrix. The distribution of random features
+at layer j is rotated to account for the random rotation introduced by ˆφj−1. We ﬁrst
+introduce inﬁnite-width rainbow networks which deﬁne the asymptotic feature vectors used
+to compute these rotations.
+Deﬁnition 1 An inﬁnite-width rainbow network has activation layers deﬁned in a separable
+Hilbert spaceHj for any j≤ J by
+φj(x) = ϕj(ϕj−1(. . . ϕ1(x) . . .))∈ Hj for x∈ H0 = Rd0,
+where each ϕj : Hj−1→ Hj is deﬁned from a probability distributionπj on Hj−1 by
+⟨ϕj(z), ϕj(z′)⟩Hj
+= Ew∼πj
+[
+σ(⟨w, z⟩Hj−1
+) σ(⟨w, z′⟩Hj−1)
+]
+for z, z′∈ Hj−1. (8)
+It deﬁnes a rainbow kernel
+kj(x, x′) =⟨φj(x), φj(x′)⟩Hj
+.
+For θ∈ HJ, the inﬁnite-width rainbow network outputs
+f(x) =⟨θ, φJ(x)⟩HJ
+∈H J ,
+whereHJ is the RKHS of the rainbow kernelkJ of the last layer. If all probability distribu-
+tions πj are Gaussian, then the rainbow network is said to be Gaussian.
+10
+
+
+===== PAGE 11 =====
+A Rainbow in Deep Network Black Boxes
+Each activation layerφj(x)∈ Hj of an inﬁnite-width rainbow network has an inﬁnite
+dimension and is deterministic. We shall see that the cascaded feature mapsϕj are inﬁnite-
+width limits ofσWj up to rotations. One can arbitrarily rotate a feature vectorϕj(z) which
+satisﬁes (8), which also rotates the Hilbert spaceHj and φj(x). If the distributionπj+1 at
+the next layer (or the weight vectorθ if j = J) is similarly rotated, this operation preserves
+the dot products⟨w, φj(x)⟩Hj for w∼ πj+1. It therefore does not aﬀect the asymptotic
+rainbow kernels at each depthj:
+kj(x, x′) = Ew∼πj
+[
+σ(
+⟨
+w, φj−1(x)
+⟩
+Hj−1
+) σ(⟨w, φj−1(x′)⟩Hj−1)
+]
+, (9)
+as well as the rainbow network output f(x). We shall ﬁx these rotations by choosing
+KPCA feature vectors. This imposes that Hj = ℓ2(N) and Ex[φj(x) φj(x)T] is diagonal
+with decreasing values along the diagonal. The random feature distributionsπj are thus
+deﬁned with respect to the PCA basis ofφj(x). Inﬁnite-width rainbow networks are then
+uniquely determined by the distributionsπj and the last-layer weightsθ.
+The weight distributionsπj for j≥ 2 are deﬁned in the inﬁnite-dimensional spaceHj−1
+andsomecaremustbetaken. Wesaythatadistribution π onaHilbertspace H hasbounded
+second-order moments if its (uncentered) covariance operatorEw∼π[wwT] is bounded (for
+the operator norm). The expectation is to be understood in a weak sense: we assume
+that there exists a bounded operatorC on H such that zTCz′ = Ew∼π[⟨w, z⟩H⟨w, z′⟩H] for
+z, z′∈ H. We further say that π has bounded fourth-order moments if for every trace-
+class operator T (that is, such thattr(T TT)1/2 < +∞), Ew∼π[(wTT w)2] < +∞. We will
+assume that the weight distributionsπj have bounded second- and fourth-order moments.
+Together with our assumptions thatEx[∥x∥2] < +∞ and that σ is Lipschitz continuous,
+this veriﬁes the existence of all the inﬁnite-dimensional objects we will use in the sequel. For
+the sake of brevity, we shall not mention these veriﬁcations in the main text and defer them
+to Appendix B. Finally, we note that we can generalize rainbow networks to cylindrical
+measures πj, which deﬁne cylindrical random variablesw (Vakhania et al., 1987, see also
+Riedle, 2011 or Gawarecki and Mandrekar, 2011, Section 2.1.1). Such cylindrical random
+variables w are linear maps such thatw(z) is a real random variable for everyz∈ Hj−1.
+w(z) cannot necessarily be written⟨w, z⟩ with a random w∈ Hj−1. We still write⟨w, z⟩
+by abuse of notation, with the understanding that it refers tow(z). For example, we will
+see that ﬁnite-width networks at initialization converge to inﬁnite-width rainbow networks
+with πj =N (0, Id), which is a cylindrical measure but not a measure whenHj−1 is inﬁnite-
+dimensional.
+Dimensionality reduction. Empirical observations of trained deep networks show that
+they have approximately low-rank weight matrices (Martin and Mahoney, 2021; Thamm
+et al., 2022). They compute a dimensionality reduction of their input, which is character-
+ized by the singular values of the layer weightWj, or equivalently the eigenvalues of the
+empirical weight covarianced−1
+j W T
+j Wj. For rainbow networks, the uncentered covariances
+Cj = Ew∼πj[wwT] of the weight distributionsπj therefore capture the linear dimensionality
+reductions of the network. IfC1/2
+j is the symmetric square root ofCj, we can rewrite (8)
+11
+
+
+===== PAGE 12 =====
+Guth, Ménard, Rochette, and Mallat
+with a change of variable as
+ϕj(z) = ˜ϕj
+(
+C1/2
+j z
+)
+with ⟨ ˜ϕj(z), ˜ϕj(z′)⟩Hj = Ew∼˜πj
+[
+σ(⟨w, z⟩) σ(⟨z, z′⟩)
+]
+,
+where ˜πj has an identity covariance. Rainbow network activations can thus be written:
+φj(x) = ˜ϕj
+(
+C1/2
+j ··· ˜ϕ1(C1/2
+1 x)
+)
+. (10)
+Each square root C1/2
+j performs a linear dimensionality reduction of its input, while the
+white random feature maps ˜ϕj compute high-dimensional non-linear embeddings. Such
+linear dimensionality reductions in-between kernel feature maps had been previously con-
+sidered in previous works (Cho and Saul, 2009; Mairal, 2016; Bietti, 2019).
+Gaussian rainbow networks. The distributions πj are entirely speciﬁed by their co-
+variance Cj for Gaussian rainbow networks, where we then have
+πj =N (0, Cj).
+When the covarianceCj is not trace-class,πj is a cylindrical measure as explained above.
+If σ is a homogeneous non-linearity such as ReLU, on can derive (Cho and Saul, 2009) from
+(9) that Gaussian rainbow kernels can be written from a homogeneous dot-product:
+kj(x, x′) =∥zj(x)∥∥ zj(x′)∥ κ
+(
+⟨zj(x), zj(x′)⟩
+∥zj(x)∥∥ zj(x′)∥
+(
+with zj(x) = C1/2
+j φj−1(x), (11)
+where κ is a scalar function which depends on the non-linearityσ. The Gaussian rainbow
+kernels kj and the rainbow RKHSHJ only depend on the covariances(Cj)j≤J. If Cj = Idfor
+each j, thenkj remains a dot-product kernel because⟨zj(x), zj(x′)⟩ =⟨φj−1(x), φj−1(x′)⟩ =
+kj−1(x, x′). If the norms
+zj(x)
+ concentrate, we then obtainkj(x, x′) = κ(. . . κ(⟨x, x′⟩) . . .)
+(Daniely et al., 2016). Increasing depth then does not lead to better approximation prop-
+erties3, as kj has the same expressivity as k1 (Bietti and Bach, 2021). When Cj ̸= Id,
+Gaussian rainbow kernels kj cannot be written as a cascade of elementary kernels, but
+their square roots φj are a cascade of kernel feature mapsϕℓ = ˜ϕℓ C1/2
+ℓ for ℓ≤ j. The
+white random feature maps˜ϕj have simple expressions as they arise from the homogeneous
+dot-product kernel:
+⟨ ˜ϕj(z), ˜ϕj(z′)⟩Hj =∥z∥∥ z′∥ κ
+(
+⟨z, z′⟩
+∥z∥∥ z′∥
+(
+.
+This dot-product kernel implies that ˜ϕj is equivariant to rotations, and hence symmetry
+properties on the networkφj as we will see in Section 2.3.
+3Though depth may still aﬀects the generalization properties by changing the spectral bias of the kernels
+(Bordelon et al., 2020).
+12
+
+
+===== PAGE 13 =====
+A Rainbow in Deep Network Black Boxes
+Finite-width rainbow networks. We now go back to the general case of arbitrary
+weight distributions πj and introduce ﬁnite-width rainbow networks, which are random
+approximations of inﬁnite-width rainbow networks. Each weight matrixWj is iteratively
+deﬁned conditionally on the previous weight matrices(Wℓ)ℓ<j. Its conditional probability
+distribution is deﬁned in order to preserve the key induction property of the rainbow con-
+vergence of the activationsˆφj. Informally, it states that ˆAj ˆφj≈ φj where ˆAj : Rdj→ Hj
+is an alignment rotation. Finite-width rainbow networks impose suﬃcient conditions to
+obtain this convergence at all layers, as we will show below.
+The ﬁrst layer W1 is deﬁned as in Section 2.1. Suppose thatW1, . . . , Wj−1 have been
+deﬁned. By induction, there exists an alignment rotationˆAj−1 : Rdj−1→ Hj−1, deﬁned by
+ˆAj−1 = arg min
+ˆA∈O(dj−1)
+Ex
+[
+∥ ˆA ˆφj−1(x)− φj−1(x)∥
+2
+Hj−1
+]
+, (12)
+such that ˆAj−1 ˆφj−1(x)≈ φj−1(x). We wish to deﬁneWj so that ˆAj ˆφj(x)≈ φj(x). This
+can be achieved with a random feature approximation ofϕj composed with the alignment
+ˆAj−1. Consider a (semi-inﬁnite) random matrix W′
+j of dj i.i.d. rows in Hj−1 distributed
+according to πj:
+W′
+j = (w′
+ji)i≤dj with i.i.d. w′
+ji∼ πj.
+We then have ˆAj σ(W′
+jx)≈ ϕj(x) for a suitably deﬁned ˆAj, as in Section 2.1. Combining
+the two approximations, we obtain
+ˆAj σ
+(
+W′
+j ˆAj−1 ˆφj−1(x)
+)
+≈ ϕj
+(
+φj−1(x)
+)
+= φj(x).
+We thus deﬁne the weight at layerj with the aligned random features
+Wj = W′
+j ˆAj−1.
+It is a random weight matrix of sizedj× dj−1, with rotated rows ˆAT
+j−1w′
+ji that are inde-
+pendent and identically distributed when conditioned on the previous layers(Wℓ)ℓ<j. This
+inverse rotation of random weights cancels the rotation introduced by the random features
+at the previous layer, and implies a convergence of the random features cascade as we will
+prove below. This qualitative derivation motivates the following deﬁnition of ﬁnite-width
+rainbow networks.
+Deﬁnition 2 A ﬁnite-width rainbow network approximation of an inﬁnite-width rainbow
+network with weight distributions (πj)j≤J is deﬁned for each j ≤ J by a random weight
+matrix Wj of size dj× dj−1 which satisﬁes
+Wj = ( ˆAT
+j−1w′
+ji)i≤dj with i.i.d. w′
+ji∼ πj, (13)
+where ˆAj−1 is the rotation deﬁned in (12). The last layer weight vector isˆθ = ˆAT
+J θ where
+θ is the last layer weight of the inﬁnite-width rainbow network.
+13
+
+
+===== PAGE 14 =====
+Guth, Ménard, Rochette, and Mallat
+The random weightsWj of a ﬁnite rainbow networks are deﬁned as rotations and ﬁnite-
+dimensional projections of thedj inﬁnite-dimensional random vectorsw′
+ji, which are inde-
+pendent. The dependence on the previous layers(Wℓ)ℓ<j is captured by the rotationˆAj−1.
+The rows ofWj are thus not independent, but they are independent when conditioned on
+(Wℓ)ℓ<j.
+The rotation and projection of the random weights (13) implies a similar rotation and
+projection on the moments ofWj conditionally on (Wℓ)ℓ<j. In particular, the conditional
+covariance ofWj is thus
+ˆCj = ˆAT
+j−1Cj ˆAj−1. (14)
+Wj can then be factorized as the product of a white random feature matrix˜Wj with the
+covariance square root:
+Wj = ˜Wj ˆC1/2
+j with i.i.d. ˜wji conditionally on (Wℓ)ℓ<j.
+Note that the distribution of the white random features˜wji depends in general on ˆAj−1.
+However, for Gaussian rainbow networks withπj =N (0, Cj), this dependence is limited to
+the covariance ˆCj and ˜Wj = Gj is a Gaussian white matrix with i.i.d. normal entries that
+are independent of the previous layer weights(Wℓ)ℓ<j:
+Wj = Gj ˆC1/2
+j with i.i.d. Gjik∼N (0, 1) . (15)
+Finite-width Gaussian rainbow networks are approximation models of deep networks
+that have been trained end-to-end by SGD on a supervised task. We will explain in Section 3
+how each covariance Cj of the rainbow model can be estimated from the weights of one
+or several trained networks. The precision of a Gaussian rainbow model is evaluated by
+sampling new weights according to (15) and verifying that the resulting rainbow network
+has a similar performance as the original trained networks.
+Convergence to inﬁnite-width networks. The heuristic derivation used to motivate
+Deﬁnition 2 suggests that the weights rotation (13) guarantees the convergence of ﬁnite-
+width rainbow networks towards their inﬁnite-width counterpart. This is proved by the
+next theorem, which builds on Theorem 1.
+Theorem 2 Assume that Ex[∥x∥2] < +∞ and σ is Lipschitz continuous. Let (φj)j≤J be
+the activation layer of an inﬁnite-width rainbow network with distributions(πj)j≤J with
+bounded second- and fourth-order moments, and an outputf(x). Let (ˆφj)j≤J be the activa-
+tion layers of sizes(dj)j≤J of a ﬁnite-width rainbow network approximation, with an output
+ˆf(x). Let kj(x, x′) =⟨φj(x), φj(x′)⟩ and ˆkj(x, x′) =⟨ˆφj(x), ˆφj(x′)⟩. Suppose that the sorted
+eigenvalues of Ex[φj(x) φj(x)T] satisfy λj,m = O(m−αj) with αj > 1. Then there exists
+c > 0 which does not depend upon(dj)j≤J such that
+EW1,...,Wj ,x,x′
+[
+|ˆkj(x, x′)− kj(x, x′)|2]
+≤ c
+(
+εj−1 + d−1/2
+j
+)2
+EW1,...,Wj ,x
+[
+∥ ˆAj ˆφj(x)− φj(x)∥
+2
+Hj
+]
+≤ c ε2
+j
+EW1,...,WJ ,x
+[
+| ˆf(x)− f(x)|2]
+≤ c∥f∥2
+HJ
+ε2
+J ,
+14
+
+
+===== PAGE 15 =====
+A Rainbow in Deep Network Black Boxes
+where
+εj =
+j∑
+ℓ=1
+d−ηℓ/2
+ℓ with ηℓ = αℓ− 1
+2(2αℓ− 1) > 0.
+The proof is given in Appendix B. It applies iteratively Theorem 1 at each layer. As in
+Theorem 1, the constantc is explicit and depends polynomially on the constants involved
+in the hypotheses. For Gaussian weight distributions πj =N (0, Cj), the theorem only
+requires that∥Cj∥∞ is ﬁnite for each j≤ J, where∥·∥∞ is the operator norm (i.e., the
+largest eigenvalue).
+This theorem proves that at each layer, a ﬁnite-width rainbow network has an empirical
+kernel ˆkj which converges in mean-square to the deterministic kernelkj of the inﬁnite-width
+network, when all widthsdℓ grow to inﬁnity. Similarly, after alignment, each activation layer
+ˆφj also converges to the activation layerφj of the inﬁnite-width network. Finally, the ﬁnite-
+width rainbow output ˆf converges to a functionf in the RKHSHJ of the inﬁnite-width
+network. This demonstrates that all ﬁnite-width rainbow networks implement the same
+deterministic function when they are wide enough. Note that any relative scaling between
+the layer widths is allowed, as the error decomposes as a sum over layer contributions: each
+layer converges independently. In particular, this includes the proportional case when the
+widths are deﬁned asdj = s d0
+j and the scaling factors grows to inﬁnity.
+Theasymptoticexistenceofrotationsbetweenanytwotrainednetworkshasimplications
+for the geometry of the loss landscape: if the weight distributionsπj are unimodal, which
+is the case for Gaussian distributions, alignment rotations can be used to build continuous
+paths in parameter space between the two rainbow network weights without encountering
+loss barriers (Freeman and Bruna, 2017; Draxler et al., 2018; Garipov et al., 2018). This
+could not be done with permutations, which are discrete symmetries. It proves that under
+the rainbow assumptions, the loss landscape of wide-enough networks has a single connected
+basin, as opposed to many isolated ones.
+Theorem 2 is a law-of-large-numbers result, which is diﬀerent but complementary to
+the central-limit neural network Gaussian process convergence of Neal (1996); Williams
+(1996); Lee et al. (2018); Matthews et al. (2018). These works state that at initialization,
+random ﬁnite-dimensional projections of the activationsˆφj converge to a random Gaussian
+process described by a kernel. In contrast, we show in a wider setting that the activations
+ˆφj converge to a deterministic feature vectorφj described by a more general kernel, up to
+a random rotation. Note that this requires no assumptions of Gaussianity on the weights
+or the activations. The convergence of the kernels is similar to the results of Daniely et al.
+(2016), but here generalized to non-compositional kernels obtained with arbitrary weight
+distributions πj.
+Theorem 2 can be considered as a multi-layer but static extension of the mean-ﬁeld
+limit of Chizat and Bach (2018); Mei et al. (2018); Rotskoﬀ and Vanden-Eijnden (2018);
+Sirignano and Spiliopoulos (2020). The limit is the inﬁnite-width rainbow networks of
+Deﬁnition 1. It diﬀers from other multi-layer extensions (Sirignano and Spiliopoulos, 2022;
+E and Wojtowytsch, 2020; Nguyen and Pham, 2020; Chen et al., 2022; Yang and Hu, 2021;
+Bordelon and Pehlevan, 2022) because Deﬁnition 2 includes the alignment rotationsˆAj. We
+shall not model the optimization dynamics of rainbow networks when trained with SGD,
+but we will make several empirical observations in Section 3.
+15
+
+
+===== PAGE 16 =====
+Guth, Ménard, Rochette, and Mallat
+Finally, Theorem 2 shows that the two assumptions of Deﬁnition 2, namely that layer
+dependencies are reduced to alignment rotations and that neuron weights are conditionally
+i.i.d. at each layer, imply the convergence up to rotations of network activations at each
+layer. We will verify numerically this convergence in Section 3 for several network archi-
+tectures on image classiﬁcation tasks, corroborating the results of Raghu et al. (2017) and
+Kornblith et al. (2019). It does not mean that the assumptions of Deﬁnition 2 are valid,
+and verifying them is challenging in high-dimensions beyond the Gaussian case where the
+weight distributionsπj are not known. We however note that the rainbow assumptions are
+satisﬁed at initialization with πj =N (0, Id), as eq. (14) implies that ˆCj = Id and thus
+that the weight matricesWj = Gj are independent. Theorem 2 therefore applies at ini-
+tialization. It is an open problem to show whether the existence of alignment rotationsˆAj
+is preserved during training by SGD, or whether dependencies between layer weights are
+indeed reduced to these rotations. Regarding (conditional) independence between neuron
+weights, Sirignano and Spiliopoulos (2020) show that in one-hidden-layer networks, neuron
+weights remain independent at non-zero but ﬁnite training times in the inﬁnite-width limit.
+In contrast, a result of Rotskoﬀ and Vanden-Eijnden (2018) suggests that this is no longer
+true at diverging training times, as SGD leads to an approximation of the target function
+f with a better rate than Monte-Carlo. Neuron weights at a given layer remain however
+(conditionally) exchangeable due to the permutation equivariance of the initialization and
+SGD, and therefore have the same marginal distribution. Theorem 2 can be extended to
+dependent neuron weightsw′
+ji, e.g., with the more general assumption that their empirical
+distribution d−1
+j
+∑dj
+i=1 δw′
+ji
+converges weakly toπj when the widthdj increases.
+2.3 Symmetries and convolutional rainbow networks
+The previous sections have deﬁned fully-connected rainbow networks. In applications, prior
+information on the learning problem is often available. Practitioners then design more
+constrained architectures which implement inductive biases. Convolutional networks are
+important examples, which enforce two fundamental properties: equivariance to transla-
+tions, achieved with weight sharing, and local receptive ﬁelds, achieved with small ﬁlter
+supports (LeCun et al., 1989a; LeCun and Bengio, 1995). We ﬁrst explain how equivari-
+ance to general groups may be achieved in rainbow networks. We then generalize rainbow
+networks to convolutional architectures.
+Equivariant rainbow networks. Prior information may be available in the form of a
+symmetry group under which the desired output is invariant. For instance, translating an
+image may not change its class. We now explain how to enforce symmetry properties in
+rainbow networks by imposing these symmetries on the weight distributionsπj rather than
+on the values of individual neuron weightswji. For Gaussian rainbow networks, we shall
+see that it is suﬃcient to impose that the desired symmetries commute with the weight
+covariances Cj.
+Formally, let us consider G a subgroup of the orthogonal group O(d0), under whose
+action the target functionf ⋆ is invariant: f ⋆(gx) = f ⋆(x) for all g∈ G. Such invariance
+is generally achieved progressively through the network layers. In a convolutional network,
+translation invariance is built up by successive pooling operations. The outputf(x) is in-
+16
+
+
+===== PAGE 17 =====
+A Rainbow in Deep Network Black Boxes
+variant but intermediate activationsφj(x) are equivariant to the group action. Equivariance
+is more general than invariance. The activation mapφ is equivariant if there is a represen-
+tation ρ of G such that φ(gx) = ρ(g)φ(x), where ρ(g) is an invertible linear operator such
+that ρ(gg′) = ρ(g)ρ(g′) for all g, g′∈ G. An invariant functionf(x) =⟨θ, φ(x)⟩ is obtained
+from an equivariant activation mapφ with a ﬁxed pointθ of the representationρ. Indeed,
+if ρ(g)Tθ = θ for all g∈ G, then f(gx) = f(x).
+We say that ρ is an orthogonal representation ofG if ρ(g) is an orthogonal operator
+for all g. When ρ is orthogonal, we say thatφ is orthogonally equivariant. We also say
+that a distributionπ is invariant under the action ofρ if ρ(g)Tw∼ π for all g∈ G, where
+w∼ π. We say that a linear operatorC commutes with ρ if it commutes with ρ(g) for
+all g∈ G. Finally, a kernel k is invariant to the action ofG if k(gx, gx′) = k(x, x′). The
+following theorem proves that rainbow kernels are invariant to a group action if each weight
+distribution πj is invariant to the group representation on the activation layerφj−1, which
+inductively deﬁnes orthogonal representationsρj at each layer.
+Theorem 3 Let G be a subgroup of the orthogonal groupO(d0). If all weight distribution
+(πj)j≤J are invariant to the inductively deﬁned orthogonal representation ofG on their
+input activations, then activations(φj)j≤J are orthogonally equivariant to the action ofG,
+and the rainbow kernels(kj)j≤J are invariant to the action ofG. For Gaussian rainbow
+networks, this is equivalent to imposing that all weight covariances(Cj)j≤J commute with
+the orthogonal representation ofG on their input activations.
+The proof is in Appendix C. The result is proved by induction. Ifφj is orthogonally
+equivariant and πj+1 is invariant to its representationρj, then the next-layer activations
+are equivariant. Indeed, forw∼ πj+1,
+σ
+(]
+w, φj(gx)
+⟩)
+= σ
+(]
+w, ρj(g)φj(x)
+⟩)
+= σ
+(]
+ρj(g)Tw, φj(x)
+⟩)
+∼ σ
+(]
+w, φj(x)
+⟩)
+,
+which deﬁnes an orthogonal representation ρj+1 on φj+1. Note that any distribution πj
+which is invariant to an orthogonal representationρj necessarily has a covarianceCj which
+commutes with ρj. The converse is true whenπj is Gaussian, which shows that Gaussian
+rainbow networks have a maximal number of symmetries among rainbow networks with
+weight covariancesCj.
+Together with Theorem 2, Theorem 3 implies that ﬁnite-width rainbow networks can
+implement functions ˆf which are approximately invariant, in the sense that the mean-square
+error EW1,...,WJ ,x[| ˆf(gx)− ˆf(x)|2] vanishes when the layer widths grow to inﬁnity, with the
+same convergence rate as in Theorem 2. The activationsˆφj are approximately equivariant
+in a similar sense. This gives a relatively easy procedure to deﬁne neural networks having
+predeﬁned symmetries. The usual approach is to impose that each weight matrixWj is
+permutation-equivariant to the representation of the group action on each activation layer
+(Cohen and Welling, 2016; Kondor and Trivedi, 2018). This means thatWj is a group
+convolution operator and hence that the rows ofWj are invariant by this group action. This
+property requires weight-sharing or synchronization between weights of diﬀerent neurons,
+which has been criticized as biologically implausible (Bartunov et al., 2018; Ott et al.,
+2020; Pogodin et al., 2021). On the contrary, rainbow networks implement symmetries
+by imposing that the neuron weights are independent samples of a distribution which is
+17
+
+
+===== PAGE 18 =====
+Guth, Ménard, Rochette, and Mallat
+invariant under the group action. The synchronization is thus only at a global, statistical
+level. It also provides representations with the orthogonal group, which is much richer than
+the permutation group, and hence increases expressivity. It comes however at the cost of
+an approximate equivariance for ﬁnite layer widths.
+Convolutional rainbow networks. Translation-equivariance could be achieved in a
+fully-connected architecture by imposing stationary weight distributions πj. For Gaus-
+sian rainbow networks, this means that weight covariancesCj commute with translations,
+and are thus convolution operators. However, the weights then have a stationary Gaussian
+distribution and therefore cannot have a localized support. This localization has to be en-
+forced with the architecture, by constraining the connectivity of the network. We generalize
+the rainbow construction to convolutional architectures, without necessarily imposing that
+the weights are Gaussian. It is achieved by a factorization of the weight layers, so that iden-
+tical random features embeddings are computed for each patch of the input. As a result,
+all previous theoretical results carry over to the convolutional setting.
+In convolutional networks, eachWj is a convolution operator which enforces both trans-
+lation equivariance and locality. Typical architectures impose that convolutional ﬁlters have
+a predeﬁned support with an output which may be subsampled. This architecture prior can
+be written as a factorization of the weight matrix:
+Wj = Lj Pj,
+where Pj is a prior convolutional operator which only acts along space and is replicated over
+channels (also known as depthwise convolution), whileLj is a learned pointwise (or1× 1)
+convolution which only acts along channels and is replicated over space. This factorization
+is always possible, and should not be confused with depthwise-separable convolutions (Sifre
+and Mallat, 2013; Chollet, 2017).
+Let us consider a convolutional operatorWj having a spatial support of sizes2
+j, with
+dj−1 input channels and dj output channels. The prior operator Pj then extracts dj−1
+patches of size sj× sj at each spatial location and reshapes them as a channel vector of
+size d′
+j−1 = dj−1s2
+j. Pj is ﬁxed during training and represents the architectural constraints
+imposed by the convolutional layer. The learned operatorLj is then a1× 1 convolutional
+operator, applied at each spatial location acrossd′
+j−1 input channels to computedj output
+channels. This factorization reshapes the convolution kernel ofWj of sizedj× dj−1× sj× sj
+into a1× 1 convolution Lj with a kernel of sizedj× d′
+j−1× 1× 1. Lj can then be thought
+as a fully-connected operator over channels that is applied at every spatial location.
+The choice of the prior operator Pj directly inﬂuences the learned operator Lj and
+therefore the weight distributionsπj. Pj may thus be designed to achieve certain desired
+properties on πj. For instance, the operatorPj may also specify predeﬁned ﬁlters, such as
+wavelets in learned scattering networks (Zarka et al., 2021; Guth et al., 2022). In a learned
+scattering network, Pj computes spatial convolutions and subsamplings, with q wavelet
+ﬁlters having diﬀerent orientations and frequency selectivity. The learned convolutionLj
+then has d′
+j−1 = dj−1q input channels. This is further detailed in Appendix D, which
+explains that one can reduce the size ofLj by imposing that it commutes withPj, which
+amounts to factorizingWj = Pj Lj instead.
+The rainbow construction of Section 2.2 has a straightforward extension to the convo-
+lutional case, with a few adaptations. The activations layersˆφj−1 should be replaced with
+18
+
+
+===== PAGE 19 =====
+A Rainbow in Deep Network Black Boxes
+Pj ˆφj−1 and Wj with Lj, where it is understood that it represents a fully-connected matrix
+acting along channels and replicated pointwise across space. Similarly, the weight covari-
+ances Cj and its square rootsC1/2
+j are 1× 1 convolutional operators which act along the
+channels ofPj ˆφj−1, or equivalently are applied over patches ofˆφj−1. Finally, the alignments
+ˆAj−1 are 1× 1 convolutions which therefore commute withPj as they act along diﬀerent
+axes. One can thus still deﬁne ˆCj = ˆAT
+j−1Cj ˆAj−1. Convolutional rainbow networks also
+satisfy Theorems 1 to 3 with appropriate modiﬁcations.
+We note that the expression of the rainbow kernel is diﬀerent for convolutional archi-
+tectures. Equation (9) becomes
+kj(x, x′) =
+∑
+u
+Ew∼πj
+[
+σ
+(⟨
+w, Pjφj−1(x)[u]
+⟩)
+σ(⟨w, Pjφj−1(x′)[u]⟩)
+]
+,
+where Pjφj−1(x)[u] is a patch ofφj−1(x) centered atu and whose spatial size is determined
+by Pj. In the particular case whereπj is Gaussian with a covarianceCj, the dot-product
+kernel in eq. (11) becomes
+kj(x, x′) =
+∑
+u
+∥zu(x)∥∥ zu(x′)∥ κ
+(
+⟨zu(x), zu(x′)⟩
+∥zu(x)∥∥ zu(x′)∥
+(
+with zu(x) = C1/2
+j Pjφj−1(x)[u],
+The sum on the spatial locationu averages the local dot-product kernel values and deﬁnes
+a translation-invariant kernel. Observe that it diﬀers from the fully-connected rainbow
+kernel (11) with weight covariancesC′
+j = P T
+j CjPj, which is a global dot-product kernel
+with a stationary covariance. Indeed, the corresponding fully-connected rainbow networks
+have ﬁlters with global spatial support, while convolutional rainbow networks have localized
+ﬁlters. The covariance structure of depthwise convolutional ﬁlters has been investigated by
+Trockman et al. (2023).
+The architecture plays an important role by modifying the kernel and hence the RKHS
+HJ of the output (Daniely et al., 2016). Hierarchical convolutional kernels have been studied
+by Mairal et al. (2014); Anselmi et al. (2015); Bietti (2019). Bietti and Mairal (2019) have
+proved that functions inHJ are stable to the action of diﬀeomorphisms (Mallat, 2012) when
+Pj also include a local averaging before the patch extraction. WhenCj = Id, such kernels
+have been shown to eﬃciently approximate and learn local functions (Cagnetta et al., 2023).
+In that case, deep kernels withJ > 1 hidden layers are not equivalent to shallow kernels
+with J = 1 (Bietti and Bach, 2021).
+3. Numerical results
+In this section, we validate the rainbow model on several network architectures trained on
+image classiﬁcation tasks and make several observations on the properties of the learned
+weight covariancesCj. As our ﬁrst main result, we partially validate the rainbow model by
+showing that network activations converge up to rotations when the layer widths increase
+(Section 3.1). We then show in Section 3.2 that the empirical weight covariancesˆCj converge
+up to rotations when the layer widths increase. Furthermore, the weight covariances are
+typically low-rank and can be partially speciﬁed from the input activation covariances. Our
+second main result, in Section 3.3, is that the Gaussian rainbow model applies to scattering
+19
+
+
+===== PAGE 20 =====
+Guth, Ménard, Rochette, and Mallat
+networks trained on the CIFAR-10 dataset. Generating new weights from the estimated
+covariances Cj leads to similar performance than SGD training when the network width is
+large enough. We further show that SGD only updates the weight covariance during training
+while preserving the white Gaussian initialization. It suggests a possible explanation for
+the Gaussian rainbow model, though the Gaussian assumption seems too strong to hold for
+more complex learning tasks for network widths used in practice.
+3.1 Convergence of activations in the inﬁnite-width limit
+We show that trained networks with diﬀerent initializations converge to the same function
+whentheirwidthincreases. Moreprecisely, weshowthestrongerpropertythatateachlayer,
+their activations converge after alignment to a ﬁxed deterministic limit when the width
+increases. Trained networks thus share the convergence properties of rainbow networks
+(Theorem 2). Section 3.3 will further show that scattering networks trained on CIFAR-10
+indeed approximate Gaussian rainbow networks. In this case, the limit function is thus in
+the Gaussian rainbow RKHS (Deﬁnition 1).
+Architectures and tasks. In this paper, we consider two architectures, learned scatter-
+ing networks (Zarka et al., 2021; Guth et al., 2022) and ResNets (He et al., 2016), trained
+on two image classiﬁcation datasets, CIFAR-10 (Krizhevsky, 2009) and ImageNet (Rus-
+sakovsky et al., 2015).
+Scattering networks have ﬁxed spatial ﬁlters, so that their learned weights only operate
+across channels. This structure reduces the learning problem to channel matrices and
+plays a major role in the (conditional) Gaussianity of the learned weights, as we will see.
+The networks haveJ hidden layers, with J = 7 on CIFAR-10 andJ = 10 on ImageNet.
+Each layer can be written Wj = Lj Pj where Lj is a learned 1× 1 convolution, and Pj
+is a convolution with predeﬁned complex wavelets. Pj convolves each of its dj−1 input
+channels with5 diﬀerent wavelet ﬁlters (1 low-frequency ﬁlter and4 oriented high-frequency
+wavelets), thus generatingd′
+j−1 = 5dj−1 channels. We shall still denoteLj with Wj to keep
+the notations of Section 2.2. The non-linearityσ is a complex modulus with skip-connection,
+followed by a standardization (as computed by a batch-normalization). This architecture
+is borrowed from Guth et al. (2022) and is further detailed in Appendix D.
+Our scattering network reaches an accuracy of92% on the CIFAR-10 test set. As a
+comparison, ResNet-20 (He et al., 2016) achieves91% accuracy, while most linear classiﬁ-
+cation methods based on hierarchical convolutional kernels such as the scattering transform
+or the neural tangent kernel reach less than83% accuracy (Mairal et al., 2014; Oyallon
+and Mallat, 2015; Li et al., 2019). On the ImageNet dataset (Russakovsky et al., 2015),
+learned scattering networks achieve89% top-5 accuracy (Zarka et al., 2021; Guth et al.,
+2022), which is also the performance of ResNet-18 with single-crop testing.
+We have made minor adjustments to the ResNet architecture for ease of analysis such
+as removing bias parameters (at no cost in performance), as explained in Appendix D. It
+can still be written Wj = Lj Pj where Pj is a patch extraction operator as explained in
+Section 2.3, and the non-linearityσ is a ReLU.
+Convergence of activations. We train several networks with a range of widths by si-
+multaneously scaling the widths of all layers with a multiplicative factors varying over a
+20
+
+
+===== PAGE 21 =====
+A Rainbow in Deep Network Black Boxes
+100 101 102 103 104
+ˆφj KPCA rank m
+10□4
+10□3
+10□2
+10□1
+100
+ˆφj KPCA eigenvalue
+m□1
+s = 2 □3 s = 2 0 s = 2 3
+j = 4
+100 101 102 103 104
+φj KPCA rank m
+10□4
+10□3
+10□2
+10□1
+100
+φj KPCA eigenvalue
+m□1
+j = 1 j = 4 j = 7
+Figure 2: Convergence of spectra of activationsˆφj of ﬁnite-width trained scattering networks to-
+wards the feature vectorφj. The ﬁgure shows the covariance spectra of activationsˆφj
+for a given layerj = 4 and various width scalings (left) and of the feature vectorφj for
+the seven hidden layersj∈{ 1, . . . ,7} (right). The covariance spectrum is a power law
+of index close to−1.
+range of 26 = 64. We show that their activations ˆφj converge after alignment to a ﬁxed
+deterministic limit φj when the width increases. The feature mapφj is approximated with
+the activations of a large network withs = 23.
+We begin illustrating the behavior of activation spectra as a function of our width-scaling
+parameter s, for seven-hidden-layer trained scattering networks on CIFAR-10. In the left
+panel of Figure 2, we show how activation spectra vary as a function ofs for the layer
+j = 4 which has a behavior representative of all other layers. The spectra are obtained by
+doing a PCA of the activationsˆφj(x), which corresponds to a KPCA of the inputx with
+respect to the empirical kernelˆkj. The ˆφj covariance spectra for networks of various widths
+overlap at lower KPCA ranks, suggesting well-estimated components, while the variance
+then decays rapidly at higher ranks. Wider networks thus estimate a larger number of
+principal components of the feature vectorφj. For the ﬁrst layerj = 1, this recovers the
+random feature KPCA results of Sriperumbudur and Sterge (2022), but this convergence
+is observed at all layers. The overall trend as a function ofs illustrates the inﬁnite-width
+convergence. We also note that, as the width increases, the activation spectrum becomes
+closer to a power-law distribution with a slope of−1. The right panel of the ﬁgure shows
+that this type of decay with KPCA rankm is observed at all layers of the inﬁnite-width
+network (φj)j≤J. Thepower-law spectral properties ofrandom feature activations havebeen
+studied theoretically by Scetbon and Harchaoui (2021), and in connection with empirical
+scaling laws (Hestness et al., 2017; Kaplan et al., 2020) by Spigler et al. (2020); Bordelon
+et al. (2020); Maloney et al. (2022). Note that here we do not scale the dataset size nor
+training hyperparameters such as the learning rate or batch size with the network width,
+and a diﬀerent experimental setup would likely inﬂuence the inﬁnite-width limit (Yang
+et al., 2022; Hoﬀmann et al., 2022).
+We now directly measure the convergence of activations by evaluating the mean-square
+distance after alignment Ex[∥ ˆAj ˆφj(x)− φj(x)∥2]. The left panel of Figure 3 shows that
+21
+
+
+===== PAGE 22 =====
+Guth, Ménard, Rochette, and Mallat
+2□3 2□2 2□1 20 21 22
+Width scaling
+10□1
+100
+Mean-square alignment error
+Scattering-7 on CIF AR-10
+2□3 2□2 2□1 20 21 22
+Width scaling
+10□1
+100
+Mean-square alignment error
+ResNet-18 on ImageNet
+First
+Last
+Layer j
+Figure 3: Convergence of activations ˆφj of ﬁnite-width networks towards the corresponding
+feature vector φj, for scattering networks trained on CIFAR-10 ( left) and ResNet
+trained on ImageNet ( right). Both panels show the relative mean squared error
+Ex[∥ ˆAj ˆφj(x)− φj(x)∥2]/Ex[∥φj(x)∥2] between aligned activations ˆAj ˆφj and the feature
+vector φj. The error decreases as a function of the width scalings for all layers for the
+scattering network, and all but the last few layers for ResNet.
+it does indeed decrease when the network width increases, for all layersj. Despite the
+theoretical convergence rate of Theorem 2 vanishing when the activation spectrum exponent
+αj approaches 1, in practice we still observe convergence. Alignment rotations ˆAj are
+computed on the train set while the mean-square distance is computed on the test set,
+so this decrease is not a result of overﬁtting. It demonstrates that scattering networks
+ˆφj approximate the same deterministic networkφj no matter their initialization or width
+when it is large enough. The right panel of the ﬁgure evaluates this same convergence on
+a ResNet-18 trained on ImageNet. The mean-square distance after alignment decreases
+for most layers when the width increases. We note that the rate of decrease slows down
+for the last few layers. For these layers, the relative error after alignment is of the order
+of unity, indicating that the convergence is not observed at the largest width considered
+here. The overall trend however suggests that further increasing the width would reduce the
+error after alignment. The observations that networks trained from diﬀerent initializations
+have similar activations had already been made by Raghu et al. (2017). Kornblith et al.
+(2019) showed that similarity increases with width, but with a weaker similarity measure.
+Rainbow networks, which we will show can approximate scattering networks, explain the
+source of these observations as a consequence of the law of large numbers applied to the
+random weight matrices with conditionally i.i.d. rows.
+3.2 Properties of learned weight covariances
+We have established the convergence (up to rotations) of the activationsˆφj in the inﬁnite-
+width limit. Under the rainbow model, the weight matrices Wj are random and thus
+cannot converge. However, they deﬁne estimates ˜Cj of the inﬁnite-dimensional weight
+covariances Cj. We show that these estimates ˜Cj converge to the true covariances Cj
+when the width increases. We then demonstrate that the covariances Cj are eﬀectively
+22
+
+
+===== PAGE 23 =====
+A Rainbow in Deep Network Black Boxes
+low-rank, and that their eigenspaces can be eﬃciently approximated by taking into account
+unsupervised information. The weight covariances are thus of low complexity, in the sense
+that they can be described with a number of parameters signiﬁcantly smaller than their
+original size.
+Estimation of the weight covariances. We estimate the weight covariancesCj from
+the learned weights of a deep network. This network has weight matricesWj of sizedj×dj−1
+that have been trained end-to-end by SGD. The natural empirical estimate of the weight
+covariance ˆCj of Wj is
+ˆCj≈ d−1
+j W T
+j Wj. (16)
+It computes ˆCj from dj samples, which are conditionally i.i.d. under the rainbow model
+hypothesis. Although the numberdj of samples is large, their dimensiondj−1 is also large.
+For many architecturesdj/dj−1 remains nearly constant and we shall consider in this section
+that dj = s d0
+j, so that when the scaling factors grows to inﬁnity dj/dj−1 converges to a
+non-zero ﬁnite limit. This creates challenges in the estimation ofˆCj, as we now explain. We
+will see that the weight variance is ampliﬁed during training. The learned covariance can
+thus be modeledˆCj = Id + ˆC′
+j, where the magnitude ofˆC′
+j keeps increasing during training.
+When the training time goes to inﬁnity, the initializationId becomes negligible with respect
+to ˆC′
+j. However, at ﬁnite training time, only the eigenvectors ofC′
+j with suﬃciently high
+eigenvalues have been learned consistently, andˆC′
+j is thus eﬀectively low-rank.ˆCj is then a
+spiked covariance matrix (Johnstone, 2001). A large statistical literature has addressed the
+estimation of spiked covariances when the number of parametersdj−1 and the number of
+observations dj increases, with a constant ratiodj/dj−1 (Baik et al., 2005; El Karoui, 2008a).
+Consistent estimators of the eigenvalues ofˆCj can be computed, but not of its eigenvectors,
+unless we have other prior information such as sparsity of the covariance entries (El Karoui,
+2008b) or its eigenvectors (Ma, 2013). In our setting, we shall see that prior information
+on eigenspaces of ˆCj is available from the eigenspaces of the input activation covariances.
+We use the empirical estimator (16) for simplicity, but it is not optimal. Minimax-optimal
+estimators are obtained by shrinking empirical eigenvalues (Donoho et al., 2018).
+We would like to estimate the inﬁnite-dimensional covariancesCj rather than ﬁnite-
+dimensional projections ˆCj. Since ˆCj = ˆAT
+j−1Cj ˆAj−1, an empirical estimate ofCj is given
+by
+˜Cj = ˆAj−1 ˆCj ˆAT
+j−1. (17)
+To compute the alignment rotationˆAj−1 with eq. (6), we must estimate the inﬁnite-width
+rainbow activations φj−1. As above, we approximate φj−1 with the activations ˆφj−1 of a
+ﬁnite but suﬃciently large network, relying on the activation convergence demonstrated
+in the previous section. We then estimate Cj with eq. (17) and ˆCj ≈ d−1
+j W T
+j Wj. We
+further reduce the estimation error ofCj by training several networks of size(dj)j≤J, and
+by averaging the empirical estimators (17). Note that averaging directly the estimates (16)
+of ˆCj with diﬀerent networks would not lead to an estimate ofCj, because the covariances
+ˆCj are represented in diﬀerent bases which must be aligned. The ﬁnal layer weightsθ are
+also similarly computed with an empirical estimator from the trained weightsˆθ.
+23
+
+
+===== PAGE 24 =====
+Guth, Ménard, Rochette, and Mallat
+1 50 100 150 200 250 300
+˜Cj PCA rank
+10□1
+100
+101
+102
+˜Cj PCA eigenvalue
+N = 1 network
+N = 10 networks
+N = 50 networks
+1 50 100 150 200 250 300
+˜Cj PCA rank
+10□1
+100
+101
+102
+˜Cj PCA eigenvalue
+s = 2 □3 s = 2 1
+s = 2 5
+1 50 100 150 200 250 300
+˜Cj PCA maximum rank
+20%
+40%
+60%
+80%
+100%CIF AR-10 Top-1 accuracy
++5% oﬀset
+-5% oﬀset
+2□3 2□2 2□1 20 21 22 23 24
+Width scaling s
+10□1
+100
+Cj estimation error
+j = 2
+j = 3
+Figure 4: The weight covariance estimate˜Cj converges towards the inﬁnite-dimensional covariance
+Cj for a three-hidden-layer scattering network trained on CIFAR-10. The ﬁrst three
+panels show the behavior of the layerj = 2. Upper left: spectra of empirical weight
+covariances ˜Cj as a function of the network sample sizeN showing the transition from
+an exponential decay (ﬁtted by the dashed line forN = 1) to the Marchenko-Pastur
+spectrum (ﬁtted by the dotted lines). Lower left: test classiﬁcation performance on
+CIFAR-10 of the trained networks as a function of the maximum rank of its weight
+covariance ˜Cj. Most of the performance is captured with the ﬁrst eigenvectors of˜Cj.
+The curves for diﬀerent network sample sizesN when estimating ˜Cj overlap and are
+oﬀset for visual purposes.Upper right: spectrum of empirical weight covariances˜Cj as
+a function of the network width scalings. The dashed line is a ﬁt to an exponential
+decay at low rank.Lower right: relative distance between empirical and true covariances
+∥ ˆCj− Cj∥∞/∥Cj∥∞, as a function of the width scalings.
+Convergence of weight covariances. We now show numerically that the weight co-
+variance estimates ˜Cj (17) converge to the true covariancesCj. This performs a partial
+validation of the rainbow assumptions of Deﬁnition 2, as it veriﬁes the rotation of the
+second-order moments ofπj (14) but not higher-moments nor independence between neu-
+rons. Due to computational limitations, we perform this veriﬁcation on three-hidden-layer
+scattering networks trained on CIFAR-10, for which we can scale both the number of net-
+works N we can average over, and their widths. The main computational bottleneck here
+is the singular value decomposition of the cross-covariance matrixEx[φj(x) ˆφj(x)T] to com-
+24
+
+
+===== PAGE 25 =====
+A Rainbow in Deep Network Black Boxes
+pute the alignment ˆAj, which requiresO(N s3) time and O(N s2) memory. These shallower
+networks reach a test accuracy of84% at large width.
+We begin by showing that empirical covariance matrices˜Cj estimated from the weights
+of diﬀerent networks share the same eigenspaces of large eigenvalues. To this end, we train
+N networks of the same ﬁnite width (s = 1) and compare the covariances˜Cj estimated from
+these N networks as a function ofN. As introduced above, the estimated covariances˜Cj
+are well modeled with a spiked-covariance model. The upper-left panel of Figure 4 indeed
+shows that the covariance spectrum interpolates between an exponential decay at low ranks
+(indicated by the dashed line, corresponding to the “spikes” resulting from training, as will
+be shown in Section 3.3), and a Marchenko-Pastur tail at higher ranks (indicated by dotted
+lines, corresponding to the initialization with identity covariance). Note that we show the
+eigenvalues as a function of their rank rather than a spectral density in order to reveal the
+exponential decay of the spike positions with rank, which was missed in previous works
+(Martin and Mahoney, 2021; Thamm et al., 2022). The exponential regime is present even
+in the covariance estimated from a single network, indicating its stability across training
+runs, while the Marchenko-Pastur tail becomes ﬂatter as more samples are used to estimate
+the empirical covariance. Here, the feature vectorφj has been estimated with a scattering
+network of same widths = 1 for simplicity of illustration.
+As shown in the lower-left panel, only the exponential regime contributes to the classi-
+ﬁcation accuracy of the network: the neuron weights can be projected on the ﬁrst principal
+components of ˜Cj, which correspond to the learned spikes, without harming performance.
+The informative component of the weights is thus much lower-dimensional (≈ 30) than
+the network width (128), and this dimension appears to match the characteristic scale of
+the exponential decay of the covariance eigenvalues. The numberN of trained networks
+used to compute ˜Cj has no appreciable eﬀect on the approximation accuracy, which again
+shows that the empirical covariance matrices of allN networks share this common infor-
+mative component. This presence of a low-dimensional informative weight component is
+in agreement with the observation that the Hessian of the loss at the end of training is
+dominated by a subset of its eigenvectors (LeCun et al., 1989b; Hassibi and Stork, 1992).
+These Hessian eigenvectors could indeed be related to the weight covariance eigenvectors.
+Similarly, the dichotomy in weight properties highlighted by our analysis could indicate why
+the eigenvalue distribution of the loss Hessian separates into two distinct regimes (Sagun
+et al., 2016, 2017; Papyan, 2019): the “bulk” (with small eigenvalues corresponding to un-
+informative ﬂat directions of the loss landscape) is related to the Marchenko-Pastur tail of
+our weight covariance spectrum and the “top” (or spiked) components correspond to the
+exponential regime found at the lowest ranks of the covariance spectrum.
+We now demonstrate that the weight covariances˜Cj converge to an inﬁnite-dimensional
+covarianceoperator Cj whenthewidthsofthescatteringnetworksincrease. Here, theweight
+covariances ˜Cj are estimated from the weights ofN = 10 networks with the same width
+scaling s, and we estimateCj from the weights ofN = 10 wide scattering networks with
+s = 25. We ﬁrst illustrate this convergence on the spectrum of˜Cj in the upper-right panel of
+Figure 2. The entire spectrum of˜Cj converges to a limiting spectrum which contains both
+the informative exponential part resulting from training and the uninformative Marchenko-
+Pastur tail coming from the initialization. The characteristic scale of the exponential regime
+grows with network width but converges to a ﬁnite value as the width increases to inﬁnity.
+25
+
+
+===== PAGE 26 =====
+Guth, Ménard, Rochette, and Mallat
+We then conﬁrm that the estimated covariances˜Cj indeed converge to the covarianceCj
+when the width increases in the lower-right panel. The distance converges to zero as a
+power law of the width scaling. The ﬁrst layerj = 1 has a diﬀerent convergence behavior
+(not shown) as its input dimension does not increase withs.
+In summary, in the context considered here, networks trained from diﬀerent initial-
+izations share the same informative weight subspaces (after alignment) described by the
+weight covariances at each layer, and they converge to a deterministic limit when the width
+increases. The following paragraphs then demonstrate several properties of the weight co-
+variances.
+Dimensionality reduction in deep networks.We now consider deeper networks and
+show that they also learn low-rank covariances. Comparing the spectra of weights and
+activations reveals the alternation between dimensionality reduction with the “colored”
+weight covariancesCj and high-dimensional embeddings with the “white” random features
+which are captured in the rainbow model. We do so with two architectures: a ten-hidden-
+layer scattering network and a slightly modiﬁed ResNet-18 trained on ImageNet (speciﬁed
+in Appendix D), which both reach89% top-5 test accuracy.
+We show the spectra of covariances of activationsφj in the left panels of Figure 5 and
+of the weight covariancesCj in the right panels. For both networks, we recover the trend
+that activation spectra are close to power laws of slope−1 and the weight spectra show
+a transition from a learned exponential regime to a decay consistent with the Marchenko-
+Pastur expectation, which is almost absent for ResNet-18. Considering them in sequence, as
+a function of depth, the input activations are thus high-dimensional (due to the power-law
+of index close to−1) while the subsequent weights perform a dimensionality reduction using
+an exponential bottleneck with a characteristic scale much smaller than the width. Next,
+the dimensionality is re-expanded with the non-linearity, as the activations at the next layer
+again have a power-law covariance spectrum. Considering the weight spectra, we observe
+that the eﬀective exponential scale increases with depth, from about10 to 60 for both the
+scattering network and the ResNet. This increase of dimensionality with depth is expected:
+in convolutional architectures, the weight covariancesCj are only deﬁned on small patches
+of activations φj−1 because of the prior operatorPj. However, these patches correspond
+to a larger receptive ﬁeld in the input imagex as the depth j increases. The rank of the
+covariances is thus to be compared with the size of this receptive ﬁeld. Deep convolutional
+networks thus implement a sequence of dimensionality contractions (with the learned weight
+covariances) and expansions (with the white random features and non-linearity).
+The successive increases and decreases in dimensionality due to the weights and non-
+linearity across deep network layers have been observed by Recanatesi et al. (2019) with a
+diﬀerent dimensionality measure. The observation that weight matrices of trained networks
+are low-rank has been made in several works which exploited it for model compression (Denil
+et al., 2013; Denton et al., 2014; Yu et al., 2017), while the high-dimensional embedding
+property of random feature maps is well-known via the connection to their kernel (Rahimi
+and Recht, 2007; Scetbon and Harchaoui, 2021). The rainbow model integrates these two
+properties. In neuroscience, high-dimensional representations with power-law spectra have
+been measured in the mouse visual cortex by Stringer et al. (2019). Such representations
+in deep networks have been demonstrated to lead to increased predictive power of human
+26
+
+
+===== PAGE 27 =====
+A Rainbow in Deep Network Black Boxes
+100 101 102 103
+φj KPCA rank m
+10□2
+10□1
+100
+101
+102
+103
+φj KPCA eigenvalue
+1 100 200 300 400 500
+Cj PCA rank r
+10□1
+100
+101
+Cj PCA eigenvalue
+100 101 102 103
+φj KPCA rank m
+10□2
+10□1
+100
+101
+102
+103
+φj KPCA eigenvalue
+1 100 200 300 400 500
+Cj PCA rank r
+10□1
+100
+101
+Cj PCA eigenvalue
+First
+Last
+Layer j
+Scattering-11 (89% ImageNet Top-5 accuracy)
+ResNet-18 (89% ImageNet Top-5 accuracy)
+Figure 5: Covariance spectra of activations and weights of an ten-hidden-layer scattering network
+(top) and ResNet-18 (bottom) trained on ImageNet. In both cases, activation spectra
+(left) mainly follow power-law distribution with index roughly−1. Weight spectra (right)
+show a transition from an exponential decay with a characteristic scale increasing with
+depth to the Marchenko-Pastur spectral distribution. These behaviors are captured by
+the rainbow model. For visual purposes, activation and weight spectra are oﬀset by
+a factor depending on j. In addition, we do not show the ﬁrst layer nor the 1× 1
+convolutional residual branches in ResNet as they have diﬀerent layer properties.
+fMRI cortical responses (Elmoznino and Bonner, 2022) and generalization in self-supervised
+learning (Agrawal et al., 2022).
+Unsupervised approximations of weight covariances. The learning complexity of
+a rainbow network depends upon the number of parameters needed to specify the weight
+covariances (Cj)j≤J toreachagivenperformance. Afterhavingshownthattheirinformative
+subspace is of dimension signiﬁcantly lower than the network width, we now show that this
+subspace can be eﬃciently approximated by taking into account unsupervised information
+(that is, information about the distribution of the inputx but not the target outputy).
+We would like to deﬁne a representation of the weight covariancesCj which can be
+accurately approximated with a limited number of parameters. We chose to represent
+the inﬁnite-width activations φj as KPCA feature vectors, whose uncentered covariances
+Ex[φj(x) φj(x)T] are diagonal. In that case, the weight covariancesCj for j > 1 are oper-
+ators deﬁned on Hj−1 = ℓ2(N). It amounts to representing Cj relatively to the principal
+components of φj−1, or equivalently, the kernel principal components ofx with respect to
+27
+
+
+===== PAGE 28 =====
+Guth, Ménard, Rochette, and Mallat
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+Explained variance
+j = 2 j = 4 j = 6
+0 100 200 300
+Maximum rank
+20%
+40%
+60%
+80%CIF AR-10 Top-1 accuracy
+0 500 1000
+Maximum rank
+0 1000 2000
+Maximum rank
+Cj PCA
+φj□1 KPCA
+Random basis
+Figure 6: Unsupervised information deﬁnes low-dimensional approximations of the learned weight
+covariances. Each column shows a diﬀerent layer j = 2 , 4, 6 of a seven-hidden-layer
+scattering network trained on CIFAR-10. For each r, we consider projections of the
+network weights on the ﬁrstr principal components of the weight covariances (red), the
+kernel principal components of the input activations (orange), or random orthogonal
+vectors (green).Top: weight variance explained by the ﬁrstr basis vectors as a function
+of r. Bottom: classiﬁcation accuracy after projection of thej-th layer weights on the ﬁrst
+r basis vectors, as function ofr.
+kj−1. This deﬁnes unsupervised approximations of the weight covarianceCj by considering
+its projection on these ﬁrst principal components. We now evaluate the quality of this
+approximation.
+Here, we consider a seven-hidden-layer scattering network trained on CIFAR-10, and
+weight covariances estimated from N = 50 same-width networks. The upper panels of
+Figure 6 shows the amount of variance inCj captured by the ﬁrstm basis directions as a
+function of m, for three diﬀerent orthogonal bases. The speed of growth of this variance as
+a function ofm deﬁnes the quality of the approximation: a faster growth indicates that the
+basis provides an eﬃcient low-dimensional approximation of the covariance. The PCA basis
+of Cj provides optimal such approximations, but it is not known before supervised training.
+In contrast, the KPCA basis is computed from the previous layer activationsφj−1 without
+28
+
+
+===== PAGE 29 =====
+A Rainbow in Deep Network Black Boxes
+the supervision of class label information. This corresponds to an “unsupervised” rainbow
+network which can be deﬁned iteratively by approximatingC1 with the covariance of x,
+which deﬁnes a random feature representationφ1(x), and then approximatingC2 with the
+covariance of φ1(x), etc. Figure 6 demonstrates that theφj−1 KPCA basis provides close
+to optimal approximations ofCj. This approximation is more eﬀective for earlier layers,
+indicating that the supervised information becomes more important for the deeper layers.
+The lower panels of Figure 6 show a similar phenomenon when measuring classiﬁcation
+accuracy instead of weight variance.
+In summary, the learned weight matrices are low-rank, and a low-dimensional bottleneck
+can be introduced without harming performance. Further, unsupervised information (in the
+form of a KPCA) gives substantial prior information on this bottleneck: high-variance com-
+ponents of the weights are correlated with high-variance components of the activations. This
+observation was indirectly made by Raghu et al. (2017), who showed that network activa-
+tions can be projected on stable subspaces, which are in fact aligned with the high-variance
+kernel principal components. It demonstrates the importance of self-supervised learning
+within supervised learning tasks (Bengio, 2012), and corroborates the empirical success of
+self-supervised pre-training for many supervised tasks. The eﬀective number of parame-
+ters that need to be learned in a supervised manner is thus much smaller than the total
+number of trainable parameters. It has recently been shown that better approximations of
+the weight covariances can be obtained by using supervised information, in the form of the
+covariance of function gradients (Radhakrishnan et al., 2024).
+3.3 Gaussian rainbow approximations
+We now show that the Gaussian rainbow model applies to scattering networks trained on
+the CIFAR-10 dataset, by exploiting the ﬁxed wavelet spatial ﬁlters incorporated in the
+architecture. The Gaussian assumption thus only applies to weights along channels. We
+make use of the factorizationWj = Gj ˆC1/2
+j (15) of trained weights, whereˆCj results from
+an estimation of Cj from several trained networks. We ﬁrst show that the distribution of
+Gj can be approximated with random matrices of i.i.d. normal coeﬃcients. We then show
+that Gaussian rainbow networks, which replace Gj with such a white Gaussian matrix,
+achieve similar classiﬁcation accuracy as trained networks when the width is large. Finally,
+we show that in the same context, the SGD training dynamics of the weight matricesWj
+are characterized by the evolution of the weight covariancesˆCj only, whileGj remains close
+to its initial value. The Gaussian approximation deteriorates at small widths or on more
+complex datasets, suggesting that its validity regime is when the network width is large
+compared to the task complexity.
+ComparisonbetweentrainedweightsandGaussianmatrices. Weshowthatstatis-
+tics of trained weights are reasonably well approximated by the Gaussian rainbow model.
+To do so, we train N = 50 seven-hidden-layer scattering networks and estimate weight
+covariances (Cj)j≤J by averaging eq. (17) over the trained networks as explained in Sec-
+tion 3.2. We then retrieveGj = Wj ˆC−1/2
+j with ˆCj = ˆAT
+j Cj ˆAj as in eq. (14). Note that we
+use a single covarianceCj to whiten the weights of allN networks: this will conﬁrm that
+the covariances of weights of diﬀerent networks are indeed related through rotations, as was
+29
+
+
+===== PAGE 30 =====
+Guth, Ménard, Rochette, and Mallat
+r = 1
+j = 2 j = 4 j = 6
+r = 10
+r = 100
+Figure 7: Marginal distributions of the weights ofN = 50 seven-hidden-layer scattering networks
+trained on CIFAR-10. The weights at the j-th layer (wji)i≤dj of the N networks are
+projected along the r-th eigenvector of Cj and normalized by the square root of the
+corresponding eigenvalue. The distribution of theN dj projections (blue histograms) is
+approximately normal (red curves). Each column shows a diﬀerent layerj, and each row
+shows a diﬀerent rankr.
+shown in Section 3.2 through the convergence of weight covariance estimates. The rainbow
+feature vectors(φj)j≤J at each layer are approximated with the activations of one of theN
+networks.
+As a ﬁrst (partial) Gaussianity test, we compare marginal distributions of whitened
+weights Gj with the expected normal distribution in Figure 7. We present results for a
+series of layers (j = 2, 4, 6) across the network. Other layers present similar results, except
+for j = 1 which has more signiﬁcant deviations from Gaussianity (not shown), as its input
+dimension is constrained by the data dimension. We shall however not focus on this ﬁrst
+layer as we will see that it can still be replaced by Gaussian realizations when generating
+new weights. The weights at the j-th layer (wji)i≤dj of the N networks are projected
+along the r-th eigenvector of Cj and normalized by the square root of the corresponding
+eigenvalue. This global view shows that speciﬁc one-dimensional marginals are reasonably
+well approximated by a normal distribution. We purposefully remain not quantitative, as
+the goal is not to demonstrate that trained weights are statistically indistinguishable from
+Gaussian realizations (which is false), but to argue that the latter is an acceptable model
+for the former.
+To go beyond one-dimensional marginals, we now compare in the bottom panels of
+Figure 8 the spectral density of the whitened weightsGj to the theoretical Marchenko-
+Pastur distribution (Marčenko and Pastur, 1967), which describes the limiting spectral
+density of matrices with i.i.d. normal entries. We note a good agreement for the earlier
+30
+
+
+===== PAGE 31 =====
+A Rainbow in Deep Network Black Boxes
+0.0
+0.1
+0.2
+0.3
+0.4
+0.5
+j = 2
+0.0
+0.1
+0.2
+0.3
+0.4
+j = 4
+0.00
+0.05
+0.10
+0.15
+0.20
+0.25
+j = 6
+Wj
+MP
+0 5 10 15 20
+0.0
+0.1
+0.2
+0.3
+0.4
+0.5
+0 10 20
+0.0
+0.1
+0.2
+0.3
+0.4
+0 10 20 30 40
+0.00
+0.05
+0.10
+0.15
+0.20
+0.25
+ Gj
+MP
+Figure 8: Spectral density of empirical covariances of trained (top) and whitened weights (bottom).
+Eigenvalues outside the support of the Marchenko-Pastur distribution (shown in red) are
+indicated with spikes of amplitude proportional to their bin count. After whitening, the
+number of outliers are respectively2%, 4%, and 8% for the layersj = 2, 4, and 6.
+layers, which deteriorates for deeper layers (as well as the ﬁrst layer, not shown, which again
+has a diﬀerent behavior). Importantly, the proportion of eigenvalues outside the Marchenko-
+Pastur support is arguably negligible (< 10% at all layers), which is not the case for the
+non-whitened weightsWj (upper panels) where it can be> 25% for j = 6. As observed by
+MartinandMahoney(2021)andThammetal.(2022), trainedweightshavenon-Marchenko-
+Pastur spectral statistics. Our results show that these deviations are primarily attributable
+to correlations introduced by the non-identity covariance matricesCj, as opposed to power-
+law distributions as hypothesized by Martin and Mahoney (2021). We however note that
+due to the universality of the Marchenko-Pastur distribution, even a perfect agreement is
+not suﬃcient to claim that trained networks have conditionally Gaussian weights. It merely
+implies that the Gaussian rainbow model provides a satisfactory description of a number
+of weight statistical properties. Despite the observed deviations from Gaussianity at later
+layers, we now show that generating new Gaussian weights at all layers simultaneously
+preserves most of the classiﬁcation accuracy of the network.
+Performance of Gaussian rainbow networks. While the above tests indicate some
+level of validation that the whitened weightsGj are matrices with approximately i.i.d. nor-
+mal entries, it is not statistically feasible to demonstrate that this property is fully satisﬁed
+in high-dimensions. We thus sample network weights from the Gaussian rainbow model
+and verify that most of the performance can be recovered. This is done with the procedure
+described in Deﬁnition 2, using the covariancesCj, rainbow activationsφj and ﬁnal layer
+weights θ here estimated from a single trained network (having shown in Sections 3.1 and 3.2
+31
+
+
+===== PAGE 32 =====
+Guth, Ménard, Rochette, and Mallat
+2□3 2□2 2□1 20 21 22
+Width scaling
+50%
+60%
+70%
+80%
+90%CIF AR-10 Top-1 accuracy
+Trained
+Rainbow + trained classiﬁer
+Rainbow
+Figure 9: Performance of seven-hidden-layer scattering networks on CIFAR-10 as a function of
+network width for a trained network (blue), its rainbow network approximation with and
+without classiﬁer retraining (red solid and dashed). The larger the width, the better the
+sampled rainbow model approximates the original network.
+that all networks deﬁne similar rainbow parameters if they are wide enough). New weights
+Wj are sampled iteratively starting from the ﬁrst layer with a covarianceˆCj = ˆAT
+j−1Cj ˆAj−1,
+after computing the alignment rotation ˆAj−1 between the activations ˆφj−1(x) of the par-
+tially sampled network and the activationsφj−1(x) of the trained network. The alignment
+rotations are computed using the CIFAR-10 train set, while network accuracy is evaluated
+on the test set, so that the measured performance is not a result of overﬁtting.
+We perform this test using a series of seven-hidden-layer scattering networks trained
+on CIFAR-10 with various width scalings. We present results in Figure 9 for two sets of
+Gaussian rainbow networks: a ﬁrst set for which both the convolutional layers and the ﬁnal
+layer are sampled from the rainbow model (which corresponds to aligning the classiﬁer of
+the trained model to the sampled activationsˆφJ(x)), and another set for which we retrain
+the classiﬁer after sampling the convolutional layers (which preserves the Gaussian rainbow
+RKHS). We observe that the larger the network, the better it can be approximated by
+a Gaussian rainbow model. At the largest width considered here, the Gaussian rainbow
+network achieves 85% accuracy and 89% with a retrained classiﬁer, and recovers most of
+the performance of the trained network which reaches92% accuracy. This performance is
+non-trivial, as it is beyond most methods based on non-learned hierarchical convolutional
+kernels which obtain less than 83% accuracy (Mairal et al., 2014; Oyallon and Mallat,
+2015; Li et al., 2019). This demonstrates the importance of the learned weight covariances
+Cj, as has been observed by Pandey et al. (2022) for modeling sensory neuron receptive
+ﬁelds. It also demonstrates that the covariancesCj are suﬃciently well-estimated from a
+single network to preserve classiﬁcation accuracy. We note however that Shankar et al.
+(2020) achieve a classiﬁcation accuracy of 90% with a non-trained kernel corresponding
+to an inﬁnite-width convolutional network, and Thiry et al. (2021) with a data-dependent
+convolutional kernel.
+32
+
+
+===== PAGE 33 =====
+A Rainbow in Deep Network Black Boxes
+A consequence of our results is that these trained scattering networks have rotation
+invariant non-linearities, in the sense that the non-linearity can be applied in random direc-
+tions, provided that the next layer is properly aligned. This comes in contrast to the idea
+that neuron weights individually converge to salient features of the input data. For large
+enough networks, the relevant information learned at the end of training is therefore not
+carried by individual neurons but encoded through the weight covariancesCj.
+For smaller networks, the covariance-encoding property no longer holds, as Figure 9
+suggests that trained weights becomes non-Gaussian. Networks trained on more complex
+tasks might require larger widths for the Gaussian rainbow approximation to be valid. We
+have repeated the analysis on scattering networks trained on the ImageNet dataset (Rus-
+sakovsky et al., 2015), which reveals that the Gaussian rainbow approximation considered
+here is inadequate at widths used in practice. This is corroborated by many empirical
+observations of (occasional) semantic specialization in deep networks trained on ImageNet
+(Olah et al., 2017; Bau et al., 2020; Dobs et al., 2022). A promising direction is to consider
+Gaussian mixture rainbow models, as used by Dubreuil et al. (2022) to model the weights
+of linear RNNs. Finally, we note that the Gaussian approximation also critically rely on
+the ﬁxed wavelet spatial ﬁlters of scattering networks. Indeed, the spatial ﬁlters learned
+by standard CNNs display frequency and orientation selectivity (Krizhevsky et al., 2012)
+which cannot be achieved with a single Gaussian distribution, and thus require adapted
+weight distributions πj to be captured in a rainbow model.
+Training dynamics. The rainbow model is a static model, which does not characterize
+the evolution of weights from their initialization during training. We now describe the
+SGD training dynamics of the seven-hidden-layer scattering network trained on CIFAR-10
+considered above. This dynamic picture provides an empirical explanation for the validity
+of the Gaussian rainbow approximation.
+We focus on the j-th layer weight matrix Wj(t) as the training time t evolves. To
+measure its evolution, we consider its projection along the principal components of the ﬁnal
+learned covariance ˆCj. More precisely, we project thedj neuron weights wji(t), which are
+the rows ofWj(t), in the direction of ther-th principal axisejr of ˆCj. This gives a vector
+ur(t)∈ Rdj for each PCA rankr and training timet, dropping the indexj for simplicity:
+ur(t) =
+(
+⟨wji(t), ejr⟩
+)
+i≤dj
+.
+Its squared magnitude is proportional to the variance of the neuron weights along ther-
+th principal direction, which should be of the order of1 at t = 0 due to the white noise
+initialization, and evolves during training to reach the correspondingˆCj eigenvalue. On
+the opposite, the direction of ur(t) encodes the sampling of the marginal distribution of
+the neurons along ther-th principal direction: a large entryur(t)[i] indicates that neuron
+i is signiﬁcantly correlated with the r-th principal component of ˆCj. This view allows
+considering the evolution of the weightsWj(t) separately for each principal componentr.
+Itoﬀersasimplerviewthanfocusingoneachindividualneuron i, becauseitgivesanaccount
+of the population dynamics across neurons. It separates the weight matrix by columnsr
+(in the weight PCA basis) rather than rowsi. We emphasize that we consider the PCA
+basis of the ﬁnal covarianceˆCj, so that we analyze the training dynamics along the ﬁxed
+principal axes ejr which do not depend on the training timet.
+33
+
+
+===== PAGE 34 =====
+Guth, Ménard, Rochette, and Mallat
+1 100 200 300 400 500
+ˆCj PCA rank r
+100
+2 × 100
+3 × 100
+4 × 100
+6 × 100
+Ampliﬁcation ar(t)
+1 100 200 300 400 500
+ˆCj PCA rank r
+0.0
+0.2
+0.4
+0.6
+0.8
+1.0
+Cosine similarity cr(t)
+Epoch t = 0
+Epoch t = 1
+Epoch t = 2
+Epoch t = 5
+Epoch t = 10
+Epoch t = 20
+□1 0 1
+ˆCj PCA direction 1
+□1
+0
+1
+ˆCj PCA direction 2
+□1 0 1
+ˆCj PCA direction 1
+□1
+0
+1
+ˆCj PCA direction 100
+□1 0 1
+ˆCj PCA direction 100
+□1
+0
+1
+ˆCj PCA direction 101
+Figure 10: The learning dynamic of a seven-hidden-layer scattering network trained on CIFAR-
+10 is mainly a low-dimensional linear ampliﬁcation eﬀect that preserves most of the
+positional information of the initialization. We present results for layerj = 4 (similar
+behavior is observed for the other layers).Upper left: ampliﬁcation (overall stretch)
+of the weight variance as a function of rank.Upper right: cosine similarity (internal
+motion) as a function of rank.Lower panels: projections of individual neurons along
+pairs of principal components. Each neuron is represented as a point in the plane, whose
+trajectory during training is shown as a connected line (color indicates training time).
+We now characterize the evolution ofur(t) during training for each rankr. We separate
+changesinmagnitude, whichcorrespondtochangesinweightvariance(overallstretch), from
+changes in direction, which correspond to internal motions of the neurons which preserve
+their variance. We thus deﬁne two quantities to compareur(t) to its initialization ur(0),
+namely the ampliﬁcation ratioar(t) and cosine similaritycr(t):
+ar(t) =∥ur(t)∥
+∥ur(0)∥ and cr(t) = ⟨ur(t), ur(0)⟩
+∥ur(t)∥∥ ur(0)∥ . (18)
+We evaluate these quantities using our seven-hidden-layer scattering network trained on
+CIFAR-10. In Figure 10, we present the results for the intermediate layerj = 4 (similar
+behavior is observed for the other layers). We show the two quantitiesar(t) and cr(t) in
+the top row of Figure 10 as a function of the training epocht. We observe that the motion
+34
+
+
+===== PAGE 35 =====
+A Rainbow in Deep Network Black Boxes
+of the weight vector is mainly an ampliﬁcation eﬀect operating in a sequence starting with
+the ﬁrst eigenvectors, as the cosine similarity remains of order unity. Given the considered
+dimensionality (dj = 512), the observed departure from unity is rather small: the solid
+angle subtended by this angular change of direction covers a vanishingly small surface of
+the unit sphere indj dimensions. We thus haveur(t)≈ ar(t) ur(0).
+These results show that the weight evolution can be written
+Wj(t)≈ Gj ˆC1/2
+j (t),
+where Gj = Wj(0) is the initialization and the weight covarianceˆCj(t) evolves by ampliﬁ-
+cation in its ﬁxed PCA basis:
+ˆCj(t) =
+∑
+r
+ar(t)2 ejr eT
+jr .
+In other words, the weight evolution during training is an ensemble motion of the neuron
+population, with negligible internal motion of individual neurons relative to the population:
+training amounts to learning the weight covariance. Surprisingly, the weight conﬁguration
+at the end of training thus retains most of the information of its random initialization:
+the initial conﬁguration can be practically recovered by whitening the trained weights.
+In addition, the stochasticity introduced by SGD and data augmentation appears to be
+negligible, as it does not aﬀect the relative positions of individual neurons during training.
+This observation has two implications. First, the alignment rotations ˆAj which describe
+the trained network relative to its inﬁnite-width rainbow counterpart (asˆφj≈ ˆAT
+j φj) are
+entirely determined by the initialization. Second, it provides an empirical explanation for
+the validity of the Gaussian rainbow approximation. While this argument seems to imply
+that the learned weight distributionsπj depend signiﬁcantly on the initialization scheme,
+note that signiﬁcantly non-Gaussian initializations might not be preserved by SGD or could
+lead to poor performance.
+The bottom row of Figure 10 illustrates more directly the evolution of individual neu-
+rons during training. Although each neuron ofWj(t) is described by a dj−1-dimensional
+weight vector, it can be projected along two principal directions to obtain a two-dimensional
+picture. We then visualize the trajectories of each neuron projected in this plane. The tra-
+jectories are almost straight lines, as the learning dynamics only amplify variance along the
+principal directions while preserving the relative positions of the neurons. Projections on
+principal components of higher ranks give a more static picture as the ampliﬁcation along
+these directions is smaller.
+A large literature has characterized properties of SGD training dynamics. Several works
+have observed that dynamics are linearized after a few epochs (Jastrzebski et al., 2020;
+Leclerc and Madry, 2020), so that the weights remain in the same linearly connected basin
+thereafter (Frankle et al., 2020). It has also been shown that the empirical neural tangent
+kernel evolves mostly during this short initial phase (Fort et al., 2020) and aligns itself with
+discriminative directions (Baratin et al., 2021; Atanasov et al., 2022). Our results indicate
+that this change in the neural tangent kernel is due to the large ampliﬁcation of the neuron
+weights along the principal axes ofˆCj, which happen early during training. The observation
+that neural network weights have a low-rank departure from initialization has been made
+35
+
+
+===== PAGE 36 =====
+Guth, Ménard, Rochette, and Mallat
+in connection with eigenvectors of the loss Hessian by Gur-Ari et al. (2018), in the lazy
+regime by Thamm et al. (2022), for linear RNNs by Schuessler et al. (2020), and for large
+language-model adaptation by Hu et al. (2022). The sequential emergence of the weight
+principal components has been derived theoretically in linear networks by Saxe et al. (2014,
+2019).
+4. Conclusion
+We have introduced rainbow networks as a model of the probability distribution of weights
+of trained deep networks. The rainbow model relies on two assumptions. First, layer
+dependencies are reduced to alignment rotations. Second, neurons are independent when
+conditioned on the previous layer weights. Under these assumptions, trained networks
+converge to a deterministic function in the corresponding rainbow RKHS when the layer
+widths increase. We have veriﬁed numerically the convergence of activations after alignment
+for scattering networks and ResNets trained on CIFAR-10 and ImageNet. We conjecture
+that this convergence conversely implies the rotation dependency assumption of the rainbow
+model. We have veriﬁed this rotation on the second-order moments of the weights through
+the convergence of their covariance after alignment (for scattering networks trained on
+CIFAR-10 due to computational limitations).
+The data-dependent kernels which describe the inﬁnite-width rainbow networks, and
+thus their functional properties, are determined by the learned distributionsπj. Mathe-
+matically, we have shown how the symmetry properties of these distributions are trans-
+ferred on the network. Numerically, we have shown that their covariances Cj compute
+projections in a low-dimensional “informative” subspace that is shared among networks,
+is low-dimensional, and can be approximated eﬃciently with an unsupervised KPCA. It
+reveals that networks balance low learning complexity with high expressivity by computing
+a sequence of reductions and increases in dimensionality.
+In the Gaussian case, the distributionsπj are determined by their covariancesCj. We
+have validated that factorizing the learned weights with ﬁxed wavelet ﬁlters is suﬃcient to
+obtain Gaussian rainbow networks on CIFAR-10, using scattering networks. In this setting,
+we can generate new weights and have shown that the weight covariancesCj are suﬃcient
+to capture most of the performance of the trained networks. Further, the training dynamics
+are reduced to learning these covariances while preserving memory of the initialization in
+the individual neuron weights.
+Our work has several limitations. First, we have not veriﬁed the rainbow assumptions
+of rotation dependence between layers beyond second-order moments, and conditional inde-
+pendence between neurons beyond the Gaussian case. A complete model would incorporate
+the training dynamics and show that such statistical properties are satisﬁed at all times.
+Second, our numerical experiments have shown that the Gaussian rainbow approximation
+of scattering networks gradually degrades when the network width is reduced. When this
+approximation becomes less accurate, it raises the question whether incorporating more
+prior information in the architecture could lead to Gaussian rainbow networks. Finally,
+even in the Gaussian case, the rainbow model is not completely speciﬁed as it requires to
+estimate the weight covariancesCj from trained weights. A major mathematical issue is to
+36
+
+
+===== PAGE 37 =====
+A Rainbow in Deep Network Black Boxes
+understand the properties of the resulting rainbow RKHS which result from properties of
+these weight covariances.
+By introducing the rainbow model, this work provides new insights towards understand-
+ing the inner workings of deep networks.
+Acknowledgments
+This work was partially supported by a grant from the PRAIRIE 3IA Institute of the
+French ANR-19-P3IA-0001 program. BM acknowledges support from the David and Lucile
+Packard Foundation. We thank the Scientiﬁc Computing Core at the Flatiron Institute for
+the use of their computing resources. BM thanks Chris Olah and Eric Vanden-Eijnden for
+inspiring discussions. FG would like to thank Francis Bach and Gabriel Peyré for helpful
+pointers for the proof of Theorem 1. We also thank Kameron Decker Harris, Nathanaël
+Cuvelle-Magar, and Etienne Lempereur for feedback on the manuscript.
+Appendix A. Proof of Theorem 1
+We prove a slightly more general version of Theorem 1 which we will need in the proof
+of Theorem 2. We allow the input x to be in a possibly inﬁnite-dimensional separable
+Hilbert spaceH0 (the ﬁnite-dimensional case is recovered withH0 = Rd0). We shall assume
+that the random feature distribution π has bounded second- and fourth-order moments
+in the sense of Section 2.2: it admits a bounded uncentered covariance operator C =
+Ew∼π[wwT] and Ew∼π[(wTT w)2] < +∞ for every trace-class operatorT on H0. Without
+loss of generality, we assume that the non-linearityσ is 1-Lipschitz and thatσ(0) = 0. These
+last assumptions simplify the constants involved in the analysis. They can be satisﬁed for
+any L-Lipschitz non-linearity σ by replacing it with(σ− σ(0))/L, which does not change
+the linear expressivity of the network.
+We give the proof outline in Appendix A.1. It relies on several lemmas, which are proven
+inAppendicesA.2toA.5. Wewrite ∥·∥∞ theoperatornorm, ∥·∥2 theHilbert-Schmidtnorm,
+and∥·∥1 the nuclear (or trace) norm.
+A.1 Proof outline
+The convergence of the activationsˆϕ(x) to the feature vectorϕ(x) relies on the convergence
+of the empirical kernelˆk to the asymptotic kernelk. We thus begin by reformulating the
+mean-square error Ex[∥ ˆA ˆϕ(x)− ϕ(x)∥2
+H] in terms of the kernelsˆk and k. More precisely,
+we will consider the integral operatorsˆT and T associated to the kernels. These integral
+operators are the inﬁnite-dimensional equivalent of Gram matrices(k(xi, xi′))1≤i,i′≤n.
+Let µ be the distribution of x. We deﬁne the integral operator T : L2(µ)→ L2(µ)
+associated to the asymptotic kernelk as
+(T f)(x) = Ex′
+[
+k(x, x′) f(x′)
+]
+,
+where x′ is an i.i.d. copy ofx and µ is the law ofx. Similarly, we denote ˆT the integral
+operator deﬁned byˆk. Their standard properties are detailed in the next lemma. Moreover,
+37
+
+
+===== PAGE 38 =====
+Guth, Ménard, Rochette, and Mallat
+the deﬁnition of ˆT entails that it is the average ofd1 i.i.d. integral operators deﬁned by the
+individual random features(wi)i≤d1 of ˆϕ. The law of large numbers then implies a mean-
+square convergence ofˆT to T, as proven in the following lemma.
+Lemma 1 T and ˆT are trace-class non-negative self-adjoint operators onL2(µ), with
+tr(T)≤∥ C∥∞ Ex[∥x∥2].
+The eigenvalues ofT and ˆT are the same as their respective activation covariance matrices
+Ex[ϕ(x) ϕ(x)T] and Ex[ ˆϕ(x) ˆϕ(x)T]. Besides, it holds thatEW [ ˆT] = T and
+√
+EW
+[
+∥ ˆT− T∥2
+2
+]
+=
+√
+EW,x,x′
+[
+|ˆk(x, x′)− k(x, x′)|2]
+= c d−1/2
+1 ,
+with some constantc < +∞.
+Note that the last statement is in fact an equality. We defer the proof, which relies on
+standard properties and a direct calculation of the variance ofˆT around its mean T, to
+Appendix A.2. In the following, we shall writec = κ∥C∥∞ Ex[∥x∥2] to simplify calculations
+for the proof of Theorem 2, whereC = Ew∼π[wwT] is the uncentered covariance ofπ, and
+κ is a constant. Whenπ is Gaussian, Appendix A.2 further shows thatκ≤
+√
+3.
+The mean-square error between ˆϕ and ϕ after alignment can then be expressed as a
+diﬀerent distance betweenˆT and T, as proven in the next lemma.
+Lemma 2 The alignment error betweenˆϕ and ϕ is equal to the Bures-Wasserstein distance
+BW between ˆT and T:
+min
+ˆA∈O(d1)
+Ex
+[
+∥ ˆA ˆϕ(x)− ϕ(x)∥
+2
+H
+]
+= BW( ˆT , T)2.
+The Bures-Wasserstein distance (Bhatia et al., 2019) is deﬁned, for any trace-class non-
+negative self-adjoint operators ˆT and T, as
+BW( ˆT , T)2 = min
+ˆA∈O
+(
+L2(µ)
+)∥ ˆA ˆT 1/2− T 1/2∥2
+2 = tr
+(
+ˆT + T− 2
+(
+T 1/2 ˆT T 1/2)1/2)
+.
+The minimization in the ﬁrst term is done over unitary operators ofL2(µ), and can be
+solved in closed-form with a singular value decomposition ofT 1/2 ˆT 1/2 as in eqs. (5) and (6).
+A direct calculation then shows that the minimal value is equal to the expression in the
+second term, as in eq. (7). The Bures-Wasserstein distance arises in optimal transport
+as the Wasserstein-2 distance between two zero-mean Gaussian distributions of respective
+covariance operators ˆT and T, and in quantum information as the Bures distance, a non-
+commutative generalization of the Hellinger distance. We refer the interested reader to
+Bhatia et al. (2019) for more details. We defer the proof of Lemma 2 to Appendix A.3.
+It remains to establish the convergence ofˆT towards T for the Bures-Wasserstein dis-
+tance, which is a distance on the square roots of the operators. The main diﬃculty comes
+from the fact that the square root is Lipschitz continuous only when bounded away from
+zero. This lack of regularity in the optimization problem can be seen from the fact that
+38
+
+
+===== PAGE 39 =====
+A Rainbow in Deep Network Black Boxes
+the optimal alignment rotation ˆA is obtained by setting all singular values of some oper-
+ator to one, which is unstable when this operator has vanishing singular values. We thus
+consider an entropic regularization of the underlying optimal transport problem over ˆA
+with a parameter λ > 0 that will be adjusted with d1. It penalizes the entropy of the
+coupling so that singular values smaller thanλ are not ampliﬁed. It leads to a bound on
+the Bures-Wasserstein distance, as shown in the following lemma.
+Lemma 3 Let ˆT and T be two trace-class non-negative self-adjoint operators. For any
+λ > 0, we have
+BW( ˆT , T)2≤∥T∥2∥ ˆT− T∥2
+λ + tr( ˆT− T ) + 2 tr
+(
+T + λId−
+(
+T 2 + λ2Id
+)1/2)
+. (19)
+We defer the proof to Appendix A.4.
+The ﬁrst two terms in eq. (19) are controlled in expectation with Lemma 1. The last
+term, when divided byλ, has a similar behavior to another quantity which arises in least-
+squares regression, namely the degrees of freedomtr(T (T + λId)−1) (Hastie and Tibshirani,
+1987; Caponnetto and De Vito, 2007). It can be calculated by assuming a decay rate for
+the eigenvalues ofT, as done in the next lemma.
+Lemma 4 Let T be a trace-class non-negative self-adjoint operator whose eigenvalues sat-
+isfy λm≤ c m−α for some α > 1 and c > 0. Then it holds:
+tr
+(
+T + λId−
+(
+T 2 + λ2Id
+)1/2)
+≤ c′ λ1−1/α,
+where the constantc′ = c1/α
+1−1/α.
+The proof is in Appendix A.5.
+We now put together Lemmas 1 to 4. We have for anyλ > 0,
+EW,x
+[
+∥ ˆA ˆϕ(x)− ϕ(x)∥2
+H
+]
+= EW
+[
+BW( ˆT , T)2]
+≤ κ∥C∥2
+∞Ex[∥x∥2]2
+λ√d1
++ 2c1/α
+1− 1/α λ1− 1
+α ,
+wherewehaveusedtheCauchy-Schwarzinequalitytobound EW [∥ ˆT− T∥2]≤
+∑
+EW [∥ ˆT− T∥2
+2]
+and the fact that∥T∥2≤ tr T≤∥ C∥∞ Ex[∥x∥2]. We then optimize the upper bound with
+respect to λ by setting
+λ =
+(
+2c1/α√d1
+κ∥C∥2
+∞Ex[∥x∥2]2
+(−α/(2α−1)
+,
+which yields
+EW,x
+[
+∥ ˆA ˆϕ(x)− ϕ(x)∥2
+H
+]
+≤ c′′ d−(α−1)/(4α−2)
+1 ,
+with a constant
+c′′ = 2κ(α−1)/(2α−1)
+(α− 1)/(2α− 1)
+(
+c
+∥C∥∞Ex[∥x∥2]
+(1/(2α−1)
+∥C∥∞ Ex[∥x∥2].
+39
+
+
+===== PAGE 40 =====
+Guth, Ménard, Rochette, and Mallat
+Finally, the functionˆf can be written
+ˆf(x) =⟨ ˆATθ, ˆϕ(x)⟩ =⟨θ, ˆA ˆϕ(x)⟩H ,
+so that
+| ˆf(x)− f(x)|2 =|⟨θ, ˆA ˆϕ(x)− ϕ(x)⟩H|2≤∥ θ∥2
+H∥ ˆA ˆϕ(x)− ϕ(x)∥
+2
+H .
+Rewriting∥θ∥H =∥f∥H, assuming that θ is the minimum-norm vector such thatf(x) =
+⟨θ, ϕ(x)⟩H, and using the convergence ofˆA ˆϕ towards ϕ then yields
+EW,x
+[
+| ˆf(x)− f(x)|2]
+≤ c′′∥f∥2
+H d−(α−1)/(4α−2)
+1 .
+A.2 Proof of Lemma 1
+We deﬁne the linear operatorΦ: L2(µ)→ H by
+Φf = Ex[f(x) ϕ(x)].
+Its adjointΦT : H→ L2(µ) is then given by
+(ΦTu)(x) =⟨u, ϕ(x)⟩,
+so that T = ΦTΦ. This proves thatT is self-adjoint and non-negative. On the other hand,
+we have ΦΦT = Ex[ϕ(x) ϕ(x)T] the uncentered covariance matrix of the feature mapϕ
+associated to the kernelk. This shows thatT and this uncentered covariance matrix have
+the same eigenvalues.
+Moreover, we have
+tr(T ) = Ex[k(x, x)] = tr
+(
+ΦTΦ
+)
+=∥Φ∥2
+2 = Ex
+[
+∥ϕ(x)∥2]
+,
+and using the deﬁnition ofk,
+Ex[k(x, x)] = Ex,w
+[
+σ(⟨w, x⟩)2]
+≤ Ex,w
+[
+|⟨w, x⟩|2]
+= tr
+(
+C Ex
+[
+xxT])
+≤∥ C∥∞ Ex
+[
+∥x∥2]
+,
+where w∼ π independently from x,|σ(t)|≤| t| by assumption on σ, and the last step
+follows from Hölder’s inequality. This proves thatT is trace-class andΦ is Hilbert-Schmidt,
+with an explicit upper bound on the trace.
+Theaboveremarksarealsovalidfor ˆT withanappropriatedeﬁnitionof ˆΦ: L2(µ)→ Rd1.
+We have EW [ ˆT] = T because EW [ˆk(x, x′)] = k(x, x′). Therefore, tr( ˆT) =∥ˆΦ∥2
+2 is almost
+surely ﬁnite because
+EW [tr( ˆT)] = tr(T) < +∞.
+Let ˆki(x, x′) = σ(⟨wi, x⟩) σ(⟨wi, x′⟩) where (wi)i≤dj are the rows ofW, and ˆTi the as-
+sociated integral operators. The ˆTi are i.i.d. with EW [ ˆTi] = T as for ˆT, and we have
+ˆT = d−1
+1
+∑d1
+i=1 ˆTi. It then follows by standard variance calculations that
+EW
+[
+∥ ˆT− T∥2
+2
+]
+= 1
+d1
+(
+EW
+[
+∥ ˆT1∥2
+2
+]
+−∥ T∥2
+2
+)
+= c
+d1
+,
+40
+
+
+===== PAGE 41 =====
+A Rainbow in Deep Network Black Boxes
+with a constantc such that
+c≤ EW
+[
+∥ ˆT1∥2
+2
+]
+≤ EW
+[
+tr( ˆT1)2]
+= EW
+[
+Ex
+[
+σ(⟨w1, x⟩)2]2]
+≤ EW
+[
+Ex
+[
+|⟨w1, x⟩|2]2]
+.
+We then have, using the assumption on the fourth moments ofπ,
+EW
+[
+Ex
+[
+|⟨w1, x⟩|2]2]
+= EW
+[(
+wT
+1 Ex
+[
+xxT]
+w1
+)2]
+< +∞,
+because tr Ex[xxT] = Ex[∥x∥2] < +∞. When π is Gaussian, we further have
+EW
+[
+Ex
+[
+|⟨w1, x⟩|2]2]
+=
+(
+tr
+(
+C Ex
+[
+xxT]))2
++ 2 tr
+((
+C Ex
+[
+xxT])2)
+≤ 3
+(
+tr
+(
+C Ex
+[
+xxT]))2
+≤ 3∥C∥2
+∞ Ex
+[
+∥x∥2]2
+,
+by classical fourth-moment computations of Gaussian random variables.
+A.3 Proof of Lemma 2
+The alignment error can be rewritten in terms of the linear operatorsΦ and ˆΦ deﬁned in
+Appendix A.2:
+Ex
+[
+∥ ˆA ˆϕ(x)− ϕ(x)∥2
+H
+]
+=∥ ˆA ˆΦ− Φ∥2
+2.
+We then expand
+∥ ˆA ˆΦ− Φ∥2
+2 =∥ˆΦ∥2
+2 +∥Φ∥2
+2− 2 tr
+(
+ΦT ˆAˆΦ
+)
+.
+The ﬁrst two terms are respectively equal to tr ˆT and tr T per Appendix A.2. The
+alignment error is minimized withˆA = U V T from the SVD decomposition (Bhatia et al.,
+2019):
+ΦˆΦT = Ex
+[
+ϕ(x) ˆϕ(x)T]
+= U SV T,
+for which we then have
+tr
+(
+ΦT ˆAˆΦ
+)
+= tr
+(
+ˆΦΦT ˆA
+)
+= tr
+(
+V SU TU V T)
+= tr(S).
+This can further be written
+tr(S) = tr
+((
+U S2U T)1/2)
+= tr
+((
+ΦˆΦT ˆΦΦT)1/2)
+= tr
+((
+Φ ˆT ΦT)1/2)
+.
+To rewrite this in terms ofT, we perform a polar decomposition ofΦ: there exists a unitary
+operator P : L2(µ)→ H such thatΦ = P T 1/2. We then have
+tr
+((
+Φ ˆTΦT)1/2)
+= tr
+((
+P T 1/2 ˆT T 1/2P T)1/2)
+= tr
+(
+P
+(
+T 1/2 ˆT T 1/2)1/2
+P T
+)
+= tr
+((
+T 1/2 ˆT T 1/2)1/2)
+.
+41
+
+
+===== PAGE 42 =====
+Guth, Ménard, Rochette, and Mallat
+Putting everything together, we have
+Ex
+[
+∥ ˆA ˆϕ(x)− ϕ(x)∥2
+H
+]
+= tr
+(
+ˆT + T− 2
+(
+T 1/2 ˆT T 1/2)1/2)
+.
+A.4 Proof of Lemma 3
+The Bures-Wasserstein distance can be rewritten as a minimum over contractions rather
+than unitary operators:
+BW( ˆT , T)2 = min
+∥ ˆA∥∞≤1
+tr
+(
+ˆT + T− 2T 1/2 ˆA ˆT 1/2)
+,
+which holds because of Hölder’s inequality:
+tr
+(
+T 1/2 ˆA ˆT 1/2)
+= tr
+(
+ˆT 1/2T 1/2 ˆA
+)
+≤∥ ˆT 1/2T 1/2∥1∥ ˆA∥∞ = tr
+((
+T 1/2 ˆT T 1/2)1/2)
+∥ ˆA∥∞.
+Rather than optimizing over contractions ˆA, which leads to a unitary ˆA, we shall use a
+non-unitary ˆA with∥ ˆA∥∞ < 1.
+We introduce an “entropic” regularization: letλ > 0, and deﬁne
+BWλ( ˆT , T)2 = min
+∥ ˆA∥∞≤1
+tr
+(
+ˆT + T− 2T 1/2 ˆA ˆT 1/2)
++ λ log det
+((
+Id− ˆAT ˆA
+)−1)
+.
+The second term corresponds to the negentropy of the coupling in the underlying optimal
+transport formulation of the Bures-Wasserstein distance. It can be minimized in closed-
+form by calculating the ﬁxed-point of Sinkhorn iterations (Janati et al., 2020), or with a
+direct SVD calculation as in Appendix A.3. It is indeed clear that the minimum is attained
+at some ˆAλ = U SλV T with T 1/2 ˆT 1/2 = U SV T, and this becomes a separable quadratic
+problem over the singular valuesSλ. We thus ﬁnd
+Sλ =
+((
+S2 + λ2Id
+)1/2
+− λId
+)
+S−1,
+ˆAλ =
+((
+T 1/2 ˆT T 1/2 + λ2Id
+)1/2
+− λId
+)
+T− 1
+2 ˆT− 1
+2 ,
+and one can verify that we indeed have∥ ˆAλ∥∞ < 1. When plugged in the original distance,
+it gives the following upper bound:
+BW( ˆT , T)2≤ tr
+(
+ˆT + T− 2
+((
+T 1/2 ˆT T 1/2 + λ2Id
+)1/2
+− λId
+))
+.
+The term λ2Id in the square root makes this a Lipschitz continuous function of ˆT.
+Indeed, deﬁne the functiong by
+g( ˆT ) = tr
+((
+T 1/2 ˆT T 1/2 + λ2Id
+)1/2
+− λId
+)
+.
+Standard calculations (Bhatia et al., 2019; Janati et al., 2020) then show that
+∇g( ˆT) = 1
+2 T 1/2(
+T 1/2 ˆT T 1/2 + λ2Id
+)−1/2
+T 1/2.
+42
+
+
+===== PAGE 43 =====
+A Rainbow in Deep Network Black Boxes
+It implies that
+0 ≼∇g( ˆT) ≼ 1
+2λ T,
+where have used thatT 1/2 ˆT T 1/2 ≽ 0 in the second inequality, and ﬁnally,
+∥∇g( ˆT)∥2≤∥T∥2
+2λ .
+This last inequality follows from
+∥∇g( ˆT)∥2
+2 = tr
+(
+∇g( ˆT)T∇g( ˆT)
+)
+≤ tr
+(
+∇g( ˆT)T 1
+2λ T
+)
+≤∥∇ g( ˆT)∥2
+∥T∥2
+2λ ,
+where we have used the operator-monotonicity of the mapM ↦→ tr
+(
+∇g( ˆT)TM
+)
+, which
+holds because∇g( ˆT) ≽ 0.
+Using the bound on the Lipschitz constant ofg, we can then write
+|g( ˆT)− g(T)|≤ ∥T∥2
+2λ ∥ ˆT− T∥2.
+This leads to an inequality on the Bures-Wasserstein distance:
+BW( ˆT , T)2≤ tr( ˆT + T)− 2g( ˆT )
+= 2(tr(T )− g(T)) + tr(ˆT− T)− 2(g( ˆT)− g(T))
+≤ 2(tr(T)− g(T )) + tr(ˆT− T) +∥T∥2
+λ ∥ ˆT− T∥2,
+which concludes the proof.
+A.5 Proof of Lemma 4
+We have
+tr
+(
+T + λId−
+(
+T 2 + λ2Id
+)1/2)
+=
+∞∑
+m=1
+(
+λm + λ−
+∑
+λ2
+m + λ2
+)
+We have the following inequality
+λm + λ−
+∑
+λ2
+m + λ2≤ min(λm, λ),
+by using
+∑
+λ2
+m + λ2≥ max(λm, λ).
+We have λm ≤ c m−α for all m. We split the sum at M = ⌊(λ/c)−1/α⌋ (so that
+c M−α≈ λ), and we have
+M∑
+m=1
+(
+λm + λ−
+∑
+λ2
+m + λ2
+)
+≤
+M∑
+m=1
+λ = M λ,
+∞∑
+m=M +1
+(
+λm + λ−
+∑
+λ2
+m + λ2
+)
+≤
+∞∑
+m=M +1
+λm≤ c
+∞∑
+m=M +1
+m−α≤ c M 1−α
+α− 1 ,
+43
+
+
+===== PAGE 44 =====
+Guth, Ménard, Rochette, and Mallat
+Finally,
+∞∑
+1=1
+(
+λm + λ−
+∑
+λ2
+m + λ2
+)
+≤
+(λ
+c
+)−1/α
+λ + c
+α− 1
+(λ
+c
+)1−1/α
+= c1/α
+1− 1/α λ1−1/α.
+Appendix B. Proof of Theorem 2
+In this section, expectations are taken with respect to both the weightsW1, . . . , Wj and
+the input x. We remind that Wj = W′
+j ˆAj−1 with W′
+j having i.i.d. rows w′
+ji ∼ πj. Let
+Cj = Ewj∼πj[wjwT
+j ] be the uncentered covariance of πj. Similarly to Appendix A, we
+assume without loss of generality thatσ is 1-Lipschitz and thatσ(0) = 0.
+Let ˜φj = σW′
+j φj−1. Let Aj∈O (dj) to be adjusted later. We have by deﬁnition ofˆAj:
+√
+E
+[
+∥ ˆAj ˆφj(x)− φj(x)∥2]
+≤
+√
+E
+[
+∥Aj ˆφj(x)− φj(x)∥2]
+≤
+√
+E
+[
+∥Aj ˆφj(x)− Aj ˜φj(x)∥2]
++
+√
+E
+[
+∥Aj ˜φj(x)− φj(x)∥2]
+,
+(20)
+where the last step follows by the triangle inequality. We now bound separately each term.
+To bound the ﬁrst term, we compute the Lipschitz constant ofσW′
+j (in expectation).
+For anyz, z′∈ Hj−1, we have:
+E
+[
+∥σW′
+jz− σW′
+jz′∥
+2]
+≤ 1
+dj
+E
+[
+∥W′
+j(z− z′)∥
+2]
+= 1
+dj
+dj∑
+i=1
+E
+[
+|⟨w′
+ji, z− z′⟩|
+2]
+= (z− z′)TCj(z− z′)
+≤∥ Cj∥∞∥z− z′∥2,
+where we have used the fact thatσ is 1-Lipschitz, and have made explicit the normalization
+factor of d−1
+j . We can therefore bound the ﬁrst term in eq. (20):
+√
+E
+[
+∥Aj ˆφj(x)− Aj ˜φj(x)∥2]
+=
+√
+E
+[
+∥(σW′
+j) ˆAj−1 ˆφj−1(x)− (σW′
+j)φj−1(x)∥2]
+≤∥ Cj∥1/2
+∞
+√
+E
+[
+∥ ˆAj−1 ˆφj−1(x)− φj−1(x)∥2]
+.
+We deﬁne Aj, which was arbitrary, as the minimizer of the second term in eq. (20)
+overO(dj). We can then apply Theorem 1 toz = φj−1(x). Indeed, Ez[ϕj(z) ϕj(z)T] =
+Ex[φj(x) φj(x)T] is trace-class with eigenvalues λj,m = O(m−αj), and πj has bounded
+second- and fourth-order moments. Therefore, there exists a constantcj such that
+√
+E
+[
+∥Aj ˜φj(x)− φj(x)∥2]
+=
+√
+E
+[
+∥Aj σW′
+j φj−1(x)− ϕj φj−1(x)∥2]
+≤∥ Cj∥1/2
+∞
+∑
+E[
+φj−1(x)
+2] cj d
+−ηj /2
+j ,
+44
+
+
+===== PAGE 45 =====
+A Rainbow in Deep Network Black Boxes
+with ηj =
+αj−1
+2(2αj−1). We have made explicit the factors∥Cj∥1/2
+∞
+∑
+E[
+φj−1(x)
+2] in the con-
+stant coming from Theorem 1 to simplify the expressions in the sequel. We can further
+bound
+∑
+E[∥φj−1(x)∥2] by iteratively applying Lemma 1 from Appendix A:
+∑
+E[∥φj−1(x)∥2]≤∥ Cj−1∥1/2
+∞ ···∥ C1∥1/2
+∞
+∑
+E[∥x∥2].
+We thus have shown:
+√
+E
+[
+∥ ˆAj ˆφj(x)− φj(x)∥2]
+≤∥ Cj∥1/2
+∞
+√
+E
+[
+∥ ˆAj−1 ˆφj−1(x)− φj−1(x)∥2]
++∥Cj∥1/2
+∞ ···∥ C1∥1/2
+∞
+∑
+E[∥x∥2] cj d
+−ηj /2
+j .
+It then follows by induction:
+√
+E
+[
+∥ ˆAj ˆφj(x)− φj(x)∥2]
+≤∥ Cj∥1/2
+∞ ···∥ C1∥1/2
+∞
+∑
+E[∥x∥2]
+j∑
+ℓ=1
+cℓ d−ηℓ/2
+ℓ .
+We conclude like in the proof of Theorem 1:
+√
+E
+[
+| ˆf(x)− f(x)|2]
+≤∥ f∥HJ
+∥CJ∥1/2
+∞ ···∥ C1∥1/2
+∞
+∑
+E[∥x∥2]
+J∑
+j=1
+cj d
+−ηj /2
+j .
+We ﬁnally show the convergence of the kernels. Let˜kj be the kernel deﬁned by the
+feature map ˜φj. Expectations are now also taken with respect tox′, an i.i.d. copy ofx. We
+have by the triangle inequality:
+|ˆkj(x, x′)− kj(x, x′)|≤| ˆkj(x, x′)− ˜kj(x, x′)| +|˜kj(x, x′)− kj(x, x′)|. (21)
+For the ﬁrst term on the right-hand side:
+|ˆkj(x, x′)− ˜kj(x, x′)| =|⟨ˆφj(x), ˆφj(x′)⟩−⟨ ˜φj(x), ˜φj(x′)⟩|
+≤|⟨ ˆφj(x), ˆφj(x′)− ˜φj(x′)⟩ +⟨ˆφj(x)− ˜φj(x), ˜φj(x′)⟩|
+≤∥ ˆφj(x)∥∥ˆφj(x′)− ˜φj(x′)∥ +∥˜φj(x′)∥∥ˆφj(x)− ˜φj(x)∥.
+We thus have, becausex, x′ are i.i.d.,
+√
+E
+[
+|ˆkj(x, x′)− ˜kj(x, x′)|2]
+≤
+√
+E
+[
+∥ˆφj(x)∥2]
+E
+[
+∥ˆφj(x′)− ˜φj(x′)∥2]
++
+√
+E
+[
+∥˜φj(x′)∥2]
+E
+[
+∥ˆφj(x)− ˜φj(x)∥2]
+.
+Using the Lipschitz constant ofσW′
+j in expectation as above:
+√
+E
+[
+|ˆkj(x, x′)− ˜kj(x, x′)|2]
+≤ 2∥Cj∥∞
+√
+E
+[
+∥φj−1(x)∥2]
+E
+[
+∥ˆφj−1(x)− φj−1(x)∥2]
+.
+45
+
+
+===== PAGE 46 =====
+Guth, Ménard, Rochette, and Mallat
+The factors on the right-hand side can be bounded using the above, to yield
+√
+E
+[
+|ˆkj(x, x′)− ˜kj(x, x′)|2]
+≤ 2∥Cj∥∞···∥ C1∥∞E[∥x∥2]
+j−1∑
+ℓ=1
+cℓ d−ηℓ/2
+ℓ .
+The second term on the right-hand side of eq. (21) can be bounded with Theorem 1
+applied to z = φj−1(x) as before:
+√
+E
+[
+|˜kj(x, x′)− kj(x, x′)|2]
+≤ κj∥Cj∥∞···∥ C1∥∞E[∥x∥2] d−1/2
+j .
+where we have again used the upper bound on
+∑
+E[
+φj−1(x)
+2].
+We thus have shown that
+√
+E
+[
+|kj(x, x′)− kj(x, x′)|2]
+≤∥ Cj∥∞···∥ C1∥∞E[∥x∥2]
+
+2
+j−1∑
+ℓ=1
+cℓ d−ηℓ/2
+ℓ + κj d−1/2
+j
+(
+(.
+Appendix C. Proof of Theorem 3
+We prove the result by induction on the layer indexj. We initialize with φ0(x) = x,
+which admits an orthogonal representation ρ0(g) = g. Now suppose that φj−1 admits
+an orthogonal representation ρj−1. Let w ∼ πj, we have that ρj−1(g)Tw ∼ πj for all
+g∈ G by hypothesis. When πj =N (0, Cj), this is equivalent toρj−1(g)TCjρj−1(g) = Cj,
+i.e. ρj−1(g)Cj = Cjρj−1(g). We begin by showing that φj then admits an orthogonal
+representation ρj.
+We have
+φj(gx) = ϕj(φj−1(gx)) = ϕj(ρj−1(g)φj−1(x)).
+For simplicity, here we deﬁne the feature mapϕj with ϕj(z)(w) = σ(⟨w, z⟩) with Hj =
+L2(πj) (the result of the theorem does however not depend on this choice, as all feature
+maps are related by a rotation). Then,
+φj(gx)(w) = σ
+(⟨
+w, ρj−1(g)φj−1(x)
+⟩)
+= σ(⟨ρj−1(g)Tw, φj−1(x)⟩).
+For eachg∈ G, we thus deﬁne the operatorρj(g) by its action onψ∈ Hj:
+(ρj(g)ψ)(w) = ψ(ρj−1(g)Tw).
+It is obviously linear, and bounded as
+ρj(g)
+
+∞ = 1:
+ρj(g)ψ
+2
+Hj
+= Ew
+[
+ψ(ρj−1(g)Tw)2]
+= Ew
+[
+ψ(w)2]
+=∥ψ∥2
+Hj
+,
+where we have used thatρj−1(g)Tw∼ w. We further verify thatρj(gg′) = ρj(g)ρj(g′):
+(ρj(gg′)ψ)(w) = ψ(ρj−1(gg′)Tw) = ψ(ρj−1(g′)Tρj−1(g)Tw)
+= (ρj(g′)ψ)(ρj−1(g)Tw) = (ρj(g)ρj(g′)ψ)(w).
+46
+
+
+===== PAGE 47 =====
+A Rainbow in Deep Network Black Boxes
+We can thus writeφj(gx) = ρj(g)φj(x), which shows thatφj admits a representation.
+It remains to show thatρj(g) is orthogonal. The adjointρj(g)T is equal toρj(gT):
+]
+ρj(g)ψ, ψ′⟩
+Hj
+= Ew
+[
+ψ(ρj−1(g)Tw)ψ′(w)
+]
+= Ew
+[
+ψ(w)ψ′(ρj−1(g)w)
+]
+=
+]
+ψ, ρj(gT)ψ′⟩
+Hj
+,
+where we have usedρj−1(g)T = ρj−1(gT) since ρj−1 is a group homomorphism. It is then
+straightforward that ρj(g)ρj(g)T = ρj(g)Tρj(g) = Id by using again the fact thatρj is a
+group homomorphism. This proves thatρj(g)∈ O(Hj).
+We ﬁnally show that the rainbow kernelkj is invariant. We have
+kj(gx, gx′) =
+]
+φj(gx), φj(gx′)
+⟩
+Hj
+=
+]
+ρj(g)φj(x), ρj(g)φj(x′)
+⟩
+Hj
+=
+]
+φj(x), φj(x′)
+⟩
+Hj
+= kj(x, x′),
+which concludes the proof.
+Appendix D. Experimental details
+Normalization. In all the networks considered in this paper, after each non-linearityσ,
+a 2D batch-normalization layer (Ioﬀe and Szegedy, 2015) without learned aﬃne param-
+eters sets the per-channel mean and variance across space and data samples to0 and 1
+respectively. After training, we multiply the learned standard deviations by1/
+∑
+dj and the
+learned weight matricesLj+1 by
+∑
+dj as per our normalization conventions. This ensures
+that Ex[ˆφj(x)] = 0 and Ex[∥ˆφj(x)∥2] = 1, which enables more direct comparisons between
+networks of diﬀerent sizes. When evaluating activation convergence for ResNet-18, we ex-
+plicitly compute these expectations on the training set and standardize the activationsˆφj(x)
+after training for additional numerical stability. When sampling weights from the Gaussian
+rainbow model, the mean and variance parameters of the normalization layers are computed
+on the training set before alignment and sampling of the next layer.
+Scattering networks. We use the learned scattering architecture of Guth et al. (2022),
+with several simpliﬁcations based on the setting.
+The prior operatorPj performs a convolution of every channel of its input with prede-
+ﬁned ﬁlters: one real low-pass Gabor ﬁlterφ (a Gaussian window) and4 oriented Morlet
+wavelets ψθ (complex exponentials localized with a Gaussian window) (Andreux et al.,
+2020). Pj also implements a subsampling by a factor2 on even layer indicesj, with a slight
+modiﬁcation of the ﬁlters to compute wavelet coeﬃcients at intermediate scales. See Guth
+et al. (2022, Appendix G) for a precise deﬁnition of the ﬁlters. The learned weight matrices
+Lj are real for CIFAR-10 experiments, and complex for ImageNet experiments.
+We impose a commutation property betweenPj and Lj, so that we implementWj =
+Pj Lj. It is equivalent to havingWj = Lj Pj, with the constraint thatLj is applied pointwise
+with respect to the channels created byPj. The non-linearityσ is a complex modulus, which
+is only applied on the high-frequency channels. A scattering layer writes:
+σWjz =
+(
+Ljz∗ φ,
+⏐⏐Ljz∗ ψθ
+⏐⏐)
+θ.
+47
+
+
+===== PAGE 48 =====
+Guth, Ménard, Rochette, and Mallat
+The input (and therefore output) ofLj are then both real whenLj is real.
+We apply a pre-processing σP0 to the input x before feeding it to the network. The
+fully-connected classiﬁer θ is preceded with a learned1× 1 convolution LJ+1 which reduces
+the channel dimension. The learned scattering architecture thus writes:
+ˆf(x) = θTLJ+1 σPJ LJ··· σP1L1 σP0x.
+The number of output channels ofLj is given in Table 1.
+As explained above, we include a 2D batch-normalization layer without learned aﬃne
+parameters after each non-linearityσ, as well as before the classiﬁerθ. Furthermore, after
+each operator Lj, a divisive normalization sets the norm along channels at each spatial
+location to1 (except in Figures 4, 5 and 10). There are no learned biases in the architecture
+beyond the unsupervised channel means.
+The non-linearity σ includes a skip-connection in Figures 5 and 9, in which case a
+scattering layer computes
+σWjz =
+(
+Ljz∗ φ, Ljz∗ ψθ,
+⏐⏐Ljz∗ φ
+⏐⏐,
+⏐⏐Ljz∗ ψθ
+⏐⏐)
+θ.
+In this case, the activationsφj(x) are complex. The rainbow model extends to this case
+by adding complex conjugates at appropriate places. For instance, the alignment matrices
+become complex unitary operators when both activations and weights are complex.
+j 1 2 3 4 5 6 7 8 9 10 11
+CIFAR-10 (J = 3) dj 64 128 256 512 - - - - - - -
+CIFAR-10 (J = 7) dj 64 128 256 512 512 512 512 512 - - -
+ImageNet (J = 10) dj 32 64 64 128 256 512 512 512 512 512 256
+Table 1: Numberdj of output channels ofLj, 1≤ j≤ J +1. The total number of projectors
+is J + 1 = 4 or J + 1 = 8 for CIFAR-10 andJ + 1 = 11 for ImageNet.
+ResNet. Pj is the patch-extraction operator deﬁned in Section 2.3. The non-linearityσ is
+a ReLU. We have trained a slightly diﬀerent ResNet with no bias parameters. In addition,
+the batch-normalization layers have no learned aﬃne parameters, and are placed after the
+non-linearity to be consistent with our normalization conventions. The top-5 test accuracy
+on ImageNet remains at89% like the original model.
+Training. Network weights are initialized with i.i.d. samples from an uniform distribution
+(Glorot and Bengio, 2010) with so-called Kaiming variance scaling (He et al., 2015), which is
+the default in the PyTorch library (Paszke et al., 2019). Despite the uniform initialization,
+weight marginals become Gaussian after a single training epoch. Scattering networks are
+trained for 150 epochs with an initial learning rate of0.01 which is divided by10 every 50
+epochs, with a batch size of128. ResNets are trained for90 epochs with an initial learning
+rate of 0.1 which is divided by10 every 30 epochs, with a batch size of256. We use the
+optimizer SGD with a momentum of0.9 and a weight decay of10−4 (except for Figures 4
+48
+
+
+===== PAGE 49 =====
+A Rainbow in Deep Network Black Boxes
+and 10 where weight decay has been disabled). We use classical data augmentations: hori-
+zontal ﬂips and random crops for CIFAR, random resized crops of size224 and horizontal
+ﬂips for ImageNet. The classiﬁcation error on the ImageNet validation set is computed on
+a single center crop of size224.
+Activation covariances. The covariance of the activationsˆφj(x) is computed over chan-
+nels and averaged across space. Precisely, we compute
+Ex
+)∑
+u
+ˆφj(x)[u] ˆφj(x)[u]T
+]
+,
+where ˆφj(x)[u] is a channel vector of dimensiond′
+j at spatial locationu. It yields a matrix
+of dimension d′
+j× d′
+j. For scattering networks, thed′
+j channels correspond to thedj output
+channels of Lj times the 5 scattering channels computed byPj (times 2 when σ includes a
+skip-connection). For ResNet, ˆφj(x)[u] is a patch of sizesj× sj centered at u due to the
+operator Pj. dj is thus equal to the numberd′
+j of channels ofˆφj multiplied by s2
+j.
+References
+Kumar K Agrawal, Arnab Kumar Mondal, Arna Ghosh, and Blake Richards. α-ReQ :
+Assessing representation quality in self-supervised learning by measuring eigenspectrum
+decay. InAdvances in Neural Information Processing Systems, volume 35, pages 17626–
+17638, 2022.
+Samuel K Ainsworth, Jonathan Hayase, and Siddhartha Srinivasa. Git re-basin: Merging
+models modulo permutation symmetries.arXiv preprint arXiv:2209.04836, 2022.
+M. Andreux, T. Angles, G. Exarchakis, R. Leonarduzzi, G. Rochette, L. Thiry, J. Zarka,
+S. Mallat, J. Andén, E. Belilovsky, J. Bruna, V. Lostanlen, M. J. Hirn, E. Oyallon,
+S. Zhang, C. E. Cella, and M. Eickenberg. Kymatio: Scattering transforms in python.
+Journal of Machine Learning Research, 21(60):1–6, 2020.
+Fabio Anselmi, Lorenzo Rosasco, Cheston Tan, and Tomaso Poggio. Deep convolutional
+networks are hierarchical kernel machines.arXiv preprint arXiv:1508.01084, 2015.
+Nachman Aronszajn. Theory of reproducing kernels.Transactions of the American mathe-
+matical society, 68(3):337–404, 1950.
+Alexander Atanasov, Blake Bordelon, and Cengiz Pehlevan. Neural networks as kernel
+learners: The silent alignment eﬀect. InInternational Conference on Learning Represen-
+tations, 2022.
+Francis Bach. On the equivalence between kernel quadrature rules and random feature
+expansions. The Journal of Machine Learning Research, 18(1):714–751, 2017.
+Jinho Baik, Gérard Ben Arous, and Sandrine Péché. Phase transition of the largest eigen-
+value for nonnull complex sample covariance matrices.The Annals of Probability, 33(5):
+1643–1697, 2005.
+49
+
+
+===== PAGE 50 =====
+Guth, Ménard, Rochette, and Mallat
+Aristide Baratin, Thomas George, César Laurent, R Devon Hjelm, Guillaume Lajoie, Pascal
+Vincent, and Simon Lacoste-Julien. Implicit regularization via neural feature alignment.
+In International Conference on Artiﬁcial Intelligence and Statistics, pages 2269–2277.
+PMLR, 2021.
+Sergey Bartunov, Adam Santoro, Blake Richards, Luke Marris, Geoﬀrey E Hinton, and
+Timothy Lillicrap. Assessing the scalability of biologically-motivated deep learning al-
+gorithms and architectures. Advances in Neural Information Processing Systems, 31,
+2018.
+David Bau, Jun-Yan Zhu, Hendrik Strobelt, Agata Lapedriza, Bolei Zhou, and Antonio
+Torralba. Understanding the role of individual units in a deep neural network.Proceedings
+of the National Academy of Sciences, 117(48):30071–30078, 2020.
+Yoshua Bengio. Deep learning of representations for unsupervised and transfer learning.
+In Proceedings of ICML workshop on unsupervised and transfer learning, pages 17–36.
+JMLR Workshop and Conference Proceedings, 2012.
+FrederikBenzing, SimonSchug, RobertMeier, JohannesVonOswald, YassirAkram, Nicolas
+Zucchet, Laurence Aitchison, and Angelika Steger. Random initialisations performing
+above chance and how to ﬁnd them. InOPT 2022: Optimization for Machine Learning
+(NeurIPS 2022 Workshop), 2022.
+Rajendra Bhatia, Tanvi Jain, and Yongdo Lim. On the Bures–Wasserstein distance between
+positive deﬁnite matrices.Expositiones Mathematicae, 37(2):165–191, 2019.
+Alberto Bietti. Foundations of deep convolutional models through kernel methods. Theses,
+Université Grenoble Alpes, 2019.
+Alberto Bietti and Francis Bach. Deep equals shallow for ReLU networks in kernel regimes.
+In International Conference on Learning Representations, 2021.
+Alberto Bietti and Julien Mairal. Group invariance, stability to deformations, and com-
+plexity of deep convolutional representations.Journal of Machine Learning Research, 20
+(25):1–49, 2019.
+Blake Bordelon and Cengiz Pehlevan. Self-consistent dynamical ﬁeld theory of kernel evo-
+lution in wide neural networks.Advances in Neural Information Processing Systems, 35:
+32240–32256, 2022.
+Blake Bordelon, Abdulkadir Canatar, and Cengiz Pehlevan. Spectrum dependent learning
+curves in kernel regression and wide neural networks. InInternational Conference on
+Machine Learning, pages 1024–1034. PMLR, 2020.
+Francesco Cagnetta, Alessandro Favero, and Matthieu Wyart. What can be learnt with
+wide convolutional neural networks? InInternational Conference on Machine Learning,
+pages 3347–3379. PMLR, 2023.
+Andrea Caponnetto and Ernesto De Vito. Optimal rates for the regularized least-squares
+algorithm. Foundations of Computational Mathematics, 7:331–368, 2007.
+50
+
+
+===== PAGE 51 =====
+A Rainbow in Deep Network Black Boxes
+Zhengdao Chen, Eric Vanden-Eijnden, and Joan Bruna. A functional-space mean-ﬁeld
+theory of partially-trained three-layer neural networks.arXiv preprint arXiv:2210.16286,
+2022.
+Lenaic Chizat and Francis Bach. On the global convergence of gradient descent for over-
+parameterized models using optimal transport.Advances in Neural Information Process-
+ing Systems, 31, 2018.
+Lenaic Chizat and Francis Bach. Implicit bias of gradient descent for wide two-layer neural
+networks trained with the logistic loss. InConference on Learning Theory, pages 1305–
+1338. PMLR, 2020.
+Lenaic Chizat, Edouard Oyallon, and Francis Bach. On lazy training in diﬀerentiable
+programming. Advances in Neural Information Processing Systems, 32, 2019.
+Youngmin Cho and Lawrence Saul. Kernel methods for deep learning.Advances in Neural
+Information Processing Systems, 22, 2009.
+François Chollet. Xception: Deep learning with depthwise separable convolutions. InPro-
+ceedings of the IEEE conference on computer vision and pattern recognition, pages 1251–
+1258, 2017.
+Taco Cohen and Max Welling. Group equivariant convolutional networks. InProceedings
+of the 33nd International Conference on Machine Learning, ICML, volume 48 ofJMLR
+Workshop and Conference Proceedings, pages 2990–2999, 2016.
+Corinna Cortes, Mehryar Mohri, and Afshin Rostamizadeh. Algorithms for learning kernels
+based on centered alignment.The Journal of Machine Learning Research, 13(1):795–828,
+2012.
+Nello Cristianini, John Shawe-Taylor, Andre Elisseeﬀ, and Jaz Kandola. On kernel-target
+alignment. Advances in Neural Information Processing Systems, 14, 2001.
+Marco Cuturi. Sinkhorn distances: Lightspeed computation of optimal transport.Advances
+in neural information processing systems, 26, 2013.
+Amit Daniely, Roy Frostig, and Yoram Singer. Toward deeper understanding of neural
+networks: The power of initialization and a dual view on expressivity. Advances in
+Neural Information Processing Systems, 29, 2016.
+Misha Denil, Babak Shakibi, Laurent Dinh, Marc’Aurelio Ranzato, and Nando De Fre-
+itas. Predicting parameters in deep learning.Advances in Neural Information Processing
+Systems, 26, 2013.
+Emily L Denton, Wojciech Zaremba, Joan Bruna, Yann LeCun, and Rob Fergus. Exploiting
+linear structure within convolutional networks for eﬃcient evaluation.Advances in Neural
+Information Processing Systems, 27, 2014.
+Katharina Dobs, Julio Martinez, Alexander JE Kell, and Nancy Kanwisher. Brain-like func-
+tional specialization emerges spontaneously in deep neural networks.Science advances,
+8(11):eabl8913, 2022.
+51
+
+
+===== PAGE 52 =====
+Guth, Ménard, Rochette, and Mallat
+David L Donoho, Matan Gavish, and Iain M Johnstone. Optimal shrinkage of eigenvalues
+in the spiked covariance model.Annals of statistics, 46(4):1742, 2018.
+Felix Draxler, Kambis Veschgini, Manfred Salmhofer, and Fred Hamprecht. Essentially no
+barriers in neural network energy landscape. InInternational Conference on Machine
+Learning, pages 1309–1318. PMLR, 2018.
+Alexis Dubreuil, Adrian Valente, Manuel Beiran, Francesca Mastrogiuseppe, and Srdjan
+Ostojic. The role of population structure in computations through neural dynamics.
+Nature neuroscience, 25(6):783–794, 2022.
+Weinan E and Stephan Wojtowytsch. On the banach spaces associated with multi-layer relu
+networks: Function representation, approximation theory and gradient descent dynamics.
+arXiv preprint arXiv:2007.15623, 2020.
+Noureddine El Karoui. Spectrum estimation for large dimensional covariance matrices using
+random matrix theory.The Annals of Statistics, pages 2757–2790, 2008a.
+Noureddine El Karoui. Operator norm consistent estimation of large-dimensional sparse
+covariance matrices.The Annals of Statistics, 36(6):2717–2756, 2008b.
+Eric Elmoznino and Michael F Bonner. High-performing neural network models of visual
+cortex beneﬁt from high latent dimensionality.bioRxiv, pages 2022–07, 2022.
+Rahim Entezari, Hanie Sedghi, Olga Saukh, and Behnam Neyshabur. The role of per-
+mutation invariance in linear mode connectivity of neural networks. In International
+Conference on Learning Representations, 2022.
+Stanislav Fort, Gintare Karolina Dziugaite, Mansheej Paul, Sepideh Kharaghani, Daniel M
+Roy, and Surya Ganguli. Deep learning versus kernel learning: an empirical study of loss
+landscape geometry and the time evolution of the neural tangent kernel.Advances in
+Neural Information Processing Systems, 33:5850–5861, 2020.
+Jonathan Frankle, Gintare Karolina Dziugaite, Daniel Roy, and Michael Carbin. Linear
+mode connectivity and the lottery ticket hypothesis. In International Conference on
+Machine Learning, pages 3259–3269. PMLR, 2020.
+C Daniel Freeman and Joan Bruna. Topology and geometry of half-rectiﬁed network opti-
+mization. In International Conference on Learning Representations, 2017.
+Timur Garipov, Pavel Izmailov, Dmitrii Podoprikhin, Dmitry P Vetrov, and Andrew G
+Wilson. Loss surfaces, mode connectivity, and fast ensembling of dnns. Advances in
+Neural Information Processing Systems, 31, 2018.
+Leszek Gawarecki and Vidyadhar Mandrekar. Stochastic diﬀerential equations.Stochastic
+Diﬀerential Equations in Inﬁnite Dimensions: with Applications to Stochastic Partial
+Diﬀerential Equations, pages 73–149, 2011.
+Mario Geiger, Stefano Spigler, Arthur Jacot, and Matthieu Wyart. Disentangling feature
+and lazy training in deep neural networks.Journal of Statistical Mechanics: Theory and
+Experiment, 2020(11):113301, 2020.
+52
+
+
+===== PAGE 53 =====
+A Rainbow in Deep Network Black Boxes
+Xavier Glorot and Yoshua Bengio. Understanding the diﬃculty of training deep feedforward
+neural networks. In Proceedings of the thirteenth international conference on artiﬁcial
+intelligence and statistics, pages 249–256. JMLR Workshop and Conference Proceedings,
+2010.
+Guy Gur-Ari, Daniel A Roberts, and Ethan Dyer. Gradient descent happens in a tiny
+subspace. arXiv preprint arXiv:1812.04754, 2018.
+Florentin Guth, John Zarka, and Stephane Mallat. Phase Collapse in Neural Networks. In
+International Conference on Learning Representations, 2022.
+Babak Hassibi and David Stork. Second order derivatives for network pruning: Optimal
+brain surgeon. Advances in Neural Information Processing Systems, 5, 1992.
+Trevor Hastie and Robert Tibshirani. Generalized additive models: some applications.
+Journal of the American Statistical Association, 82(398):371–386, 1987.
+JamesVHaxby, JSwaroopGuntupalli, AndrewCConnolly, YaroslavOHalchenko, BryanR
+Conroy, M Ida Gobbini, Michael Hanke, and Peter J Ramadge. A common, high-
+dimensional model of the representational space in human ventral temporal cortex.Neu-
+ron, 72(2):404–416, 2011.
+Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. Delving deep into rectiﬁers:
+Surpassing human-level performance on imagenet classiﬁcation. In Proceedings of the
+IEEE international conference on computer vision, pages 1026–1034, 2015.
+Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. Deep residual learning for image
+recognition. In 2016 IEEE Conference on Computer Vision and Pattern Recognition
+(CVPR), pages 770–778, 2016.
+Joel Hestness, Sharan Narang, Newsha Ardalani, Gregory Diamos, Heewoo Jun, Hassan
+Kianinejad, Md Mostofa Ali Patwary, Yang Yang, and Yanqi Zhou. Deep learning scaling
+is predictable, empirically.arXiv preprint arXiv:1712.00409, 2017.
+Jordan Hoﬀmann, Sebastian Borgeaud, Arthur Mensch, Elena Buchatskaya, Trevor Cai,
+Eliza Rutherford, Diego de Las Casas, Lisa Anne Hendricks, Johannes Welbl, Aidan
+Clark, Tom Hennigan, Eric Noland, Katie Millican, George van den Driessche, Bogdan
+Damoc, Aurelia Guy, Simon Osindero, Karen Simonyan, Erich Elsen, Jack W. Rae, Oriol
+Vinyals, and Laurent Sifre. Training compute-optimal large language models. arXiv
+preprint arXiv:2203.15556, 2022.
+Edward J Hu, Yelong Shen, Phillip Wallis, Zeyuan Allen-Zhu, Yuanzhi Li, Shean Wang,
+Lu Wang, and Weizhu Chen. LoRA: Low-rank adaptation of large language models. In
+International Conference on Learning Representations, 2022.
+John R Hurley and Raymond B Cattell. The Procrustes program: Producing direct rotation
+to test a hypothesized factor structure.Behavioral science, 7(2):258, 1962.
+53
+
+
+===== PAGE 54 =====
+Guth, Ménard, Rochette, and Mallat
+Sergey Ioﬀe and Christian Szegedy. Batch normalization: Accelerating deep network train-
+ing by reducing internal covariate shift. InProceedings of the 32nd International Con-
+ference on International Conference on Machine Learning - Volume 37, page 448–456,
+2015.
+Arthur Jacot, Franck Gabriel, and Clément Hongler. Neural tangent kernel: Convergence
+and generalization in neural networks.Advances in Neural Information Processing Sys-
+tems, 31, 2018.
+Hicham Janati, Boris Muzellec, Gabriel Peyré, and Marco Cuturi. Entropic optimal trans-
+port between unbalanced Gaussian measures has a closed form. Advances in Neural
+Information Processing Systems, 33:10468–10479, 2020.
+Kevin Jarrett, Koray Kavukcuoglu, Marc’Aurelio Ranzato, and Yann LeCun. What is the
+best multi-stage architecture for object recognition? In 2009 IEEE 12th international
+conference on computer vision, pages 2146–2153. IEEE, 2009.
+Stanislaw Jastrzebski, Maciej Szymczak, Stanislav Fort, Devansh Arpit, Jacek Tabor,
+Kyunghyun Cho, and Krzysztof Geras. The break-even point on optimization trajec-
+tories of deep neural networks. InInternational Conference on Learning Representations,
+2020.
+Iain M Johnstone. On the distribution of the largest eigenvalue in principal components
+analysis. The Annals of statistics, 29(2):295–327, 2001.
+Jared Kaplan, Sam McCandlish, Tom Henighan, Tom B Brown, Benjamin Chess, Rewon
+Child, Scott Gray, Alec Radford, Jeﬀrey Wu, and Dario Amodei. Scaling laws for neural
+language models. arXiv preprint arXiv:2001.08361, 2020.
+Risi Kondor and Shubhendu Trivedi. On the generalization of equivariance and convolution
+in neural networks to the action of compact groups. InProceedings of the 35th Inter-
+national Conference on Machine Learning, ICML, volume 80 ofProceedings of Machine
+Learning Research, pages 2747–2755, 2018.
+Simon Kornblith, Mohammad Norouzi, Honglak Lee, and Geoﬀrey Hinton. Similarity of
+neural network representations revisited. InInternational Conference on Machine Learn-
+ing, pages 3519–3529. PMLR, 2019.
+Nikolaus Kriegeskorte, Marieke Mur, and Peter A Bandettini. Representational similarity
+analysis-connecting the branches of systems neuroscience. Frontiers in systems neuro-
+science, page 4, 2008.
+Alex Krizhevsky. Learning multiple layers of features from tiny images. Technical report,
+University of Toronto, 2009.
+Alex Krizhevsky, Ilya Sutskever, and Geoﬀrey E Hinton. Imagenet classiﬁcation with deep
+convolutional neural networks. In Advances in Neural Information Processing Systems
+25, NeurIPS, pages 1097–1105, 2012.
+54
+
+
+===== PAGE 55 =====
+A Rainbow in Deep Network Black Boxes
+Guillaume Leclerc and Aleksander Madry. The two regimes of deep network training.arXiv
+preprint arXiv:2002.10376, 2020.
+Yann LeCun and Yoshua Bengio. Convolutional networks for images, speech, and time
+series. The handbook of brain theory and neural networks, 3361(10):1995, 1995.
+Yann LeCun, Bernhard Boser, John Denker, Donnie Henderson, Richard Howard, Wayne
+Hubbard, and Lawrence Jackel. Handwritten digit recognition with a back-propagation
+network. Advances in Neural Information Processing Systems, 2, 1989a.
+Yann LeCun, John Denker, and Sara Solla. Optimal brain damage.Advances in Neural
+Information Processing Systems, 2, 1989b.
+Jaehoon Lee, Yasaman Bahri, Roman Novak, Samuel S Schoenholz, Jeﬀrey Pennington,
+and Jascha Sohl-Dickstein. Deep neural networks as Gaussian processes. InInternational
+Conference on Learning Representations, 2018.
+Jaehoon Lee, Lechao Xiao, Samuel Schoenholz, Yasaman Bahri, Roman Novak, Jascha Sohl-
+Dickstein, and Jeﬀrey Pennington. Wide neural networks of any depth evolve as linear
+models under gradient descent.Advances in Neural Information Processing Systems, 32,
+2019.
+Jaehoon Lee, Samuel Schoenholz, Jeﬀrey Pennington, Ben Adlam, Lechao Xiao, Roman
+Novak, and Jascha Sohl-Dickstein. Finite versus inﬁnite neural networks: an empirical
+study. Advances in Neural Information Processing Systems, 33:15156–15172, 2020.
+Zhiyuan Li, Ruosong Wang, Dingli Yu, Simon S Du, Wei Hu, Ruslan Salakhutdinov,
+and Sanjeev Arora. Enhanced convolutional neural tangent kernels. arXiv preprint
+arXiv:1911.00809, 2019.
+Zongming Ma. Sparse principal component analysis and iterative thresholding.The Annals
+of Statistics, 41(2):772–801, 2013.
+Julien Mairal. End-to-end kernel learning with supervised convolutional kernel networks.
+Advances in Neural Information Processing Systems, 29, 2016.
+Julien Mairal, Piotr Koniusz, Zaid Harchaoui, and Cordelia Schmid. Convolutional kernel
+networks. Advances in Neural Information Processing Systems, 27, 2014.
+Stephane Mallat. Group invariant scattering.Communications on Pure and Applied Math-
+ematics, 65(10):1331–1398, 2012.
+Alexander Maloney, Daniel A Roberts, and James Sully. A solvable model of neural scaling
+laws. arXiv preprint arXiv:2210.16859, 2022.
+Vladimir A Marčenko and Leonid A Pastur. Distribution of eigenvalues for some sets of
+random matrices. Mathematics of the USSR-Sbornik, 1(4):457, 1967.
+Charles H Martin and Michael W Mahoney. Implicit self-regularization in deep neural net-
+works: Evidence from random matrix theory and implications for learning.The Journal
+of Machine Learning Research, 22(1):7479–7551, 2021.
+55
+
+
+===== PAGE 56 =====
+Guth, Ménard, Rochette, and Mallat
+Alexander G de G Matthews, Mark Rowland, Jiri Hron, Richard E Turner, and Zoubin
+Ghahramani. Gaussian process behaviour in wide deep neural networks.arXiv preprint
+arXiv:1804.11271, 2018.
+Song Mei, Andrea Montanari, and Phan-Minh Nguyen. A mean ﬁeld view of the landscape
+of two-layers neural networks.Proceedings of the National Academy of Sciences, 115(33):
+E7665–E7671, 2018.
+Stanislav Minsker. On some extensions of Bernstein’s inequality for self-adjoint operators.
+Statistics & Probability Letters, 127:111–119, 2017.
+Sreyas Mohan, Zahra Kadkhodaie, Eero P Simoncelli, and Carlos Fernandez-Granda. Ro-
+bust and interpretable blind image denoising via bias-free convolutional neural networks.
+In International Conference on Learning Representations, 2019.
+Ari Morcos, Maithra Raghu, and Samy Bengio. Insights on representational similarity in
+neural networks with canonical correlation.Advances in Neural Information Processing
+Systems, 31, 2018.
+Radford M Neal. Bayesian learning for neural networks, volume 118. Springer Science &
+Business Media, 1996.
+Phan-Minh Nguyen and Huy Tuan Pham. A rigorous framework for the mean ﬁeld limit of
+multilayer neural networks.arXiv preprint arXiv:2001.11443, 2020.
+Chris Olah, Alexander Mordvintsev, and Ludwig Schubert. Feature visualization.Distill,
+2017. https://distill.pub/2017/feature-visualization.
+Jordan Ott, Erik Linstead, Nicholas LaHaye, and Pierre Baldi. Learning in the machine:
+To share or not to share?Neural Networks, 126:235–249, 2020. ISSN 0893-6080.
+Edouard Oyallon and Stephane Mallat. Deep roto-translation scattering for object classiﬁ-
+cation. InIEEE Conference on Computer Vision and Pattern Recognition, CVPR, pages
+2865–2873. IEEE Computer Society, 2015.
+Biraj Pandey, Marius Pachitariu, Bingni W Brunton, and Kameron Decker Harris. Struc-
+tured random receptive ﬁelds enable informative sensory encodings.PLoS Computational
+Biology, 18(10):e1010484, 2022.
+Vardan Papyan. Measurements of three-level hierarchical structure in the outliers in the
+spectrum of deepnet Hessians. InInternational Conference on Machine Learning, pages
+5012–5021. PMLR, 2019.
+AdamPaszke, SamGross, FranciscoMassa, AdamLerer, JamesBradbury, GregoryChanan,
+Trevor Killeen, Zeming Lin, Natalia Gimelshein, Luca Antiga, Alban Desmaison, An-
+dreas Kopf, Edward Yang, Zachary DeVito, Martin Raison, Alykhan Tejani, Sasank
+Chilamkurthy, Benoit Steiner, Lu Fang, Junjie Bai, and Soumith Chintala. PyTorch:
+An imperative style, high-performance deep learning library. InAdvances in Neural In-
+formation Processing Systems, pages 8024–8035, 2019.
+56
+
+
+===== PAGE 57 =====
+A Rainbow in Deep Network Black Boxes
+Gabriel Peyré and Marco Cuturi. Computational optimal transport: With applications to
+data science. Foundations and Trends in Machine Learning, 11(5-6):355–607, 2019.
+Nicolas Pinto, David Doukhan, James J DiCarlo, and David D Cox. A high-throughput
+screening approach to discovering good forms of biologically inspired visual representa-
+tion. PLoS computational biology, 5(11):e1000579, 2009.
+Roman Pogodin, Yash Mehta, Timothy Lillicrap, and Peter E Latham. Towards biologically
+plausible convolutional networks. Advances in Neural Information Processing Systems,
+34:13924–13936, 2021.
+Adityanarayanan Radhakrishnan, Daniel Beaglehole, Parthe Pandit, and Mikhail Belkin.
+Mechanism for feature learning in neural networks and backpropagation-free machine
+learning models. Science, 383(6690):1461–1467, 2024.
+Maithra Raghu, Justin Gilmer, Jason Yosinski, and Jascha Sohl-Dickstein. SVCCA: Singu-
+lar vector canonical correlation analysis for deep learning dynamics and interpretability.
+Advances in Neural Information Processing Systems, 30, 2017.
+Ali Rahimi and Benjamin Recht. Random features for large-scale kernel machines.Advances
+in Neural Information Processing Systems, 20, 2007.
+Ali Rahimi and Benjamin Recht. Uniform approximation of functions with random bases.
+In 46th annual Allerton conference on communication, control, and computing, pages
+555–561. IEEE, 2008.
+Stefano Recanatesi, Matthew Farrell, Madhu Advani, Timothy Moore, Guillaume Lajoie,
+and Eric Shea-Brown. Dimensionality compression and expansion in deep neural net-
+works. arXiv preprint arXiv:1906.00443, 2019.
+Markus Riedle. Cylindrical wiener processes.Séminaire de Probabilités XLIII, pages 191–
+214, 2011.
+Grant M Rotskoﬀ and Eric Vanden-Eijnden. Trainability and accuracy of neural networks:
+An interacting particle system approach.arXiv preprint arXiv:1805.00915, 2018.
+Alessandro Rudi, Guillermo D Canas, and Lorenzo Rosasco. On the sample complexity of
+subspace learning. In Advances in Neural Information Processing Systems, volume 26,
+2013.
+Olga Russakovsky, Jia Deng, Hao Su, Jonathan Krause, Sanjeev Satheesh, Sean Ma, Zhi-
+heng Huang, Andrej Karpathy, Aditya Khosla, Michael Bernstein, Alexander C Berg,
+and Li Fei-Fei. ImageNet large scale visual recognition challenge.International Journal
+of Computer Vision (IJCV), 115(3):211–252, 2015.
+Levent Sagun, Leon Bottou, and Yann LeCun. Eigenvalues of the Hessian in deep learning:
+Singularity and beyond.arXiv preprint arXiv:1611.07476, 2016.
+Levent Sagun, Utku Evci, V Ugur Guney, Yann Dauphin, and Leon Bottou. Em-
+pirical analysis of the Hessian of over-parametrized neural networks. arXiv preprint
+arXiv:1706.04454, 2017.
+57
+
+
+===== PAGE 58 =====
+Guth, Ménard, Rochette, and Mallat
+Andrew M Saxe, James L McClelland, and Surya Ganguli. Exact solutions to the nonlinear
+dynamics of learning in deep linear neural networks. In International Conference on
+Learning Representations, 2014.
+Andrew M Saxe, James L McClelland, and Surya Ganguli. A mathematical theory of
+semantic development in deep neural networks.Proceedings of the National Academy of
+Sciences, 116(23):11537–11546, 2019.
+Meyer Scetbon and Zaid Harchaoui. A spectral analysis of dot-product kernels. In In-
+ternational conference on artiﬁcial intelligence and statistics, pages 3394–3402. PMLR,
+2021.
+Bernhard Schölkopf and Alexander J Smola. Learning with kernels: support vector ma-
+chines, regularization, optimization, and beyond. MIT press, 2002.
+Bernhard Schölkopf, Alexander Smola, and Klaus-Robert Müller. Kernel principal compo-
+nent analysis. In Artiﬁcial Neural Networks—ICANN’97: 7th International Conference
+Lausanne, Switzerland, October 8–10, 1997 Proceeedings, pages 583–588. Springer Verlag,
+1997.
+Peter H Schönemann. A generalized solution of the orthogonal Procrustes problem.Psy-
+chometrika, 31(1):1–10, 1966.
+Friedrich Schuessler, Francesca Mastrogiuseppe, Alexis Dubreuil, Srdjan Ostojic, and Omri
+Barak. The interplay between randomness and structure during learning in RNNs.Ad-
+vances in Neural Information Processing Systems, 33:13352–13362, 2020.
+Inbar Seroussi, Gadi Naveh, and Zohar Ringel. Separation of scales and a thermodynamic
+description of feature learning in some cnns.Nature Communications, 14(1):908, 2023.
+Vaishaal Shankar, Alex Fang, Wenshuo Guo, Sara Fridovich-Keil, Jonathan Ragan-Kelley,
+Ludwig Schmidt, and Benjamin Recht. Neural kernels without tangents. InInternational
+Conference on Machine Learning, pages 8614–8623. PMLR, 2020.
+Laurent Sifre and Stephane Mallat. Rotation, scaling and deformation invariant scattering
+for texture discrimination. InProceedings of the IEEE conference on computer vision and
+pattern recognition, pages 1233–1240, 2013.
+Justin Sirignano and Konstantinos Spiliopoulos. Mean ﬁeld analysis of neural networks: A
+law of large numbers.SIAM Journal on Applied Mathematics, 80(2):725–752, 2020.
+JustinSirignanoandKonstantinosSpiliopoulos. Meanﬁeldanalysisofdeepneuralnetworks.
+Mathematics of Operations Research, 47(1):120–152, 2022.
+SamuelLSmith, DavidHPTurban, StevenHamblin, andNilsYHammerla. Oﬄinebilingual
+word vectors, orthogonal transformations and the inverted softmax. In International
+Conference on Learning Representations, 2017.
+Stefano Spigler, Mario Geiger, and Matthieu Wyart. Asymptotic learning curves of kernel
+methods: empirical data versus teacher–student paradigm. Journal of Statistical Me-
+chanics: Theory and Experiment, 2020(12):124001, 2020.
+58
+
+
+===== PAGE 59 =====
+A Rainbow in Deep Network Black Boxes
+Bharath K Sriperumbudur and Nicholas Sterge. Approximate kernel PCA: Computational
+versus statistical trade-oﬀ.The Annals of Statistics, 50(5):2713–2736, 2022.
+Carsen Stringer, Marius Pachitariu, Nicholas Steinmetz, Matteo Carandini, and Kenneth D
+Harris. High-dimensional geometry of population responses in visual cortex.Nature, 571
+(7765):361–365, 2019.
+Matthias Thamm, Max Staats, and Bernd Rosenow. Random matrix analysis of deep neural
+network weight matrices.Physical Review E, 106(5):054124, 2022.
+Louis Thiry, Michael Arbel, Eugene Belilovsky, and Edouard Oyallon. The unreason-
+able eﬀectiveness of patches in deep convolutional kernels methods. arXiv preprint
+arXiv:2101.07528, 2021.
+Asher Trockman, Devin Willmott, and J Zico Kolter. Understanding the covariance struc-
+ture of convolutional ﬁlters. In International Conference on Learning Representations,
+2023.
+Joel A Tropp. User-friendly tail bounds for sums of random matrices. Foundations of
+computational mathematics, 12:389–434, 2012.
+NicholasVakhania, VazhaTarieladze, andSChobanyan. Probability distributions on Banach
+spaces, volume 14. Springer Science & Business Media, 1987.
+Alex H Williams, Erin Kunz, Simon Kornblith, and Scott Linderman. Generalized shape
+metrics on neural representations.Advances in Neural Information Processing Systems,
+34:4738–4750, 2021.
+Christopher Williams. Computing with inﬁnite networks.Advances in Neural Information
+Processing Systems, 9, 1996.
+Blake Woodworth, Suriya Gunasekar, Jason D Lee, Edward Moroshko, Pedro Savarese, Itay
+Golan, Daniel Soudry, and Nathan Srebro. Kernel and rich regimes in overparametrized
+models. In Conference on Learning Theory, pages 3635–3673. PMLR, 2020.
+Greg Yang and Edward J Hu. Tensor programs IV: Feature learning in inﬁnite-width neural
+networks. InInternational Conference on Machine Learning, pages 11727–11737. PMLR,
+2021.
+Greg Yang, Edward J Hu, Igor Babuschkin, Szymon Sidor, Xiaodong Liu, David Farhi,
+Nick Ryder, Jakub Pachocki, Weizhu Chen, and Jianfeng Gao. Tensor programs V:
+Tuning large neural networks via zero-shot hyperparameter transfer. arXiv preprint
+arXiv:2203.03466, 2022.
+Xiyu Yu, Tongliang Liu, Xinchao Wang, and Dacheng Tao. On compressing deep models by
+low rank and sparse decomposition. InProceedings of the IEEE conference on computer
+vision and pattern recognition, pages 7370–7379, 2017.
+John Zarka, Florentin Guth, and Stephane Mallat. Separation and concentration in deep
+networks. InInternational Conference on Learning Representations, ICLR, 2021.
+59
