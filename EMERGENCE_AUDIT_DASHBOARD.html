@@ -326,12 +326,12 @@
       background: var(--surface);
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 1120px;
-      font-size: 13px;
-    }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          min-width: 1280px;
+          font-size: 13px;
+        }
 
     th,
     td {
@@ -361,11 +361,29 @@
       font-weight: 700;
     }
 
-    .score {
-      font-weight: 800;
-      color: var(--blue);
-      white-space: nowrap;
-    }
+        .score {
+          font-weight: 800;
+          color: var(--blue);
+          white-space: nowrap;
+        }
+
+        .doi-link {
+          font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+          font-size: 12px;
+          white-space: nowrap;
+        }
+
+        .doi-kind {
+          display: block;
+          color: var(--muted);
+          font-size: 12px;
+          margin-top: 4px;
+        }
+
+        .note-cell {
+          min-width: 300px;
+          color: #3f4d57;
+        }
 
     .bar-list {
       display: grid;
@@ -558,11 +576,12 @@
         <a href="#overview">Overview</a>
         <a href="#method">Method</a>
         <a href="#criteria">Final criteria</a>
-        <a href="#levels">Corpus levels</a>
-        <a href="#guth">Guth, Menard, Rainbow</a>
-        <a href="#level1">Level 1 matrix</a>
-        <a href="#evidence">Paper evidence</a>
-        <a href="#clusters">Cluster findings</a>
+            <a href="#levels">Corpus levels</a>
+            <a href="#guth">Guth, Menard, Rainbow</a>
+            <a href="#doi-index">DOI index</a>
+            <a href="#level1">Level 1 matrix</a>
+            <a href="#evidence">Paper evidence</a>
+            <a href="#clusters">Cluster findings</a>
         <a href="#files">Files</a>
       </nav>
     </aside>
@@ -704,19 +723,40 @@
             <p><strong>Verdict:</strong> use as high-quality adjacent evidence for compression and novel bases, not as verification of the exact unpublished double-descent claim.</p>
           </div>
         </div>
-      </section>
+          </section>
 
-      <section id="level1">
-        <h2>Level 1 Final-Selection Matrix</h2>
-        <p class="lede">Full and Prov count as satisfied. Part and No do not count. The last column preserves the precursor core-check strength.</p>
+          <section id="doi-index">
+            <h2>Level 1 DOI Index</h2>
+            <p class="lede">Each Level 1 paper now has a primary DOI for repeated checking. Most are arXiv DOIs; where a publisher/proceedings DOI is available, it is used as primary and the arXiv DOI is retained as a secondary check.</p>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Paper</th>
+                    <th>Primary DOI</th>
+                    <th>Source / version</th>
+                    <th>Secondary DOI</th>
+                    <th>Note</th>
+                  </tr>
+                </thead>
+                <tbody id="doi-index-body"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="level1">
+            <h2>Level 1 Final-Selection Matrix</h2>
+            <p class="lede">Full and Prov count as satisfied. Part and No do not count. The last column preserves the precursor core-check strength.</p>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>#</th>
-                <th>Paper</th>
-                <th>Scaling</th>
-                <th>Criticality</th>
+                    <th>#</th>
+                    <th>Paper</th>
+                    <th>DOI</th>
+                    <th>Scaling</th>
+                    <th>Criticality</th>
                 <th>Compression</th>
                 <th>Novel bases</th>
                 <th>Generalization</th>
@@ -813,11 +853,13 @@
               <tr><td><a href="FINAL_PAPER_LEVELS.md">FINAL_PAPER_LEVELS.md</a></td><td>Human-readable tiered paper list.</td></tr>
               <tr><td><a href="LEVEL1_SURPRISE_AUDIT.md">LEVEL1_SURPRISE_AUDIT.md</a></td><td>Level 1 source/version audit, matrix, and per-paper evidence.</td></tr>
               <tr><td><a href="GUTH_MENARD_CRITERIA_AUDIT.md">GUTH_MENARD_CRITERIA_AUDIT.md</a></td><td>Focused audit of the unpublished exact Guth/Menard double-descent example.</td></tr>
-              <tr><td><a href="RAINBOW_JMLR_CRITERIA_AUDIT.md">RAINBOW_JMLR_CRITERIA_AUDIT.md</a></td><td>Focused audit of the public JMLR Rainbow paper.</td></tr>
-              <tr><td><a href="research_sources/FINAL_PAPER_LEVELS.tsv">research_sources/FINAL_PAPER_LEVELS.tsv</a></td><td>Full machine-readable final tiered table.</td></tr>
-            </tbody>
-          </table>
-        </div>
+                  <tr><td><a href="RAINBOW_JMLR_CRITERIA_AUDIT.md">RAINBOW_JMLR_CRITERIA_AUDIT.md</a></td><td>Focused audit of the public JMLR Rainbow paper.</td></tr>
+                  <tr><td><a href="research_sources/FINAL_PAPER_LEVELS.tsv">research_sources/FINAL_PAPER_LEVELS.tsv</a></td><td>Full machine-readable final tiered table.</td></tr>
+                  <tr><td><a href="research_sources/LEVEL1_DOI_INDEX.tsv">research_sources/LEVEL1_DOI_INDEX.tsv</a></td><td>Machine-readable DOI index for the 18 Level 1 papers.</td></tr>
+                  <tr><td><a href="research_sources/LEVEL1_DOI_INDEX.json">research_sources/LEVEL1_DOI_INDEX.json</a></td><td>JSON copy of the Level 1 DOI index.</td></tr>
+                </tbody>
+              </table>
+            </div>
       </section>
 
       <p class="footer">Standalone local report generated from the emergence literature-audit workspace. Open this file directly in a browser.</p>
@@ -826,25 +868,25 @@
 
   <script>
     const rows = [
-      {n:1, paper:"Emergent Structured Representations", status:["Part","No","Full","Full","Prov","Full","Full"], score:"5 / 7", core:"4 Full / 1 Prov / 2 Part"},
-      {n:2, paper:"Mechanistic Data Attribution", status:["Prov","Part","Part","No","Prov","Full","Full"], score:"4 / 7", core:"5 Full / 0 Prov / 2 Part"},
-      {n:3, paper:"MetaOthello", status:["Part","No","Full","Full","Full","Full","Full"], score:"5 / 7", core:"5 Full / 0 Prov / 2 Part"},
-      {n:4, paper:"Relational KD with Fine-tuned FVs", status:["No","No","Full","Prov","Full","Full","Full"], score:"5 / 7", core:"4 Full / 1 Prov / 2 Part"},
-      {n:5, paper:"Deductive Circuits", status:["Part","No","Prov","Part","Part","Full","Full"], score:"3 / 7", core:"4 Full / 0 Prov / 3 Part"},
-      {n:6, paper:"Attention Circuits Form", status:["Full","Full","Part","Part","Prov","Full","Full"], score:"5 / 7", core:"4 Full / 1 Prov / 2 Part"},
-      {n:7, paper:"Analogical Reasoning / Concept Vectors", status:["No","No","Prov","Prov","Part","Prov","Full"], score:"4 / 7", core:"4 Full / 0 Prov / 3 Part"},
-      {n:8, paper:"Linear Spatial World Models", status:["No","No","Full","Full","Part","Full","Full"], score:"4 / 7", core:"4 Full / 1 Prov / 2 Part"},
-      {n:9, paper:"Multimodal Function Vectors", status:["No","No","Full","Prov","Full","Full","Full"], score:"5 / 7", core:"4 Full / 1 Prov / 2 Part"},
-      {n:10, paper:"Hidden-State Geometry for ICL", status:["Part","Prov","Full","Full","Prov","Full","Full"], score:"6 / 7", core:"5 Full / 0 Prov / 2 Part"},
-      {n:11, paper:"Two-Layer Transformers / Induction Heads", status:["Full","No","Prov","Part","Full","Prov","Full"], score:"5 / 7", core:"4 Full / 0 Prov / 3 Part"},
-      {n:12, paper:"Which Attention Heads Matter?", status:["Full","Prov","Full","Prov","Full","Full","Full"], score:"7 / 7", core:"5 Full / 1 Prov / 1 Part"},
-      {n:13, paper:"Chess World Models", status:["Part","No","Full","Prov","Prov","Full","Full"], score:"5 / 7", core:"5 Full / 1 Prov / 1 Part"},
-      {n:14, paper:"What Needs To Go Right For An Induction Head?", status:["Full","Full","Prov","Part","Prov","Full","Full"], score:"6 / 7", core:"5 Full / 1 Prov / 1 Part"},
-      {n:15, paper:"Emergent Linear Representations / Othello", status:["Part","No","Full","Full","Part","Full","Prov"], score:"4 / 7", core:"4 Full / 1 Prov / 2 Part"},
-      {n:16, paper:"Function Vectors in LLMs", status:["Part","No","Full","Full","Full","Full","Full"], score:"5 / 7", core:"5 Full / 1 Prov / 1 Part"},
-      {n:17, paper:"Linear Latent World Models / Othello-GPT", status:["Prov","No","Full","Full","Part","Full","Full"], score:"5 / 7", core:"4 Full / 1 Prov / 2 Part"},
-      {n:18, paper:"Progress Measures for Grokking", status:["Full","Full","Full","Full","Prov","Full","Full"], score:"7 / 7", core:"6 Full / 0 Prov / 1 Part"}
-    ];
+          {n:1, paper:"Emergent Structured Representations", fullTitle:"Emergent Structured Representations Support Flexible In-Context Inference in Large Language Models", doi:"10.48550/arXiv.2602.07794", doiKind:"arXiv DOI", sourceUrl:"https://arxiv.org/abs/2602.07794v3", secondaryDoi:"", note:"Primary check DOI is the arXiv DOI; resolver verified to arXiv abs page.", status:["Part","No","Full","Full","Prov","Full","Full"], score:"5 / 7", core:"4 Full / 1 Prov / 2 Part"},
+          {n:2, paper:"Mechanistic Data Attribution", fullTitle:"Mechanistic Data Attribution: Tracing the Training Origins of Interpretable LLM Units", doi:"10.48550/arXiv.2601.21996", doiKind:"arXiv DOI", sourceUrl:"https://arxiv.org/abs/2601.21996v2", secondaryDoi:"", note:"Primary check DOI is the arXiv DOI; resolver verified to arXiv abs page.", status:["Prov","Part","Part","No","Prov","Full","Full"], score:"4 / 7", core:"5 Full / 0 Prov / 2 Part"},
+          {n:3, paper:"MetaOthello", fullTitle:"MetaOthello: A Controlled Study of Multiple World Models in Transformers", doi:"10.48550/arXiv.2602.23164", doiKind:"arXiv DOI", sourceUrl:"https://arxiv.org/abs/2602.23164", secondaryDoi:"", note:"Manifest had an OpenAlex URL; Level 1 audit identified the arXiv source. Primary check DOI is the arXiv DOI.", status:["Part","No","Full","Full","Full","Full","Full"], score:"5 / 7", core:"5 Full / 0 Prov / 2 Part"},
+          {n:4, paper:"Relational KD with Fine-tuned FVs", fullTitle:"Relational Knowledge Distillation Using Fine-tuned Function Vectors", doi:"10.48550/arXiv.2601.08169", doiKind:"arXiv DOI", sourceUrl:"https://arxiv.org/abs/2601.08169v1", secondaryDoi:"", note:"Primary check DOI is the arXiv DOI; resolver verified to arXiv abs page.", status:["No","No","Full","Prov","Full","Full","Full"], score:"5 / 7", core:"4 Full / 1 Prov / 2 Part"},
+          {n:5, paper:"Deductive Circuits", fullTitle:"Revealing Algorithmic Deductive Circuits for Logical Reasoning", doi:"10.48550/arXiv.2605.27824", doiKind:"arXiv DOI", sourceUrl:"https://arxiv.org/abs/2605.27824v1", secondaryDoi:"", note:"Primary check DOI is the arXiv DOI; resolver verified to arXiv abs page.", status:["Part","No","Prov","Part","Part","Full","Full"], score:"3 / 7", core:"4 Full / 0 Prov / 3 Part"},
+          {n:6, paper:"Attention Circuits Form", fullTitle:"When Do Attention Circuits Form? Developmental Trajectories of Capability and Attention-Sink Emergence Across Three 1B-Class Architectures", doi:"10.48550/arXiv.2606.02378", doiKind:"arXiv DOI", sourceUrl:"https://arxiv.org/abs/2606.02378v2", secondaryDoi:"", note:"Primary check DOI is the arXiv DOI; resolver verified to arXiv abs page.", status:["Full","Full","Part","Part","Prov","Full","Full"], score:"5 / 7", core:"4 Full / 1 Prov / 2 Part"},
+          {n:7, paper:"Analogical Reasoning / Concept Vectors", fullTitle:"Analogical Reasoning Inside Large Language Models: Concept Vectors and the Limits of Abstraction", doi:"10.48550/arXiv.2503.03666", doiKind:"arXiv DOI", sourceUrl:"https://arxiv.org/abs/2503.03666v1", secondaryDoi:"", note:"Primary check DOI is the arXiv DOI; resolver verified to arXiv abs page.", status:["No","No","Prov","Prov","Part","Prov","Full"], score:"4 / 7", core:"4 Full / 0 Prov / 3 Part"},
+          {n:8, paper:"Linear Spatial World Models", fullTitle:"Linear Spatial World Models Emerge in Large Language Models", doi:"10.48550/arXiv.2506.02996", doiKind:"arXiv DOI", sourceUrl:"https://arxiv.org/abs/2506.02996v1", secondaryDoi:"", note:"Primary check DOI is the arXiv DOI; resolver verified to arXiv abs page.", status:["No","No","Full","Full","Part","Full","Full"], score:"4 / 7", core:"4 Full / 1 Prov / 2 Part"},
+          {n:9, paper:"Multimodal Function Vectors", fullTitle:"Multimodal Function Vectors for Visual Relations", doi:"10.48550/arXiv.2510.02528", doiKind:"arXiv DOI", sourceUrl:"https://arxiv.org/abs/2510.02528v2", secondaryDoi:"", note:"Primary check DOI is the arXiv DOI; resolver verified to arXiv abs page.", status:["No","No","Full","Prov","Full","Full","Full"], score:"5 / 7", core:"4 Full / 1 Prov / 2 Part"},
+          {n:10, paper:"Hidden-State Geometry for ICL", fullTitle:"Unifying Attention Heads and Task Vectors via Hidden State Geometry in In-Context Learning", doi:"10.48550/arXiv.2505.18752", doiKind:"arXiv DOI", sourceUrl:"https://arxiv.org/abs/2505.18752v2", secondaryDoi:"", note:"Primary check DOI is the arXiv DOI; resolver verified to arXiv abs page.", status:["Part","Prov","Full","Full","Prov","Full","Full"], score:"6 / 7", core:"5 Full / 0 Prov / 2 Part"},
+          {n:11, paper:"Two-Layer Transformers / Induction Heads", fullTitle:"What One Cannot, Two Can: Two-Layer Transformers Provably Represent Induction Heads on Any-Order Markov Chains", doi:"10.48550/arXiv.2508.07208", doiKind:"arXiv DOI", sourceUrl:"https://arxiv.org/abs/2508.07208v2", secondaryDoi:"", note:"Primary check DOI is the arXiv DOI; resolver verified to arXiv abs page.", status:["Full","No","Prov","Part","Full","Prov","Full"], score:"5 / 7", core:"4 Full / 0 Prov / 3 Part"},
+          {n:12, paper:"Which Attention Heads Matter?", fullTitle:"Which Attention Heads Matter for In-Context Learning?", doi:"10.48550/arXiv.2502.14010", doiKind:"arXiv DOI", sourceUrl:"https://arxiv.org/abs/2502.14010v1", secondaryDoi:"", note:"PMLR page is retained as proceedings source; no PMLR DOI metadata was visible, so the check DOI is arXiv.", status:["Full","Prov","Full","Prov","Full","Full","Full"], score:"7 / 7", core:"5 Full / 1 Prov / 1 Part"},
+          {n:13, paper:"Chess World Models", fullTitle:"Emergent World Models and Latent Variable Estimation in Chess-Playing Language Models", doi:"10.48550/arXiv.2403.15498", doiKind:"arXiv DOI", sourceUrl:"https://arxiv.org/abs/2403.15498v2", secondaryDoi:"", note:"Primary check DOI is the arXiv DOI; resolver verified to arXiv abs page.", status:["Part","No","Full","Prov","Prov","Full","Full"], score:"5 / 7", core:"5 Full / 1 Prov / 1 Part"},
+          {n:14, paper:"What Needs To Go Right For An Induction Head?", fullTitle:"What needs to go right for an induction head? A mechanistic study of in-context learning circuits and their formation", doi:"10.48550/arXiv.2404.07129", doiKind:"arXiv DOI", sourceUrl:"https://arxiv.org/abs/2404.07129v1", secondaryDoi:"", note:"Primary check DOI is the arXiv DOI; resolver verified to arXiv abs page.", status:["Full","Full","Prov","Part","Prov","Full","Full"], score:"6 / 7", core:"5 Full / 1 Prov / 1 Part"},
+          {n:15, paper:"Emergent Linear Representations / Othello", fullTitle:"Emergent Linear Representations in World Models of Self-Supervised Sequence Models", doi:"10.18653/v1/2023.blackboxnlp-1.2", doiKind:"publisher DOI", sourceUrl:"https://aclanthology.org/2023.blackboxnlp-1.2/", secondaryDoi:"10.48550/arXiv.2309.00941", note:"ACL Anthology records the publisher DOI; arXiv DOI retained as secondary source check.", status:["Part","No","Full","Full","Part","Full","Prov"], score:"4 / 7", core:"4 Full / 1 Prov / 2 Part"},
+          {n:16, paper:"Function Vectors in LLMs", fullTitle:"Function Vectors in Large Language Models", doi:"10.48550/arXiv.2310.15213", doiKind:"arXiv DOI", sourceUrl:"https://arxiv.org/abs/2310.15213v2", secondaryDoi:"", note:"OpenReview entry is retained as venue/source link; primary check DOI is arXiv.", status:["Part","No","Full","Full","Full","Full","Full"], score:"5 / 7", core:"5 Full / 1 Prov / 1 Part"},
+          {n:17, paper:"Linear Latent World Models / Othello-GPT", fullTitle:"Linear Latent World Models in Simple Transformers: A Case Study on Othello-GPT", doi:"10.48550/arXiv.2310.07582", doiKind:"arXiv DOI", sourceUrl:"https://arxiv.org/abs/2310.07582v2", secondaryDoi:"", note:"Primary check DOI is the arXiv DOI; resolver verified to arXiv abs page.", status:["Prov","No","Full","Full","Part","Full","Full"], score:"5 / 7", core:"4 Full / 1 Prov / 2 Part"},
+          {n:18, paper:"Progress Measures for Grokking", fullTitle:"Progress measures for grokking via mechanistic interpretability", doi:"10.48550/arXiv.2301.05217", doiKind:"arXiv DOI", sourceUrl:"https://arxiv.org/abs/2301.05217", secondaryDoi:"", note:"Primary check DOI is the arXiv DOI; resolver verified to arXiv abs page.", status:["Full","Full","Full","Full","Prov","Full","Full"], score:"7 / 7", core:"6 Full / 0 Prov / 1 Part"}
+        ];
 
     const details = [
       {
@@ -1103,17 +1145,39 @@
       }
     ];
 
-    function statusClass(value) {
-      return "status-" + value.toLowerCase();
-    }
+        function statusClass(value) {
+          return "status-" + value.toLowerCase();
+        }
 
-    function renderMatrix() {
-      const body = document.getElementById("matrix-body");
-      body.innerHTML = rows.map(row => {
-        const cells = row.status.map(s => `<td><span class="${statusClass(s)}">${s}</span></td>`).join("");
-        return `<tr><td>${row.n}</td><td class="paper-name">${row.paper}</td>${cells}<td class="score">${row.score}</td><td>${row.core}</td></tr>`;
-      }).join("");
-    }
+        function doiUrl(doi) {
+          return `https://doi.org/${doi}`;
+        }
+
+        function doiCell(row) {
+          return `<a class="doi-link" href="${doiUrl(row.doi)}">${row.doi}</a><span class="doi-kind">${row.doiKind}</span>`;
+        }
+
+        function renderDoiIndex() {
+          const body = document.getElementById("doi-index-body");
+          body.innerHTML = rows.map(row => `
+            <tr>
+              <td>${row.n}</td>
+              <td class="paper-name">${row.fullTitle}</td>
+              <td>${doiCell(row)}</td>
+              <td><a href="${row.sourceUrl}">source/version</a></td>
+              <td>${row.secondaryDoi ? `<a class="doi-link" href="${doiUrl(row.secondaryDoi)}">${row.secondaryDoi}</a>` : "—"}</td>
+              <td class="note-cell">${row.note}</td>
+            </tr>
+          `).join("");
+        }
+
+        function renderMatrix() {
+          const body = document.getElementById("matrix-body");
+          body.innerHTML = rows.map(row => {
+            const cells = row.status.map(s => `<td><span class="${statusClass(s)}">${s}</span></td>`).join("");
+            return `<tr><td>${row.n}</td><td class="paper-name">${row.paper}</td><td>${doiCell(row)}</td>${cells}<td class="score">${row.score}</td><td>${row.core}</td></tr>`;
+          }).join("");
+        }
 
     function list(items) {
       return `<ul>${items.map(item => `<li>${item}</li>`).join("")}</ul>`;
@@ -1140,8 +1204,9 @@
       `).join("");
     }
 
-    renderMatrix();
-    renderDetails();
-  </script>
+        renderDoiIndex();
+        renderMatrix();
+        renderDetails();
+      </script>
 </body>
 </html>

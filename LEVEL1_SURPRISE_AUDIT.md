@@ -91,6 +91,31 @@ Counting rule:
 The **Satisfied** column counts **Full + Prov** out of the seven final-selection criteria.
 The **Core support** column preserves the precursor audit strength: source, claim match, effect, method, mechanism, reduced description, and controls.
 
+## DOI Tracking Index
+
+Most Level 1 entries use the durable arXiv DOI as the primary check handle. When a proceedings/publisher DOI is available, it is primary and the arXiv DOI is retained as a secondary check.
+
+| # | Paper | Primary DOI | Kind | Source / version | Secondary DOI |
+|---:|---|---|---|---|---|
+| 1 | Emergent Structured Representations | [10.48550/arXiv.2602.07794](https://doi.org/10.48550/arXiv.2602.07794) | arXiv DOI | [source](https://arxiv.org/abs/2602.07794v3) | - |
+| 2 | Mechanistic Data Attribution | [10.48550/arXiv.2601.21996](https://doi.org/10.48550/arXiv.2601.21996) | arXiv DOI | [source](https://arxiv.org/abs/2601.21996v2) | - |
+| 3 | MetaOthello | [10.48550/arXiv.2602.23164](https://doi.org/10.48550/arXiv.2602.23164) | arXiv DOI | [source](https://arxiv.org/abs/2602.23164) | - |
+| 4 | Relational KD with Fine-tuned FVs | [10.48550/arXiv.2601.08169](https://doi.org/10.48550/arXiv.2601.08169) | arXiv DOI | [source](https://arxiv.org/abs/2601.08169v1) | - |
+| 5 | Deductive Circuits | [10.48550/arXiv.2605.27824](https://doi.org/10.48550/arXiv.2605.27824) | arXiv DOI | [source](https://arxiv.org/abs/2605.27824v1) | - |
+| 6 | Attention Circuits Form | [10.48550/arXiv.2606.02378](https://doi.org/10.48550/arXiv.2606.02378) | arXiv DOI | [source](https://arxiv.org/abs/2606.02378v2) | - |
+| 7 | Analogical Reasoning / Concept Vectors | [10.48550/arXiv.2503.03666](https://doi.org/10.48550/arXiv.2503.03666) | arXiv DOI | [source](https://arxiv.org/abs/2503.03666v1) | - |
+| 8 | Linear Spatial World Models | [10.48550/arXiv.2506.02996](https://doi.org/10.48550/arXiv.2506.02996) | arXiv DOI | [source](https://arxiv.org/abs/2506.02996v1) | - |
+| 9 | Multimodal Function Vectors | [10.48550/arXiv.2510.02528](https://doi.org/10.48550/arXiv.2510.02528) | arXiv DOI | [source](https://arxiv.org/abs/2510.02528v2) | - |
+| 10 | Hidden-State Geometry for ICL | [10.48550/arXiv.2505.18752](https://doi.org/10.48550/arXiv.2505.18752) | arXiv DOI | [source](https://arxiv.org/abs/2505.18752v2) | - |
+| 11 | Two-Layer Transformers / Induction Heads | [10.48550/arXiv.2508.07208](https://doi.org/10.48550/arXiv.2508.07208) | arXiv DOI | [source](https://arxiv.org/abs/2508.07208v2) | - |
+| 12 | Which Attention Heads Matter? | [10.48550/arXiv.2502.14010](https://doi.org/10.48550/arXiv.2502.14010) | arXiv DOI | [source](https://arxiv.org/abs/2502.14010v1) | - |
+| 13 | Chess World Models | [10.48550/arXiv.2403.15498](https://doi.org/10.48550/arXiv.2403.15498) | arXiv DOI | [source](https://arxiv.org/abs/2403.15498v2) | - |
+| 14 | What Needs To Go Right For An Induction Head? | [10.48550/arXiv.2404.07129](https://doi.org/10.48550/arXiv.2404.07129) | arXiv DOI | [source](https://arxiv.org/abs/2404.07129v1) | - |
+| 15 | Emergent Linear Representations / Othello | [10.18653/v1/2023.blackboxnlp-1.2](https://doi.org/10.18653/v1/2023.blackboxnlp-1.2) | publisher DOI | [source](https://aclanthology.org/2023.blackboxnlp-1.2/) | [10.48550/arXiv.2309.00941](https://doi.org/10.48550/arXiv.2309.00941) |
+| 16 | Function Vectors in LLMs | [10.48550/arXiv.2310.15213](https://doi.org/10.48550/arXiv.2310.15213) | arXiv DOI | [source](https://arxiv.org/abs/2310.15213v2) | - |
+| 17 | Linear Latent World Models / Othello-GPT | [10.48550/arXiv.2310.07582](https://doi.org/10.48550/arXiv.2310.07582) | arXiv DOI | [source](https://arxiv.org/abs/2310.07582v2) | - |
+| 18 | Progress Measures for Grokking | [10.48550/arXiv.2301.05217](https://doi.org/10.48550/arXiv.2301.05217) | arXiv DOI | [source](https://arxiv.org/abs/2301.05217) | - |
+
 | # | Paper | Scaling | Criticality | Compression | Novel bases | Generalization | Knowledge-in mechanism | Capability vs intelligence | Satisfied | Core support |
 |---:|---|---|---|---|---|---|---|---|---:|---|
 | 1 | Emergent Structured Representations | Part | No | Full | Full | Prov | Full | Full | **5 / 7** | 4 Full / 1 Prov / 2 Part |

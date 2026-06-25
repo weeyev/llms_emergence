@@ -27,6 +27,7 @@ None of the levels mean “verified.” They mean review priority. Verification 
 - `research_sources/FINAL_PAPER_LEVELS.json` - full tiered JSON
 - `research_sources/GOAL_V2_PAPER_RUBRIC.tsv/json` - V2 rubric reclassification
 - `research_sources/GOAL_V2_CORE_CANDIDATES.tsv/json` - unpruned V2 core candidates
+- `research_sources/LEVEL1_DOI_INDEX.tsv/json` - DOI tracking index for the 18 Level 1 papers
 - `GUTH_MENARD_CRITERIA_AUDIT.md` - focused audit of the Guth/Menard double-descent example
 - `RAINBOW_JMLR_CRITERIA_AUDIT.md` - focused audit of the public JMLR Rainbow paper
 - `LEVEL1_SURPRISE_AUDIT.md` - source/version and surprise audit across the 18 Level 1 papers
