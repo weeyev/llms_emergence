@@ -27,6 +27,10 @@ None of the levels mean “verified.” They mean review priority. Verification 
 - `research_sources/FINAL_PAPER_LEVELS.json` - full tiered JSON
 - `research_sources/GOAL_V2_PAPER_RUBRIC.tsv/json` - V2 rubric reclassification
 - `research_sources/GOAL_V2_CORE_CANDIDATES.tsv/json` - unpruned V2 core candidates
+- `GUTH_MENARD_CRITERIA_AUDIT.md` - focused audit of the Guth/Menard double-descent example
+- `RAINBOW_JMLR_CRITERIA_AUDIT.md` - focused audit of the public JMLR Rainbow paper
+- `LEVEL1_SURPRISE_AUDIT.md` - source/version and surprise audit across the 18 Level 1 papers
+- `EMERGENCE_AUDIT_DASHBOARD.html` - organized standalone HTML report/dashboard covering the full audit trail
 
 ## Main Claim Competitors
 
@@ -34,7 +38,7 @@ None of the levels mean “verified.” They mean review priority. Verification 
 |---|---|---|---|
 | Benchmark scaling / criticality | Wei, Brown, Ganguli, BIG-Bench, grokking/phase papers | Schaeffer, Hu, Snell, Lu, double-descent demystification | Behavioral effects matter, but scaling curves alone are weak emergence evidence. |
 | Compression / coarse-grained models | Othello, induction heads, function vectors, task vectors, representation compression | Probe-only critiques, bag-of-heuristics, weak causality | Strongest positive route when causal/predictive use is shown. |
-| Novel bases / manifolds | Guth public work, abstraction units, representation geometry, subspaces | Unpublished Guth/Menard exact claim, noncausal geometry | Promising but often incomplete. |
+| Novel bases / manifolds | Guth public work, abstraction units, representation geometry, subspaces | Unpublished Guth/Menard exact claim, noncausal geometry | Promising but often incomplete; see `RAINBOW_JMLR_CRITERIA_AUDIT.md` for the public Rainbow evidence and `GUTH_MENARD_CRITERIA_AUDIT.md` for why the exact Guth/Menard double-descent example is not verified. |
 | World models / causal state | Othello, chess, linear/world-model sequence papers | Vafa, verification critiques, bag-of-heuristics | Strong direct lane, still contested. |
 | Generalization / analogy / reuse | Webb-style analogy, ICL, CoT, scratchpads, reusable modules | GSM-Symbolic, Stevenson/Lewis/Hodel-West, contamination/shortcuts | Useful only when tied to compact abstraction reuse, not generic capability. |
 

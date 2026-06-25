@@ -1,0 +1,1147 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LLM Emergence Literature Audit</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --surface: #ffffff;
+      --surface-2: #eef2f5;
+      --ink: #182026;
+      --muted: #5e6b76;
+      --line: #d9e0e6;
+      --blue: #2364aa;
+      --teal: #1b7f79;
+      --green: #287a43;
+      --amber: #a05d00;
+      --red: #b23a3a;
+      --violet: #654ea3;
+      --shadow: 0 12px 28px rgba(24, 32, 38, 0.08);
+      --radius: 8px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.55;
+    }
+
+    a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+      padding: 24px 18px;
+      background: #17222c;
+      color: #edf3f7;
+      border-right: 1px solid #111920;
+    }
+
+    .brand {
+      margin-bottom: 24px;
+    }
+
+    .brand h1 {
+      margin: 0 0 8px;
+      font-size: 21px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      margin: 0;
+      color: #b8c7d2;
+      font-size: 13px;
+    }
+
+    nav {
+      display: grid;
+      gap: 6px;
+      margin-top: 18px;
+    }
+
+    nav a {
+      display: block;
+      padding: 9px 10px;
+      border-radius: 6px;
+      color: #e8f0f5;
+      font-size: 14px;
+    }
+
+    nav a:hover {
+      background: rgba(255,255,255,0.08);
+      text-decoration: none;
+    }
+
+    main {
+      padding: 28px;
+      max-width: 1440px;
+      width: 100%;
+    }
+
+    section {
+      margin: 0 0 28px;
+      scroll-margin-top: 20px;
+    }
+
+    .hero {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .eyebrow {
+      color: var(--teal);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 26px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      line-height: 1.25;
+      letter-spacing: 0;
+    }
+
+    h4 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    .lede {
+      font-size: 17px;
+      color: #2e3b45;
+      max-width: 880px;
+    }
+
+    .callout {
+      background: #edf7f6;
+      border: 1px solid #b7d9d5;
+      border-left: 5px solid var(--teal);
+      border-radius: var(--radius);
+      padding: 16px;
+      color: #173c3a;
+    }
+
+    .callout.warning {
+      background: #fff8eb;
+      border-color: #efd39c;
+      border-left-color: var(--amber);
+      color: #4b3411;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .metric {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 28px;
+      line-height: 1;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 8px 18px rgba(24,32,38,0.04);
+    }
+
+    .panel.subtle {
+      background: #fbfcfd;
+      box-shadow: none;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--blue);
+      border-radius: var(--radius);
+      padding: 14px;
+      min-height: 134px;
+    }
+
+    .step:nth-child(2) { border-top-color: var(--teal); }
+    .step:nth-child(3) { border-top-color: var(--green); }
+    .step:nth-child(4) { border-top-color: var(--amber); }
+    .step:nth-child(5) { border-top-color: var(--violet); }
+
+    .step .num {
+      font-weight: 800;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .criteria {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(160px, 1fr));
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .criterion {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      padding: 14px;
+      min-width: 160px;
+    }
+
+    .criterion strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--blue);
+    }
+
+    .criterion p {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 0;
+    }
+
+    .status-full,
+    .status-prov,
+    .status-part,
+    .status-no {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 58px;
+      min-height: 28px;
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .status-full {
+      background: #dff2e5;
+      color: #14512a;
+    }
+
+    .status-prov {
+      background: #e8efff;
+      color: #244b8f;
+    }
+
+    .status-part {
+      background: #fff1d7;
+      color: #754300;
+    }
+
+    .status-no {
+      background: #f4e1e1;
+      color: #7a2020;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1120px;
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: #e9eef3;
+      z-index: 1;
+      font-size: 12px;
+      color: #34414b;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .paper-name {
+      min-width: 250px;
+      font-weight: 700;
+    }
+
+    .score {
+      font-weight: 800;
+      color: var(--blue);
+      white-space: nowrap;
+    }
+
+    .bar-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 110px minmax(0, 1fr) 60px;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .bar-track {
+      height: 12px;
+      background: #e7ecef;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--teal);
+    }
+
+    .bar-fill.blue { background: var(--blue); }
+    .bar-fill.amber { background: var(--amber); }
+    .bar-fill.green { background: var(--green); }
+
+    details {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: var(--radius);
+      margin: 10px 0;
+      overflow: hidden;
+    }
+
+    summary {
+      cursor: pointer;
+      padding: 14px 16px;
+      font-weight: 800;
+      background: #f8fafb;
+      list-style: none;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary::after {
+      content: "+";
+      float: right;
+      font-weight: 800;
+      color: var(--blue);
+    }
+
+    details[open] summary::after {
+      content: "-";
+    }
+
+    .detail-body {
+      padding: 0 16px 16px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 8px 0 12px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--surface-2);
+      color: #3e4d57;
+    }
+
+    .tag.positive { background: #dff2e5; color: #14512a; }
+    .tag.warning { background: #fff1d7; color: #754300; }
+    .tag.negative { background: #f4e1e1; color: #7a2020; }
+    .tag.info { background: #e8efff; color: #244b8f; }
+
+    .two-col-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+
+    li {
+      margin: 5px 0;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 12px;
+      position: relative;
+    }
+
+    .timeline-item {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-left: 5px solid var(--blue);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .timeline-item:nth-child(2) { border-left-color: var(--teal); }
+    .timeline-item:nth-child(3) { border-left-color: var(--green); }
+    .timeline-item:nth-child(4) { border-left-color: var(--amber); }
+    .timeline-item:nth-child(5) { border-left-color: var(--violet); }
+
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .footer {
+      color: var(--muted);
+      font-size: 13px;
+      padding: 20px 0 8px;
+    }
+
+    @media (max-width: 1020px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        position: relative;
+        height: auto;
+      }
+
+      nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .hero,
+      .grid-2,
+      .grid-3,
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .metric-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      main {
+        padding: 16px;
+      }
+
+      .hero {
+        padding: 18px;
+      }
+
+      .metric-grid,
+      .two-col-list {
+        grid-template-columns: 1fr;
+      }
+
+      nav {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <div class="brand">
+        <h1>Emergence Audit</h1>
+        <p>LLM and neural-system literature review through June 25, 2026</p>
+      </div>
+      <nav>
+        <a href="#overview">Overview</a>
+        <a href="#method">Method</a>
+        <a href="#criteria">Final criteria</a>
+        <a href="#levels">Corpus levels</a>
+        <a href="#guth">Guth, Menard, Rainbow</a>
+        <a href="#level1">Level 1 matrix</a>
+        <a href="#evidence">Paper evidence</a>
+        <a href="#clusters">Cluster findings</a>
+        <a href="#files">Files</a>
+      </nav>
+    </aside>
+
+    <main>
+      <section id="overview" class="hero">
+        <div>
+          <div class="eyebrow">Final synthesis</div>
+          <h2>Emergence evidence became strongest when we stopped asking for broad intelligence and started asking for compact causal structure.</h2>
+          <p class="lede">
+            The audit began as a broad search over claims that LLMs or neural systems show emergence.
+            The final position is narrower and more scientific: some transformer systems show
+            paper-defined emergent capabilities through coarse-grained internal variables, but the
+            evidence does not establish broad emergent intelligence.
+          </p>
+          <div class="callout">
+            <strong>Final stance:</strong> benchmark jumps and sudden task scores are weak by themselves.
+            The strongest evidence comes from function vectors, task vectors, world-state vectors,
+            concept/spatial vectors, circuit-development trajectories, and progress measures that
+            help predict, explain, or intervene on behavior.
+          </div>
+        </div>
+        <div class="panel subtle">
+          <h3>At a glance</h3>
+          <div class="bar-list">
+            <div class="bar-row"><span>All rows</span><div class="bar-track"><div class="bar-fill blue" style="width:100%"></div></div><strong>1704</strong></div>
+            <div class="bar-row"><span>Positive pool</span><div class="bar-track"><div class="bar-fill green" style="width:23%"></div></div><strong>392</strong></div>
+            <div class="bar-row"><span>Level 1</span><div class="bar-track"><div class="bar-fill teal" style="width:4.6%"></div></div><strong>18</strong></div>
+            <div class="bar-row"><span>Level 2</span><div class="bar-track"><div class="bar-fill amber" style="width:2.3%"></div></div><strong>9</strong></div>
+          </div>
+          <p class="small" style="margin-top:14px">Levels are review priority, not verified truth. Verification still needs full-paper reading and controls.</p>
+        </div>
+      </section>
+
+      <section>
+        <div class="metric-grid">
+          <div class="metric"><strong>392</strong><span>Final positive candidates: Level 1 + Level 2 + Level 4</span></div>
+          <div class="metric"><strong>18</strong><span>Direct mechanistic Level 1 papers audited in detail</span></div>
+          <div class="metric"><strong>13</strong><span>Level 1 papers satisfying 5 or more final-selection criteria</span></div>
+          <div class="metric"><strong>0</strong><span>Level 1 papers establishing broad emergent intelligence</span></div>
+        </div>
+      </section>
+
+      <section id="method">
+        <h2>Method Evolution</h2>
+        <div class="flow">
+          <div class="step">
+            <div class="num">01</div>
+            <h3>Broad search</h3>
+            <p>Search space was intentionally wide: old and new papers, direct emergence claims, near-emergence mechanisms, controls, and counterclaims.</p>
+          </div>
+          <div class="step">
+            <div class="num">02</div>
+            <h3>Rubric correction</h3>
+            <p>The old linear gate was replaced. Scaling, criticality, compression, novel bases, and generalization became routes, not mandatory sequential gates.</p>
+          </div>
+          <div class="step">
+            <div class="num">03</div>
+            <h3>Source checks</h3>
+            <p>Original sources, newer versions, full texts, code, and criticism were checked where possible. Abstract-only matches stayed lower confidence.</p>
+          </div>
+          <div class="step">
+            <div class="num">04</div>
+            <h3>Final criteria</h3>
+            <p>Candidate papers were judged by emergence-selection criteria: compact structure, phase-like behavior, transfer, and knowledge-in mechanism.</p>
+          </div>
+          <div class="step">
+            <div class="num">05</div>
+            <h3>Level 1 audit</h3>
+            <p>The 18 strongest mechanistic papers were re-read for surprises and organized into a criteria matrix with evidence notes.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="criteria">
+        <h2>Final Selection Criteria</h2>
+        <p class="lede">These are the criteria used to select and explain the strongest papers. They are different from the precursor checks such as source validity and method quality.</p>
+        <div class="criteria">
+          <div class="criterion"><strong>Scaling</strong><p>Scale in data, compute, parameters, training time, or components reveals a new capability or organization.</p></div>
+          <div class="criterion"><strong>Criticality</strong><p>A rapid qualitative shift, threshold, phase-like transition, or order-parameter-like change is observed.</p></div>
+          <div class="criterion"><strong>Compression</strong><p>A higher-level compressed description remains useful while ignoring lower-level microscopic detail.</p></div>
+          <div class="criterion"><strong>Novel bases</strong><p>A new representational basis, subspace, manifold, internal alphabet, or geometry improves representation.</p></div>
+          <div class="criterion"><strong>Generalization</strong><p>The structure supports transfer, analogy, OOD behavior, rapid adaptation, or reuse beyond the exact setup.</p></div>
+          <div class="criterion"><strong>Knowledge-in mechanism</strong><p>The global property is connected to an internal/local neural mechanism, not only to behavior.</p></div>
+          <div class="criterion"><strong>Capability vs intelligence</strong><p>The paper is clear about narrow emergent capability versus broad emergent intelligence.</p></div>
+        </div>
+      </section>
+
+      <section id="levels">
+        <h2>Corpus Segregation</h2>
+        <div class="grid-3">
+          <div class="panel">
+            <h3>Read first</h3>
+            <p><strong>Level 1: 18 papers.</strong> Direct mechanistic shortlist. These are the best candidates for paper-defined emergent capability evidence or important controls.</p>
+          </div>
+          <div class="panel">
+            <h3>Read second</h3>
+            <p><strong>Level 2: 9 papers.</strong> Promising papers that need more target-specific checking before they can be promoted.</p>
+          </div>
+          <div class="panel">
+            <h3>Retain, but do not overclaim</h3>
+            <p><strong>Level 4: 365 papers.</strong> Partial core candidates. Useful for broad ranking, follow-up, and literature context.</p>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top:16px">
+          <div class="panel">
+            <h3>Controls and lineage</h3>
+            <p>114 effect/counterclaim papers and 163 claim-source-only papers were retained. These matter because many emergence claims are weakened by metric artifacts, memorization, prompting, contamination, ordinary scaling, or shortcut heuristics.</p>
+          </div>
+          <div class="panel">
+            <h3>Clean-up</h3>
+            <p>Superseded linear-gate reports were removed. Raw PDFs/text and final V2 artifacts were kept so future reading starts from the corrected paper-grounded rubric.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="guth">
+        <h2>Guth, Menard, and Rainbow</h2>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Exact Guth/Menard 2025 claim</h3>
+            <div class="tags">
+              <span class="tag negative">Unverifiable</span>
+              <span class="tag warning">In prep / personal communication</span>
+              <span class="tag info">Double descent claim</span>
+            </div>
+            <p>The target emergence paper says Guth and Menard 2025 show that the double-descent peak coincides with covariance spectra moving from exponential to scale-free. The local arXiv target paper calls it in preparation; the Royal Society version calls it personal communication.</p>
+            <p><strong>Verdict:</strong> do not count the exact double-descent/scale-free-transition claim as verified until a public manuscript, data, or code appears.</p>
+          </div>
+          <div class="panel">
+            <h3>Public Rainbow JMLR paper</h3>
+            <div class="tags">
+              <span class="tag positive">Released</span>
+              <span class="tag positive">Compression route</span>
+              <span class="tag positive">Novel-basis route</span>
+              <span class="tag warning">Not LLM evidence</span>
+            </div>
+            <p><em>A Rainbow in Deep Network Black Boxes</em> is real public evidence for covariance-based coarse-graining, low-rank eigenspaces, and sampled rainbow networks preserving performance in scoped CNN/scattering settings.</p>
+            <p><strong>Verdict:</strong> use as high-quality adjacent evidence for compression and novel bases, not as verification of the exact unpublished double-descent claim.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="level1">
+        <h2>Level 1 Final-Selection Matrix</h2>
+        <p class="lede">Full and Prov count as satisfied. Part and No do not count. The last column preserves the precursor core-check strength.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Paper</th>
+                <th>Scaling</th>
+                <th>Criticality</th>
+                <th>Compression</th>
+                <th>Novel bases</th>
+                <th>Generalization</th>
+                <th>Knowledge-in</th>
+                <th>Capability boundary</th>
+                <th>Satisfied</th>
+                <th>Core support</th>
+              </tr>
+            </thead>
+            <tbody id="matrix-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="evidence">
+        <h2>Why Each Paper Was Checked Off</h2>
+        <p class="lede">Each entry explains which final criteria were counted, which were not counted, and why.</p>
+        <div id="paper-details"></div>
+      </section>
+
+      <section id="clusters">
+        <h2>Cluster Findings</h2>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Function vectors became the strongest LLM-positive route</h3>
+            <p>Function-vector papers converge on compact internal vectors/subspaces that can trigger or steer task behavior. This is the strongest match to compression plus knowledge-in mechanism.</p>
+          </div>
+          <div class="panel">
+            <h3>Induction heads are developmental, not the whole story</h3>
+            <p>Several papers suggest induction heads may seed later function-vector mechanisms, and attention-sink formation can occur on a different timetable.</p>
+          </div>
+          <div class="panel">
+            <h3>World models are real in controlled domains</h3>
+            <p>Othello, MetaOthello, chess, and spatial datasets show editable internal state variables, but the evidence remains formal-domain and contested.</p>
+          </div>
+          <div class="panel">
+            <h3>Grokking is both positive and deflationary</h3>
+            <p>Progress measures give a strong internal mechanism, but also show that a behavioral jump can hide gradual circuit formation.</p>
+          </div>
+        </div>
+        <div class="callout warning" style="margin-top:16px">
+          <strong>Final warning:</strong> the audit supports some paper-defined emergent capabilities. It does not support the broad claim that LLMs have emergent intelligence.
+        </div>
+      </section>
+
+      <section>
+        <h2>Recommended Re-Segregation</h2>
+        <div class="grid-3">
+          <div class="panel">
+            <h3>Level 1A</h3>
+            <p>Highest priority positive mechanistic evidence.</p>
+            <ul>
+              <li>Function Vectors in LLMs</li>
+              <li>Which Attention Heads Matter?</li>
+              <li>Mechanistic Data Attribution</li>
+              <li>MetaOthello</li>
+              <li>Chess World Models</li>
+              <li>What Needs To Go Right For An Induction Head?</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>Level 1B</h3>
+            <p>Strong but scoped/provisional evidence.</p>
+            <ul>
+              <li>Emergent Structured Representations</li>
+              <li>Multimodal Function Vectors</li>
+              <li>Hidden-State Geometry for ICL</li>
+              <li>Attention Circuits Form</li>
+              <li>Linear Spatial World Models</li>
+              <li>Othello linear/world-model papers</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>Level 1C</h3>
+            <p>Controls, limits, and calibration.</p>
+            <ul>
+              <li>Progress Measures for Grokking</li>
+              <li>Analogical Reasoning / Concept Vectors</li>
+              <li>Two-Layer Transformers</li>
+              <li>Deductive Circuits</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="files">
+        <h2>Source Files</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>File</th><th>Role</th></tr></thead>
+            <tbody>
+              <tr><td><a href="GOAL.md">GOAL.md</a></td><td>Corrected source-of-truth rubric and search method.</td></tr>
+              <tr><td><a href="FINAL_REPORT.md">FINAL_REPORT.md</a></td><td>Final high-level summary and corpus counts.</td></tr>
+              <tr><td><a href="FINAL_PAPER_LEVELS.md">FINAL_PAPER_LEVELS.md</a></td><td>Human-readable tiered paper list.</td></tr>
+              <tr><td><a href="LEVEL1_SURPRISE_AUDIT.md">LEVEL1_SURPRISE_AUDIT.md</a></td><td>Level 1 source/version audit, matrix, and per-paper evidence.</td></tr>
+              <tr><td><a href="GUTH_MENARD_CRITERIA_AUDIT.md">GUTH_MENARD_CRITERIA_AUDIT.md</a></td><td>Focused audit of the unpublished exact Guth/Menard double-descent example.</td></tr>
+              <tr><td><a href="RAINBOW_JMLR_CRITERIA_AUDIT.md">RAINBOW_JMLR_CRITERIA_AUDIT.md</a></td><td>Focused audit of the public JMLR Rainbow paper.</td></tr>
+              <tr><td><a href="research_sources/FINAL_PAPER_LEVELS.tsv">research_sources/FINAL_PAPER_LEVELS.tsv</a></td><td>Full machine-readable final tiered table.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <p class="footer">Standalone local report generated from the emergence literature-audit workspace. Open this file directly in a browser.</p>
+    </main>
+  </div>
+
+  <script>
+    const rows = [
+      {n:1, paper:"Emergent Structured Representations", status:["Part","No","Full","Full","Prov","Full","Full"], score:"5 / 7", core:"4 Full / 1 Prov / 2 Part"},
+      {n:2, paper:"Mechanistic Data Attribution", status:["Prov","Part","Part","No","Prov","Full","Full"], score:"4 / 7", core:"5 Full / 0 Prov / 2 Part"},
+      {n:3, paper:"MetaOthello", status:["Part","No","Full","Full","Full","Full","Full"], score:"5 / 7", core:"5 Full / 0 Prov / 2 Part"},
+      {n:4, paper:"Relational KD with Fine-tuned FVs", status:["No","No","Full","Prov","Full","Full","Full"], score:"5 / 7", core:"4 Full / 1 Prov / 2 Part"},
+      {n:5, paper:"Deductive Circuits", status:["Part","No","Prov","Part","Part","Full","Full"], score:"3 / 7", core:"4 Full / 0 Prov / 3 Part"},
+      {n:6, paper:"Attention Circuits Form", status:["Full","Full","Part","Part","Prov","Full","Full"], score:"5 / 7", core:"4 Full / 1 Prov / 2 Part"},
+      {n:7, paper:"Analogical Reasoning / Concept Vectors", status:["No","No","Prov","Prov","Part","Prov","Full"], score:"4 / 7", core:"4 Full / 0 Prov / 3 Part"},
+      {n:8, paper:"Linear Spatial World Models", status:["No","No","Full","Full","Part","Full","Full"], score:"4 / 7", core:"4 Full / 1 Prov / 2 Part"},
+      {n:9, paper:"Multimodal Function Vectors", status:["No","No","Full","Prov","Full","Full","Full"], score:"5 / 7", core:"4 Full / 1 Prov / 2 Part"},
+      {n:10, paper:"Hidden-State Geometry for ICL", status:["Part","Prov","Full","Full","Prov","Full","Full"], score:"6 / 7", core:"5 Full / 0 Prov / 2 Part"},
+      {n:11, paper:"Two-Layer Transformers / Induction Heads", status:["Full","No","Prov","Part","Full","Prov","Full"], score:"5 / 7", core:"4 Full / 0 Prov / 3 Part"},
+      {n:12, paper:"Which Attention Heads Matter?", status:["Full","Prov","Full","Prov","Full","Full","Full"], score:"7 / 7", core:"5 Full / 1 Prov / 1 Part"},
+      {n:13, paper:"Chess World Models", status:["Part","No","Full","Prov","Prov","Full","Full"], score:"5 / 7", core:"5 Full / 1 Prov / 1 Part"},
+      {n:14, paper:"What Needs To Go Right For An Induction Head?", status:["Full","Full","Prov","Part","Prov","Full","Full"], score:"6 / 7", core:"5 Full / 1 Prov / 1 Part"},
+      {n:15, paper:"Emergent Linear Representations / Othello", status:["Part","No","Full","Full","Part","Full","Prov"], score:"4 / 7", core:"4 Full / 1 Prov / 2 Part"},
+      {n:16, paper:"Function Vectors in LLMs", status:["Part","No","Full","Full","Full","Full","Full"], score:"5 / 7", core:"5 Full / 1 Prov / 1 Part"},
+      {n:17, paper:"Linear Latent World Models / Othello-GPT", status:["Prov","No","Full","Full","Part","Full","Full"], score:"5 / 7", core:"4 Full / 1 Prov / 2 Part"},
+      {n:18, paper:"Progress Measures for Grokking", status:["Full","Full","Full","Full","Prov","Full","Full"], score:"7 / 7", core:"6 Full / 0 Prov / 1 Part"}
+    ];
+
+    const details = [
+      {
+        paper: "Emergent Structured Representations Support Flexible In-Context Inference",
+        counted: [
+          "Compression: identifies a low-dimensional/shared conceptual subspace instead of treating the full activation state as explanatory.",
+          "Novel bases: the central object is a structured representational subspace supporting in-context inference.",
+          "Generalization: tested across inference contexts/tasks, but still limited to the paper's task family.",
+          "Knowledge-in mechanism: uses causal mediation and attention-head analysis to connect representations to behavior.",
+          "Capability boundary: supports flexible in-context inference, not broad intelligence."
+        ],
+        not: [
+          "Scaling is partial because it is not primarily a scaling-law or model-size sweep paper.",
+          "Criticality is not counted because it does not show a sharp phase-transition-like threshold."
+        ]
+      },
+      {
+        paper: "Mechanistic Data Attribution",
+        counted: [
+          "Scaling: provisionally counted because it studies circuit/unit formation during training and data interventions on emergence.",
+          "Generalization: high-influence data augmentation/removal changes later capability and circuit formation, but not broad transfer.",
+          "Knowledge-in mechanism: links training examples to induction heads and other interpretable units through attribution and interventions.",
+          "Capability boundary: explains specific learned mechanisms rather than intelligence."
+        ],
+        not: [
+          "Criticality is only partial because development is temporal, not shown as a sharp critical transition.",
+          "Compression is partial because localized units are found, but no compressed effective model dominates the paper.",
+          "Novel bases are not counted because the main contribution is data attribution, not a new representational basis."
+        ]
+      },
+      {
+        paper: "MetaOthello",
+        counted: [
+          "Compression: multiple Othello variants share a compact board-state representation rather than isolated full submodels.",
+          "Novel bases: isomorphic variants are related by an orthogonal rotation, showing shared latent geometry.",
+          "Generalization: probes/interventions trained on one variant transfer causally to others.",
+          "Knowledge-in mechanism: mixed-game behavior is tied to internal board-state representations and causal interventions.",
+          "Capability boundary: controlled-domain world-model evidence, not intelligence."
+        ],
+        not: [
+          "Scaling is partial because mixed-environment organization is studied, not a scale threshold.",
+          "Criticality is not counted because no phase-like transition is established."
+        ]
+      },
+      {
+        paper: "Relational Knowledge Distillation Using Fine-Tuned Function Vectors",
+        counted: [
+          "Compression: relation/task behavior is compressed into function vectors.",
+          "Novel bases: function vectors define usable directions/subspaces, though partly engineered after training.",
+          "Generalization: composite function vectors support analogy tasks beyond extraction examples.",
+          "Knowledge-in mechanism: the method intervenes on activations with relation/function vectors.",
+          "Capability boundary: controllable relational capability, not intelligence."
+        ],
+        not: [
+          "Scaling is not counted because the claim is not driven by scale.",
+          "Criticality is not counted because no phase transition or sharp representational threshold is shown."
+        ]
+      },
+      {
+        paper: "Revealing Algorithmic Deductive Circuits for Logical Reasoning",
+        counted: [
+          "Compression: provisionally counted because reasoning is decomposed into small attention-head circuits.",
+          "Knowledge-in mechanism: activation/path patching links internal circuits to deductive behavior.",
+          "Capability boundary: narrow logical-reasoning mechanism, not intelligence."
+        ],
+        not: [
+          "Scaling is partial because this is not a scale-emergence study.",
+          "Criticality is not counted because there is no phase-transition-like claim.",
+          "Novel bases are partial because circuits are found, not a new basis/manifold.",
+          "Generalization is partial because experiments are mostly synthetic and structured."
+        ]
+      },
+      {
+        paper: "When Do Attention Circuits Form?",
+        counted: [
+          "Scaling: tracks circuit formation across training revisions/tokens and architectures.",
+          "Criticality: identifies distinct formation timing for induction, previous-token, and BOS/attention-sink heads.",
+          "Generalization: compares multiple 1B-class architecture/corpus settings, but not broad task transfer.",
+          "Knowledge-in mechanism: directly studies internal attention-head formation.",
+          "Capability boundary: circuit emergence and capability classes, not intelligence."
+        ],
+        not: [
+          "Compression is partial because it tracks heads/circuits but does not reduce behavior to a compact predictive model.",
+          "Novel bases are partial because the finding is developmental/circuit-level rather than basis-level."
+        ]
+      },
+      {
+        paper: "Analogical Reasoning Inside LLMs: Concept Vectors and Limits of Abstraction",
+        counted: [
+          "Compression: concept vectors are candidate compact abstractions.",
+          "Novel bases: studies concept-vector directions and representational geometry.",
+          "Knowledge-in mechanism: activation patching/function-vector analyses connect vectors to outputs, though results are mixed.",
+          "Capability boundary: explicitly limits broad abstraction and intelligence claims."
+        ],
+        not: [
+          "Scaling is not counted because scale is not the core evidence.",
+          "Criticality is not counted because there is no phase-transition claim.",
+          "Generalization is partial because abstract concepts and transformations are fragile."
+        ]
+      },
+      {
+        paper: "Linear Spatial World Models",
+        counted: [
+          "Compression: spatial configurations are encoded as linear/internal state variables.",
+          "Novel bases: claims linear spatial world-model geometry in embeddings.",
+          "Knowledge-in mechanism: probes plus causal interventions test functional use.",
+          "Capability boundary: static spatial-world-model subcase, not broad intelligence."
+        ],
+        not: [
+          "Scaling is not counted because the claim is not a scale threshold.",
+          "Criticality is not counted because no phase-like transition is shown.",
+          "Generalization is partial because temporal dynamics, object permanence, and broad relation diversity are not covered."
+        ]
+      },
+      {
+        paper: "Multimodal Function Vectors for Visual Relations",
+        counted: [
+          "Compression: visual relation behavior is represented through extracted function vectors.",
+          "Novel bases: vectors define relation directions/subspaces, though geometry is less complete than text-only FV work.",
+          "Generalization: vectors transfer to zero-shot relation tasks and composite vectors support one-shot analogy.",
+          "Knowledge-in mechanism: selected attention heads and function-vector interventions connect internals to behavior.",
+          "Capability boundary: multimodal relation capability, not broad intelligence."
+        ],
+        not: [
+          "Scaling is not counted because evidence is mechanism/intervention rather than scaling.",
+          "Criticality is not counted because no sharp transition is shown."
+        ]
+      },
+      {
+        paper: "Hidden-State Geometry for ICL",
+        counted: [
+          "Criticality: provisionally counted because the paper describes early separability and later alignment as a two-stage transition.",
+          "Compression: explains ICL through separability and alignment rather than full activations.",
+          "Novel bases: analyzes hidden-state geometry and task-vector/head geometry.",
+          "Generalization: mainly ICL classification; generation analysis is preliminary.",
+          "Knowledge-in mechanism: connects previous-token heads, induction heads, task vectors, and hidden-state dynamics.",
+          "Capability boundary: explains ICL, not intelligence."
+        ],
+        not: [
+          "Scaling is partial because training-time emergence and model scaling are not the main established evidence."
+        ]
+      },
+      {
+        paper: "Two-Layer Transformers / Induction Heads",
+        counted: [
+          "Scaling: theory addresses how depth/model structure changes efficient representability.",
+          "Compression: conditional k-gram/Markov structure is a reduced description of sequence statistics.",
+          "Generalization: construction handles any-order Markov processes in the theoretical setting.",
+          "Knowledge-in mechanism: mechanistic construction of induction-head capability, but more theoretical than empirical.",
+          "Capability boundary: narrow ICL/Markov capability, not intelligence."
+        ],
+        not: [
+          "Criticality is not counted because it is not a phase-transition paper.",
+          "Novel bases are partial because the contribution is construction capacity, not a new basis/manifold."
+        ]
+      },
+      {
+        paper: "Which Attention Heads Matter?",
+        counted: [
+          "Scaling: compares 12 models and finds FV heads matter especially in larger models.",
+          "Criticality: head evolution shows many FV heads start as induction heads before transitioning.",
+          "Compression: ICL task execution is explained through a small set of FV heads.",
+          "Novel bases: FVs define compact task directions, though this remains provisional.",
+          "Generalization: compares mechanisms across tasks/models and ICL settings.",
+          "Knowledge-in mechanism: ablations compare induction heads and FV heads directly.",
+          "Capability boundary: explains ICL capability, not intelligence."
+        ],
+        not: [
+          "No final-selection criterion is fully excluded under the Full/Prov count, though criticality and novel-basis support are provisional."
+        ]
+      },
+      {
+        paper: "Chess World Models",
+        counted: [
+          "Compression: board state and player skill are represented as compact latent variables.",
+          "Novel bases: probe/vector directions are editable, though geometry is not the whole focus.",
+          "Generalization: skill vector improves play in random-board settings, but still inside chess.",
+          "Knowledge-in mechanism: interventions edit internal board state/skill and change legal move behavior.",
+          "Capability boundary: formal-game world-model evidence, not natural-language intelligence."
+        ],
+        not: [
+          "Scaling is partial because model depth/architecture is relevant, but not a clean scale threshold.",
+          "Criticality is not counted because no phase-transition-like shift is established."
+        ]
+      },
+      {
+        paper: "What Needs To Go Right For An Induction Head?",
+        counted: [
+          "Scaling: studies training dynamics and when induction heads emerge.",
+          "Criticality: directly studies phase change associated with induction-head emergence.",
+          "Compression: decomposes a phase change into three subcircuits.",
+          "Generalization: explains data-dependent timing shifts, but remains synthetic/controlled.",
+          "Knowledge-in mechanism: activation clamping and subcircuit analysis causally test formation.",
+          "Capability boundary: narrow ICL circuit, not intelligence."
+        ],
+        not: [
+          "Novel bases are partial because it identifies subcircuits and dynamics rather than a new representational basis."
+        ]
+      },
+      {
+        paper: "Emergent Linear Representations / Othello",
+        counted: [
+          "Compression: board state is represented as compact linear mine/yours/empty features.",
+          "Novel bases: linear directions enable interpretation and vector arithmetic interventions.",
+          "Knowledge-in mechanism: interventions on linear directions affect legal move predictions.",
+          "Capability boundary: narrow and contested, so provisional."
+        ],
+        not: [
+          "Scaling is partial because model/training emergence is discussed but not a scale criterion.",
+          "Criticality is not counted because no phase transition is shown.",
+          "Generalization is partial because it stays within Othello and related board-state concepts."
+        ]
+      },
+      {
+        paper: "Function Vectors in LLMs",
+        counted: [
+          "Compression: an input-output function is represented as a compact vector.",
+          "Novel bases: FVs are directions/subspaces in residual-stream activation space.",
+          "Generalization: FVs trigger tasks outside original ICL contexts and transfer across tasks/models/layers.",
+          "Knowledge-in mechanism: causal mediation identifies heads transporting the function vector.",
+          "Capability boundary: compact task abstractions, not intelligence."
+        ],
+        not: [
+          "Scaling is partial because effects are compared across models/layers but not as a scale threshold.",
+          "Criticality is not counted because no phase-transition-like change is shown."
+        ]
+      },
+      {
+        paper: "Linear Latent World Models / Othello-GPT",
+        counted: [
+          "Scaling: provisionally counted because model complexity/layer depth affect emergence and causal role.",
+          "Compression: decision-making is explained through a linear latent world representation.",
+          "Novel bases: linear basis for opposing pieces/world state.",
+          "Knowledge-in mechanism: causal interventions show the representation steers decisions.",
+          "Capability boundary: narrow Othello evidence, not intelligence."
+        ],
+        not: [
+          "Criticality is not counted because no sharp transition is established.",
+          "Generalization is partial because evidence stays inside Othello."
+        ]
+      },
+      {
+        paper: "Progress Measures for Grokking",
+        counted: [
+          "Scaling: depends on training steps/data/regularization and the shift from memorization to generalization.",
+          "Criticality: grokking is the apparent sudden behavioral transition being analyzed.",
+          "Compression: learned algorithm is reverse engineered into Fourier/trigonometric progress measures.",
+          "Novel bases: model algorithm uses Fourier-space structure and rotations.",
+          "Generalization: explains modular-arithmetic generalization across variants, but remains narrow.",
+          "Knowledge-in mechanism: activations, weights, and Fourier-space ablations support the mechanism.",
+          "Capability boundary: narrow modular-addition mechanism, not intelligence."
+        ],
+        not: [
+          "No final-selection criterion is excluded under the Full/Prov count; generalization remains provisional because the task family is narrow."
+        ]
+      }
+    ];
+
+    function statusClass(value) {
+      return "status-" + value.toLowerCase();
+    }
+
+    function renderMatrix() {
+      const body = document.getElementById("matrix-body");
+      body.innerHTML = rows.map(row => {
+        const cells = row.status.map(s => `<td><span class="${statusClass(s)}">${s}</span></td>`).join("");
+        return `<tr><td>${row.n}</td><td class="paper-name">${row.paper}</td>${cells}<td class="score">${row.score}</td><td>${row.core}</td></tr>`;
+      }).join("");
+    }
+
+    function list(items) {
+      return `<ul>${items.map(item => `<li>${item}</li>`).join("")}</ul>`;
+    }
+
+    function renderDetails() {
+      const el = document.getElementById("paper-details");
+      el.innerHTML = details.map((d, i) => `
+        <details ${i < 2 ? "open" : ""}>
+          <summary>${i + 1}. ${d.paper}</summary>
+          <div class="detail-body">
+            <div class="two-col-list">
+              <div>
+                <h4>Counted criteria</h4>
+                ${list(d.counted)}
+              </div>
+              <div>
+                <h4>Not counted or only partial</h4>
+                ${list(d.not)}
+              </div>
+            </div>
+          </div>
+        </details>
+      `).join("");
+    }
+
+    renderMatrix();
+    renderDetails();
+  </script>
+</body>
+</html>
