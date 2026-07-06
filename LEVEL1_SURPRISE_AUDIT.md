@@ -128,6 +128,236 @@ Interpretation:
 - The weakest criteria across the corpus are **criticality** and broad **generalization**.
 - The highest-confidence positive route remains compact internal structure: function vectors, task vectors, world-state vectors, spatial vectors, and circuit/progress variables.
 
+## Human Vetting / Auditing - Vihan
+
+This section records Vihan's hand-audit notes from the supplied Level 1a, Level 1b, and Level 1c pass. It is intentionally additive: it does **not** overwrite the source-audit matrix above.
+
+Counting rule:
+
+- Count only criteria explicitly marked **valid** in Vihan's notes.
+- Do not count criteria marked **not valid**.
+- Rank analyzed papers by the number of valid criteria. Ties preserve Vihan's Level 1a -> Level 1b -> Level 1c order, then keep closely related papers together.
+- Rows not present in the supplied notes are left unranked for a second human pass.
+
+### Vihan Source Notes - Verbatim
+
+Source: `/Users/vihantiwari/Library/Mobile Documents/iCloud~md~obsidian/Documents/weeye/emergence_paper_selection.md`
+
+```markdown
+the notes while selecting papers through level 1 a,b and c.
+
+## level 1a
+
+1) Function vectors in LLMS
+
+- fv's for different tasks exist in llms and different math operators can be used on top of these to arrive at even more complex tasks
+
+- claim 1-  **compression**: these task internal representations are compact in nature (low dimensional vectors)
+	- **valid** : find that using only 10 attention heads (correlated FVs) and added them together, injected it in the model back and helped in recovering task performance.
+	
+		![[Pasted image 20260704141741.png]]
+
+- claim 2-  **novel bases**: the new way of representation for the model is through FVs'
+	- **valid**: the different algorithmic operations that can be performed using these vectors suggest that easy navigation is possible.
+
+- claim 3- **generalisation**: the extracted FVs are not restricted to the specific tasks they were taken from but when injected in completely different environments would perform still
+	- **not valid**: you can only make the LLM perform in a task made from the lower lying tasks and not on one which is completely new.
+
+passes overall as 2 satisfy
+
+2) Which Attention Heads Matter for In-Context Learning?
+
+- claim 1-  **scaling**: see whether both the ICL techniques FV's and induction heads perform across 12 different models of sizes etc.
+	- **valid**: initially for smaller models (70M) the mechanism preferred is induction heads but on scaling onto bigger models (7B) it changes over to function vectors (suggests reorganisation in the representational space) 
+- claim 2-  **criticality**: change in behaviour happens due to the newer formed representation 
+	-  **valid**: in smaller models (70M) the behaviour is split between both methods but after scaling (7B) it leans more towards FV's 
+
+- claim 3-  **compression**: not all heads are needed, with only a few too one can still perform similarly
+	- **valid**: show that top 2% heads can retain the performance (check out fig 14 for this)
+
+- claim 4-  **novel bases**: the newer way of representation here is the FVs 
+	- **valid**: give two hypothesis to show why these might emerge (check pg 8 for these conjectures)
+	
+- claim 5-  **generalisation**: do the results hold across differents tasks/architectures
+	- **valid**: same small set of FV's were responsible across 45 different tasks, also in 12 different models the same pattern of shift from induction to FV happens when going from smaller to bigger models
+
+passes with 5/5?...
+
+3) Mechanistic Data Attribution (MDA)
+
+-  claim 1-  **compression**: "provisionally counted because it studies circuit/unit formation during training and data interventions on emergence"
+	- **not valid**: instead of a new capability emerging we just notice the same organisation being present at different scales
+	
+-  claim 2-  **generalisation**: "high-influence data augmentation/removal changes later capability and circuit formation, but not broad transfer"
+	- **not valid**: authors claim - "induction heads have no effect on unrelated capabilities like factual knowledge or broad linguistic modeling"
+
+does not pass
+
+4) MetaOthello
+
+-  claim 1-  **compression**: "multiple othello like games share the same representation space even though they have different rules, the compression is relevant and makes the model perform well"
+	- **valid**: linear probes for the internal representations show for iago (a game very different from othello) also has ~98% similar representations
+
+-  claim 2-  **novel bases**: the latent representation is a novel elegant way of representation, the similar variants are related to each other by an orthogonal rotation
+	- **valid**: a cross variant intervention is performed to recover the moves of say "iago" from the classical move set through the rotations. 
+
+-  claim 3-  **generalisation**: probes/interventions trained on one variant transfer causally to others.
+	- **not valid**: the same internal representations can be efficiently used for game A-> game B when both A and B were in the training set but not true for unseen games
+
+pass 2/2
+
+4) Emergent World Models and Latent Variable Estimation in Chess-Playing Language Models
+
+-  claim 1-  **generalisation**: training on next character prediction without giving the model any game state it is able to estimate player skills and perform well on chess
+	- **valid**: they derive a player skill vector and add it to the model, improving the model's win rate by up to 2.6 times
+
+-  claim 2-  **criticality**: different internal representations are formed at different layers, showing different organisations
+	- **valid**: maximum accuracy for skill classification at final layers and for board state classification it is in mid-late layers
+
+-  claim 3-  **novel bases**: probe/vector directions are editable, though geometry is not the whole focus.
+	- **not valid**: not a novel way of representation just a task instantiation at max
+
+
+4) What needs to go right for an induction head?
+
+-  claim 1-  **scaling**: with scaling a phase change is observed in between
+	- **valid**: check out fig 3a
+	
+-  claim 2-  **criticality**: there is an induction head correlevancy with the loss phase change, a change in behaviour is being observed  
+	 **valid**: check out fig 3a
+
+-  claim 3-  **generalisation**:  explains data-dependent timing shifts, but remains synthetic/controlled 
+	 **not valid**: again task specific (controlled Omniglot-style FSL) and is not broadly generalisable 
+
+-  claim 4-  **compression**: the phase change is decomposed into 3 interacting circuits that do the major lifting 
+	 **not valid**: this decomposition of the internal representation is shown in fig 5 
+
+## level 1b
+
+1) Emergent Structured Representations
+
+-  claim 1-  **compression**: "identifies a low-dimensional/shared conceptual subspace instead of treating the full activation state as explanatory"
+	- **valid**: refer here, also show that after the establishment of common subspace by middle layers further ones use it only ![[Pasted image 20260705211418.png]] 
+-  claim 2-  **novel bases**: the subspace formed is independent and remains consistent throughout the layers
+	- **valid**:  freezing this subspace while deleting the other 7000+ dimensions lead to no task degradation
+
+-  claim 3-  **generalisation**: due to the shared subspace it is easier to move from one task to another without starting from zero
+	 **not valid**: refer pg 4. alignment metrics 
+
+2) Multimodal Function Vectors
+
+-  claim 1-  **compression**: - : visual relation behavior is represented through extracted function vectors.
+	- **valid**: uses only 10 attention heads for this to get a similar performance
+
+-  claim 2-  **novel bases**: "- vectors define relation directions/subspaces, though geometry is less complete than text-only FV work."
+	- **valid**:  fvs act as the novel base, with finetuned fvs performing better than 4 shot ICL  
+	![[Pasted image 20260705220452.png]]
+
+-  claim 3-  **generalisation**: "vectors transfer to zero-shot relation tasks and composite vectors support one-shot analogy"
+	- **valid**: the novel bases lets it solve problems for relations non existent during training, eg. using CFV ![[Pasted image 20260705220712.png]] 
+
+3) Unifying Attention Heads and Task Vectors via Hidden State Geometry in In-Context Learning
+
+-  claim 1-  **criticality**: there exists a phase transition between 2 functional states 
+	- **valid**: in middle layers the alignment measures all spike up suddenly steering it towards the output, another correlevance is how during this transition the total number of effective dimensions drops sharply leaving only useful directions
+	
+-  claim 2-  **compression**: "Compression: explains ICL through separability and alignment rather than full activations" 
+	- **valid** use SVD to find only the top variation directions and discard others, observe ~10% increase in accuracy in some layers
+
+-  claim 3-  **novel bases**: "- Novel bases: analyzes hidden-state geometry and task-vector/head geometry."
+	- **not valid**: doesnt exist a new way of representation, just the classical 
+
+4) - When do Attention Circuits Form?
+
+-  claim 1-  **scaling**: the internal representation has a strong correlevancy with the copying capability
+	- **valid** : the capability is observable at 6b tokens only before which it is not dominant
+
+-  claim 2-  **criticality**: "identifies distinct formation timing for induction, previous-token, and BOS/attention-sink heads"
+	- **valid** : OOM gap between the emergence of induction head formation and the attention sink transition, both the transitions have different times signifying changes in internal representation? 
+
+
+-  claim 3-  **generalisation**: "compares multiple 1B-class architecture/corpus settings, but not broad task transfer"
+	- **not valid**: the paper at no point shows the capabilities being common across tasks/layers etc. 
+
+4) Linear Spatial World Models Emerge in LLMs
+
+-  claim 1-  **compression**: - spatial configurations are encoded as linear/internal state variables.
+	- **valid** : "The spatial basis itself is highly compact, with the top three PCA directions explaining near 100% of the variance in the probe direction"
+
+-  claim 2-  **novel bases**: claims linear spatial world-model geometry in embeddings
+	- **valid**: the specific bases of representation are mentioned and are orthonormal in nature.
+
+
+## level 1c 
+
+1) Progress measures of grokking via mechanistic interpretability
+
+-  claim 1-  **compression**: depends on training steps/data/regularization and the shift from memorisation to generalisation
+	- **valid** : gives even three phases of this compression: memorization, circuit formation, cleanup.
+
+-  claim 2-  **criticality**: "- grokking is the apparent sudden behavioral transition being analyzed."
+	- **valid**: the point of criticality is viewed as competition between memorization and generalisation, on which generalisation wins eventually. new found representation is in fourier space
+
+-  claim 3-  **novel bases**: - model algorithm uses Fourier-space structure and rotations.
+	- **valid**: the method of representation is through trigonometric bases, this is also shown with modular addition as tasks 
+
+-  claim 4-  **generalisation**: "explains modular-arithmetic generalization across variants"
+	- **valid**: figures out the underlying rule behind the modular arithmetic through novel representation which helps it in replicating the task for unseen numbers
+
+-  claim 5-  **scaling**: scaling the data and compute is what leads to the structural reorganisation
+	- **valid**: ablations are shown for low scale vs high scale data and compute.
+
+all 5/5 strong pass
+
+2) What One Cannot, Two Can: Two-Layer Transformers Provably Represent Induction Heads on Any-Order Markov Chains
+
+-  claim 1-  **compression**: conditional k-gram/Markov structure is a reduced description of sequence statistics.
+	- **valid** : shows how the transformer takes k tokens and packs them together in a single representation, (dyadic encoding)
+	
+-  claim 2-  **scaling**: theory addresses how depth/model structure changes efficient representability
+	- **valid** : scaling the markov order k creates a new internal representation, also a similar phase transition takes place through these scaling steps 
+	
+-  claim 3-  **generalisation**: - construction handles any-order Markov processes in the theoretical setting.
+	- **valid** : shows how the two layer model can not only solve tasks of order 2 but of any k= n, also shows about the inductive generalisation of performance on a markov task B from A
+
+3) Revealing Algorithmic Deductive Circuits for Logical Reasoning
+
+-  claim 1-  **compression**: "- reasoning is decomposed into small attention-head circuits."
+	- **valid** : model compressses the strategies into only 3% of attention heads which lead to same performance
+
+does not pass, 1/5
+```
+
+### Priority Order For Human B
+
+| Human B priority | Vihan group | Paper | Vihan valid count | Valid criteria from notes | Not counted / caveat from notes | Human B action |
+|---:|---|---|---:|---|---|---|
+| 1 | Level 1a | Which Attention Heads Matter for In-Context Learning? | **5 / 5** | Scaling; criticality; compression; novel bases; generalization | None marked invalid in notes. | Read first as the cleanest Vihan-approved Level 1a paper. |
+| 2 | Level 1c | Progress measures for grokking via mechanistic interpretability | **5 / 5** | Scaling; criticality; compression; novel bases; generalization | None marked invalid in notes. | Read early despite Level 1c because Vihan marks all five criteria valid. |
+| 3 | Level 1b | Multimodal Function Vectors for Visual Relations | **3 / 3** | Compression; novel bases; generalization | None marked invalid in notes. | Strong compact-vector follow-up after the top two. |
+| 4 | Level 1c | What One Cannot, Two Can: Two-Layer Transformers Provably Represent Induction Heads on Any-Order Markov Chains | **3 / 3** | Compression; scaling; generalization | Theoretical setting should stay clearly labelled. | Prioritize as a clean theory/mechanism paper, not broad empirical LLM evidence. |
+| 5 | Level 1a | Function Vectors in Large Language Models | **2 / 3** | Compression; novel bases | Generalization not counted; note says FVs compose lower-lying tasks but not completely new ones. | Read as core function-vector evidence with a transfer caveat. |
+| 6 | Level 1a | MetaOthello: A Controlled Study of Multiple World Models in Transformers | **2 / 3** | Compression; novel bases | Generalization not counted; transfer is only within games in the training set. | Read as controlled-domain latent-basis evidence. |
+| 7 | Level 1a | Emergent World Models and Latent Variable Estimation in Chess-Playing Language Models | **2 / 3** | Generalization; criticality | Novel bases not counted; note says it is at most a task instantiation. | Read as chess-specific world-state/skill-vector evidence. |
+| 8 | Level 1a | What needs to go right for an induction head? | **2 / 4** | Scaling; criticality | Generalization not counted; compression not counted in Vihan's note. | Read for phase/circuit timing, not broad transfer. |
+| 9 | Level 1b | Emergent Structured Representations Support Flexible In-Context Inference in Large Language Models | **2 / 3** | Compression; novel bases | Generalization not counted; note points to limited alignment/transfer evidence. | Read as structured-subspace evidence with transfer caveat. |
+| 10 | Level 1b | Unifying Attention Heads and Task Vectors via Hidden State Geometry in In-Context Learning | **2 / 3** | Criticality; compression | Novel bases not counted; note says this is classical representation geometry, not a new basis. | Read for hidden-state transition and compression. |
+| 11 | Level 1b | When Do Attention Circuits Form? | **2 / 3** | Scaling; criticality | Generalization not counted; note says no common capability across tasks/layers is shown. | Read for developmental timing and architecture/corpus comparison. |
+| 12 | Level 1b | Linear Spatial World Models Emerge in LLMs | **2 / 2** | Compression; novel bases | No invalid criterion listed in the supplied notes. | Read as a clean but narrow spatial-world-model case. |
+| 13 | Level 1c | Revealing Algorithmic Deductive Circuits for Logical Reasoning | **1 / 5** | Compression | Vihan note says this does not pass overall; only small-head decomposition is counted. | Deprioritize unless Human B needs narrow logical-circuit evidence. |
+| 14 | Level 1a | Mechanistic Data Attribution | **0 / 2** | None | Compression and generalization both marked not valid; Vihan note says it does not pass. | Put after positive candidates; revisit only as data-attribution/context evidence. |
+
+### Level 1 Rows Not Found In Supplied Vihan Notes
+
+These papers remain in the original Level 1 matrix above, but no Vihan hand-vetting count was present in the pasted notes. Human B should audit these separately before treating them as Vihan-ranked.
+
+| Original Level 1 row | Paper | Existing matrix score | Status for Vihan section |
+|---:|---|---:|---|
+| 4 | Relational Knowledge Distillation Using Fine-tuned Function Vectors | 5 / 7 | Not in supplied Vihan notes. |
+| 7 | Analogical Reasoning Inside Large Language Models: Concept Vectors and the Limits of Abstraction | 4 / 7 | Not in supplied Vihan notes. |
+| 15 | Emergent Linear Representations in World Models of Self-Supervised Sequence Models | 4 / 7 | Not in supplied Vihan notes. |
+| 17 | Linear Latent World Models in Simple Transformers: A Case Study on Othello-GPT | 5 / 7 | Not in supplied Vihan notes. |
+
 ## Why Each Final Criterion Was Marked
 
 This section grounds each matrix row in the paper content. "Counted" means the criterion was marked **Full** or **Prov** in the matrix. "Not counted" means it was marked **Part** or **No**.
