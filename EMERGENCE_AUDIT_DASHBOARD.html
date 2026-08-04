@@ -301,7 +301,8 @@
     .status-full,
     .status-prov,
     .status-part,
-    .status-no {
+    .status-no,
+    .status-pending {
       display: inline-flex;
       justify-content: center;
       align-items: center;
@@ -331,6 +332,11 @@
     .status-no {
       background: #f4e1e1;
       color: #7a2020;
+    }
+
+    .status-pending {
+      background: #eceff3;
+      color: #4c5667;
     }
 
     .table-wrap {
@@ -603,7 +609,7 @@
     <aside>
       <div class="brand">
         <h1>Emergence Audit</h1>
-        <p>LLM and neural-system literature review through June 25, 2026</p>
+        <p>LLM and neural-system literature review through July 29, 2026</p>
       </div>
       <nav>
         <a href="#overview">Overview</a>
@@ -613,6 +619,8 @@
         <a href="#guth">Guth, Menard, Rainbow</a>
         <a href="#level1">Level 1 matrix</a>
         <a href="#vihan-vetting">Vihan vetting</a>
+        <a href="#final-notes">Final notes</a>
+        <a href="#second-vetting">Second vetting</a>
         <a href="#evidence">Paper evidence</a>
         <a href="#clusters">Cluster findings</a>
         <a href="#recommended">Recommended</a>
@@ -1032,6 +1040,126 @@ does not pass, 1/5</code></pre>
         </div>
       </section>
 
+      <section id="final-notes">
+        <h2>Final Human Notes and Revised Ranking</h2>
+        <p class="lede">This section applies the final hand-vetting notes as the authoritative human layer. It supersedes the earlier reading-priority ranking, while the original matrices remain visible as an audit trail.</p>
+
+        <div class="callout">
+          <strong>TL;DR:</strong> The strict review retains a small set of scoped emergence examples, not evidence of broad emergent intelligence. The strongest original-corpus cases are <em>Which Attention Heads Matter?</em>, grokking, multimodal function vectors, the any-order Markov construction, and linear spatial world models. In the second-vetting batch, foveal sampling and free-recall strategies remain the strongest reviewed cases; path integration retains a compact binding mechanism. Most claimed “generalization” is held-out or within-family transfer, and many claimed “novel bases” are encouraged by the architecture, objective, or analyst’s construction.
+        </div>
+
+        <h3 style="margin-top:22px">Final decision rules used</h3>
+        <div class="grid-2">
+          <div class="panel">
+            <h3>Compression and novel bases</h3>
+            <ul>
+              <li><strong>Compression</strong> requires a genuinely reduced representation or effective description that preserves function and preferably improves efficiency or robustness. A few decoded variables or a sparse component list is not sufficient.</li>
+              <li><strong>Novel bases</strong> requires a substantively different internal representational scheme. Structure directly encouraged by the architecture/objective, or produced by analyst-defined clustering, is not automatically emergent.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>Generalization, scaling, and criticality</h3>
+            <ul>
+              <li><strong>Generalization</strong> requires success beyond held-out examples or related tasks in the same family; broad claims need transfer to meaningfully different tasks or domains.</li>
+              <li><strong>Scaling</strong> requires a scale-linked internal reorganization that helps explain a new capability, not performance improvement alone.</li>
+              <li><strong>Criticality</strong> requires a transition tied to a changed internal organization or reduced description, not only an output threshold.</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3 style="margin-top:22px">Revised original Level 1 human ranking</h3>
+        <p class="small">Scores below count only the claims explicitly hand-checked in the supplied notes; they are not the seven-column machine-audit score.</p>
+        <div class="table-wrap" style="margin-top:12px">
+          <table class="human-table">
+            <thead>
+              <tr><th>Rank</th><th>Paper</th><th>Final human result</th><th>Interpretation</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="rank-cell">1</td><td class="paper-name">Which Attention Heads Matter for In-Context Learning?</td><td class="score">5 / 5</td><td>Strongest empirical candidate; generalization supports capability only, not intelligence.</td></tr>
+              <tr><td class="rank-cell">2</td><td class="paper-name">Progress measures for grokking via mechanistic interpretability</td><td class="score">5 / 5</td><td>Strong controlled emergence case spanning scaling, criticality, compression, Fourier bases, and task generalization.</td></tr>
+              <tr><td class="rank-cell">3</td><td class="paper-name">Multimodal Function Vectors for Visual Relations</td><td class="score">3 / 3</td><td>Compact intervention-ready relation vectors with the strongest transfer claim in the FV strand.</td></tr>
+              <tr><td class="rank-cell">4</td><td class="paper-name">What One Cannot, Two Can: Two-Layer Transformers on Any-Order Markov Chains</td><td class="score">3 / 3</td><td>Clean theoretical mechanism; retain the synthetic/theoretical scope label.</td></tr>
+              <tr><td class="rank-cell">5</td><td class="paper-name">Linear Spatial World Models Emerge in LLMs</td><td class="score">2 / 2</td><td>Clean but narrow compact orthonormal spatial-basis result.</td></tr>
+              <tr><td class="rank-cell">6</td><td class="paper-name">Function Vectors in Large Language Models</td><td class="score">2 / 3</td><td>Compression and novel bases retained; transfer to genuinely new tasks is not established.</td></tr>
+              <tr><td class="rank-cell">7</td><td class="paper-name">Unifying Attention Heads and Task Vectors via Hidden-State Geometry</td><td class="score">2 / 3</td><td>Critical transition and compression retained; no genuinely new basis.</td></tr>
+              <tr><td class="rank-cell">8</td><td class="paper-name">When Do Attention Circuits Form?</td><td class="score">2 / 3</td><td>Scaling and transition timing retained; no broad task transfer.</td></tr>
+              <tr><td class="rank-cell">9</td><td class="paper-name">Emergent World Models and Latent Variable Estimation in Chess-Playing LMs</td><td class="score">2 / 3</td><td>Chess-specific editable state/skill evidence; novel-basis claim rejected.</td></tr>
+              <tr><td class="rank-cell">10</td><td class="paper-name">What Needs To Go Right for an Induction Head?</td><td class="score">2 / 4</td><td>Retain for scaling and critical timing, not compression or generalization.</td></tr>
+              <tr><td class="rank-cell">11</td><td class="paper-name">Emergent Structured Representations</td><td class="score">Disputed</td><td>Initial 2/3 rating is downgraded: the final discussion questions direct compression and whether the shared subspace is a novel basis.</td></tr>
+              <tr><td class="rank-cell">12</td><td class="paper-name">MetaOthello</td><td class="score">Removed</td><td>Removed from the strong list: input transformations make aligned latent rotations less surprising, and compression/novel-basis evidence is insufficient.</td></tr>
+              <tr><td class="rank-cell">13</td><td class="paper-name">Revealing Algorithmic Deductive Circuits</td><td class="score">1 / 5</td><td>Narrow sparse-circuit result only; does not pass overall.</td></tr>
+              <tr><td class="rank-cell">14</td><td class="paper-name">Mechanistic Data Attribution</td><td class="score">0 / 2</td><td>Useful context on data and circuits, but neither reviewed emergence claim passes.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top:22px">Not given a final human verdict</h3>
+        <div class="callout warning">
+          <strong>Do not rank as final:</strong> Relational Knowledge Distillation Using Fine-tuned Function Vectors; Analogical Reasoning / Concept Vectors; Emergent Linear Representations in World Models; Linear Latent World Models / Othello-GPT; and, in the second-vetting batch, Neural Scene Representation and Rendering (GQN).
+        </div>
+      </section>
+
+      <section id="second-vetting">
+        <h2>Second Vetting: Final Human Adjudication</h2>
+        <p class="lede">The final hand-vetting notes override the earlier reconciled ratings where they give an explicit verdict. GQN remains pending because the supplied notes name the paper but contain no final claim assessment.</p>
+        <div class="callout">
+          <strong>Final counting rule:</strong> Scores count only claims explicitly adjudicated in the final human notes. Full and Prov count; Part and No do not. Every criterion not discussed in those notes is marked Pending and cannot silently add to the human score.
+        </div>
+        <div class="metric-grid">
+          <div class="metric"><strong>11</strong><span>Supplied sources inspected and resolved</span></div>
+          <div class="metric"><strong>10</strong><span>Papers with a final human verdict</span></div>
+          <div class="metric"><strong>6</strong><span>Papers retaining at least one checked claim</span></div>
+          <div class="metric"><strong>1</strong><span>Paper still pending final human adjudication</span></div>
+          <div class="metric"><strong>0</strong><span>Papers establishing broad emergent intelligence</span></div>
+        </div>
+        <div class="table-wrap" style="margin-top:18px">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Paper</th>
+                <th>Source</th>
+                <th>Scaling</th>
+                <th>Criticality</th>
+                <th>Compression</th>
+                <th>Novel bases</th>
+                <th>Generalization</th>
+                <th>Knowledge-in</th>
+                <th>Capability boundary</th>
+                <th>Final human result</th>
+                <th>GOAL support</th>
+                <th>Placement</th>
+              </tr>
+            </thead>
+            <tbody id="second-matrix-body"></tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top:22px">Revised second-vetting ranking</h3>
+        <div class="panel">
+          <p class="small">Ordered by explicitly checked claims only. Unchecked rubric criteria remain visible as Pending but do not contribute to the result.</p>
+          <ol>
+            <li><strong>Emergence of foveal image sampling</strong> — 2/2 checked claims valid</li>
+            <li><strong>A neural network model of free recall learns multiple memory strategies</strong> — 2/3 valid, with generalization partial</li>
+            <li><strong>Path Integration and Object-Location Binding</strong> — 1/2 valid, with novel bases partial</li>
+            <li><strong>Predicting upcoming visual features during eye movements</strong> — 1/3 valid</li>
+            <li><strong>Vector-based navigation using grid-like representations</strong> — 1/3 valid</li>
+            <li>Human-like conceptual representations — 1/2 provisionally valid</li>
+            <li>Category-orthogonal recurrent features — 0/1 valid</li>
+            <li>Attention-schema control — 0/1 valid</li>
+            <li>Modular Cognitive Architecture in LLMs — 0/3 valid</li>
+            <li>Connecting Separated Knowledge — 0/4 valid</li>
+            <li>Neural scene representation and rendering — <span class="tag warning">Pending final verdict</span></li>
+          </ol>
+        </div>
+        <div class="callout warning" style="margin-top:16px">
+          <strong>Interpretive limit:</strong> this is a claim-review ranking, not a complete seven-criterion reassessment. Pending cells identify criteria that would need a separate human check before a full rubric score could be assigned. None of the reviewed evidence establishes emergent intelligence.
+        </div>
+
+        <h3 style="margin-top:22px">Paper-level evidence and caveats</h3>
+        <div id="second-paper-details"></div>
+      </section>
+
       <section id="evidence">
         <h2>Why Each Paper Was Checked Off</h2>
         <p class="lede">Each entry explains which final criteria were counted, which were not counted, and why.</p>
@@ -1115,6 +1243,8 @@ does not pass, 1/5</code></pre>
               <tr><td><a href="LEVEL1_SURPRISE_AUDIT.md">LEVEL1_SURPRISE_AUDIT.md</a></td><td>Level 1 source/version audit, matrix, and per-paper evidence.</td></tr>
               <tr><td><a href="GUTH_MENARD_CRITERIA_AUDIT.md">GUTH_MENARD_CRITERIA_AUDIT.md</a></td><td>Focused audit of the unpublished exact Guth/Menard double-descent example.</td></tr>
               <tr><td><a href="RAINBOW_JMLR_CRITERIA_AUDIT.md">RAINBOW_JMLR_CRITERIA_AUDIT.md</a></td><td>Focused audit of the public JMLR Rainbow paper.</td></tr>
+              <tr><td><a href="SECOND_VETTING_AUDIT.md">SECOND_VETTING_AUDIT.md</a></td><td>Reconciled ratings and evidence notes for the eleven papers in the second-vetting batch.</td></tr>
+              <tr><td><a href="NON_LLM_EMERGENCE_AUDIT.md">NON_LLM_EMERGENCE_AUDIT.md</a></td><td>Prior eight-paper non-LLM batch, retained as the evidence trail for seven overlaps and one historical paper.</td></tr>
               <tr><td><a href="research_sources/FINAL_PAPER_LEVELS.tsv">research_sources/FINAL_PAPER_LEVELS.tsv</a></td><td>Full machine-readable final tiered table.</td></tr>
             </tbody>
           </table>
@@ -1146,6 +1276,253 @@ does not pass, 1/5</code></pre>
           {n:17, paper:"Linear Latent World Models / Othello-GPT", doi:"10.48550/arXiv.2310.07582", doiKind:"arXiv DOI", status:["Prov","No","Full","Full","Part","Full","Full"], score:"5 / 7", core:"4 Full / 1 Prov / 2 Part"},
           {n:18, paper:"Progress Measures for Grokking", doi:"10.48550/arXiv.2301.05217", doiKind:"arXiv DOI", status:["Full","Full","Full","Full","Prov","Full","Full"], score:"7 / 7", core:"6 Full / 0 Prov / 1 Part"}
         ];
+
+    const secondRows = [
+      {
+        n: 1,
+        paper: "Category-orthogonal object features guide information processing in RNNs",
+        source: "https://arxiv.org/abs/2111.07898",
+        sourceLabel: "arXiv:2111.07898 v2",
+        status: ["Pending", "Pending", "No", "Pending", "Pending", "Pending", "Pending"],
+        score: "0 / 1 checked",
+        support: "Compression claim rejected",
+        placement: "Rank 7 – remaining criteria unchecked"
+      },
+      {
+        n: 2,
+        paper: "Computational characterization of an attention schema",
+        source: "https://arxiv.org/abs/2402.01056",
+        sourceLabel: "arXiv:2402.01056 v2",
+        status: ["Pending", "Pending", "No", "Pending", "Pending", "Pending", "Pending"],
+        score: "0 / 1 checked",
+        support: "Compression claim rejected",
+        placement: "Rank 8 – remaining criteria unchecked"
+      },
+      {
+        n: 3,
+        paper: "Path Integration and Object-Location Binding",
+        source: "https://arxiv.org/abs/2602.03490",
+        sourceLabel: "arXiv:2602.03490 v2",
+        status: ["Pending", "Pending", "Full", "Part", "Pending", "Pending", "Pending"],
+        score: "1 / 2 checked",
+        support: "Compression valid · novel bases partial",
+        placement: "Rank 3 – compact binding candidate"
+      },
+      {
+        n: 4,
+        paper: "Predicting upcoming visual features during eye movements",
+        source: "https://arxiv.org/abs/2511.12715",
+        sourceLabel: "arXiv:2511.12715 v1",
+        status: ["Pending", "Pending", "Full", "No", "No", "Pending", "Pending"],
+        score: "1 / 3 checked",
+        support: "Compression only",
+        placement: "Rank 4 – architecture and transfer caveats"
+      },
+      {
+        n: 5,
+        paper: "Vector-based navigation using grid-like representations",
+        source: "https://doi.org/10.1038/s41586-018-0102-6",
+        sourceLabel: "Nature (2018)",
+        status: ["Pending", "Pending", "No", "Full", "No", "Pending", "Pending"],
+        score: "1 / 3 checked",
+        support: "Novel bases only",
+        placement: "Rank 5 – spatial-basis evidence"
+      },
+      {
+        n: 6,
+        paper: "Neural scene representation and rendering",
+        source: "https://doi.org/10.1126/science.aar6170",
+        sourceLabel: "Science (2018)",
+        status: ["Pending", "Pending", "Pending", "Pending", "Pending", "Pending", "Pending"],
+        score: "Pending",
+        support: "Awaiting final human verdict",
+        placement: "Unranked – no final note supplied"
+      },
+      {
+        n: 7,
+        paper: "Emergence of foveal image sampling",
+        source: "https://arxiv.org/abs/1611.09430",
+        sourceLabel: "arXiv:1611.09430 / ICLR 2017",
+        status: ["Pending", "Pending", "Full", "Full", "Pending", "Pending", "Pending"],
+        score: "2 / 2 checked",
+        support: "Both checked claims valid",
+        placement: "Rank 1 – strongest clean human result"
+      },
+      {
+        n: 8,
+        paper: "Modular Cognitive Architecture Emerges in Large Language Models",
+        source: "https://pengrui-han.github.io/LLM_Modularity_Page/assets/paper.pdf",
+        sourceLabel: "Preprint (2026)",
+        status: ["Pending", "Pending", "No", "No", "No", "Pending", "Pending"],
+        score: "0 / 3 checked",
+        support: "All checked claims rejected",
+        placement: "Rank 9 – broader rubric unchecked"
+      },
+      {
+        n: 9,
+        paper: "Revealing emergent human-like conceptual representations",
+        source: "https://doi.org/10.1073/pnas.2512514122",
+        sourceLabel: "PNAS (2025)",
+        status: ["No", "Pending", "Pending", "Pending", "Prov", "Pending", "Pending"],
+        score: "1 / 2 checked (Prov)",
+        support: "Generalization provisional",
+        placement: "Rank 6 – memorization remains unresolved"
+      },
+      {
+        n: 10,
+        paper: "A neural network model of free recall learns multiple memory strategies",
+        source: "https://doi.org/10.1038/s42256-026-01274-0",
+        sourceLabel: "Nature Machine Intelligence (2026)",
+        status: ["Pending", "Pending", "Full", "Full", "Part", "Pending", "Pending"],
+        score: "2 / 3 checked",
+        support: "Two valid · generalization partial",
+        placement: "Rank 2 – compact memory strategy"
+      },
+      {
+        n: 11,
+        paper: "Are Transformers Able to Reason by Connecting Separated Knowledge?",
+        source: "https://arxiv.org/abs/2501.15857",
+        sourceLabel: "ICLR 2025 / arXiv v8",
+        status: ["No", "No", "No", "Pending", "No", "Pending", "Pending"],
+        score: "0 / 4 checked",
+        support: "All checked claims rejected",
+        placement: "Rank 10 – remaining rubric unchecked"
+      }
+    ];
+
+    const secondDetails = [
+      {
+        paper: "Category-orthogonal object features guide information processing in recurrent neural networks",
+        counted: [],
+        not: [
+          "Compression is rejected: decoding location, orientation, and scale as three classifications is not a separate compact encoding that preserves the original function.",
+          "All other rubric criteria were not adjudicated in the final notes and remain Pending."
+        ]
+      },
+      {
+        paper: "Computational characterization of the role of an attention schema",
+        counted: [],
+        not: [
+          "Compression is rejected: the auxiliary resource supplies hints rather than a faithful, efficient compact mapping of the main state.",
+          "All other rubric criteria were not adjudicated in the final notes and remain Pending."
+        ]
+      },
+      {
+        paper: "Path Integration and Object-Location Binding",
+        counted: [
+          "Compression: the dictionary-like label–position organization is a compact predictive memory and was not explicitly engineered."
+        ],
+        not: [
+          "Novel bases is partial: absolute-position structure develops from relative displacements, but it is not a wholly new mathematical basis.",
+          "All other rubric criteria were not adjudicated in the final notes and remain Pending."
+        ]
+      },
+      {
+        paper: "Predicting upcoming visual features during eye movements",
+        counted: [
+          "Compression: recurrent versus non-recurrent GPNs show that the recurrent state integrates information across partial observations."
+        ],
+        not: [
+          "Novel bases is rejected: integration across saccades is encouraged by the recurrent architecture and prediction objective rather than an unmotivated representational reorganization.",
+          "Generalization is rejected under the strict definition: held-out scenes remain the same task, and cortical-response alignment is not task-A-to-different-task-B transfer.",
+          "All other rubric criteria were not adjudicated in the final notes and remain Pending."
+        ]
+      },
+      {
+        paper: "Vector-based navigation using grid-like representations",
+        counted: [
+          "Novel bases: the network develops periodic, multi-scale coordinates rather than relying only on localized place-like fields."
+        ],
+        not: [
+          "Compression is rejected: the grid code is a novel representation, but the paper does not establish an information-reduction or efficiency claim.",
+          "Generalization is rejected under the strict definition: shortcuts and unfamiliar layouts remain within the navigation task family.",
+          "All other rubric criteria were not adjudicated in the final notes and remain Pending."
+        ]
+      },
+      {
+        paper: "Neural scene representation and rendering",
+        counted: [],
+        not: [
+          "Pending: the final notes list GQN but provide no claim-by-claim human verdict, so the earlier 5/7 assessment is not carried forward as final."
+        ]
+      },
+      {
+        paper: "Emergence of foveal image sampling",
+        counted: [
+          "Compression: the glimpse is a heavily compressed image representation that suppresses background distractors.",
+          "Novel bases: training smoothly transforms the initially uniform/random Gaussian sampling grid into an eccentricity-dependent lattice."
+        ],
+        not: [
+          "All five remaining rubric criteria were not adjudicated in the final notes and remain Pending."
+        ]
+      },
+      {
+        paper: "Modular Cognitive Architecture Emerges in Large Language Models",
+        counted: [],
+        not: [
+          "Novel bases is rejected: the modules are obtained from an analyst-constructed attribution matrix and clustering procedure.",
+          "Compression is rejected provisionally: sparse important neurons are shown, but not a distinct condensed representation demonstrated to substitute for the original computation.",
+          "Generalization is rejected: 46 tasks remain within four predefined related domains, with no unseen task-family transfer.",
+          "All other rubric criteria were not adjudicated in the final notes and remain Pending."
+        ]
+      },
+      {
+        paper: "Revealing emergent human-like conceptual representations from language prediction",
+        counted: [
+          "Generalization is provisional: relational structure recurs across datasets, descriptions, model families, human judgments, and brain data, but task proximity and possible memorization remain unresolved."
+        ],
+        not: [
+          "Scaling is rejected: larger models perform better, but no scale-linked new internal representation is shown to cause a new capability.",
+          "All other rubric criteria were not adjudicated in the final notes and remain Pending."
+        ]
+      },
+      {
+        paper: "A neural network model of free recall learns multiple memory strategies",
+        counted: [
+          "Compression: the best strategy uses a stimulus-invariant serial-index scaffold.",
+          "Novel bases: the network develops an item-independent serial-position code despite being rewarded only for maximizing recall."
+        ],
+        not: [
+          "Generalization is partial: the model transfers to unseen item lists within the same eight-item recall setup, not to a meaningfully different task.",
+          "All other rubric criteria were not adjudicated in the final notes and remain Pending."
+        ]
+      },
+      {
+        paper: "Are Transformers Able to Reason by Connecting Separated Knowledge in Training Data?",
+        counted: [],
+        not: [
+          "Compression is rejected: the proposed ICL-plus-retrieval program is not demonstrated as a more efficient faithful mapping of the original computation.",
+          "Scaling is rejected: larger models preserve the performance trend, but no new scale-induced internal organization is identified.",
+          "Criticality is rejected: the behavioral change near the knowledge-ratio threshold has no associated internal organizational transition.",
+          "Generalization is rejected under the strict definition: longer/noisy chains remain within the same synthetic reasoning family.",
+          "All other rubric criteria were not adjudicated in the final notes and remain Pending."
+        ]
+      }
+    ];
+
+    // Strict final-human order. GQN is last because no final verdict was supplied.
+    const secondReviewOrder = [
+      "Emergence of foveal image sampling",
+      "A neural network model of free recall learns multiple memory strategies",
+      "Path Integration and Object-Location Binding",
+      "Predicting upcoming visual features during eye movements",
+      "Vector-based navigation using grid-like representations",
+      "Revealing emergent human-like conceptual representations",
+      "Category-orthogonal object features",
+      "Computational characterization of",
+      "Modular Cognitive Architecture Emerges in Large Language Models",
+      "Are Transformers Able to Reason by Connecting Separated Knowledge",
+      "Neural scene representation and rendering"
+    ];
+
+    function secondReviewRank(title) {
+      const rank = secondReviewOrder.findIndex(prefix => title.startsWith(prefix));
+      return rank === -1 ? secondReviewOrder.length : rank;
+    }
+
+    secondRows.sort((a, b) => secondReviewRank(a.paper) - secondReviewRank(b.paper));
+    secondRows.forEach((row, index) => { row.n = index + 1; });
+    secondDetails.sort((a, b) => secondReviewRank(a.paper) - secondReviewRank(b.paper));
 
     const details = [
       {
@@ -1424,6 +1801,15 @@ does not pass, 1/5</code></pre>
           }).join("");
         }
 
+    function renderSecondMatrix() {
+      const body = document.getElementById("second-matrix-body");
+      body.innerHTML = secondRows.map(row => {
+        const cells = row.status.map(s => `<td><span class="${statusClass(s)}">${s}</span></td>`).join("");
+        const source = `<a href="${row.source}">${row.sourceLabel}</a>`;
+        return `<tr><td>${row.n}</td><td class="paper-name">${row.paper}</td><td>${source}</td>${cells}<td class="score">${row.score}</td><td>${row.support}</td><td>${row.placement}</td></tr>`;
+      }).join("");
+    }
+
     function list(items) {
       return `<ul>${items.map(item => `<li>${item}</li>`).join("")}</ul>`;
     }
@@ -1441,6 +1827,27 @@ does not pass, 1/5</code></pre>
               </div>
               <div>
                 <h4>Not counted or only partial</h4>
+                ${list(d.not)}
+              </div>
+            </div>
+          </div>
+        </details>
+      `).join("");
+    }
+
+    function renderSecondDetails() {
+      const el = document.getElementById("second-paper-details");
+      el.innerHTML = secondDetails.map((d, i) => `
+        <details ${i < 2 ? "open" : ""}>
+          <summary>${i + 1}. ${d.paper}</summary>
+          <div class="detail-body">
+            <div class="two-col-list">
+              <div>
+                <h4>Retained after final human review</h4>
+                ${list(d.counted)}
+              </div>
+              <div>
+                <h4>Rejected, partial, or unresolved</h4>
                 ${list(d.not)}
               </div>
             </div>
@@ -1482,7 +1889,9 @@ does not pass, 1/5</code></pre>
     }
 
         renderMatrix();
+        renderSecondMatrix();
         renderDetails();
+        renderSecondDetails();
         initViews();
       </script>
 </body>
