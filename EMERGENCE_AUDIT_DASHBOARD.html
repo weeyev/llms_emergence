@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LLM Emergence Literature Audit</title>
+  <title>Emergence Audit — Double-Vetted Evidence Review</title>
+  <meta name="description" content="A double-vetted audit of emergence claims in language models and neural systems, with evidence matrices, human adjudication, and scoped conclusions.">
   <style>
     :root {
       color-scheme: light;
@@ -301,8 +302,7 @@
     .status-full,
     .status-prov,
     .status-part,
-    .status-no,
-    .status-pending {
+    .status-no {
       display: inline-flex;
       justify-content: center;
       align-items: center;
@@ -332,11 +332,6 @@
     .status-no {
       background: #f4e1e1;
       color: #7a2020;
-    }
-
-    .status-pending {
-      background: #eceff3;
-      color: #4c5667;
     }
 
     .table-wrap {
@@ -602,173 +597,769 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* Editorial audit-report layer */
+    :root {
+      --bg: #f3f1ec;
+      --surface: #fffdfa;
+      --surface-2: #ebe8e0;
+      --ink: #182027;
+      --muted: #667078;
+      --line: #d7d3ca;
+      --blue: #1d4f6e;
+      --teal: #1f6b63;
+      --green: #2c6a49;
+      --amber: #9a5a12;
+      --red: #9d3f3a;
+      --violet: #5f547d;
+      --accent: #c6653c;
+      --shadow: 0 14px 40px rgba(24, 32, 39, 0.06);
+      --radius: 4px;
+    }
+
+    body {
+      background:
+        linear-gradient(90deg, rgba(29, 79, 110, 0.025) 1px, transparent 1px) 0 0 / 40px 40px,
+        var(--bg);
+    }
+
+    .shell {
+      grid-template-columns: 256px minmax(0, 1fr);
+    }
+
+    aside {
+      padding: 30px 20px 24px;
+      background: #14212b;
+      border-right: 0;
+    }
+
+    .brand {
+      margin-bottom: 30px;
+      padding: 0 8px 22px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .brand-mark {
+      display: inline-block;
+      margin-bottom: 15px;
+      padding: 5px 8px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      color: #dbe6eb;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .brand h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 25px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+    }
+
+    .brand p {
+      max-width: 190px;
+      color: #9eb0bb;
+      line-height: 1.5;
+    }
+
+    nav {
+      gap: 4px;
+      margin-top: 0;
+    }
+
+    nav a {
+      display: grid;
+      grid-template-columns: 28px minmax(0, 1fr);
+      gap: 4px;
+      align-items: center;
+      padding: 10px 11px;
+      border-left: 2px solid transparent;
+      border-radius: 2px;
+      color: #cbd7de;
+      font-size: 13px;
+    }
+
+    nav a span {
+      color: #708792;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+
+    nav a:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    nav a.active {
+      background: rgba(255, 255, 255, 0.08);
+      border-left-color: var(--accent);
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .aside-note {
+      margin: 30px 8px 0;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: #8196a2;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    main {
+      max-width: 1480px;
+      padding: 50px clamp(28px, 4vw, 68px) 36px;
+    }
+
+    section {
+      margin-bottom: 0;
+    }
+
+    .report-header {
+      margin-bottom: 34px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .report-kicker {
+      margin-bottom: 12px;
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+    }
+
+    .report-title {
+      max-width: 980px;
+      margin: 0 0 14px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(36px, 5vw, 58px);
+      font-weight: 500;
+      line-height: 1.04;
+      letter-spacing: -0.035em;
+    }
+
+    .report-lede {
+      max-width: 900px;
+      margin: 0;
+      color: #46515a;
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    .report-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .report-meta span::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      margin-right: 8px;
+      border-radius: 50%;
+      background: var(--teal);
+      vertical-align: 1px;
+    }
+
+    .hero {
+      padding: 30px;
+      border-top: 4px solid var(--accent);
+      background: rgba(255, 253, 250, 0.96);
+      box-shadow: var(--shadow);
+    }
+
+    .hero h3,
+    .section-heading h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 500;
+      letter-spacing: -0.015em;
+    }
+
+    .hero-judgment {
+      display: grid;
+      gap: 14px;
+      align-content: start;
+      padding: 20px;
+      border-left: 1px solid var(--line);
+    }
+
+    .judgment-label {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .judgment-value {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 26px;
+      line-height: 1.2;
+    }
+
+    .audit-block {
+      margin-top: 58px;
+      scroll-margin-top: 24px;
+    }
+
+    .audit-block + .audit-block {
+      padding-top: 54px;
+      border-top: 1px solid var(--line);
+    }
+
+    .section-heading {
+      display: grid;
+      grid-template-columns: 54px minmax(0, 1fr);
+      gap: 14px;
+      align-items: start;
+      margin-bottom: 22px;
+    }
+
+    .section-heading.compact {
+      grid-template-columns: 1fr;
+    }
+
+    .section-number {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border: 1px solid #b8b2a7;
+      border-radius: 50%;
+      color: var(--accent);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 17px;
+    }
+
+    .section-heading h3 {
+      margin: 0 0 6px;
+      font-size: 25px;
+    }
+
+    .section-heading p {
+      max-width: 850px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .section-index {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1px;
+      margin: 26px 0 8px;
+      padding: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+    }
+
+    .section-index a {
+      padding: 14px 16px;
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .section-index a small {
+      display: block;
+      margin-bottom: 2px;
+      color: var(--accent);
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .flow {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0;
+      border: 1px solid var(--line);
+      background: var(--line);
+    }
+
+    .step {
+      min-height: 180px;
+      padding: 20px;
+      border: 0;
+      border-radius: 0;
+      background: var(--surface);
+    }
+
+    .step + .step {
+      border-left: 1px solid var(--line);
+    }
+
+    .step .num {
+      color: var(--accent);
+      letter-spacing: 0.08em;
+    }
+
+    .step h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 500;
+    }
+
+    .step p,
+    .criterion p,
+    .panel p,
+    .panel li {
+      color: #56616a;
+    }
+
+    .criteria {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      overflow: visible;
+    }
+
+    .criterion {
+      min-width: 0;
+      padding: 18px;
+      border-top: 3px solid var(--blue);
+      box-shadow: 0 5px 16px rgba(24, 32, 39, 0.03);
+    }
+
+    .criterion strong {
+      color: var(--ink);
+    }
+
+    .metric-grid {
+      gap: 1px;
+      margin-top: 20px;
+      padding: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+    }
+
+    .metric {
+      border: 0;
+      border-radius: 0;
+      background: var(--surface);
+    }
+
+    .metric strong {
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 500;
+    }
+
+    .panel {
+      border-color: var(--line);
+      background: var(--surface);
+      box-shadow: none;
+    }
+
+    .callout {
+      border-left-width: 3px;
+      background: #edf4f1;
+    }
+
+    .finding-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .finding {
+      padding: 20px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .finding .finding-type {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--accent);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .finding h4 {
+      margin-bottom: 8px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    .finding p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .table-wrap {
+      border-color: #c9c5bc;
+      box-shadow: 0 8px 24px rgba(24, 32, 39, 0.04);
+    }
+
+    table {
+      background: var(--surface);
+      font-size: 12.5px;
+    }
+
+    th {
+      background: #e7e5df;
+      color: #37434b;
+      font-size: 10px;
+      letter-spacing: 0.07em;
+    }
+
+    td {
+      padding: 11px 10px;
+    }
+
+    tbody tr:hover td {
+      background: #f8f6f1;
+    }
+
+    .status-full,
+    .status-prov,
+    .status-part,
+    .status-no,
+    .tag {
+      border-radius: 999px;
+    }
+
+    .subsection-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 28px 0 12px;
+      color: var(--ink);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .subsection-label::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+
+    details {
+      border-radius: 2px;
+    }
+
+    summary {
+      background: var(--surface);
+      font-size: 13px;
+    }
+
+    details[open] summary {
+      border-bottom: 1px solid var(--line);
+      background: #f5f3ee;
+    }
+
+    .source-notes {
+      display: none;
+    }
+
+    .rank-list {
+      counter-reset: rank;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+      margin: 0;
+      padding: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      list-style: none;
+    }
+
+    .rank-list li {
+      counter-increment: rank;
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 10px;
+      margin: 0;
+      padding: 14px;
+      background: var(--surface);
+    }
+
+    .rank-list li::before {
+      content: counter(rank, decimal-leading-zero);
+      color: var(--accent);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .overall-results {
+      display: grid;
+      grid-template-columns: 210px minmax(0, 1fr);
+      gap: 24px;
+      margin-bottom: 24px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-top: 4px solid var(--accent);
+      background: var(--surface);
+    }
+
+    .overall-total {
+      display: grid;
+      align-content: center;
+      padding-right: 24px;
+      border-right: 1px solid var(--line);
+    }
+
+    .overall-total strong {
+      display: block;
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 58px;
+      font-weight: 500;
+      line-height: 1;
+    }
+
+    .overall-total span {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .results-table table {
+      min-width: 720px;
+    }
+
+    .selection-rule {
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .review-cell {
+      display: grid;
+      gap: 7px;
+      min-width: 112px;
+    }
+
+    .review-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .review-label {
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .footer {
+      margin-top: 54px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    @media (max-width: 1120px) {
+      .criteria {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .step {
+        min-height: auto;
+      }
+
+      .step + .step {
+        border-top: 1px solid var(--line);
+        border-left: 0;
+      }
+    }
+
+    @media (max-width: 1020px) {
+      .shell {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        position: sticky;
+        z-index: 20;
+        height: auto;
+        padding: 14px 18px;
+      }
+
+      .brand {
+        display: none;
+      }
+
+      nav {
+        display: flex;
+        gap: 4px;
+        overflow-x: auto;
+      }
+
+      nav a {
+        flex: 0 0 auto;
+        min-width: 150px;
+      }
+
+      .aside-note {
+        display: none;
+      }
+
+      .hero-judgment {
+        padding: 18px 0 0;
+        border-top: 1px solid var(--line);
+        border-left: 0;
+      }
+    }
+
+    @media (max-width: 720px) {
+      main {
+        padding: 30px 16px;
+      }
+
+      .report-title {
+        font-size: 38px;
+      }
+
+      .report-lede {
+        font-size: 16px;
+      }
+
+      .section-index,
+      .criteria,
+      .finding-grid,
+      .rank-list,
+      .metric-grid,
+      .two-col-list {
+        grid-template-columns: 1fr;
+      }
+
+      .overall-results {
+        grid-template-columns: 1fr;
+      }
+
+      .overall-total {
+        padding: 0 0 18px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .section-heading {
+        grid-template-columns: 44px minmax(0, 1fr);
+      }
+    }
   </style>
 </head>
 <body>
   <div class="shell">
     <aside>
       <div class="brand">
+        <span class="brand-mark">Evidence review</span>
         <h1>Emergence Audit</h1>
-        <p>LLM and neural-system literature review through July 29, 2026</p>
+        <p>A double-vetted review of emergence claims in language models and neural systems.</p>
       </div>
       <nav>
-        <a href="#overview">Overview</a>
-        <a href="#method">Method</a>
-        <a href="#criteria">Final criteria</a>
-        <a href="#levels">Corpus levels</a>
-        <a href="#guth">Guth, Menard, Rainbow</a>
-        <a href="#level1">Level 1 matrix</a>
-        <a href="#vihan-vetting">Vihan vetting</a>
-        <a href="#final-notes">Final notes</a>
-        <a href="#second-vetting">Second vetting</a>
-        <a href="#evidence">Paper evidence</a>
-        <a href="#clusters">Cluster findings</a>
-        <a href="#recommended">Recommended</a>
-        <a href="#files">Files</a>
+        <a href="#audit-story"><span>01</span>Summary</a>
+        <a href="#first-vetting"><span>02</span>1st vetting</a>
+        <a href="#second-vetting"><span>03</span>2nd vetting</a>
       </nav>
+      <p class="aside-note">Review frozen August 7, 2026. Scores describe scoped evidence for emergent capabilities—not broad emergent intelligence.</p>
     </aside>
 
     <main>
-      <section id="overview" class="active-view">
-        <div class="hero">
+      <section id="audit-story" class="active-view">
+        <header class="report-header">
+          <div class="report-kicker">Literature audit · Method and output</div>
+          <h2 class="report-title">Emergence literature audit</h2>
+          <p class="report-lede">A summary of how the literature was collected, filtered, checked, and human-vetted—and what the two vetting rounds produced.</p>
+          <div class="report-meta"><span>1,704 records screened</span><span>Two vetting rounds</span><span>Evidence frozen 7 August 2026</span></div>
+        </header>
+
+        <article class="overall-results">
+          <div class="overall-total">
+            <div class="eyebrow">Overall result</div>
+            <strong>16</strong>
+            <span>papers retained after final human adjudication across both vetting rounds</span>
+          </div>
           <div>
-          <div class="eyebrow">Final synthesis</div>
-          <h2>Emergence evidence became strongest when we stopped asking for broad intelligence and started asking for compact causal structure.</h2>
-          <p class="lede">
-            The audit began as a broad search over claims that LLMs or neural systems show emergence.
-            The final position is narrower and more scientific: some transformer systems show
-            paper-defined emergent capabilities through coarse-grained internal variables, but the
-            evidence does not establish broad emergent intelligence.
-          </p>
-          <div class="callout">
-            <strong>Final stance:</strong> benchmark jumps and sudden task scores are weak by themselves.
-            The strongest evidence comes from function vectors, task vectors, world-state vectors,
-            concept/spatial vectors, circuit-development trajectories, and progress measures that
-            help predict, explain, or intervene on behavior.
+            <h3>Selection totals</h3>
+            <div class="table-wrap results-table">
+              <table>
+                <thead><tr><th>Stage</th><th>Entered</th><th>Human-reviewed</th><th>Selected</th><th>Not selected</th><th>Awaiting verdict</th></tr></thead>
+                <tbody>
+                  <tr><td class="paper-name">Original Tier-1 shortlist</td><td>18</td><td>14</td><td class="score">10</td><td>4</td><td>4</td></tr>
+                  <tr><td class="paper-name">2nd-vetting batch</td><td>11</td><td>10</td><td class="score">6</td><td>4</td><td>1</td></tr>
+                  <tr><td class="paper-name"><strong>Combined</strong></td><td><strong>29</strong></td><td><strong>24</strong></td><td class="score">16</td><td><strong>8</strong></td><td><strong>5</strong></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="selection-rule"><strong>Selection rule:</strong> a paper is counted as selected when the final human adjudication retains at least one explicitly checked emergence claim and does not mark the paper disputed, removed, or rejected. “Selected” means retained for the final evidence set—not evidence of broad emergent intelligence.</p>
           </div>
-          </div>
-          <div class="panel subtle">
-          <h3>At a glance</h3>
-          <div class="bar-list">
-            <div class="bar-row"><span>All rows</span><div class="bar-track"><div class="bar-fill blue" style="width:100%"></div></div><strong>1704</strong></div>
-            <div class="bar-row"><span>Positive pool</span><div class="bar-track"><div class="bar-fill green" style="width:23%"></div></div><strong>392</strong></div>
-            <div class="bar-row"><span>Level 1</span><div class="bar-track"><div class="bar-fill teal" style="width:4.6%"></div></div><strong>18</strong></div>
-            <div class="bar-row"><span>Level 2</span><div class="bar-track"><div class="bar-fill amber" style="width:2.3%"></div></div><strong>9</strong></div>
-          </div>
-          <p class="small" style="margin-top:14px">Levels are review priority, not verified truth. Verification still needs full-paper reading and controls.</p>
-          </div>
-        </div>
-        <div class="metric-grid">
-          <div class="metric"><strong>392</strong><span>Final positive candidates: Level 1 + Level 2 + Level 4</span></div>
-          <div class="metric"><strong>18</strong><span>Direct mechanistic Level 1 papers audited in detail</span></div>
-          <div class="metric"><strong>13</strong><span>Level 1 papers satisfying 5 or more final-selection criteria</span></div>
-          <div class="metric"><strong>0</strong><span>Level 1 papers establishing broad emergent intelligence</span></div>
-        </div>
-      </section>
+        </article>
 
-      <section id="method">
-        <h2>Method Evolution</h2>
-        <div class="flow">
-          <div class="step">
-            <div class="num">01</div>
-            <h3>Broad search</h3>
-            <p>Search space was intentionally wide: old and new papers, direct emergence claims, near-emergence mechanisms, controls, and counterclaims.</p>
-          </div>
-          <div class="step">
-            <div class="num">02</div>
-            <h3>Rubric correction</h3>
-            <p>The old linear gate was replaced. Scaling, criticality, compression, novel bases, and generalization became routes, not mandatory sequential gates.</p>
-          </div>
-          <div class="step">
-            <div class="num">03</div>
-            <h3>Source checks</h3>
-            <p>Original sources, newer versions, full texts, code, and criticism were checked where possible. Abstract-only matches stayed lower confidence.</p>
-          </div>
-          <div class="step">
-            <div class="num">04</div>
-            <h3>Final criteria</h3>
-            <p>Candidate papers were judged by emergence-selection criteria: compact structure, phase-like behavior, transfer, and knowledge-in mechanism.</p>
-          </div>
-          <div class="step">
-            <div class="num">05</div>
-            <h3>Level 1 audit</h3>
-            <p>The 18 strongest mechanistic papers were re-read for surprises and organized into a criteria matrix with evidence notes.</p>
-          </div>
-        </div>
-      </section>
-
-      <section id="criteria">
-        <h2>Final Selection Criteria</h2>
-        <p class="lede">These are the criteria used to select and explain the strongest papers. They are different from the precursor checks such as source validity and method quality.</p>
-        <div class="criteria">
-          <div class="criterion"><strong>Scaling</strong><p>Scale in data, compute, parameters, training time, or components reveals a new capability or organization.</p></div>
-          <div class="criterion"><strong>Criticality</strong><p>A rapid qualitative shift, threshold, phase-like transition, or order-parameter-like change is observed.</p></div>
-          <div class="criterion"><strong>Compression</strong><p>A higher-level compressed description remains useful while ignoring lower-level microscopic detail.</p></div>
-          <div class="criterion"><strong>Novel bases</strong><p>A new representational basis, subspace, manifold, internal alphabet, or geometry improves representation.</p></div>
-          <div class="criterion"><strong>Generalization</strong><p>The structure supports transfer, analogy, OOD behavior, rapid adaptation, or reuse beyond the exact setup.</p></div>
-          <div class="criterion"><strong>Knowledge-in mechanism</strong><p>The global property is connected to an internal/local neural mechanism, not only to behavior.</p></div>
-          <div class="criterion"><strong>Capability vs intelligence</strong><p>The paper is clear about narrow emergent capability versus broad emergent intelligence.</p></div>
-        </div>
-      </section>
-
-      <section id="levels">
-        <h2>Corpus Segregation</h2>
-        <div class="grid-3">
-          <div class="panel">
-            <h3>Read first</h3>
-            <p><strong>Level 1: 18 papers.</strong> Direct mechanistic shortlist. These are the best candidates for paper-defined emergent capability evidence or important controls.</p>
-          </div>
-          <div class="panel">
-            <h3>Read second</h3>
-            <p><strong>Level 2: 9 papers.</strong> Promising papers that need more target-specific checking before they can be promoted.</p>
-          </div>
-          <div class="panel">
-            <h3>Retain, but do not overclaim</h3>
-            <p><strong>Level 4: 365 papers.</strong> Partial core candidates. Useful for broad ranking, follow-up, and literature context.</p>
-          </div>
-        </div>
-        <div class="grid-2" style="margin-top:16px">
-          <div class="panel">
-            <h3>Controls and lineage</h3>
-            <p>114 effect/counterclaim papers and 163 claim-source-only papers were retained. These matter because many emergence claims are weakened by metric artifacts, memorization, prompting, contamination, ordinary scaling, or shortcut heuristics.</p>
-          </div>
-          <div class="panel">
-            <h3>Clean-up</h3>
-            <p>Superseded linear-gate reports were removed. Raw PDFs/text and final V2 artifacts were kept so future reading starts from the corrected paper-grounded rubric.</p>
-          </div>
-        </div>
-      </section>
-
-      <section id="guth">
-        <h2>Guth, Menard, and Rainbow</h2>
         <div class="grid-2">
-          <div class="panel">
-            <h3>Exact Guth/Menard 2025 claim</h3>
-            <div class="tags">
-              <span class="tag negative">Unverifiable</span>
-              <span class="tag warning">In prep / personal communication</span>
-              <span class="tag info">Double descent claim</span>
-            </div>
-            <p>The target emergence paper says Guth and Menard 2025 show that the double-descent peak coincides with covariance spectra moving from exponential to scale-free. The local arXiv target paper calls it in preparation; the Royal Society version calls it personal communication.</p>
-            <p><strong>Verdict:</strong> do not count the exact double-descent/scale-free-transition claim as verified until a public manuscript, data, or code appears.</p>
-          </div>
-          <div class="panel">
-            <h3>Public Rainbow JMLR paper</h3>
-            <div class="tags">
-              <span class="tag positive">Released</span>
-              <span class="tag positive">Compression route</span>
-              <span class="tag positive">Novel-basis route</span>
-              <span class="tag warning">Not LLM evidence</span>
-            </div>
-            <p><em>A Rainbow in Deep Network Black Boxes</em> is real public evidence for covariance-based coarse-graining, low-rank eigenspaces, and sampled rainbow networks preserving performance in scoped CNN/scattering settings.</p>
-            <p><strong>Verdict:</strong> use as high-quality adjacent evidence for compression and novel bases, not as verification of the exact unpublished double-descent claim.</p>
-          </div>
+          <article class="panel">
+            <div class="eyebrow">Method</div>
+            <h3>How the audit was conducted</h3>
+            <ol>
+              <li>A broad corpus was assembled from emergence claims, related mechanisms, controls, counterclaims, and lineage papers.</li>
+              <li>Papers were triaged by reading priority, then checked against original sources, later versions, code, data, and criticism where available.</li>
+              <li>The strongest papers were scored on scaling, criticality, compression, novel bases, generalization, knowledge-in-mechanism, and capability boundary.</li>
+              <li>In the 1st vetting, the initial Codex matrix was independently checked by Vihan and reconciled under stricter human decision rules.</li>
+              <li>In the 2nd vetting, Codex ratings were preserved and later human confirmations or overrides were recorded separately.</li>
+            </ol>
+          </article>
+
+          <article class="panel">
+            <div class="eyebrow">Output</div>
+            <h3>What the process produced</h3>
+            <ul>
+              <li><strong>1st vetting:</strong> an 18-paper mechanistic matrix, paper-level evidence notes, Vihan’s review, and a final human ranking.</li>
+              <li><strong>Strongest 1st-vetting results:</strong> <em>Which Attention Heads Matter?</em>, grokking progress measures, multimodal function vectors, the any-order Markov construction, and linear spatial world models.</li>
+              <li><strong>2nd vetting:</strong> 11 sources inspected, 10 final verdicts, 6 papers retaining at least one checked claim, and 1 paper without a supplied human verdict.</li>
+              <li><strong>Strongest 2nd-vetting results:</strong> foveal image sampling, free-recall memory strategies, and path integration/object-location binding.</li>
+              <li><strong>Overall conclusion:</strong> the audit retains scoped evidence for emergent capabilities, but no paper establishes broad emergent intelligence.</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="metric-grid">
+          <div class="metric"><strong>1,704</strong><span>Records in the assembled corpus</span></div>
+          <div class="metric"><strong>392</strong><span>Positive candidates retained for follow-up</span></div>
+          <div class="metric"><strong>18</strong><span>Papers in the 1st-vetting matrix</span></div>
+          <div class="metric"><strong>11</strong><span>Sources in the 2nd-vetting batch</span></div>
         </div>
       </section>
 
-      <section id="level1">
-        <h2>Level 1 Final-Selection Matrix</h2>
-        <p class="lede">Full and Prov count as satisfied. Part and No do not count. The DOI column gives the durable check handle for each paper.</p>
+      <section id="first-vetting">
+        <header class="report-header">
+          <div class="report-kicker">Pass 01 · LLM and mechanistic shortlist</div>
+          <h2 class="report-title">1st vetting</h2>
+          <p class="report-lede">The first pass preserves the complete audit trail: Codex’s initial evidence matrix, the supporting paper notes, Vihan’s independent challenge, and the final reconciled ranking.</p>
+          <div class="section-index">
+            <a href="#codex-pass"><small>Section 01</small>Codex matrix + evidence</a>
+            <a href="#vihan-pass"><small>Section 02</small>Vihan vetting</a>
+            <a href="#final-reconciliation"><small>Section 03</small>Final reconciliation</a>
+          </div>
+        </header>
+
+        <article id="codex-pass" class="audit-block">
+          <div class="section-heading">
+            <span class="section-number">01</span>
+            <div><h3>Codex evidence matrix</h3><p>Full and Prov count as satisfied; Part and No do not. DOI links provide the durable check handle for each paper.</p></div>
+          </div>
         <div class="table-wrap">
           <table>
             <thead>
@@ -790,15 +1381,20 @@
             <tbody id="matrix-body"></tbody>
           </table>
         </div>
-      </section>
+        <div class="subsection-label">Paper-level evidence and caveats</div>
+        <p class="small">Open a paper to see which criteria were counted in the initial matrix and which were rejected or only partially supported.</p>
+        <div id="paper-details"></div>
+        </article>
 
-      <section id="vihan-vetting">
-        <h2>Human Vetting / Auditing - Vihan</h2>
-        <p class="lede">This hand-audit layer is additive. It keeps the Level 1 matrix above intact and records only the criteria Vihan explicitly marked valid in the supplied Level 1a, 1b, and 1c notes.</p>
+        <article id="vihan-pass" class="audit-block">
+          <div class="section-heading">
+            <span class="section-number">02</span>
+            <div><h3>Vihan vetting</h3><p>An independent hand audit kept only the criteria explicitly marked valid in the Level 1a, 1b, and 1c notes.</p></div>
+          </div>
         <div class="callout">
           <strong>Counting rule:</strong> valid criteria count; not-valid criteria do not count. Analyzed papers are ranked by valid-count first. Ties preserve Vihan's Level 1a -> Level 1b -> Level 1c order, then keep closely related papers together.
         </div>
-        <details>
+        <details class="source-notes">
           <summary>Vihan source notes - verbatim</summary>
           <div class="detail-body">
             <p class="small">Source: `/Users/vihantiwari/Library/Mobile Documents/iCloud~md~obsidian/Documents/weeye/emergence_paper_selection.md`</p>
@@ -990,13 +1586,13 @@ does not pass, 1/5</code></pre>
           <table class="human-table">
             <thead>
               <tr>
-                <th>Human B priority</th>
-                <th>Vihan group</th>
+                <th>Review priority</th>
+                <th>Vihan tier</th>
                 <th>Paper</th>
-                <th>Vihan valid count</th>
+                <th>Validated</th>
                 <th>Valid criteria from notes</th>
                 <th>Not counted / caveat from notes</th>
-                <th>Human B action</th>
+                <th>Recommended use</th>
               </tr>
             </thead>
             <tbody>
@@ -1012,43 +1608,36 @@ does not pass, 1/5</code></pre>
               <tr><td class="rank-cell">10</td><td>Level 1b</td><td class="paper-name">Unifying Attention Heads and Task Vectors via Hidden State Geometry in In-Context Learning</td><td class="score">2 / 3</td><td>Criticality; compression</td><td>Novel bases not counted; note says this is classical representation geometry, not a new basis.</td><td>Read for hidden-state transition and compression.</td></tr>
               <tr><td class="rank-cell">11</td><td>Level 1b</td><td class="paper-name">When Do Attention Circuits Form?</td><td class="score">2 / 3</td><td>Scaling; criticality</td><td>Generalization not counted; note says no common capability across tasks/layers is shown.</td><td>Read for developmental timing and architecture/corpus comparison.</td></tr>
               <tr><td class="rank-cell">12</td><td>Level 1b</td><td class="paper-name">Linear Spatial World Models Emerge in LLMs</td><td class="score">2 / 2</td><td>Compression; novel bases</td><td>No invalid criterion listed in the supplied notes.</td><td>Read as a clean but narrow spatial-world-model case.</td></tr>
-              <tr><td class="rank-cell">13</td><td>Level 1c</td><td class="paper-name">Revealing Algorithmic Deductive Circuits for Logical Reasoning</td><td class="score">1 / 5</td><td>Compression</td><td>Vihan note says this does not pass overall; only small-head decomposition is counted.</td><td>Deprioritize unless Human B needs narrow logical-circuit evidence.</td></tr>
+              <tr><td class="rank-cell">13</td><td>Level 1c</td><td class="paper-name">Revealing Algorithmic Deductive Circuits for Logical Reasoning</td><td class="score">1 / 5</td><td>Compression</td><td>Vihan note says this does not pass overall; only small-head decomposition is counted.</td><td>Deprioritize unless narrow logical-circuit evidence is needed.</td></tr>
               <tr><td class="rank-cell">14</td><td>Level 1a</td><td class="paper-name">Mechanistic Data Attribution</td><td class="score">0 / 2</td><td>None</td><td>Compression and generalization both marked not valid; Vihan note says it does not pass.</td><td>Put after positive candidates; revisit only as data-attribution/context evidence.</td></tr>
             </tbody>
           </table>
         </div>
 
-        <h3 style="margin-top:22px">Level 1 rows not found in supplied Vihan notes</h3>
-        <p class="small">These rows remain in the original Level 1 matrix, but no Vihan hand-vetting count was present in the pasted notes. Human B should audit them separately before treating them as Vihan-ranked.</p>
-        <div class="table-wrap" style="margin-top:12px">
-          <table>
-            <thead>
-              <tr>
-                <th>Original Level 1 row</th>
-                <th>Paper</th>
-                <th>Existing matrix score</th>
-                <th>Status for Vihan section</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><td class="rank-cell">4</td><td class="paper-name">Relational Knowledge Distillation Using Fine-tuned Function Vectors</td><td class="score">5 / 7</td><td>Not in supplied Vihan notes.</td></tr>
-              <tr><td class="rank-cell">7</td><td class="paper-name">Analogical Reasoning Inside Large Language Models: Concept Vectors and the Limits of Abstraction</td><td class="score">4 / 7</td><td>Not in supplied Vihan notes.</td></tr>
-              <tr><td class="rank-cell">15</td><td class="paper-name">Emergent Linear Representations in World Models of Self-Supervised Sequence Models</td><td class="score">4 / 7</td><td>Not in supplied Vihan notes.</td></tr>
-              <tr><td class="rank-cell">17</td><td class="paper-name">Linear Latent World Models in Simple Transformers: A Case Study on Othello-GPT</td><td class="score">5 / 7</td><td>Not in supplied Vihan notes.</td></tr>
-            </tbody>
-          </table>
+        <div class="callout warning" style="margin-top:18px">
+          <strong>Four papers were not covered by Vihan’s supplied notes:</strong> Relational Knowledge Distillation; Analogical Reasoning / Concept Vectors; Emergent Linear Representations; and Linear Latent World Models / Othello-GPT. They remain visible in the Codex matrix but are excluded from the Vihan ranking.
         </div>
-      </section>
+        </article>
 
-      <section id="final-notes">
-        <h2>Final Human Notes and Revised Ranking</h2>
-        <p class="lede">This section applies the final hand-vetting notes as the authoritative human layer. It supersedes the earlier reading-priority ranking, while the original matrices remain visible as an audit trail.</p>
+        <article id="final-reconciliation" class="audit-block">
+          <div class="section-heading">
+            <span class="section-number">03</span>
+            <div><h3>Final human notes and revised ranking</h3><p>The reconciliation applies the strictest final notes as the authoritative layer while preserving the earlier matrices as an audit trail.</p></div>
+          </div>
 
         <div class="callout">
-          <strong>TL;DR:</strong> The strict review retains a small set of scoped emergence examples, not evidence of broad emergent intelligence. The strongest original-corpus cases are <em>Which Attention Heads Matter?</em>, grokking, multimodal function vectors, the any-order Markov construction, and linear spatial world models. In the second-vetting batch, foveal sampling and free-recall strategies remain the strongest reviewed cases; path integration retains a compact binding mechanism. Most claimed “generalization” is held-out or within-family transfer, and many claimed “novel bases” are encouraged by the architecture, objective, or analyst’s construction.
+          <strong>Reconciled result:</strong> the original corpus retains five leading scoped cases: <em>Which Attention Heads Matter?</em>, grokking, multimodal function vectors, the any-order Markov construction, and linear spatial world models. Most “generalization” remains held-out or within-family transfer; many proposed “novel bases” are encouraged by architecture, objective, or analyst construction.
         </div>
 
-        <h3 style="margin-top:22px">Final decision rules used</h3>
+        <div class="subsection-label">What changed after human review</div>
+        <div class="finding-grid">
+          <div class="finding"><span class="finding-type">Stable leaders</span><h4>Attention-head shift and grokking remained 5 / 5</h4><p>Both survived claim-level scrutiny, while retaining narrow capability and controlled-task boundaries.</p></div>
+          <div class="finding"><span class="finding-type">Removed</span><h4>MetaOthello fell out of the strong list</h4><p>Input transformations made aligned latent rotations less surprising, weakening compression and novel-basis claims.</p></div>
+          <div class="finding"><span class="finding-type">Downgraded</span><h4>Structured representations became disputed</h4><p>The final review questioned whether the shared subspace directly established compression or a genuinely novel basis.</p></div>
+          <div class="finding"><span class="finding-type">Rejected claims</span><h4>Mechanistic Data Attribution moved to 0 / 2</h4><p>The reviewed evidence supported useful context about data and circuits, but not the selected emergence claims.</p></div>
+        </div>
+
+        <div class="subsection-label">Decision rules that changed scores</div>
         <div class="grid-2">
           <div class="panel">
             <h3>Compression and novel bases</h3>
@@ -1067,7 +1656,7 @@ does not pass, 1/5</code></pre>
           </div>
         </div>
 
-        <h3 style="margin-top:22px">Revised original Level 1 human ranking</h3>
+        <div class="subsection-label">Revised 1st-vetting ranking</div>
         <p class="small">Scores below count only the claims explicitly hand-checked in the supplied notes; they are not the seven-column machine-audit score.</p>
         <div class="table-wrap" style="margin-top:12px">
           <table class="human-table">
@@ -1093,26 +1682,34 @@ does not pass, 1/5</code></pre>
           </table>
         </div>
 
-        <h3 style="margin-top:22px">Not given a final human verdict</h3>
         <div class="callout warning">
-          <strong>Do not rank as final:</strong> Relational Knowledge Distillation Using Fine-tuned Function Vectors; Analogical Reasoning / Concept Vectors; Emergent Linear Representations in World Models; Linear Latent World Models / Othello-GPT; and, in the second-vetting batch, Neural Scene Representation and Rendering (GQN).
+          <strong>Excluded from the final 1st-vetting rank:</strong> Relational Knowledge Distillation; Analogical Reasoning / Concept Vectors; Emergent Linear Representations; and Linear Latent World Models / Othello-GPT were not given a final human verdict.
         </div>
+        </article>
       </section>
 
       <section id="second-vetting">
-        <h2>Second Vetting: Final Human Adjudication</h2>
-        <p class="lede">The final hand-vetting notes override the earlier reconciled ratings where they give an explicit verdict. GQN remains pending because the supplied notes name the paper but contain no final claim assessment.</p>
+        <header class="report-header">
+          <div class="report-kicker">Pass 02 · Comparative and non-LLM batch</div>
+          <h2 class="report-title">2nd vetting</h2>
+          <p class="report-lede">The second pass preserves the complete Codex assessment and adds the later human confirmation or override for every criterion explicitly discussed in the final notes.</p>
+          <div class="report-meta"><span>11 sources inspected</span><span>10 final verdicts</span><span>1 paper without a human verdict</span></div>
+        </header>
         <div class="callout">
-          <strong>Final counting rule:</strong> Scores count only claims explicitly adjudicated in the final human notes. Full and Prov count; Part and No do not. Every criterion not discussed in those notes is marked Pending and cannot silently add to the human score.
+          <strong>Sequential rule:</strong> Codex is the first pass. If Codex rejects a criterion, the cell shows one No and stops. Human results appear only for criteria that passed Codex as Full or Prov.
         </div>
         <div class="metric-grid">
           <div class="metric"><strong>11</strong><span>Supplied sources inspected and resolved</span></div>
           <div class="metric"><strong>10</strong><span>Papers with a final human verdict</span></div>
           <div class="metric"><strong>6</strong><span>Papers retaining at least one checked claim</span></div>
-          <div class="metric"><strong>1</strong><span>Paper still pending final human adjudication</span></div>
-          <div class="metric"><strong>0</strong><span>Papers establishing broad emergent intelligence</span></div>
+          <div class="metric"><strong>1</strong><span>Paper without any supplied human verdict</span></div>
         </div>
-        <div class="table-wrap" style="margin-top:18px">
+        <article class="audit-block">
+          <div class="section-heading">
+            <span class="section-number">01</span>
+            <div><h3>Codex assessment and human adjudication</h3><p>One No means the criterion stopped at the Codex pass. Paired ratings appear only when the criterion advanced to human review.</p></div>
+          </div>
+        <div class="table-wrap">
           <table>
             <thead>
               <tr>
@@ -1126,7 +1723,8 @@ does not pass, 1/5</code></pre>
                 <th>Generalization</th>
                 <th>Knowledge-in</th>
                 <th>Capability boundary</th>
-                <th>Final human result</th>
+                <th>Codex result</th>
+                <th>Human result</th>
                 <th>GOAL support</th>
                 <th>Placement</th>
               </tr>
@@ -1135,123 +1733,38 @@ does not pass, 1/5</code></pre>
           </table>
         </div>
 
-        <h3 style="margin-top:22px">Revised second-vetting ranking</h3>
+        <div class="subsection-label">Paper-level evidence and caveats</div>
+        <div id="second-paper-details"></div>
+        </article>
+
+        <article class="audit-block">
+          <div class="section-heading">
+            <span class="section-number">02</span>
+            <div><h3>Revised 2nd-vetting ranking</h3><p>Ordered by the final human score across all seven criteria.</p></div>
+          </div>
         <div class="panel">
-          <p class="small">Ordered by explicitly checked claims only. Unchecked rubric criteria remain visible as Pending but do not contribute to the result.</p>
-          <ol>
-            <li><strong>Emergence of foveal image sampling</strong> — 2/2 checked claims valid</li>
-            <li><strong>A neural network model of free recall learns multiple memory strategies</strong> — 2/3 valid, with generalization partial</li>
-            <li><strong>Path Integration and Object-Location Binding</strong> — 1/2 valid, with novel bases partial</li>
-            <li><strong>Predicting upcoming visual features during eye movements</strong> — 1/3 valid</li>
-            <li><strong>Vector-based navigation using grid-like representations</strong> — 1/3 valid</li>
-            <li>Human-like conceptual representations — 1/2 provisionally valid</li>
-            <li>Category-orthogonal recurrent features — 0/1 valid</li>
-            <li>Attention-schema control — 0/1 valid</li>
-            <li>Modular Cognitive Architecture in LLMs — 0/3 valid</li>
-            <li>Connecting Separated Knowledge — 0/4 valid</li>
-            <li>Neural scene representation and rendering — <span class="tag warning">Pending final verdict</span></li>
+          <p class="small">Ordered by the final human score across all seven criteria.</p>
+          <ol class="rank-list">
+            <li><strong>Emergence of foveal image sampling</strong> — 2/7</li>
+            <li><strong>A neural network model of free recall learns multiple memory strategies</strong> — 2/7</li>
+            <li><strong>Path Integration and Object-Location Binding</strong> — 1/7</li>
+            <li><strong>Predicting upcoming visual features during eye movements</strong> — 1/7</li>
+            <li><strong>Vector-based navigation using grid-like representations</strong> — 1/7</li>
+            <li>Human-like conceptual representations — 1/7 provisional</li>
+            <li>Category-orthogonal recurrent features — 0/7</li>
+            <li>Attention-schema control — 0/7</li>
+            <li>Modular Cognitive Architecture in LLMs — 0/7</li>
+            <li>Connecting Separated Knowledge — 0/7</li>
+            <li>Neural scene representation and rendering — 0/7</li>
           </ol>
         </div>
         <div class="callout warning" style="margin-top:16px">
-          <strong>Interpretive limit:</strong> this is a claim-review ranking, not a complete seven-criterion reassessment. Pending cells identify criteria that would need a separate human check before a full rubric score could be assigned. None of the reviewed evidence establishes emergent intelligence.
+          <strong>Interpretive limit:</strong> the complete Codex assessment remains visible alongside the stricter human score. None of the reviewed evidence establishes emergent intelligence.
         </div>
-
-        <h3 style="margin-top:22px">Paper-level evidence and caveats</h3>
-        <div id="second-paper-details"></div>
+        </article>
       </section>
 
-      <section id="evidence">
-        <h2>Why Each Paper Was Checked Off</h2>
-        <p class="lede">Each entry explains which final criteria were counted, which were not counted, and why.</p>
-        <div id="paper-details"></div>
-      </section>
-
-      <section id="clusters">
-        <h2>Cluster Findings</h2>
-        <div class="grid-2">
-          <div class="panel">
-            <h3>Function vectors became the strongest LLM-positive route</h3>
-            <p>Function-vector papers converge on compact internal vectors/subspaces that can trigger or steer task behavior. This is the strongest match to compression plus knowledge-in mechanism.</p>
-          </div>
-          <div class="panel">
-            <h3>Induction heads are developmental, not the whole story</h3>
-            <p>Several papers suggest induction heads may seed later function-vector mechanisms, and attention-sink formation can occur on a different timetable.</p>
-          </div>
-          <div class="panel">
-            <h3>World models are real in controlled domains</h3>
-            <p>Othello, MetaOthello, chess, and spatial datasets show editable internal state variables, but the evidence remains formal-domain and contested.</p>
-          </div>
-          <div class="panel">
-            <h3>Grokking is both positive and deflationary</h3>
-            <p>Progress measures give a strong internal mechanism, but also show that a behavioral jump can hide gradual circuit formation.</p>
-          </div>
-        </div>
-        <div class="callout warning" style="margin-top:16px">
-          <strong>Final warning:</strong> the audit supports some paper-defined emergent capabilities. It does not support the broad claim that LLMs have emergent intelligence.
-        </div>
-      </section>
-
-      <section id="recommended">
-        <h2>Recommended Re-Segregation</h2>
-        <div class="grid-3">
-          <div class="panel">
-            <h3>Level 1A</h3>
-            <p>Highest priority positive mechanistic evidence.</p>
-            <ul>
-              <li>Function Vectors in LLMs</li>
-              <li>Which Attention Heads Matter?</li>
-              <li>Mechanistic Data Attribution</li>
-              <li>MetaOthello</li>
-              <li>Chess World Models</li>
-              <li>What Needs To Go Right For An Induction Head?</li>
-            </ul>
-          </div>
-          <div class="panel">
-            <h3>Level 1B</h3>
-            <p>Strong but scoped/provisional evidence.</p>
-            <ul>
-              <li>Emergent Structured Representations</li>
-              <li>Multimodal Function Vectors</li>
-              <li>Hidden-State Geometry for ICL</li>
-              <li>Attention Circuits Form</li>
-              <li>Linear Spatial World Models</li>
-              <li>Othello linear/world-model papers</li>
-            </ul>
-          </div>
-          <div class="panel">
-            <h3>Level 1C</h3>
-            <p>Controls, limits, and calibration.</p>
-            <ul>
-              <li>Progress Measures for Grokking</li>
-              <li>Analogical Reasoning / Concept Vectors</li>
-              <li>Two-Layer Transformers</li>
-              <li>Deductive Circuits</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section id="files">
-        <h2>Source Files</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>File</th><th>Role</th></tr></thead>
-            <tbody>
-              <tr><td><a href="GOAL.md">GOAL.md</a></td><td>Corrected source-of-truth rubric and search method.</td></tr>
-              <tr><td><a href="FINAL_REPORT.md">FINAL_REPORT.md</a></td><td>Final high-level summary and corpus counts.</td></tr>
-              <tr><td><a href="FINAL_PAPER_LEVELS.md">FINAL_PAPER_LEVELS.md</a></td><td>Human-readable tiered paper list.</td></tr>
-              <tr><td><a href="LEVEL1_SURPRISE_AUDIT.md">LEVEL1_SURPRISE_AUDIT.md</a></td><td>Level 1 source/version audit, matrix, and per-paper evidence.</td></tr>
-              <tr><td><a href="GUTH_MENARD_CRITERIA_AUDIT.md">GUTH_MENARD_CRITERIA_AUDIT.md</a></td><td>Focused audit of the unpublished exact Guth/Menard double-descent example.</td></tr>
-              <tr><td><a href="RAINBOW_JMLR_CRITERIA_AUDIT.md">RAINBOW_JMLR_CRITERIA_AUDIT.md</a></td><td>Focused audit of the public JMLR Rainbow paper.</td></tr>
-              <tr><td><a href="SECOND_VETTING_AUDIT.md">SECOND_VETTING_AUDIT.md</a></td><td>Reconciled ratings and evidence notes for the eleven papers in the second-vetting batch.</td></tr>
-              <tr><td><a href="NON_LLM_EMERGENCE_AUDIT.md">NON_LLM_EMERGENCE_AUDIT.md</a></td><td>Prior eight-paper non-LLM batch, retained as the evidence trail for seven overlaps and one historical paper.</td></tr>
-              <tr><td><a href="research_sources/FINAL_PAPER_LEVELS.tsv">research_sources/FINAL_PAPER_LEVELS.tsv</a></td><td>Full machine-readable final tiered table.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <p class="footer">Standalone local report generated from the emergence literature-audit workspace. Open this file directly in a browser.</p>
+      <p class="footer">Emergence literature audit · Review frozen August 7, 2026 · Source-level evidence remains linked from the vetting matrices.</p>
     </main>
   </div>
 
@@ -1283,28 +1796,34 @@ does not pass, 1/5</code></pre>
         paper: "Category-orthogonal object features guide information processing in RNNs",
         source: "https://arxiv.org/abs/2111.07898",
         sourceLabel: "arXiv:2111.07898 v2",
-        status: ["Pending", "Pending", "No", "Pending", "Pending", "Pending", "Pending"],
-        score: "0 / 1 checked",
+        codexStatus: ["Part", "No", "Full", "Part", "Part", "Full", "Full"],
+        codexScore: "3 / 7",
+        status: ["No", "No", "No", "No", "No", "No", "No"],
+        score: "0 / 7",
         support: "Compression claim rejected",
-        placement: "Rank 7 – remaining criteria unchecked"
+        placement: "Rank 7 – one criterion human-reviewed"
       },
       {
         n: 2,
         paper: "Computational characterization of an attention schema",
         source: "https://arxiv.org/abs/2402.01056",
         sourceLabel: "arXiv:2402.01056 v2",
-        status: ["Pending", "Pending", "No", "Pending", "Pending", "Pending", "Pending"],
-        score: "0 / 1 checked",
+        codexStatus: ["Part", "No", "Full", "Part", "Part", "Full", "Full"],
+        codexScore: "3 / 7",
+        status: ["No", "No", "No", "No", "No", "No", "No"],
+        score: "0 / 7",
         support: "Compression claim rejected",
-        placement: "Rank 8 – remaining criteria unchecked"
+        placement: "Rank 8 – one criterion human-reviewed"
       },
       {
         n: 3,
         paper: "Path Integration and Object-Location Binding",
         source: "https://arxiv.org/abs/2602.03490",
         sourceLabel: "arXiv:2602.03490 v2",
-        status: ["Pending", "Pending", "Full", "Part", "Pending", "Pending", "Pending"],
-        score: "1 / 2 checked",
+        codexStatus: ["No", "No", "Full", "Full", "Part", "Full", "Full"],
+        codexScore: "4 / 7",
+        status: ["No", "No", "Full", "Part", "No", "No", "No"],
+        score: "1 / 7",
         support: "Compression valid · novel bases partial",
         placement: "Rank 3 – compact binding candidate"
       },
@@ -1313,8 +1832,10 @@ does not pass, 1/5</code></pre>
         paper: "Predicting upcoming visual features during eye movements",
         source: "https://arxiv.org/abs/2511.12715",
         sourceLabel: "arXiv:2511.12715 v1",
-        status: ["Pending", "Pending", "Full", "No", "No", "Pending", "Pending"],
-        score: "1 / 3 checked",
+        codexStatus: ["Part", "No", "Full", "Full", "Full", "Full", "Full"],
+        codexScore: "5 / 7",
+        status: ["No", "No", "Full", "No", "No", "No", "No"],
+        score: "1 / 7",
         support: "Compression only",
         placement: "Rank 4 – architecture and transfer caveats"
       },
@@ -1323,8 +1844,10 @@ does not pass, 1/5</code></pre>
         paper: "Vector-based navigation using grid-like representations",
         source: "https://doi.org/10.1038/s41586-018-0102-6",
         sourceLabel: "Nature (2018)",
-        status: ["Pending", "Pending", "No", "Full", "No", "Pending", "Pending"],
-        score: "1 / 3 checked",
+        codexStatus: ["Part", "No", "Full", "Full", "Full", "Full", "Full"],
+        codexScore: "5 / 7",
+        status: ["No", "No", "No", "Full", "No", "No", "No"],
+        score: "1 / 7",
         support: "Novel bases only",
         placement: "Rank 5 – spatial-basis evidence"
       },
@@ -1333,18 +1856,22 @@ does not pass, 1/5</code></pre>
         paper: "Neural scene representation and rendering",
         source: "https://doi.org/10.1126/science.aar6170",
         sourceLabel: "Science (2018)",
-        status: ["Pending", "Pending", "Pending", "Pending", "Pending", "Pending", "Pending"],
-        score: "Pending",
-        support: "Awaiting final human verdict",
-        placement: "Unranked – no final note supplied"
+        codexStatus: ["No", "No", "Full", "Full", "Full", "Full", "Full"],
+        codexScore: "5 / 7",
+        status: ["No", "No", "No", "No", "No", "No", "No"],
+        score: "0 / 7",
+        support: "Codex 5/7 · human 0/7",
+        placement: "Unranked"
       },
       {
         n: 7,
         paper: "Emergence of foveal image sampling",
         source: "https://arxiv.org/abs/1611.09430",
         sourceLabel: "arXiv:1611.09430 / ICLR 2017",
-        status: ["Pending", "Pending", "Full", "Full", "Pending", "Pending", "Pending"],
-        score: "2 / 2 checked",
+        codexStatus: ["Part", "No", "Full", "Full", "Part", "Full", "Full"],
+        codexScore: "4 / 7",
+        status: ["No", "No", "Full", "Full", "No", "No", "No"],
+        score: "2 / 7",
         support: "Both checked claims valid",
         placement: "Rank 1 – strongest clean human result"
       },
@@ -1353,18 +1880,22 @@ does not pass, 1/5</code></pre>
         paper: "Modular Cognitive Architecture Emerges in Large Language Models",
         source: "https://pengrui-han.github.io/LLM_Modularity_Page/assets/paper.pdf",
         sourceLabel: "Preprint (2026)",
-        status: ["Pending", "Pending", "No", "No", "No", "Pending", "Pending"],
-        score: "0 / 3 checked",
+        codexStatus: ["Part", "No", "Full", "Prov", "Prov", "Full", "Part"],
+        codexScore: "4 / 7",
+        status: ["No", "No", "No", "No", "No", "No", "No"],
+        score: "0 / 7",
         support: "All checked claims rejected",
-        placement: "Rank 9 – broader rubric unchecked"
+        placement: "Rank 9 – three claims human-reviewed"
       },
       {
         n: 9,
         paper: "Revealing emergent human-like conceptual representations",
         source: "https://doi.org/10.1073/pnas.2512514122",
         sourceLabel: "PNAS (2025)",
-        status: ["No", "Pending", "Pending", "Pending", "Prov", "Pending", "Pending"],
-        score: "1 / 2 checked (Prov)",
+        codexStatus: ["Prov", "No", "Part", "Part", "Full", "Part", "Part"],
+        codexScore: "2 / 7",
+        status: ["No", "No", "No", "No", "Prov", "No", "No"],
+        score: "1 / 7 (Prov)",
         support: "Generalization provisional",
         placement: "Rank 6 – memorization remains unresolved"
       },
@@ -1373,8 +1904,10 @@ does not pass, 1/5</code></pre>
         paper: "A neural network model of free recall learns multiple memory strategies",
         source: "https://doi.org/10.1038/s42256-026-01274-0",
         sourceLabel: "Nature Machine Intelligence (2026)",
-        status: ["Pending", "Pending", "Full", "Full", "Part", "Pending", "Pending"],
-        score: "2 / 3 checked",
+        codexStatus: ["Part", "No", "Full", "Full", "Prov", "Prov", "Full"],
+        codexScore: "5 / 7",
+        status: ["No", "No", "Full", "Full", "Part", "No", "No"],
+        score: "2 / 7",
         support: "Two valid · generalization partial",
         placement: "Rank 2 – compact memory strategy"
       },
@@ -1383,10 +1916,12 @@ does not pass, 1/5</code></pre>
         paper: "Are Transformers Able to Reason by Connecting Separated Knowledge?",
         source: "https://arxiv.org/abs/2501.15857",
         sourceLabel: "ICLR 2025 / arXiv v8",
-        status: ["No", "No", "No", "Pending", "No", "Pending", "Pending"],
-        score: "0 / 4 checked",
+        codexStatus: ["Full", "Prov", "Prov", "Part", "Full", "Part", "Full"],
+        codexScore: "5 / 7",
+        status: ["No", "No", "No", "No", "No", "No", "No"],
+        score: "0 / 7",
         support: "All checked claims rejected",
-        placement: "Rank 10 – remaining rubric unchecked"
+        placement: "Rank 10 – four claims human-reviewed"
       }
     ];
 
@@ -1396,7 +1931,7 @@ does not pass, 1/5</code></pre>
         counted: [],
         not: [
           "Compression is rejected: decoding location, orientation, and scale as three classifications is not a separate compact encoding that preserves the original function.",
-          "All other rubric criteria were not adjudicated in the final notes and remain Pending."
+          "All other human ratings: No."
         ]
       },
       {
@@ -1404,7 +1939,7 @@ does not pass, 1/5</code></pre>
         counted: [],
         not: [
           "Compression is rejected: the auxiliary resource supplies hints rather than a faithful, efficient compact mapping of the main state.",
-          "All other rubric criteria were not adjudicated in the final notes and remain Pending."
+          "All other human ratings: No."
         ]
       },
       {
@@ -1414,7 +1949,7 @@ does not pass, 1/5</code></pre>
         ],
         not: [
           "Novel bases is partial: absolute-position structure develops from relative displacements, but it is not a wholly new mathematical basis.",
-          "All other rubric criteria were not adjudicated in the final notes and remain Pending."
+          "All other human ratings: No."
         ]
       },
       {
@@ -1425,7 +1960,7 @@ does not pass, 1/5</code></pre>
         not: [
           "Novel bases is rejected: integration across saccades is encouraged by the recurrent architecture and prediction objective rather than an unmotivated representational reorganization.",
           "Generalization is rejected under the strict definition: held-out scenes remain the same task, and cortical-response alignment is not task-A-to-different-task-B transfer.",
-          "All other rubric criteria were not adjudicated in the final notes and remain Pending."
+          "All other human ratings: No."
         ]
       },
       {
@@ -1436,14 +1971,14 @@ does not pass, 1/5</code></pre>
         not: [
           "Compression is rejected: the grid code is a novel representation, but the paper does not establish an information-reduction or efficiency claim.",
           "Generalization is rejected under the strict definition: shortcuts and unfamiliar layouts remain within the navigation task family.",
-          "All other rubric criteria were not adjudicated in the final notes and remain Pending."
+          "All other human ratings: No."
         ]
       },
       {
         paper: "Neural scene representation and rendering",
         counted: [],
         not: [
-          "Pending: the final notes list GQN but provide no claim-by-claim human verdict, so the earlier 5/7 assessment is not carried forward as final."
+          "Codex rating: 5/7. Human rating: 0/7."
         ]
       },
       {
@@ -1453,7 +1988,7 @@ does not pass, 1/5</code></pre>
           "Novel bases: training smoothly transforms the initially uniform/random Gaussian sampling grid into an eccentricity-dependent lattice."
         ],
         not: [
-          "All five remaining rubric criteria were not adjudicated in the final notes and remain Pending."
+          "All other human ratings: No."
         ]
       },
       {
@@ -1463,7 +1998,7 @@ does not pass, 1/5</code></pre>
           "Novel bases is rejected: the modules are obtained from an analyst-constructed attribution matrix and clustering procedure.",
           "Compression is rejected provisionally: sparse important neurons are shown, but not a distinct condensed representation demonstrated to substitute for the original computation.",
           "Generalization is rejected: 46 tasks remain within four predefined related domains, with no unseen task-family transfer.",
-          "All other rubric criteria were not adjudicated in the final notes and remain Pending."
+          "All other human ratings: No."
         ]
       },
       {
@@ -1473,7 +2008,7 @@ does not pass, 1/5</code></pre>
         ],
         not: [
           "Scaling is rejected: larger models perform better, but no scale-linked new internal representation is shown to cause a new capability.",
-          "All other rubric criteria were not adjudicated in the final notes and remain Pending."
+          "All other human ratings: No."
         ]
       },
       {
@@ -1484,7 +2019,7 @@ does not pass, 1/5</code></pre>
         ],
         not: [
           "Generalization is partial: the model transfers to unseen item lists within the same eight-item recall setup, not to a meaningfully different task.",
-          "All other rubric criteria were not adjudicated in the final notes and remain Pending."
+          "All other human ratings: No."
         ]
       },
       {
@@ -1495,7 +2030,7 @@ does not pass, 1/5</code></pre>
           "Scaling is rejected: larger models preserve the performance trend, but no new scale-induced internal organization is identified.",
           "Criticality is rejected: the behavioral change near the knowledge-ratio threshold has no associated internal organizational transition.",
           "Generalization is rejected under the strict definition: longer/noisy chains remain within the same synthetic reasoning family.",
-          "All other rubric criteria were not adjudicated in the final notes and remain Pending."
+          "All other human ratings: No."
         ]
       }
     ];
@@ -1804,9 +2339,23 @@ does not pass, 1/5</code></pre>
     function renderSecondMatrix() {
       const body = document.getElementById("second-matrix-body");
       body.innerHTML = secondRows.map(row => {
-        const cells = row.status.map(s => `<td><span class="${statusClass(s)}">${s}</span></td>`).join("");
+        const cells = row.status.map((human, index) => {
+          const codex = row.codexStatus[index];
+          const passedCodex = codex === "Full" || codex === "Prov";
+          if (!passedCodex) {
+            return `<td><span class="status-no">No</span></td>`;
+          }
+          if (codex === human) {
+            return `<td><span class="${statusClass(human)}">${human}</span></td>`;
+          }
+          const humanResult = `<span class="${statusClass(human)}">${human}</span>`;
+          return `<td><div class="review-cell">
+            <div class="review-row"><span class="review-label">Codex</span><span class="${statusClass(codex)}">${codex}</span></div>
+            <div class="review-row"><span class="review-label">Human</span>${humanResult}</div>
+          </div></td>`;
+        }).join("");
         const source = `<a href="${row.source}">${row.sourceLabel}</a>`;
-        return `<tr><td>${row.n}</td><td class="paper-name">${row.paper}</td><td>${source}</td>${cells}<td class="score">${row.score}</td><td>${row.support}</td><td>${row.placement}</td></tr>`;
+        return `<tr><td>${row.n}</td><td class="paper-name">${row.paper}</td><td>${source}</td>${cells}<td class="score">${row.codexScore}</td><td class="score">${row.score}</td><td>${row.support}</td><td>${row.placement}</td></tr>`;
       }).join("");
     }
 
@@ -1843,11 +2392,11 @@ does not pass, 1/5</code></pre>
           <div class="detail-body">
             <div class="two-col-list">
               <div>
-                <h4>Retained after final human review</h4>
+                <h4>Human-confirmed criteria</h4>
                 ${list(d.counted)}
               </div>
               <div>
-                <h4>Rejected, partial, or unresolved</h4>
+                <h4>Human overrides and caveats</h4>
                 ${list(d.not)}
               </div>
             </div>
@@ -1859,19 +2408,46 @@ does not pass, 1/5</code></pre>
     function initViews() {
       const sections = Array.from(document.querySelectorAll("main > section[id]"));
       const links = Array.from(document.querySelectorAll("nav a[href^='#']"));
+      const aliases = {
+        overview: "audit-story",
+        method: "audit-story",
+        criteria: "audit-story",
+        levels: "audit-story",
+        guth: "audit-story",
+        "rajpal-goodman": "audit-story",
+        clusters: "audit-story",
+        recommended: "audit-story",
+        files: "audit-story",
+        level1: "first-vetting",
+        "vihan-vetting": "vihan-pass",
+        "final-notes": "final-reconciliation",
+        evidence: "codex-pass"
+      };
 
-      function showView(id) {
-        const target = sections.some(section => section.id === id) ? id : "overview";
+      function showView(id, scrollToAnchor = false) {
+        const requested = aliases[id] || id || "audit-story";
+        const anchor = document.getElementById(requested);
+        const parentSection = anchor ? anchor.closest("main > section[id]") : null;
+        const target = sections.some(section => section.id === requested)
+          ? requested
+          : parentSection?.id || "audit-story";
         sections.forEach(section => {
           section.classList.toggle("active-view", section.id === target);
         });
         links.forEach(link => {
           link.classList.toggle("active", link.getAttribute("href") === `#${target}`);
         });
-        if (window.location.hash !== `#${target}`) {
-          history.replaceState(null, "", `#${target}`);
+        const nextHash = anchor && requested !== target ? requested : target;
+        if (window.location.hash !== `#${nextHash}`) {
+          history.replaceState(null, "", `#${nextHash}`);
         }
-        window.scrollTo(0, 0);
+        requestAnimationFrame(() => {
+          if (scrollToAnchor && anchor && requested !== target) {
+            anchor.scrollIntoView({ block: "start" });
+          } else {
+            window.scrollTo(0, 0);
+          }
+        });
       }
 
       links.forEach(link => {
@@ -1882,10 +2458,10 @@ does not pass, 1/5</code></pre>
       });
 
       window.addEventListener("hashchange", () => {
-        showView(window.location.hash.slice(1) || "overview");
+        showView(window.location.hash.slice(1) || "audit-story", true);
       });
 
-      showView(window.location.hash.slice(1) || "overview");
+      showView(window.location.hash.slice(1) || "audit-story", true);
     }
 
         renderMatrix();
