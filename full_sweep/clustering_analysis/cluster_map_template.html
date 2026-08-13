@@ -1,0 +1,679 @@
+<section id="emergence-paper-cluster-map" class="epcm-root" aria-labelledby="epcm-heading">
+  <style>
+    #emergence-paper-cluster-map {
+      color: var(--foreground);
+      width: 100%;
+    }
+
+    #emergence-paper-cluster-map .epcm-heading-row {
+      align-items: baseline;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      justify-content: space-between;
+    }
+
+    #emergence-paper-cluster-map .epcm-heading-row h2 {
+      margin: 0;
+    }
+
+    #emergence-paper-cluster-map .epcm-controls {
+      margin-top: 12px;
+    }
+
+    #emergence-paper-cluster-map .epcm-keyline {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 18px;
+      margin-top: 10px;
+    }
+
+    #emergence-paper-cluster-map .epcm-status-key {
+      align-items: center;
+      display: none;
+      flex-wrap: wrap;
+      gap: 6px 12px;
+    }
+
+    #emergence-paper-cluster-map .epcm-status-key.is-visible {
+      display: flex;
+    }
+
+    #emergence-paper-cluster-map .epcm-status-item {
+      align-items: center;
+      display: inline-flex;
+      gap: 5px;
+    }
+
+    #emergence-paper-cluster-map .epcm-status-dot {
+      border: 1.5px solid var(--foreground);
+      border-radius: 50%;
+      box-sizing: border-box;
+      display: inline-block;
+      height: 10px;
+      width: 10px;
+    }
+
+    #emergence-paper-cluster-map .epcm-status-dot.is-filled {
+      background: var(--foreground);
+    }
+
+    #emergence-paper-cluster-map .epcm-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px 14px;
+      margin-top: 10px;
+    }
+
+    #emergence-paper-cluster-map .epcm-legend-button {
+      align-items: center;
+      appearance: none;
+      background: transparent;
+      border: 0;
+      color: var(--foreground);
+      cursor: pointer;
+      display: inline-flex;
+      font: inherit;
+      font-weight: 400;
+      gap: 6px;
+      padding: 2px 0;
+      text-align: left;
+    }
+
+    #emergence-paper-cluster-map .epcm-legend-button[aria-pressed="false"] {
+      color: var(--muted-foreground);
+      text-decoration: line-through;
+    }
+
+    #emergence-paper-cluster-map .epcm-legend-swatch {
+      background: var(--epcm-cluster-color);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: inline-block;
+      flex: 0 0 auto;
+      height: 10px;
+      width: 10px;
+    }
+
+    #emergence-paper-cluster-map .epcm-chart-wrap {
+      margin-top: 6px;
+      position: relative;
+      width: 100%;
+    }
+
+    #emergence-paper-cluster-map .epcm-chart {
+      display: block;
+      overflow: visible;
+      width: 100%;
+    }
+
+    #emergence-paper-cluster-map .epcm-chart-frame {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 1;
+    }
+
+    #emergence-paper-cluster-map .epcm-axis {
+      color: var(--foreground);
+    }
+
+    #emergence-paper-cluster-map .epcm-axis .domain {
+      display: none;
+    }
+
+    #emergence-paper-cluster-map .epcm-axis line {
+      stroke: var(--border);
+    }
+
+    #emergence-paper-cluster-map .epcm-axis text,
+    #emergence-paper-cluster-map .epcm-axis-title,
+    #emergence-paper-cluster-map .epcm-cluster-label {
+      fill: var(--foreground);
+      font-size: 12px;
+      font-weight: 400;
+    }
+
+    #emergence-paper-cluster-map .epcm-cluster-label {
+      font-weight: 500;
+      paint-order: stroke;
+      pointer-events: none;
+      stroke: var(--background);
+      stroke-linejoin: round;
+      stroke-width: 4px;
+    }
+
+    #emergence-paper-cluster-map .epcm-point {
+      vector-effect: non-scaling-stroke;
+    }
+
+    #emergence-paper-cluster-map .epcm-hover-marker,
+    #emergence-paper-cluster-map .epcm-selected-marker {
+      fill: none;
+      pointer-events: none;
+      stroke: var(--foreground);
+      vector-effect: non-scaling-stroke;
+    }
+
+    #emergence-paper-cluster-map .epcm-hover-marker {
+      stroke-width: 1.5;
+    }
+
+    #emergence-paper-cluster-map .epcm-selected-marker {
+      stroke-width: 2;
+    }
+
+    #emergence-paper-cluster-map .epcm-hit {
+      fill: transparent;
+      pointer-events: all;
+    }
+
+    #emergence-paper-cluster-map .epcm-tooltip {
+      background: var(--popover);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--popover-foreground);
+      max-width: calc(100% - 16px);
+      padding: 8px 10px;
+      pointer-events: none;
+      position: absolute;
+      width: max-content;
+      z-index: 2;
+    }
+
+    #emergence-paper-cluster-map .epcm-tooltip[hidden] {
+      display: none;
+    }
+
+    #emergence-paper-cluster-map .epcm-tooltip-title {
+      font-weight: 500;
+      max-width: 320px;
+    }
+
+    #emergence-paper-cluster-map .epcm-tooltip-line {
+      margin-top: 3px;
+      max-width: 320px;
+    }
+
+    #emergence-paper-cluster-map .epcm-selection {
+      margin: 2px 0 0;
+      min-height: 1.5em;
+    }
+
+    #emergence-paper-cluster-map .epcm-caption {
+      margin: 4px 0 0;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      #emergence-paper-cluster-map .epcm-point,
+      #emergence-paper-cluster-map .epcm-cluster-label {
+        transition: opacity 160ms ease;
+      }
+    }
+  </style>
+
+  <div class="epcm-heading-row">
+    <h2 id="epcm-heading">Paper cluster map</h2>
+    <span id="epcm-count" class="text-small text-muted"></span>
+  </div>
+
+  <div class="viz-controls epcm-controls" aria-label="Map controls">
+    <label class="form-label" for="epcm-corpus">
+      Paper set
+      <select id="epcm-corpus" class="form-select">
+        <option value="included">Included papers (92)</option>
+        <option value="audited">All audited papers (333)</option>
+      </select>
+    </label>
+    <label class="form-label" for="epcm-method">
+      Representation
+      <select id="epcm-method" class="form-select">
+        <option value="semantic" selected>Semantic</option>
+        <option value="tfidf">TF-IDF</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="epcm-keyline">
+    <span class="text-small text-muted">Color identifies the macrocluster; select a legend item to hide or show it.</span>
+    <span id="epcm-status-key" class="epcm-status-key text-small text-muted" aria-label="Audit verdict symbols">
+      <span class="epcm-status-item"><span class="epcm-status-dot is-filled" aria-hidden="true"></span>Included</span>
+      <span class="epcm-status-item"><span class="epcm-status-dot" aria-hidden="true"></span>Excluded</span>
+    </span>
+  </div>
+
+  <div id="epcm-legend" class="epcm-legend" aria-label="Macrocluster legend"></div>
+
+  <div id="epcm-chart-wrap" class="epcm-chart-wrap">
+    <svg id="epcm-chart" class="epcm-chart" role="img" aria-labelledby="epcm-chart-title epcm-chart-description">
+      <title id="epcm-chart-title">Two-dimensional map of audited emergence papers</title>
+      <desc id="epcm-chart-description">Each dot is one paper. Dot color marks its macrocluster.</desc>
+    </svg>
+    <div id="epcm-tooltip" class="epcm-tooltip text-small" role="tooltip" hidden></div>
+  </div>
+
+  <p id="epcm-selection" class="epcm-selection text-small" aria-live="polite">Select a dot to pin its paper details.</p>
+  <p class="epcm-caption text-small text-muted">Classical MDS projection of cosine distances. Clusters were formed in the full feature space, so overlap and spacing in two dimensions are approximate.</p>
+
+  <script id="emergence-paper-cluster-map-data" type="application/json">__CLUSTER_MAP_DATA__</script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      var root = document.getElementById("emergence-paper-cluster-map");
+      if (!root) {
+        return;
+      }
+
+      var countLabel = root.querySelector("#epcm-count");
+      var corpusControl = root.querySelector("#epcm-corpus");
+      var methodControl = root.querySelector("#epcm-method");
+      var legend = root.querySelector("#epcm-legend");
+      var statusKey = root.querySelector("#epcm-status-key");
+      var chartWrap = root.querySelector("#epcm-chart-wrap");
+      var svgNode = root.querySelector("#epcm-chart");
+      var description = root.querySelector("#epcm-chart-description");
+      var tooltip = root.querySelector("#epcm-tooltip");
+      var selectionLine = root.querySelector("#epcm-selection");
+      var dataNode = document.getElementById("emergence-paper-cluster-map-data");
+
+      if (!window.d3 || !dataNode || !countLabel || !corpusControl || !methodControl ||
+          !legend || !statusKey || !chartWrap || !svgNode || !description ||
+          !tooltip || !selectionLine) {
+        selectionLine.textContent = "The paper map could not be initialized.";
+        return;
+      }
+
+      var payload = JSON.parse(dataNode.textContent);
+      var points = payload.rows.map(function (row) {
+        var item = {};
+        payload.columns.forEach(function (column, index) {
+          item[column] = row[index];
+        });
+        return item;
+      });
+      var d3 = window.d3;
+      var svg = d3.select(svgNode);
+      var seriesColors = [
+        "var(--viz-series-1)",
+        "var(--viz-series-2)",
+        "var(--viz-series-3)",
+        "var(--viz-series-4)",
+        "var(--viz-series-5)",
+        "var(--viz-series-6)"
+      ];
+      var state = {
+        corpus: corpusControl.value,
+        method: methodControl.value,
+        points: [],
+        activeClusters: new Set(),
+        selected: null
+      };
+      var resizeFrame = null;
+
+      function colorForCluster(cluster) {
+        var numericId = Number(cluster.slice(1));
+        return seriesColors[(numericId - 1) % seriesColors.length];
+      }
+
+      function readableToken(value) {
+        if (!value) {
+          return "";
+        }
+        return value
+          .toLowerCase()
+          .replaceAll("_", " ")
+          .replace(/\b\w/g, function (letter) { return letter.toUpperCase(); });
+      }
+
+      function paddedDomain(values) {
+        var extent = d3.extent(values);
+        var span = extent[1] - extent[0];
+        if (!Number.isFinite(span) || span === 0) {
+          span = 1;
+        }
+        var pad = span * 0.08;
+        return [extent[0] - pad, extent[1] + pad];
+      }
+
+      function renderSelection() {
+        if (!state.selected) {
+          selectionLine.textContent = "Select a dot to pin its paper details.";
+          return;
+        }
+        var paper = state.selected;
+        var year = paper.year ? " (" + paper.year + ")" : "";
+        selectionLine.textContent =
+          paper.title + year + " — " + paper.macro_cluster + " / " +
+          paper.subcluster + "; " + paper.supported_count + "/5 criteria supported.";
+      }
+
+      function hideTooltip() {
+        tooltip.hidden = true;
+      }
+
+      function addTooltipLine(text, className) {
+        var line = document.createElement("div");
+        line.className = className || "epcm-tooltip-line";
+        line.textContent = text;
+        tooltip.appendChild(line);
+      }
+
+      function showTooltip(event, paper) {
+        tooltip.replaceChildren();
+        var year = paper.year ? " (" + paper.year + ")" : "";
+        addTooltipLine(paper.title + year, "epcm-tooltip-title");
+        addTooltipLine(
+          paper.macro_cluster + " · " + paper.macro_label +
+          " | " + paper.subcluster + " · " + paper.subcluster_label
+        );
+        var auditParts = [readableToken(paper.verdict)];
+        if (paper.tier) {
+          auditParts.push(readableToken(paper.tier));
+        }
+        auditParts.push(paper.supported_count + "/5 criteria supported");
+        addTooltipLine(auditParts.join(" · "));
+        if (paper.supported_criteria) {
+          addTooltipLine("Supported: " + readableToken(paper.supported_criteria));
+        }
+        addTooltipLine(
+          "Silhouette: macro " + Number(paper.macro_silhouette).toFixed(3) +
+          " · subcluster " + Number(paper.subcluster_silhouette).toFixed(3)
+        );
+        tooltip.hidden = false;
+
+        var pointer = d3.pointer(event, chartWrap);
+        var tooltipBounds = tooltip.getBoundingClientRect();
+        var wrapBounds = chartWrap.getBoundingClientRect();
+        var left = pointer[0] + 12;
+        var top = pointer[1] - tooltipBounds.height - 12;
+        if (left + tooltipBounds.width > wrapBounds.width - 8) {
+          left = pointer[0] - tooltipBounds.width - 12;
+        }
+        if (top < 8) {
+          top = pointer[1] + 12;
+        }
+        left = Math.max(8, Math.min(left, wrapBounds.width - tooltipBounds.width - 8));
+        top = Math.max(8, top);
+        tooltip.style.left = left + "px";
+        tooltip.style.top = top + "px";
+      }
+
+      function drawLegend(clusterGroups) {
+        legend.replaceChildren();
+        clusterGroups.forEach(function (group) {
+          var button = document.createElement("button");
+          var swatch = document.createElement("span");
+          var label = document.createElement("span");
+          var cluster = group[0];
+          var members = group[1];
+          var clusterLabel = members[0].macro_label;
+          button.type = "button";
+          button.className = "epcm-legend-button text-small";
+          button.setAttribute("aria-pressed", "true");
+          button.setAttribute(
+            "aria-label",
+            cluster + ", " + clusterLabel + ", " + members.length + " papers"
+          );
+          swatch.className = "epcm-legend-swatch";
+          swatch.setAttribute("aria-hidden", "true");
+          swatch.style.setProperty("--epcm-cluster-color", colorForCluster(cluster));
+          label.textContent = cluster + " · " + clusterLabel + " (" + members.length + ")";
+          button.append(swatch, label);
+          button.addEventListener("click", function () {
+            if (state.activeClusters.has(cluster)) {
+              state.activeClusters.delete(cluster);
+              button.setAttribute("aria-pressed", "false");
+            } else {
+              state.activeClusters.add(cluster);
+              button.setAttribute("aria-pressed", "true");
+            }
+            hideTooltip();
+            renderChart();
+          });
+          legend.appendChild(button);
+        });
+      }
+
+      function nearestPoint(event, xScale, yScale, visiblePoints) {
+        var pointer = d3.pointer(event, svgNode);
+        var nearest = null;
+        var nearestDistance = Infinity;
+        visiblePoints.forEach(function (paper) {
+          var dx = xScale(paper.mds_x) - pointer[0];
+          var dy = yScale(paper.mds_y) - pointer[1];
+          var distanceSquared = dx * dx + dy * dy;
+          if (distanceSquared < nearestDistance) {
+            nearestDistance = distanceSquared;
+            nearest = paper;
+          }
+        });
+        return nearestDistance <= 24 * 24 ? nearest : null;
+      }
+
+      function renderChart() {
+        hideTooltip();
+        svg.selectAll("g, rect, circle, line, text").remove();
+
+        var width = Math.max(320, Math.round(chartWrap.getBoundingClientRect().width));
+        var height = width < 480 ? 430 : Math.min(580, Math.max(480, Math.round(width * 0.62)));
+        var margin = { top: 22, right: 22, bottom: 62, left: 68 };
+        var frameLeft = margin.left;
+        var frameRight = width - margin.right;
+        var frameTop = margin.top;
+        var frameBottom = height - margin.bottom;
+        var visiblePoints = state.points.filter(function (paper) {
+          return state.activeClusters.has(paper.macro_cluster);
+        });
+        var domainPoints = state.points.length ? state.points : [{ mds_x: 0, mds_y: 0 }];
+        var xScale = d3.scaleLinear()
+          .domain(paddedDomain(domainPoints.map(function (paper) { return paper.mds_x; })))
+          .range([frameLeft + 8, frameRight - 8]);
+        var yScale = d3.scaleLinear()
+          .domain(paddedDomain(domainPoints.map(function (paper) { return paper.mds_y; })))
+          .range([frameBottom - 8, frameTop + 8]);
+        var xTicks = width <= 360 ? 4 : 6;
+
+        svg
+          .attr("viewBox", "0 0 " + width + " " + height)
+          .attr("width", width)
+          .attr("height", height)
+          .style("height", height + "px")
+          .attr(
+            "aria-label",
+            state.points.length + " papers in the " + state.corpus +
+            " corpus using the " + state.method + " representation"
+          );
+        description.textContent =
+          "Each dot is one paper. Colors mark " +
+          new Set(state.points.map(function (paper) { return paper.macro_cluster; })).size +
+          " macroclusters; hover for the paper and its nested subcluster.";
+
+        svg.append("rect")
+          .attr("class", "epcm-chart-frame")
+          .attr("data-chart-frame", "")
+          .attr("x", frameLeft)
+          .attr("y", frameTop)
+          .attr("width", frameRight - frameLeft)
+          .attr("height", frameBottom - frameTop);
+
+        svg.append("g")
+          .attr("class", "epcm-axis")
+          .attr("transform", "translate(0," + frameBottom + ")")
+          .call(d3.axisBottom(xScale).ticks(xTicks).tickSizeOuter(0));
+
+        svg.append("g")
+          .attr("class", "epcm-axis")
+          .attr("transform", "translate(" + frameLeft + ",0)")
+          .call(d3.axisLeft(yScale).ticks(5).tickSizeOuter(0));
+
+        svg.append("text")
+          .attr("class", "epcm-axis-title")
+          .attr("data-axis", "x")
+          .attr("text-anchor", "middle")
+          .attr("x", (frameLeft + frameRight) / 2)
+          .attr("y", height - 12)
+          .text("MDS axis 1 (relative distance)");
+
+        svg.append("text")
+          .attr("class", "epcm-axis-title")
+          .attr("data-axis", "y")
+          .attr("text-anchor", "middle")
+          .attr("transform", "translate(16," + ((frameTop + frameBottom) / 2) + ") rotate(-90)")
+          .text("MDS axis 2 (relative distance)");
+
+        var orderedPoints = visiblePoints.slice().sort(function (left, right) {
+          return Number(left.verdict === "INCLUDE") - Number(right.verdict === "INCLUDE");
+        });
+        var pointLayer = svg.append("g").attr("aria-hidden", "true");
+        pointLayer.selectAll("circle")
+          .data(orderedPoints, function (paper) { return paper.work_id; })
+          .join("circle")
+          .attr("class", "epcm-point")
+          .attr("cx", function (paper) { return xScale(paper.mds_x); })
+          .attr("cy", function (paper) { return yScale(paper.mds_y); })
+          .attr("r", state.corpus === "audited" ? 3.8 : 4.7)
+          .attr("fill", function (paper) {
+            return paper.verdict === "INCLUDE"
+              ? colorForCluster(paper.macro_cluster)
+              : "var(--background)";
+          })
+          .attr("stroke", function (paper) {
+            return paper.verdict === "INCLUDE"
+              ? "var(--background)"
+              : colorForCluster(paper.macro_cluster);
+          })
+          .attr("stroke-width", function (paper) {
+            return paper.verdict === "INCLUDE" ? 0.8 : 1.35;
+          })
+          .attr("opacity", 0.86);
+
+        var grouped = d3.groups(visiblePoints, function (paper) {
+          return paper.macro_cluster;
+        }).sort(function (left, right) {
+          return d3.ascending(left[0], right[0]);
+        });
+        var clusterLayer = svg.append("g").attr("aria-hidden", "true");
+        clusterLayer.selectAll("text")
+          .data(grouped)
+          .join("text")
+          .attr("class", "epcm-cluster-label")
+          .attr("x", function (group) {
+            var meanX = d3.mean(group[1], function (paper) { return paper.mds_x; });
+            var meanY = d3.mean(group[1], function (paper) { return paper.mds_y; });
+            var anchor = d3.least(group[1], function (paper) {
+              return Math.pow(paper.mds_x - meanX, 2) + Math.pow(paper.mds_y - meanY, 2);
+            });
+            return xScale(anchor.mds_x) + 6;
+          })
+          .attr("y", function (group) {
+            var meanX = d3.mean(group[1], function (paper) { return paper.mds_x; });
+            var meanY = d3.mean(group[1], function (paper) { return paper.mds_y; });
+            var anchor = d3.least(group[1], function (paper) {
+              return Math.pow(paper.mds_x - meanX, 2) + Math.pow(paper.mds_y - meanY, 2);
+            });
+            return yScale(anchor.mds_y) - 6;
+          })
+          .text(function (group) { return group[0]; });
+
+        var selectedMarker = svg.append("circle")
+          .attr("class", "epcm-selected-marker")
+          .attr("r", 8)
+          .attr("display", "none");
+        if (
+          state.selected &&
+          state.activeClusters.has(state.selected.macro_cluster) &&
+          state.selected.corpus === state.corpus &&
+          state.selected.method === state.method
+        ) {
+          selectedMarker
+            .attr("cx", xScale(state.selected.mds_x))
+            .attr("cy", yScale(state.selected.mds_y))
+            .attr("display", null);
+        }
+
+        var hoverMarker = svg.append("circle")
+          .attr("class", "epcm-hover-marker")
+          .attr("data-chart-hover-marker", "")
+          .attr("r", 7)
+          .attr("display", "none");
+
+        svg.append("rect")
+          .attr("class", "epcm-hit")
+          .attr("data-chart-hit", "")
+          .attr("data-chart-hover-overlay", "nearest-point")
+          .attr("x", frameLeft)
+          .attr("y", frameTop)
+          .attr("width", frameRight - frameLeft)
+          .attr("height", frameBottom - frameTop)
+          .on("pointermove", function (event) {
+            var paper = nearestPoint(event, xScale, yScale, visiblePoints);
+            if (!paper) {
+              hoverMarker.attr("display", "none");
+              hideTooltip();
+              return;
+            }
+            hoverMarker
+              .attr("cx", xScale(paper.mds_x))
+              .attr("cy", yScale(paper.mds_y))
+              .attr("display", null);
+            showTooltip(event, paper);
+          })
+          .on("pointerleave", function () {
+            hoverMarker.attr("display", "none");
+            hideTooltip();
+          })
+          .on("click", function (event) {
+            var paper = nearestPoint(event, xScale, yScale, visiblePoints);
+            if (!paper) {
+              return;
+            }
+            state.selected = paper;
+            selectedMarker
+              .attr("cx", xScale(paper.mds_x))
+              .attr("cy", yScale(paper.mds_y))
+              .attr("display", null);
+            renderSelection();
+          });
+      }
+
+      function refreshView() {
+        state.corpus = corpusControl.value;
+        state.method = methodControl.value;
+        state.points = points.filter(function (paper) {
+          return paper.corpus === state.corpus && paper.method === state.method;
+        });
+        var groups = d3.groups(state.points, function (paper) {
+          return paper.macro_cluster;
+        }).sort(function (left, right) {
+          return d3.ascending(left[0], right[0]);
+        });
+        state.activeClusters = new Set(groups.map(function (group) { return group[0]; }));
+        state.selected = null;
+        countLabel.textContent =
+          state.points.length + " papers · " + groups.length + " macroclusters";
+        statusKey.classList.toggle("is-visible", state.corpus === "audited");
+        drawLegend(groups);
+        renderSelection();
+        renderChart();
+      }
+
+      corpusControl.addEventListener("change", refreshView);
+      methodControl.addEventListener("change", refreshView);
+
+      var resizeObserver = new ResizeObserver(function () {
+        if (resizeFrame !== null) {
+          cancelAnimationFrame(resizeFrame);
+        }
+        resizeFrame = requestAnimationFrame(function () {
+          resizeFrame = null;
+          renderChart();
+        });
+      });
+      resizeObserver.observe(chartWrap);
+
+      refreshView();
+    }());
+  </script>
+</section>

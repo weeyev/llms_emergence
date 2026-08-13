@@ -1,0 +1,15 @@
+{
+  "cache_digest": "52c8204f7f09a56f5a6e5a2730a08431f5a597ca76e34f5989bf7a100d5f09e1",
+  "chunk_overlap_tokens": 64,
+  "chunked_papers": 4,
+  "encoded_chunks": 429,
+  "max_sequence_length": 512,
+  "model_id": "BAAI/bge-base-en-v1.5",
+  "model_revision": "a5beb1e3e68b9ab74eb54cfd186867f64f240e1a",
+  "model_weight_sha256": "c7c1988aae201f80cf91a5dbbd5866409503b89dcaba877ca6dba7dd0a5167d7",
+  "prompt": "",
+  "shape": [
+    425,
+    768
+  ]
+}

@@ -1167,6 +1167,23 @@
       border-top: 1px solid var(--line);
     }
 
+    .full-sweep-frame-wrap {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .full-sweep-frame {
+      display: block;
+      width: 100%;
+      height: 940px;
+      border: 0;
+      background: var(--surface);
+      color-scheme: light;
+    }
+
     @media (max-width: 1120px) {
       .criteria {
         grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1259,6 +1276,10 @@
       .section-heading {
         grid-template-columns: 44px minmax(0, 1fr);
       }
+
+      .full-sweep-frame {
+        height: 1280px;
+      }
     }
   </style>
 </head>
@@ -1274,6 +1295,7 @@
         <a href="#audit-story"><span>01</span>Summary</a>
         <a href="#first-vetting"><span>02</span>1st vetting</a>
         <a href="#second-vetting"><span>03</span>2nd vetting</a>
+        <a href="#full-sweep-visual"><span>04</span>Full sweep visual</a>
       </nav>
       <p class="aside-note">Review frozen August 7, 2026. Scores describe scoped evidence for emergent capabilities—not broad emergent intelligence.</p>
     </aside>
@@ -1762,6 +1784,25 @@ does not pass, 1/5</code></pre>
           <strong>Interpretive limit:</strong> the complete Codex assessment remains visible alongside the stricter human score. None of the reviewed evidence establishes emergent intelligence.
         </div>
         </article>
+      </section>
+
+      <section id="full-sweep-visual">
+        <header class="report-header">
+          <div class="report-kicker">Full sweep · Cluster landscape</div>
+          <h2 class="report-title">Full sweep visual</h2>
+          <p class="report-lede">Each paper is a dot. Compare the 92 included papers with all 333 audited papers, and switch between semantic and TF-IDF layouts to inspect stable neighborhoods and boundary cases.</p>
+          <div class="report-meta"><span>333 papers audited</span><span>92 papers included</span><span>Semantic + TF-IDF views</span></div>
+        </header>
+        <div class="full-sweep-frame-wrap">
+          <iframe
+            class="full-sweep-frame"
+            src="full_sweep/clustering_analysis/outputs/cluster_map.html"
+            title="Interactive full-sweep paper cluster map"
+            loading="lazy"
+            sandbox="allow-scripts"
+            referrerpolicy="no-referrer"
+          ></iframe>
+        </div>
       </section>
 
       <p class="footer">Emergence literature audit · Review frozen August 7, 2026 · Source-level evidence remains linked from the vetting matrices.</p>
@@ -2437,11 +2478,13 @@ does not pass, 1/5</code></pre>
         links.forEach(link => {
           link.classList.toggle("active", link.getAttribute("href") === `#${target}`);
         });
+        const activeLink = links.find(link => link.getAttribute("href") === `#${target}`);
         const nextHash = anchor && requested !== target ? requested : target;
         if (window.location.hash !== `#${nextHash}`) {
           history.replaceState(null, "", `#${nextHash}`);
         }
         requestAnimationFrame(() => {
+          activeLink?.scrollIntoView({ block: "nearest", inline: "nearest" });
           if (scrollToAnchor && anchor && requested !== target) {
             anchor.scrollIntoView({ block: "start" });
           } else {

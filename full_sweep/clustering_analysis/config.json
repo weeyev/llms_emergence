@@ -1,0 +1,40 @@
+{
+  "random_seed": 20260813,
+  "evaluation_distance": "cosine",
+  "linkage": "ward",
+  "linkage_space": "euclidean on L2-normalized vectors",
+  "linkage_sensitivity": ["average", "complete", "weighted", "ward"],
+  "tfidf": {
+    "ngram_range": [1, 2],
+    "min_df": 2,
+    "max_df": 0.88,
+    "max_features": 12000,
+    "sublinear_tf": true
+  },
+  "semantic": {
+    "model_id": "BAAI/bge-base-en-v1.5",
+    "model_revision": "a5beb1e3e68b9ab74eb54cfd186867f64f240e1a",
+    "model_weight_sha256": "c7c1988aae201f80cf91a5dbbd5866409503b89dcaba877ca6dba7dd0a5167d7",
+    "embedding_dimensions": 768,
+    "max_sequence_length": 512,
+    "prompt": ""
+  },
+  "corpora": {
+    "included": {
+      "papers": 92,
+      "text_policy": "title plus SUPPORTED exact claims and supporting results",
+      "macro_clusters": 6,
+      "subclusters": 15,
+      "silhouette_scan_max_k": 20
+    },
+    "audited": {
+      "papers": 333,
+      "text_policy": "title plus all explicitly claimed exact claims and supporting results; abstract fallback",
+      "macro_clusters": 10,
+      "subclusters": 25,
+      "silhouette_scan_max_k": 35
+    }
+  },
+  "bootstrap_subsample_fraction": 0.8,
+  "bootstrap_runs": 100
+}

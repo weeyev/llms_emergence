@@ -1,0 +1,607 @@
+{
+  "corpora": {
+    "audited": {
+      "cross_method_macro": {
+        "adjusted_rand_index": 0.18006365044430586,
+        "coassignment_agreement": 0.7723868446760013,
+        "normalized_mutual_information": 0.36528203236324525,
+        "pairwise_distance_spearman": 0.4356265516280955,
+        "top_10_neighbor_overlap": 0.27927927927927926,
+        "top_5_neighbor_overlap": 0.24804804804804803
+      },
+      "cross_method_subcluster": {
+        "adjusted_rand_index": 0.1401434647596665,
+        "coassignment_agreement": 0.9159159159159159,
+        "normalized_mutual_information": 0.4628311456762384,
+        "pairwise_distance_spearman": 0.4356265516280955,
+        "top_10_neighbor_overlap": 0.27927927927927926,
+        "top_5_neighbor_overlap": 0.24804804804804803
+      },
+      "semantic": {
+        "cophenetic_correlation": 0.32443573173568496,
+        "linkage_sensitivity": [
+          {
+            "clusters": 10,
+            "corpus": "audited",
+            "level": "macro",
+            "linkage": "average",
+            "max_cluster_size": 323,
+            "method": "semantic",
+            "min_cluster_size": 1,
+            "silhouette": 0.09828813390550939,
+            "singleton_clusters": 8
+          },
+          {
+            "clusters": 25,
+            "corpus": "audited",
+            "level": "subcluster",
+            "linkage": "average",
+            "max_cluster_size": 274,
+            "method": "semantic",
+            "min_cluster_size": 1,
+            "silhouette": 0.008860741064230238,
+            "singleton_clusters": 11
+          },
+          {
+            "clusters": 10,
+            "corpus": "audited",
+            "level": "macro",
+            "linkage": "complete",
+            "max_cluster_size": 86,
+            "method": "semantic",
+            "min_cluster_size": 1,
+            "silhouette": 0.04044314094204585,
+            "singleton_clusters": 1
+          },
+          {
+            "clusters": 25,
+            "corpus": "audited",
+            "level": "subcluster",
+            "linkage": "complete",
+            "max_cluster_size": 44,
+            "method": "semantic",
+            "min_cluster_size": 1,
+            "silhouette": 0.053090895944234565,
+            "singleton_clusters": 5
+          },
+          {
+            "clusters": 10,
+            "corpus": "audited",
+            "level": "macro",
+            "linkage": "weighted",
+            "max_cluster_size": 277,
+            "method": "semantic",
+            "min_cluster_size": 1,
+            "silhouette": 0.045919018750864085,
+            "singleton_clusters": 5
+          },
+          {
+            "clusters": 25,
+            "corpus": "audited",
+            "level": "subcluster",
+            "linkage": "weighted",
+            "max_cluster_size": 129,
+            "method": "semantic",
+            "min_cluster_size": 1,
+            "silhouette": 0.048216680652018284,
+            "singleton_clusters": 10
+          },
+          {
+            "clusters": 10,
+            "corpus": "audited",
+            "level": "macro",
+            "linkage": "ward",
+            "max_cluster_size": 64,
+            "method": "semantic",
+            "min_cluster_size": 7,
+            "silhouette": 0.06515385756711067,
+            "singleton_clusters": 0
+          },
+          {
+            "clusters": 25,
+            "corpus": "audited",
+            "level": "subcluster",
+            "linkage": "ward",
+            "max_cluster_size": 28,
+            "method": "semantic",
+            "min_cluster_size": 2,
+            "silhouette": 0.06250836301494431,
+            "singleton_clusters": 0
+          }
+        ],
+        "macro": {
+          "bootstrap_stability": {
+            "mean_ari": 0.49753434308078404,
+            "min_ari": 0.373604629429827,
+            "p10_ari": 0.41392511819212874,
+            "runs": 100,
+            "std_ari": 0.06152807086727095,
+            "subsample_fraction": 0.8
+          },
+          "clusters": 10,
+          "max_cluster_size": 64,
+          "min_cluster_size": 7,
+          "silhouette": 0.06515385756711067,
+          "singleton_clusters": 0
+        },
+        "subcluster": {
+          "bootstrap_stability": {
+            "mean_ari": 0.48455633384316665,
+            "min_ari": 0.38262562649164544,
+            "p10_ari": 0.42413291314400053,
+            "runs": 100,
+            "std_ari": 0.04849742025690928,
+            "subsample_fraction": 0.8
+          },
+          "clusters": 25,
+          "max_cluster_size": 28,
+          "min_cluster_size": 2,
+          "silhouette": 0.06250836301494431,
+          "singleton_clusters": 0
+        }
+      },
+      "tfidf": {
+        "cophenetic_correlation": 0.2757341118170404,
+        "linkage_sensitivity": [
+          {
+            "clusters": 10,
+            "corpus": "audited",
+            "level": "macro",
+            "linkage": "average",
+            "max_cluster_size": 132,
+            "method": "tfidf",
+            "min_cluster_size": 2,
+            "silhouette": 0.01182087289258801,
+            "singleton_clusters": 0
+          },
+          {
+            "clusters": 25,
+            "corpus": "audited",
+            "level": "subcluster",
+            "linkage": "average",
+            "max_cluster_size": 64,
+            "method": "tfidf",
+            "min_cluster_size": 1,
+            "silhouette": 0.021121927301872186,
+            "singleton_clusters": 1
+          },
+          {
+            "clusters": 10,
+            "corpus": "audited",
+            "level": "macro",
+            "linkage": "complete",
+            "max_cluster_size": 229,
+            "method": "tfidf",
+            "min_cluster_size": 2,
+            "silhouette": -0.005685422231003218,
+            "singleton_clusters": 0
+          },
+          {
+            "clusters": 25,
+            "corpus": "audited",
+            "level": "subcluster",
+            "linkage": "complete",
+            "max_cluster_size": 88,
+            "method": "tfidf",
+            "min_cluster_size": 2,
+            "silhouette": 0.006142396666355276,
+            "singleton_clusters": 0
+          },
+          {
+            "clusters": 10,
+            "corpus": "audited",
+            "level": "macro",
+            "linkage": "weighted",
+            "max_cluster_size": 163,
+            "method": "tfidf",
+            "min_cluster_size": 2,
+            "silhouette": 0.005908411216715304,
+            "singleton_clusters": 0
+          },
+          {
+            "clusters": 25,
+            "corpus": "audited",
+            "level": "subcluster",
+            "linkage": "weighted",
+            "max_cluster_size": 64,
+            "method": "tfidf",
+            "min_cluster_size": 1,
+            "silhouette": 0.019516757141429995,
+            "singleton_clusters": 1
+          },
+          {
+            "clusters": 10,
+            "corpus": "audited",
+            "level": "macro",
+            "linkage": "ward",
+            "max_cluster_size": 128,
+            "method": "tfidf",
+            "min_cluster_size": 2,
+            "silhouette": 0.0132389672635089,
+            "singleton_clusters": 0
+          },
+          {
+            "clusters": 25,
+            "corpus": "audited",
+            "level": "subcluster",
+            "linkage": "ward",
+            "max_cluster_size": 32,
+            "method": "tfidf",
+            "min_cluster_size": 2,
+            "silhouette": 0.024577388100023283,
+            "singleton_clusters": 0
+          }
+        ],
+        "macro": {
+          "bootstrap_stability": {
+            "mean_ari": 0.33117015561383745,
+            "min_ari": 0.17303640705428844,
+            "p10_ari": 0.2438917544507621,
+            "runs": 100,
+            "std_ari": 0.08251810294929539,
+            "subsample_fraction": 0.8
+          },
+          "clusters": 10,
+          "max_cluster_size": 128,
+          "min_cluster_size": 2,
+          "silhouette": 0.0132389672635089,
+          "singleton_clusters": 0
+        },
+        "subcluster": {
+          "bootstrap_stability": {
+            "mean_ari": 0.31751244336983053,
+            "min_ari": 0.22582934382696773,
+            "p10_ari": 0.2731096772106372,
+            "runs": 100,
+            "std_ari": 0.0402168773197183,
+            "subsample_fraction": 0.8
+          },
+          "clusters": 25,
+          "max_cluster_size": 32,
+          "min_cluster_size": 2,
+          "silhouette": 0.024577388100023283,
+          "singleton_clusters": 0
+        }
+      }
+    },
+    "included": {
+      "cross_method_macro": {
+        "adjusted_rand_index": 0.4518476147423468,
+        "coassignment_agreement": 0.8377926421404682,
+        "normalized_mutual_information": 0.5999348141841839,
+        "pairwise_distance_spearman": 0.4244050855457544,
+        "top_10_neighbor_overlap": 0.49999999999999994,
+        "top_5_neighbor_overlap": 0.4369565217391305
+      },
+      "cross_method_subcluster": {
+        "adjusted_rand_index": 0.44653296838111556,
+        "coassignment_agreement": 0.9271380793119923,
+        "normalized_mutual_information": 0.7169086970024291,
+        "pairwise_distance_spearman": 0.4244050855457544,
+        "top_10_neighbor_overlap": 0.49999999999999994,
+        "top_5_neighbor_overlap": 0.4369565217391305
+      },
+      "semantic": {
+        "cophenetic_correlation": 0.4841575516816183,
+        "linkage_sensitivity": [
+          {
+            "clusters": 6,
+            "corpus": "included",
+            "level": "macro",
+            "linkage": "average",
+            "max_cluster_size": 32,
+            "method": "semantic",
+            "min_cluster_size": 1,
+            "silhouette": 0.11403729335093579,
+            "singleton_clusters": 1
+          },
+          {
+            "clusters": 15,
+            "corpus": "included",
+            "level": "subcluster",
+            "linkage": "average",
+            "max_cluster_size": 18,
+            "method": "semantic",
+            "min_cluster_size": 1,
+            "silhouette": 0.12751909399019795,
+            "singleton_clusters": 3
+          },
+          {
+            "clusters": 6,
+            "corpus": "included",
+            "level": "macro",
+            "linkage": "complete",
+            "max_cluster_size": 38,
+            "method": "semantic",
+            "min_cluster_size": 3,
+            "silhouette": 0.10642007388206273,
+            "singleton_clusters": 0
+          },
+          {
+            "clusters": 15,
+            "corpus": "included",
+            "level": "subcluster",
+            "linkage": "complete",
+            "max_cluster_size": 12,
+            "method": "semantic",
+            "min_cluster_size": 1,
+            "silhouette": 0.10537578428757192,
+            "singleton_clusters": 1
+          },
+          {
+            "clusters": 6,
+            "corpus": "included",
+            "level": "macro",
+            "linkage": "weighted",
+            "max_cluster_size": 23,
+            "method": "semantic",
+            "min_cluster_size": 7,
+            "silhouette": 0.10261831068429898,
+            "singleton_clusters": 0
+          },
+          {
+            "clusters": 15,
+            "corpus": "included",
+            "level": "subcluster",
+            "linkage": "weighted",
+            "max_cluster_size": 17,
+            "method": "semantic",
+            "min_cluster_size": 1,
+            "silhouette": 0.11504486296121502,
+            "singleton_clusters": 2
+          },
+          {
+            "clusters": 6,
+            "corpus": "included",
+            "level": "macro",
+            "linkage": "ward",
+            "max_cluster_size": 20,
+            "method": "semantic",
+            "min_cluster_size": 7,
+            "silhouette": 0.11343421649750775,
+            "singleton_clusters": 0
+          },
+          {
+            "clusters": 15,
+            "corpus": "included",
+            "level": "subcluster",
+            "linkage": "ward",
+            "max_cluster_size": 11,
+            "method": "semantic",
+            "min_cluster_size": 2,
+            "silhouette": 0.11524420147269153,
+            "singleton_clusters": 0
+          }
+        ],
+        "macro": {
+          "bootstrap_stability": {
+            "mean_ari": 0.5946319362422967,
+            "min_ari": 0.3120354917562261,
+            "p10_ari": 0.4523652348280301,
+            "runs": 100,
+            "std_ari": 0.11316436340486499,
+            "subsample_fraction": 0.8
+          },
+          "clusters": 6,
+          "max_cluster_size": 20,
+          "min_cluster_size": 7,
+          "silhouette": 0.11343421649750775,
+          "singleton_clusters": 0
+        },
+        "subcluster": {
+          "bootstrap_stability": {
+            "mean_ari": 0.6484035218516603,
+            "min_ari": 0.45275558118461157,
+            "p10_ari": 0.5426499472477534,
+            "runs": 100,
+            "std_ari": 0.07642320429678151,
+            "subsample_fraction": 0.8
+          },
+          "clusters": 15,
+          "max_cluster_size": 11,
+          "min_cluster_size": 2,
+          "silhouette": 0.11524420147269153,
+          "singleton_clusters": 0
+        }
+      },
+      "tfidf": {
+        "cophenetic_correlation": 0.5231164931965573,
+        "linkage_sensitivity": [
+          {
+            "clusters": 6,
+            "corpus": "included",
+            "level": "macro",
+            "linkage": "average",
+            "max_cluster_size": 25,
+            "method": "tfidf",
+            "min_cluster_size": 1,
+            "silhouette": 0.0354341640006818,
+            "singleton_clusters": 1
+          },
+          {
+            "clusters": 15,
+            "corpus": "included",
+            "level": "subcluster",
+            "linkage": "average",
+            "max_cluster_size": 14,
+            "method": "tfidf",
+            "min_cluster_size": 1,
+            "silhouette": 0.0559541519913866,
+            "singleton_clusters": 1
+          },
+          {
+            "clusters": 6,
+            "corpus": "included",
+            "level": "macro",
+            "linkage": "complete",
+            "max_cluster_size": 43,
+            "method": "tfidf",
+            "min_cluster_size": 5,
+            "silhouette": 0.021354958024329143,
+            "singleton_clusters": 0
+          },
+          {
+            "clusters": 15,
+            "corpus": "included",
+            "level": "subcluster",
+            "linkage": "complete",
+            "max_cluster_size": 12,
+            "method": "tfidf",
+            "min_cluster_size": 3,
+            "silhouette": 0.054864764361850435,
+            "singleton_clusters": 0
+          },
+          {
+            "clusters": 6,
+            "corpus": "included",
+            "level": "macro",
+            "linkage": "weighted",
+            "max_cluster_size": 26,
+            "method": "tfidf",
+            "min_cluster_size": 4,
+            "silhouette": 0.041340614570174086,
+            "singleton_clusters": 0
+          },
+          {
+            "clusters": 15,
+            "corpus": "included",
+            "level": "subcluster",
+            "linkage": "weighted",
+            "max_cluster_size": 14,
+            "method": "tfidf",
+            "min_cluster_size": 2,
+            "silhouette": 0.06089979119730927,
+            "singleton_clusters": 0
+          },
+          {
+            "clusters": 6,
+            "corpus": "included",
+            "level": "macro",
+            "linkage": "ward",
+            "max_cluster_size": 23,
+            "method": "tfidf",
+            "min_cluster_size": 6,
+            "silhouette": 0.043517343724524545,
+            "singleton_clusters": 0
+          },
+          {
+            "clusters": 15,
+            "corpus": "included",
+            "level": "subcluster",
+            "linkage": "ward",
+            "max_cluster_size": 12,
+            "method": "tfidf",
+            "min_cluster_size": 2,
+            "silhouette": 0.06025045275299782,
+            "singleton_clusters": 0
+          }
+        ],
+        "macro": {
+          "bootstrap_stability": {
+            "mean_ari": 0.5530894236577735,
+            "min_ari": 0.268923261334865,
+            "p10_ari": 0.38867402614207663,
+            "runs": 100,
+            "std_ari": 0.12925532111489726,
+            "subsample_fraction": 0.8
+          },
+          "clusters": 6,
+          "max_cluster_size": 23,
+          "min_cluster_size": 6,
+          "silhouette": 0.043517343724524545,
+          "singleton_clusters": 0
+        },
+        "subcluster": {
+          "bootstrap_stability": {
+            "mean_ari": 0.5878451404107724,
+            "min_ari": 0.3864956229562541,
+            "p10_ari": 0.4552531057920817,
+            "runs": 100,
+            "std_ari": 0.0854967423375226,
+            "subsample_fraction": 0.8
+          },
+          "clusters": 15,
+          "max_cluster_size": 12,
+          "min_cluster_size": 2,
+          "silhouette": 0.06025045275299782,
+          "singleton_clusters": 0
+        }
+      }
+    }
+  },
+  "run": {
+    "config": {
+      "bootstrap_runs": 100,
+      "bootstrap_subsample_fraction": 0.8,
+      "corpora": {
+        "audited": {
+          "macro_clusters": 10,
+          "papers": 333,
+          "silhouette_scan_max_k": 35,
+          "subclusters": 25,
+          "text_policy": "title plus all explicitly claimed exact claims and supporting results; abstract fallback"
+        },
+        "included": {
+          "macro_clusters": 6,
+          "papers": 92,
+          "silhouette_scan_max_k": 20,
+          "subclusters": 15,
+          "text_policy": "title plus SUPPORTED exact claims and supporting results"
+        }
+      },
+      "evaluation_distance": "cosine",
+      "linkage": "ward",
+      "linkage_sensitivity": [
+        "average",
+        "complete",
+        "weighted",
+        "ward"
+      ],
+      "linkage_space": "euclidean on L2-normalized vectors",
+      "random_seed": 20260813,
+      "semantic": {
+        "embedding_dimensions": 768,
+        "max_sequence_length": 512,
+        "model_id": "BAAI/bge-base-en-v1.5",
+        "model_revision": "a5beb1e3e68b9ab74eb54cfd186867f64f240e1a",
+        "model_weight_sha256": "c7c1988aae201f80cf91a5dbbd5866409503b89dcaba877ca6dba7dd0a5167d7",
+        "prompt": ""
+      },
+      "tfidf": {
+        "max_df": 0.88,
+        "max_features": 12000,
+        "min_df": 2,
+        "ngram_range": [
+          1,
+          2
+        ],
+        "sublinear_tf": true
+      }
+    },
+    "database": "/Users/vihantiwari/Documents/emergence_llms/full_sweep/data/sweep.sqlite",
+    "database_sha256": "484b5db32a51ae6a3d00cce5d3af4956f4f3e779e0b48dda6db7b485d49afbbd",
+    "python": "3.12.13 (main, Aug  7 2026, 02:15:23) [Clang 22.1.3 ]",
+    "semantic": {
+      "cache_digest": "52c8204f7f09a56f5a6e5a2730a08431f5a597ca76e34f5989bf7a100d5f09e1",
+      "chunk_overlap_tokens": 64,
+      "chunked_papers": 4,
+      "embedding_dimensions": 768,
+      "encoded_chunks": 429,
+      "encoding_or_cache_load_seconds": 0.0,
+      "max_sequence_length": 512,
+      "model_id": "BAAI/bge-base-en-v1.5",
+      "model_revision": "a5beb1e3e68b9ab74eb54cfd186867f64f240e1a",
+      "model_weight_sha256": "c7c1988aae201f80cf91a5dbbd5866409503b89dcaba877ca6dba7dd0a5167d7",
+      "prompt": ""
+    },
+    "versions": {
+      "matplotlib": "3.11.1",
+      "numpy": "2.5.2",
+      "scikit-learn": "1.9.0",
+      "scipy": "1.18.0",
+      "sentence-transformers": "5.7.0",
+      "torch": "2.13.0",
+      "transformers": "5.15.0"
+    }
+  }
+}

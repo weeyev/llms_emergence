@@ -1,0 +1,851 @@
+corpus	method	work_id	title	year	verdict	tier	claimed_count	supported_count	supported_criteria	macro_cluster	subcluster	macro_silhouette	subcluster_silhouette
+included	tfidf	w_c05624cc0be4c2cb	A jamming transition from under- to over-parametrization affects generalization in deep learning	2018	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M03	S06	-0.037178	-0.039906
+included	tfidf	w_f94f564014be4c25	A Mechanistic Analysis of Transformers for Dynamical Systems	2025	INCLUDE	TIER_2	0	2	SCALING,COMPRESSION	M04	S11	0.063756	0.191447
+included	tfidf	w_3f7299052e18118d	A Neural Network Model of Free Recall Learns Multiple Memory Strategies	2026	INCLUDE	TIER_2	3	2	COMPRESSION,NOVEL_BASIS	M05	S13	0.013732	-0.034777
+included	tfidf	w_07d5eb02f4e65497	A phase transition between positional and semantic learning in a solvable model of dot-product attention	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M02	S03	0.049283	0.146243
+included	tfidf	w_ee7cdd8c7d281656	A simple model of co-emergence of grid and place fields	2026	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M05	S12	0.039127	0.045645
+included	tfidf	w_92e78fbf258ed40a	Assign and Add: A Mechanistic Study of Compositional Arithmetic	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M05	S13	-0.059809	-0.080087
+included	tfidf	w_7642d8c74152ab9f	Attention-Head Binding as a Term-Conditioned Mechanistic Marker of Accessibility Concept Emergence in Language Models	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M01	S02	0.04827	0.014705
+included	tfidf	w_3d415e237f7c4f65	Autocorrelations from emergent bistability in homeostatic spiking neural networks on neuromorphic hardware	2022	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M06	S14	0.216416	0.166478
+included	tfidf	w_3144bdd83cd17ac0	Automated construction of cognitive maps with visual predictive coding	2024	INCLUDE	TIER_2	1	2	COMPRESSION,NOVEL_BASIS	M05	S12	0.042693	0.027646
+included	tfidf	w_0ff86e6a31e1d145	Balancing Stability and Flow in Hippocampal Networks via Inductive Bias and Learned Symmetry Breaking	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M05	S12	0.01441	0.0482
+included	tfidf	w_47f0ccb3e2ec3eac	Beyond Induction Heads: In-Context Meta Learning Induces Multi-Phase Circuit Emergence	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M01	S01	0.067587	0.078513
+included	tfidf	w_63db75cd5e03c2b8	Bridging Lottery Ticket and Grokking: Understanding Grokking from Inner Structure of Networks	2023	INCLUDE	TIER_1	2	3	SCALING,CRITICALITY,NOVEL_BASIS	M03	S07	0.068743	-0.029068
+included	tfidf	w_584c8d983c92b47f	Circuit Synchronization Precedes Generalization: A Causal Precursor to Grokking	2026	INCLUDE	TIER_2	3	2	SCALING,NOVEL_BASIS	M03	S07	0.057518	0.016902
+included	tfidf	w_679c49d202c94f8e	Control of criticality and computation in spiking neuromorphic networks with plasticity	2019	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M06	S14	0.210872	0.199987
+included	tfidf	w_3a9d20d4ea381a66	Critical dynamics in associative memory networks	2013	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M06	S15	0.192393	0.488456
+included	tfidf	w_d18730b289f06c03	Critical dynamics in homeostatic memory networks	2011	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M06	S15	0.217567	0.467414
+included	tfidf	w_811a8cd021958e82	Deep Networks Always Grok and Here is Why	2024	INCLUDE	TIER_2	2	3	SCALING,CRITICALITY,NOVEL_BASIS	M02	S04	0.029281	0.043985
+included	tfidf	w_a6027fec6ac3ab9a	Differential learning kinetics govern the transition from memorization to generalization during in-context learning	2024	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M01	S01	0.011227	-0.022783
+included	tfidf	w_8af770f5f86d5ac0	Distinct mechanisms underlying in-context learning in transformers	2026	INCLUDE	TIER_1	3	3	SCALING,CRITICALITY,NOVEL_BASIS	M01	S01	0.042433	0.0587
+included	tfidf	w_848983c423304f71	Emergence and Effectiveness of Task Vectors in In-Context Learning: An Encoder Decoder Perspective	2024	INCLUDE	TIER_2	1	2	SCALING,COMPRESSION	M01	S01	0.040872	0.0395
+included	tfidf	w_a68de8b27948098c	Emergence and Function of Abstract Representations in Self-Supervised Transformers	2023	INCLUDE	TIER_2	3	2	COMPRESSION,NOVEL_BASIS	M04	S09	0.039108	0.001244
+included	tfidf	w_a6ec62ef7863cd72	Emergence of Foveal Image Sampling from Learning to Attend in Visual Scenes	2017	INCLUDE	TIER_2	3	2	COMPRESSION,NOVEL_BASIS	M05	S13	0.00275	-0.015524
+included	tfidf	w_ab07437d78318352	Emergence of functional and structural properties of the head direction system by optimization of recurrent neural networks	2019	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M05	S12	0.019971	0.026559
+included	tfidf	w_aaa017a83700f80c	Emergence of Invariance and Disentanglement in Deep Representations	2017	INCLUDE	TIER_2	4	2	COMPRESSION,CRITICALITY	M03	S05	0.006096	0.079535
+included	tfidf	w_7209270e01aef2a8	Emergent Capabilities Arise Randomly from Learning Sparse Attention Patterns	2026	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M01	S02	0.023379	0.028775
+included	tfidf	w_4ea8cb6a3b5fed46	Emergent Generalization by Representation Learning in Artificial Neural Networks	2026	INCLUDE	TIER_2	4	2	SCALING,COMPRESSION	M03	S05	0.024808	0.047316
+included	tfidf	w_f6a044308e277e6f	Emergent mechanisms for long timescales depend on training curriculum and affect performance in memory tasks	2023	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M05	S13	0.019422	0.014052
+included	tfidf	w_e219fcd05aa4ac72	Emergent Symbol-like Number Variables in Artificial Neural Networks	2025	INCLUDE	TIER_2	3	2	SCALING,NOVEL_BASIS	M04	S09	0.03011	0.045432
+included	tfidf	w_cb00fb1bab7f3b7f	Emergent Symbolic Mechanisms Support Abstract Reasoning in Large Language Models	2025	INCLUDE	TIER_1	1	3	COMPRESSION,NOVEL_BASIS,GENERALISATION	M04	S09	0.036155	0.131336
+included	tfidf	w_63d2efb7962dd788	Evolving reservoir computers reveal bidirectional coupling between predictive power and emergent dynamics	2026	INCLUDE	TIER_2	1	2	SCALING,COMPRESSION	M05	S12	-0.001307	-0.011615
+included	tfidf	w_0daa43451a63b0d5	Excitatory-inhibitory recurrent dynamics produce robust visual grids and stable attractors	2022	INCLUDE	TIER_2	3	2	COMPRESSION,NOVEL_BASIS	M05	S13	0.037374	-0.01648
+included	tfidf	w_cddfb17d263e3744	Explaining Grokking and Information Bottleneck through Neural Collapse Emergence	2025	INCLUDE	TIER_2	4	2	SCALING,COMPRESSION	M03	S05	0.041845	0.112165
+included	tfidf	w_45a112f0ccfe5c13	Feature emergence via margin maximization: case studies in algebraic tasks	2023	INCLUDE	TIER_1	2	3	SCALING,COMPRESSION,NOVEL_BASIS	M03	S06	0.03068	0.095105
+included	tfidf	w_87462cebc24e3c1e	From movement to cognitive maps: recurrent neural networks reveal how locomotor development shapes hippocampal spatial coding	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M05	S12	0.054423	0.097386
+included	tfidf	w_27f0a0911b68ee3a	Gradient-based learning drives robust representations in recurrent neural networks by balancing compression and expansion	2022	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M05	S13	0.044963	-0.01927
+included	tfidf	w_35bf58ca4093d76e	Grokking and epoch-wise double descent in quantum neural networks	2026	INCLUDE	TIER_2	4	3	SCALING,COMPRESSION,CRITICALITY	M03	S06	0.046055	0.035606
+included	tfidf	w_9db7d6568bb89686	Grokking as a First Order Phase Transition in Two Layer Networks	2023	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M02	S03	0.071766	0.182733
+included	tfidf	w_8a9381903c1dcd61	Grokking as an entanglement transition in tensor network machine learning	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M03	S07	-0.010741	-0.01054
+included	tfidf	w_2b77293cdef4c93f	Grokking as Structural Inference: Transformers Need Bayesian Lottery Tickets	2026	INCLUDE	TIER_2	3	2	SCALING,NOVEL_BASIS	M04	S10	0.041899	0.13645
+included	tfidf	w_055282d4fa8fa8da	Grokking Beyond the Euclidean Norm of Model Parameters	2025	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M03	S07	0.042427	0.000303
+included	tfidf	w_cbbadc97bc1c553c	Hippocampal representations emerge when training recurrent neural networks on a memory dependent maze navigation task	2020	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M05	S12	0.058264	0.048033
+included	tfidf	w_8d71fca6fabfe6c0	How do language models learn facts? Dynamics, curricula and hallucinations	2025	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M01	S02	0.013827	-0.014734
+included	tfidf	w_83ff2605b95d13cd	How Do LLMs Acquire New Knowledge? A Knowledge Circuits Perspective on Continual Pre-Training	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M01	S02	0.023109	0.029975
+included	tfidf	w_988674ea0e8c1cb7	How Does Controllability Emerge In Language Models During Pretraining?	2025	INCLUDE	TIER_2	1	2	SCALING,COMPRESSION	M01	S02	0.001625	-0.000447
+included	tfidf	w_6d9aedbcf0365751	How Does Unfaithful Reasoning Emerge from Autoregressive Training? A Study of Synthetic Experiments	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M01	S02	-0.015292	-0.033943
+included	tfidf	w_c0722915b2be1f88	How to Tame Grokking: Representation Geometry as a Control Signal	2026	INCLUDE	TIER_1	2	3	SCALING,COMPRESSION,CRITICALITY	M03	S07	0.036541	0.062225
+included	tfidf	w_e93a08062ac7d030	How Transformers Learn Causal Structure with Gradient Descent	2024	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M04	S10	0.098002	0.129492
+included	tfidf	w_3addefc2ae588ee1	How Transformers Learn to Plan via Multi-Token Prediction	2026	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M04	S10	0.060395	0.192628
+included	tfidf	w_6fc4c4ab9c9916f7	Hysteresis, neural avalanches, and critical behavior near a first-order transition of a spiking neural network	2018	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M06	S14	0.164255	0.139375
+included	tfidf	w_86f10686a7226020	ILDR: Geometric Early Detection of Grokking	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M03	S07	0.047076	0.021598
+included	tfidf	w_c053dda032e0c8cc	Is Random Attention Sufficient for Sequence Modeling? Disentangling Trainable Components in the Transformer	2025	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M04	S09	0.03412	0.023397
+included	tfidf	w_01e15d37549ba1fc	Latent Algorithmic Structure Precedes Grokking: A Mechanistic Study of ReLU MLPs on Modular Arithmetic	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M02	S04	-0.013443	-0.039746
+included	tfidf	w_1414f43f732405e6	Learning through atypical phase transitions in overparameterized neural networks	2022	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M02	S04	0.081514	-0.004129
+included	tfidf	w_9f65ba32c1a08d74	Low-Dimensional and Transversely Curved Optimization Dynamics in Grokking	2026	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M03	S07	0.021771	-0.022057
+included	tfidf	w_5cfae990f2e4ea0e	Multiple-Timescale Neural Networks: Generation of History-Dependent Sequences and Inference Through Autonomous Bifurcations	2021	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M05	S13	0.030453	0.014113
+included	tfidf	w_c31a237682405c3b	Noise-Driven Escape from Metastable Phases explains Grokking in Deep Neural Networks	2026	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M02	S04	0.021601	0.002725
+included	tfidf	w_0308d55890a5b9c6	On the Emergence of Induction Heads for In-Context Learning	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M01	S01	0.023939	0.031418
+included	tfidf	w_25ba5099b834e43a	On the Mechanism and Dynamics of Modular Addition: Fourier Features, Lottery Ticket, and Grokking	2026	INCLUDE	TIER_1	1	3	SCALING,COMPRESSION,NOVEL_BASIS	M03	S06	0.03142	-0.012341
+included	tfidf	w_6ffbda57ab6a27ae	Optimal reinforcement learning near the edge of a synchronization transition	2022	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M06	S14	0.136915	0.01872
+included	tfidf	w_dff3d1da5e63f8e0	Phase Transitions in Attention: A Bayesian Theory of Copy Head Emergence	2026	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M02	S03	0.076079	0.130216
+included	tfidf	w_e290bc51cfc6cc89	Phase transitions reveal hierarchical structure in deep neural networks	2025	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M02	S04	0.047728	0.032319
+included	tfidf	w_b19041cd869bacfa	Post-Grokking Collapse at the Representation-Readout Interface in Muon-Trained Transformers	2026	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M03	S05	0.047971	-0.007011
+included	tfidf	w_85b812c5c78e647c	Predicting the Emergence of Induction Heads in Language Model Pretraining	2025	INCLUDE	TIER_2	1	2	SCALING,CRITICALITY	M01	S01	0.05988	0.070418
+included	tfidf	w_d27b97e00fa37f8b	Prediction horizon shapes representations in predictive learning	2025	INCLUDE	TIER_2	4	3	SCALING,COMPRESSION,NOVEL_BASIS	M04	S11	0.04668	0.097347
+included	tfidf	w_0c85822618800428	Predictive learning as a network mechanism for extracting low-dimensional latent space representations	2021	INCLUDE	TIER_1	2	3	SCALING,COMPRESSION,NOVEL_BASIS	M04	S11	0.013949	0.072583
+included	tfidf	w_cf357442f5aa7893	Predictive pursuit emerges in high-dimensional recurrent neural networks	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M05	S12	0.058302	0.072216
+included	tfidf	w_e1dd76d318faa330	Predictive sequence learning in the hippocampal formation	2024	INCLUDE	TIER_2	1	3	SCALING,COMPRESSION,NOVEL_BASIS	M05	S12	0.051084	0.054858
+included	tfidf	w_f3172e652cebe4b6	Progress Measures for Grokking via Mechanistic Interpretability	2023	INCLUDE	TIER_1	5	4	SCALING,CRITICALITY,COMPRESSION,NOVEL_BASIS	M03	S06	0.053209	0.045776
+included	tfidf	w_248da8719a3b92f1	Quantum-data-driven dynamical transition in quantum learning	2024	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M05	S13	-0.042464	-0.03932
+included	tfidf	w_34505df745b929e9	Random noise promotes slow heterogeneous synaptic dynamics important for robust working memory computation	2025	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M05	S13	0.000424	-0.006901
+included	tfidf	w_71088ab66e735f6d	Recurrent Neural Networks Learn to Store and Generate Sequences using Non-Linear Representations	2024	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M05	S13	0.018484	-0.043088
+included	tfidf	w_67833e8bc8bb92f5	Redundant representations help generalization in wide neural networks * , †	2023	INCLUDE	TIER_2	2	3	SCALING,COMPRESSION,CRITICALITY	M03	S06	0.008705	0.001696
+included	tfidf	w_de78b34865a33cc1	Sequential predictive learning is a unifying theory for hippocampal representation and replay	2024	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M05	S12	0.05345	0.070936
+included	tfidf	w_38e23f5995c71d9b	Spatial reasoning via recurrent neural dynamics in mouse retrosplenial cortex	2025	INCLUDE	TIER_2	2	3	SCALING,COMPRESSION,NOVEL_BASIS	M05	S12	0.0327	0.039719
+included	tfidf	w_b1a722c7add3a18c	Specialization of softmax attention heads: insights from the high-dimensional single-location model	2026	INCLUDE	TIER_2	1	2	SCALING,CRITICALITY	M02	S03	0.043491	0.136983
+included	tfidf	w_a124ea491b1e38a3	Spectral Entropy Collapse as a Phase Transition in Delayed Generalisation: An Interventional and Predictive Framework for Grokkin	2026	INCLUDE	TIER_2	4	2	SCALING,COMPRESSION	M03	S07	0.047967	0.047752
+included	tfidf	w_8c5442dfb760aae0	Spectral phase transitions and trainability in neural network learning dynamics	2026	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M02	S04	0.032427	0.013783
+included	tfidf	w_4ec0813caf380920	Structure-Specific Representational Priors Causally Control the Grokking Delay	2026	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M03	S07	0.017719	0.038515
+included	tfidf	w_5c54f66764cf4f97	Temporal hierarchy in spiking neural networks	2024	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M05	S13	-0.013704	-0.017625
+included	tfidf	w_f05eeedb3d84fbb7	The Geometry of Multi-Task Grokking: Transverse Instability, Superposition, and Weight Decay Phase Structure	2026	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M03	S08	0.043379	0.36594
+included	tfidf	w_e0964d9cc077c1f7	The Kinetics of Training: A Driven-Nucleation Rate Law for Emergence, Plasticity Loss, and Circuit Control in Language Models	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M01	S02	0.044917	0.043527
+included	tfidf	w_4ae2e575bb61224a	The mechanistic basis of data dependence and abrupt learning in an in-context classification task	2023	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M01	S01	0.070529	0.098959
+included	tfidf	w_97808c92883566a2	Thinking Sparks!: Emergent Attention Heads in Reasoning Models During Post Training	2025	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M01	S02	0.027573	0.016032
+included	tfidf	w_5fc248e95ef96553	Towards Empirical Interpretation of Internal Circuits and Properties in Grokked Transformers on Modular Polynomials	2024	INCLUDE	TIER_2	1	2	SCALING,COMPRESSION	M03	S06	0.054621	0.079068
+included	tfidf	w_29ea95f17f21c7ac	Transformers for dynamical systems learn transfer operators in-context	2026	INCLUDE	TIER_2	4	2	NOVEL_BASIS,GENERALISATION	M04	S11	0.080258	0.02822
+included	tfidf	w_7478c4587d99ea18	Unveiling Transformers with LEGO: a synthetic reasoning task	2022	INCLUDE	TIER_2	1	3	SCALING,NOVEL_BASIS,GENERALISATION	M04	S09	0.036579	0.007573
+included	tfidf	w_f5f5600670f31041	Weight Decay Regimes in Grokking Transformers: Cheap Online Diagnostics	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M03	S08	0.024755	0.402003
+included	tfidf	w_7afa59979906b85f	What Needs to Go Right for an Induction Head? A Mechanistic Study of In-Context Learning Circuits and Their Formation	2024	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M01	S01	0.051373	0.053691
+included	tfidf	w_33b529766cc60dd2	What One Cannot, Two Can: Two-Layer Transformers Provably Represent Induction Heads on Any-Order Markov Chains	2025	INCLUDE	TIER_2	3	2	COMPRESSION,SCALING	M01	S01	0.012932	0.030475
+included	tfidf	w_5362be8fefcfa6c2	When and Where: A Model Hippocampal Network Unifies Formation of Time Cells and Place Cells	2026	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M05	S12	0.047009	0.075804
+included	tfidf	w_b1b2841abfaf8ef2	Which Attention Heads Matter for In-Context Learning?	2025	INCLUDE	TIER_2	5	2	SCALING,COMPRESSION	M01	S01	0.064089	0.086381
+included	tfidf	w_9f42a69c53e47f06	Why the Brain Consolidates: Predictive Forgetting for Optimal Generalisation	2026	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M03	S05	0.00503	0.070124
+included	semantic	w_c05624cc0be4c2cb	A jamming transition from under- to over-parametrization affects generalization in deep learning	2018	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M06	S14	0.046274	0.110149
+included	semantic	w_f94f564014be4c25	A Mechanistic Analysis of Transformers for Dynamical Systems	2025	INCLUDE	TIER_2	0	2	SCALING,COMPRESSION	M04	S09	0.061023	-0.079748
+included	semantic	w_3f7299052e18118d	A Neural Network Model of Free Recall Learns Multiple Memory Strategies	2026	INCLUDE	TIER_2	3	2	COMPRESSION,NOVEL_BASIS	M01	S02	-0.068887	-0.028572
+included	semantic	w_07d5eb02f4e65497	A phase transition between positional and semantic learning in a solvable model of dot-product attention	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M06	S12	-0.084564	0.083436
+included	semantic	w_ee7cdd8c7d281656	A simple model of co-emergence of grid and place fields	2026	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M02	S04	0.249712	0.25675
+included	semantic	w_92e78fbf258ed40a	Assign and Add: A Mechanistic Study of Compositional Arithmetic	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M05	S11	0.02303	0.22426
+included	semantic	w_7642d8c74152ab9f	Attention-Head Binding as a Term-Conditioned Mechanistic Marker of Accessibility Concept Emergence in Language Models	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M03	S06	0.17568	0.017119
+included	semantic	w_3d415e237f7c4f65	Autocorrelations from emergent bistability in homeostatic spiking neural networks on neuromorphic hardware	2022	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M01	S01	0.259354	0.34633
+included	semantic	w_3144bdd83cd17ac0	Automated construction of cognitive maps with visual predictive coding	2024	INCLUDE	TIER_2	1	2	COMPRESSION,NOVEL_BASIS	M02	S05	0.308845	0.003616
+included	semantic	w_0ff86e6a31e1d145	Balancing Stability and Flow in Hippocampal Networks via Inductive Bias and Learned Symmetry Breaking	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M01	S03	-0.024927	-0.148151
+included	semantic	w_47f0ccb3e2ec3eac	Beyond Induction Heads: In-Context Meta Learning Induces Multi-Phase Circuit Emergence	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M03	S07	0.116215	0.335996
+included	semantic	w_63db75cd5e03c2b8	Bridging Lottery Ticket and Grokking: Understanding Grokking from Inner Structure of Networks	2023	INCLUDE	TIER_1	2	3	SCALING,CRITICALITY,NOVEL_BASIS	M05	S10	0.143897	-0.056595
+included	semantic	w_584c8d983c92b47f	Circuit Synchronization Precedes Generalization: A Causal Precursor to Grokking	2026	INCLUDE	TIER_2	3	2	SCALING,NOVEL_BASIS	M05	S11	0.221645	0.224262
+included	semantic	w_679c49d202c94f8e	Control of criticality and computation in spiking neuromorphic networks with plasticity	2019	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M01	S01	0.23208	0.334989
+included	semantic	w_3a9d20d4ea381a66	Critical dynamics in associative memory networks	2013	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M01	S02	0.228303	0.045586
+included	semantic	w_d18730b289f06c03	Critical dynamics in homeostatic memory networks	2011	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M01	S02	0.195045	0.101763
+included	semantic	w_811a8cd021958e82	Deep Networks Always Grok and Here is Why	2024	INCLUDE	TIER_2	2	3	SCALING,CRITICALITY,NOVEL_BASIS	M06	S14	0.0466	0.134657
+included	semantic	w_a6027fec6ac3ab9a	Differential learning kinetics govern the transition from memorization to generalization during in-context learning	2024	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M03	S07	0.026266	0.107636
+included	semantic	w_8af770f5f86d5ac0	Distinct mechanisms underlying in-context learning in transformers	2026	INCLUDE	TIER_1	3	3	SCALING,CRITICALITY,NOVEL_BASIS	M03	S07	0.069315	0.239003
+included	semantic	w_848983c423304f71	Emergence and Effectiveness of Task Vectors in In-Context Learning: An Encoder Decoder Perspective	2024	INCLUDE	TIER_2	1	2	SCALING,COMPRESSION	M03	S08	-0.079736	0.201875
+included	semantic	w_a68de8b27948098c	Emergence and Function of Abstract Representations in Self-Supervised Transformers	2023	INCLUDE	TIER_2	3	2	COMPRESSION,NOVEL_BASIS	M06	S13	-0.199468	-0.093908
+included	semantic	w_a6ec62ef7863cd72	Emergence of Foveal Image Sampling from Learning to Attend in Visual Scenes	2017	INCLUDE	TIER_2	3	2	COMPRESSION,NOVEL_BASIS	M06	S12	-0.107378	-0.056043
+included	semantic	w_ab07437d78318352	Emergence of functional and structural properties of the head direction system by optimization of recurrent neural networks	2019	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M01	S03	-0.100187	-0.112719
+included	semantic	w_aaa017a83700f80c	Emergence of Invariance and Disentanglement in Deep Representations	2017	INCLUDE	TIER_2	4	2	COMPRESSION,CRITICALITY	M06	S13	0.149779	0.142978
+included	semantic	w_7209270e01aef2a8	Emergent Capabilities Arise Randomly from Learning Sparse Attention Patterns	2026	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M03	S06	0.070054	-0.07322
+included	semantic	w_4ea8cb6a3b5fed46	Emergent Generalization by Representation Learning in Artificial Neural Networks	2026	INCLUDE	TIER_2	4	2	SCALING,COMPRESSION	M06	S13	0.071474	0.152769
+included	semantic	w_f6a044308e277e6f	Emergent mechanisms for long timescales depend on training curriculum and affect performance in memory tasks	2023	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M01	S02	0.114729	0.122992
+included	semantic	w_e219fcd05aa4ac72	Emergent Symbol-like Number Variables in Artificial Neural Networks	2025	INCLUDE	TIER_2	3	2	SCALING,NOVEL_BASIS	M01	S03	-0.084634	-0.016172
+included	semantic	w_cb00fb1bab7f3b7f	Emergent Symbolic Mechanisms Support Abstract Reasoning in Large Language Models	2025	INCLUDE	TIER_1	1	3	COMPRESSION,NOVEL_BASIS,GENERALISATION	M03	S06	0.065337	0.131591
+included	semantic	w_63d2efb7962dd788	Evolving reservoir computers reveal bidirectional coupling between predictive power and emergent dynamics	2026	INCLUDE	TIER_2	1	2	SCALING,COMPRESSION	M01	S03	0.054364	-0.080284
+included	semantic	w_0daa43451a63b0d5	Excitatory-inhibitory recurrent dynamics produce robust visual grids and stable attractors	2022	INCLUDE	TIER_2	3	2	COMPRESSION,NOVEL_BASIS	M01	S03	-0.089796	-0.116607
+included	semantic	w_cddfb17d263e3744	Explaining Grokking and Information Bottleneck through Neural Collapse Emergence	2025	INCLUDE	TIER_2	4	2	SCALING,COMPRESSION	M06	S13	-0.00213	0.05312
+included	semantic	w_45a112f0ccfe5c13	Feature emergence via margin maximization: case studies in algebraic tasks	2023	INCLUDE	TIER_1	2	3	SCALING,COMPRESSION,NOVEL_BASIS	M06	S13	-0.051849	-0.090922
+included	semantic	w_87462cebc24e3c1e	From movement to cognitive maps: recurrent neural networks reveal how locomotor development shapes hippocampal spatial coding	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M02	S04	0.361166	0.353721
+included	semantic	w_27f0a0911b68ee3a	Gradient-based learning drives robust representations in recurrent neural networks by balancing compression and expansion	2022	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M01	S02	0.031685	-0.069518
+included	semantic	w_35bf58ca4093d76e	Grokking and epoch-wise double descent in quantum neural networks	2026	INCLUDE	TIER_2	4	3	SCALING,COMPRESSION,CRITICALITY	M06	S15	-0.089575	0.207062
+included	semantic	w_9db7d6568bb89686	Grokking as a First Order Phase Transition in Two Layer Networks	2023	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M05	S10	0.057716	-0.0857
+included	semantic	w_8a9381903c1dcd61	Grokking as an entanglement transition in tensor network machine learning	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M06	S15	0.002057	0.199577
+included	semantic	w_2b77293cdef4c93f	Grokking as Structural Inference: Transformers Need Bayesian Lottery Tickets	2026	INCLUDE	TIER_2	3	2	SCALING,NOVEL_BASIS	M04	S09	0.095123	0.077457
+included	semantic	w_055282d4fa8fa8da	Grokking Beyond the Euclidean Norm of Model Parameters	2025	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M05	S10	0.156385	0.033597
+included	semantic	w_cbbadc97bc1c553c	Hippocampal representations emerge when training recurrent neural networks on a memory dependent maze navigation task	2020	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M02	S04	0.304115	0.380631
+included	semantic	w_8d71fca6fabfe6c0	How do language models learn facts? Dynamics, curricula and hallucinations	2025	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M03	S06	0.131565	-0.004058
+included	semantic	w_83ff2605b95d13cd	How Do LLMs Acquire New Knowledge? A Knowledge Circuits Perspective on Continual Pre-Training	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M03	S06	0.13647	-0.207591
+included	semantic	w_988674ea0e8c1cb7	How Does Controllability Emerge In Language Models During Pretraining?	2025	INCLUDE	TIER_2	1	2	SCALING,COMPRESSION	M03	S06	0.104157	0.099759
+included	semantic	w_6d9aedbcf0365751	How Does Unfaithful Reasoning Emerge from Autoregressive Training? A Study of Synthetic Experiments	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M03	S06	0.039452	-0.005526
+included	semantic	w_c0722915b2be1f88	How to Tame Grokking: Representation Geometry as a Control Signal	2026	INCLUDE	TIER_1	2	3	SCALING,COMPRESSION,CRITICALITY	M05	S10	0.160356	0.144426
+included	semantic	w_e93a08062ac7d030	How Transformers Learn Causal Structure with Gradient Descent	2024	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M04	S09	0.304494	0.237263
+included	semantic	w_3addefc2ae588ee1	How Transformers Learn to Plan via Multi-Token Prediction	2026	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M04	S09	0.189916	0.168606
+included	semantic	w_6fc4c4ab9c9916f7	Hysteresis, neural avalanches, and critical behavior near a first-order transition of a spiking neural network	2018	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M01	S01	0.224011	0.348408
+included	semantic	w_86f10686a7226020	ILDR: Geometric Early Detection of Grokking	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M05	S10	0.237806	0.111126
+included	semantic	w_c053dda032e0c8cc	Is Random Attention Sufficient for Sequence Modeling? Disentangling Trainable Components in the Transformer	2025	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M04	S09	0.14525	0.12422
+included	semantic	w_01e15d37549ba1fc	Latent Algorithmic Structure Precedes Grokking: A Mechanistic Study of ReLU MLPs on Modular Arithmetic	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M05	S11	0.205975	0.207357
+included	semantic	w_1414f43f732405e6	Learning through atypical phase transitions in overparameterized neural networks	2022	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M06	S14	0.11475	0.23891
+included	semantic	w_9f65ba32c1a08d74	Low-Dimensional and Transversely Curved Optimization Dynamics in Grokking	2026	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M05	S10	0.199142	0.14538
+included	semantic	w_5cfae990f2e4ea0e	Multiple-Timescale Neural Networks: Generation of History-Dependent Sequences and Inference Through Autonomous Bifurcations	2021	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M01	S02	0.132521	0.037574
+included	semantic	w_c31a237682405c3b	Noise-Driven Escape from Metastable Phases explains Grokking in Deep Neural Networks	2026	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M06	S14	-0.024373	0.065761
+included	semantic	w_0308d55890a5b9c6	On the Emergence of Induction Heads for In-Context Learning	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M03	S07	0.183905	0.369534
+included	semantic	w_25ba5099b834e43a	On the Mechanism and Dynamics of Modular Addition: Fourier Features, Lottery Ticket, and Grokking	2026	INCLUDE	TIER_1	1	3	SCALING,COMPRESSION,NOVEL_BASIS	M05	S11	0.068629	0.34315
+included	semantic	w_6ffbda57ab6a27ae	Optimal reinforcement learning near the edge of a synchronization transition	2022	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M01	S01	0.139026	0.247417
+included	semantic	w_dff3d1da5e63f8e0	Phase Transitions in Attention: A Bayesian Theory of Copy Head Emergence	2026	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M06	S12	-0.003445	0.068213
+included	semantic	w_e290bc51cfc6cc89	Phase transitions reveal hierarchical structure in deep neural networks	2025	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M06	S14	0.095944	0.262105
+included	semantic	w_b19041cd869bacfa	Post-Grokking Collapse at the Representation-Readout Interface in Muon-Trained Transformers	2026	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M05	S10	0.166049	-0.157807
+included	semantic	w_85b812c5c78e647c	Predicting the Emergence of Induction Heads in Language Model Pretraining	2025	INCLUDE	TIER_2	1	2	SCALING,CRITICALITY	M03	S06	0.208715	-0.084927
+included	semantic	w_d27b97e00fa37f8b	Prediction horizon shapes representations in predictive learning	2025	INCLUDE	TIER_2	4	3	SCALING,COMPRESSION,NOVEL_BASIS	M02	S05	0.177385	0.274299
+included	semantic	w_0c85822618800428	Predictive learning as a network mechanism for extracting low-dimensional latent space representations	2021	INCLUDE	TIER_1	2	3	SCALING,COMPRESSION,NOVEL_BASIS	M02	S05	0.282924	0.24423
+included	semantic	w_cf357442f5aa7893	Predictive pursuit emerges in high-dimensional recurrent neural networks	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M02	S04	0.252424	0.117579
+included	semantic	w_e1dd76d318faa330	Predictive sequence learning in the hippocampal formation	2024	INCLUDE	TIER_2	1	3	SCALING,COMPRESSION,NOVEL_BASIS	M02	S04	0.279204	0.318231
+included	semantic	w_f3172e652cebe4b6	Progress Measures for Grokking via Mechanistic Interpretability	2023	INCLUDE	TIER_1	5	4	SCALING,CRITICALITY,COMPRESSION,NOVEL_BASIS	M05	S11	0.344115	0.244507
+included	semantic	w_248da8719a3b92f1	Quantum-data-driven dynamical transition in quantum learning	2024	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M06	S15	0.02173	0.331001
+included	semantic	w_34505df745b929e9	Random noise promotes slow heterogeneous synaptic dynamics important for robust working memory computation	2025	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M01	S02	0.124758	0.003278
+included	semantic	w_71088ab66e735f6d	Recurrent Neural Networks Learn to Store and Generate Sequences using Non-Linear Representations	2024	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M01	S03	-0.052442	-0.004098
+included	semantic	w_67833e8bc8bb92f5	Redundant representations help generalization in wide neural networks * , †	2023	INCLUDE	TIER_2	2	3	SCALING,COMPRESSION,CRITICALITY	M06	S13	0.002504	0.126009
+included	semantic	w_de78b34865a33cc1	Sequential predictive learning is a unifying theory for hippocampal representation and replay	2024	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M02	S04	0.377173	0.250191
+included	semantic	w_38e23f5995c71d9b	Spatial reasoning via recurrent neural dynamics in mouse retrosplenial cortex	2025	INCLUDE	TIER_2	2	3	SCALING,COMPRESSION,NOVEL_BASIS	M02	S04	0.262086	0.289235
+included	semantic	w_b1a722c7add3a18c	Specialization of softmax attention heads: insights from the high-dimensional single-location model	2026	INCLUDE	TIER_2	1	2	SCALING,CRITICALITY	M06	S12	0.023302	0.108702
+included	semantic	w_a124ea491b1e38a3	Spectral Entropy Collapse as a Phase Transition in Delayed Generalisation: An Interventional and Predictive Framework for Grokkin	2026	INCLUDE	TIER_2	4	2	SCALING,COMPRESSION	M05	S10	0.141114	-0.017991
+included	semantic	w_8c5442dfb760aae0	Spectral phase transitions and trainability in neural network learning dynamics	2026	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M06	S14	0.000149	0.047718
+included	semantic	w_4ec0813caf380920	Structure-Specific Representational Priors Causally Control the Grokking Delay	2026	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M05	S10	0.099324	0.020853
+included	semantic	w_5c54f66764cf4f97	Temporal hierarchy in spiking neural networks	2024	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M01	S01	0.136054	0.220253
+included	semantic	w_f05eeedb3d84fbb7	The Geometry of Multi-Task Grokking: Transverse Instability, Superposition, and Weight Decay Phase Structure	2026	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M05	S10	0.22355	0.182444
+included	semantic	w_e0964d9cc077c1f7	The Kinetics of Training: A Driven-Nucleation Rate Law for Emergence, Plasticity Loss, and Circuit Control in Language Models	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M03	S06	0.13265	-0.158007
+included	semantic	w_4ae2e575bb61224a	The mechanistic basis of data dependence and abrupt learning in an in-context classification task	2023	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M03	S07	0.17214	0.417387
+included	semantic	w_97808c92883566a2	Thinking Sparks!: Emergent Attention Heads in Reasoning Models During Post Training	2025	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M03	S06	0.203733	-0.019889
+included	semantic	w_5fc248e95ef96553	Towards Empirical Interpretation of Internal Circuits and Properties in Grokked Transformers on Modular Polynomials	2024	INCLUDE	TIER_2	1	2	SCALING,COMPRESSION	M05	S11	0.2425	0.320503
+included	semantic	w_29ea95f17f21c7ac	Transformers for dynamical systems learn transfer operators in-context	2026	INCLUDE	TIER_2	4	2	NOVEL_BASIS,GENERALISATION	M04	S09	0.229496	0.147156
+included	semantic	w_7478c4587d99ea18	Unveiling Transformers with LEGO: a synthetic reasoning task	2022	INCLUDE	TIER_2	1	3	SCALING,NOVEL_BASIS,GENERALISATION	M03	S06	-0.040188	0.018859
+included	semantic	w_f5f5600670f31041	Weight Decay Regimes in Grokking Transformers: Cheap Online Diagnostics	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M05	S10	0.098391	0.027172
+included	semantic	w_7afa59979906b85f	What Needs to Go Right for an Induction Head? A Mechanistic Study of In-Context Learning Circuits and Their Formation	2024	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M03	S07	0.168782	0.404143
+included	semantic	w_33b529766cc60dd2	What One Cannot, Two Can: Two-Layer Transformers Provably Represent Induction Heads on Any-Order Markov Chains	2025	INCLUDE	TIER_2	3	2	COMPRESSION,SCALING	M04	S09	0.18047	0.112491
+included	semantic	w_5362be8fefcfa6c2	When and Where: A Model Hippocampal Network Unifies Formation of Time Cells and Place Cells	2026	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M02	S04	0.185135	0.276166
+included	semantic	w_b1b2841abfaf8ef2	Which Attention Heads Matter for In-Context Learning?	2025	INCLUDE	TIER_2	5	2	SCALING,COMPRESSION	M03	S08	0.146845	0.011934
+included	semantic	w_9f42a69c53e47f06	Why the Brain Consolidates: Predictive Forgetting for Optimal Generalisation	2026	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M06	S13	-0.093811	0.014052
+audited	tfidf	w_7ced2a0538a6bf26	A Bayesian Perspective on the Role of Epistemic Uncertainty for Delayed Generalization in In-Context Learning	2026	EXCLUDE	TIER_3	3	0		M06	S13	0.038885	0.074088
+audited	tfidf	w_094c3309bf13cd4c	A Critical Period for Compositional Visual Grounding? Controlled Block Order and Causal Attention Interventions in a Small Vision–Language Transformer	2026	EXCLUDE	TIER_3	3	0		M10	S20	-0.005622	0.025706
+audited	tfidf	w_c05624cc0be4c2cb	A jamming transition from under- to over-parametrization affects generalization in deep learning	2018	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M02	S04	-0.010023	0.013697
+audited	tfidf	w_f94f564014be4c25	A Mechanistic Analysis of Transformers for Dynamical Systems	2025	INCLUDE	TIER_2	0	2	SCALING,COMPRESSION	M04	S08	0.02915	0.029305
+audited	tfidf	w_3f7299052e18118d	A Neural Network Model of Free Recall Learns Multiple Memory Strategies	2026	INCLUDE	TIER_2	3	2	COMPRESSION,NOVEL_BASIS	M10	S20	-0.031257	-0.027345
+audited	tfidf	w_07d5eb02f4e65497	A phase transition between positional and semantic learning in a solvable model of dot-product attention	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M02	S04	-0.046809	-0.014808
+audited	tfidf	w_a5e46f75ed09651c	A Rationale from a Frequency Perspective for Grokking in Training Neural Networks	2026	EXCLUDE		1	0		M01	S03	0.023637	0.016466
+audited	tfidf	w_ee7cdd8c7d281656	A simple model of co-emergence of grid and place fields	2026	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M04	S07	0.031514	0.075402
+audited	tfidf	w_c8aa82534e05dc80	Acceleration of Grokking in Learning Arithmetic Operations Via Kolmogorov-Arnold Representation	2024	EXCLUDE	TIER_3	1	0		M10	S21	-0.013254	0.000431
+audited	tfidf	w_8e2c23b49bc4d436	Actionable Activation Directions for Detecting and Mitigating Emergent Misalignment Across Language Model Families	2026	EXCLUDE	TIER_3	1	1	COMPRESSION	M07	S15	0.088013	0.074258
+audited	tfidf	w_9b4cd178ad4adfab	Adaptive time scales in recurrent neural networks	2019	EXCLUDE	TIER_3	1	1	SCALING	M05	S10	0.034656	0.036513
+audited	tfidf	w_66f94b2437b7dc7a	Algebraic Representability as the Limiting Regime of Grokking: An Exactly Solvable Model with Holomorphic Activations	2026	EXCLUDE	TIER_3	2	0		M01	S03	0.033072	0.007692
+audited	tfidf	w_16cd2ac0aa2264b5	Algorithmic Phase Transitions in Language Models: A Mechanistic Case Study of Arithmetic	2024	EXCLUDE	TIER_3	2	0		M10	S22	-0.001315	-0.020365
+audited	tfidf	w_69468026d902ba92	An Emergent Mirage: Is Emergent Misalignment and Realignment Indeed a Robust Phenomenon?	2026	EXCLUDE	TIER_3	2	0		M07	S15	0.181071	0.17468
+audited	tfidf	w_ed2497928c30d699	Anchored Intrinsic Coordinates for Grokking: Curvature, Predictive Reducibility, and Boundary Cases	2026	EXCLUDE		4	0		M09	S18	-0.015251	-0.024427
+audited	tfidf	w_310671f6b2320a54	Are Your Reasoning Models Reasoning or Guessing? A Mechanistic Analysis of Hierarchical Reasoning Models	2026	EXCLUDE	TIER_3	2	0		M10	S22	-0.033258	-0.020174
+audited	tfidf	w_8686cbb9af9f8fa5	Arithmetic Pedagogy for Language Models	2026	EXCLUDE	TIER_3	1	1	SCALING	M10	S21	-0.004145	-0.007433
+audited	tfidf	w_8bf24f4dbe9ac287	Arithmetic with language models: From memorization to computation	2024	EXCLUDE	TIER_3	1	0		M10	S21	-0.002086	0.008748
+audited	tfidf	w_92e78fbf258ed40a	Assign and Add: A Mechanistic Study of Compositional Arithmetic	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M10	S20	-0.024464	0.012276
+audited	tfidf	w_7642d8c74152ab9f	Attention-Head Binding as a Term-Conditioned Mechanistic Marker of Accessibility Concept Emergence in Language Models	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M10	S20	-0.006196	-0.005397
+audited	tfidf	w_4d72f64019a5d816	Attention to Order: Transformers Discover Phase Transitions via Learnability	2025	EXCLUDE	TIER_3	3	0		M10	S22	-0.01331	-0.005985
+audited	tfidf	w_3d415e237f7c4f65	Autocorrelations from emergent bistability in homeostatic spiking neural networks on neuromorphic hardware	2022	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M03	S06	0.213758	0.200085
+audited	tfidf	w_3144bdd83cd17ac0	Automated construction of cognitive maps with visual predictive coding	2024	INCLUDE	TIER_2	1	2	COMPRESSION,NOVEL_BASIS	M04	S07	0.058845	0.052964
+audited	tfidf	w_0ff86e6a31e1d145	Balancing Stability and Flow in Hippocampal Networks via Inductive Bias and Learned Symmetry Breaking	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M04	S07	-0.015472	0.026167
+audited	tfidf	w_15e8cda2ffdcc159	Benign Overfitting and Grokking in ReLU Networks for XOR Cluster Data	2023	EXCLUDE	TIER_3	1	0		M01	S03	0.018566	0.013664
+audited	tfidf	w_47f0ccb3e2ec3eac	Beyond Induction Heads: In-Context Meta Learning Induces Multi-Phase Circuit Emergence	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M06	S14	0.042867	0.046063
+audited	tfidf	w_63db75cd5e03c2b8	Bridging Lottery Ticket and Grokking: Understanding Grokking from Inner Structure of Networks	2023	INCLUDE	TIER_1	2	3	SCALING,CRITICALITY,NOVEL_BASIS	M01	S03	0.020821	-0.000651
+audited	tfidf	w_2715496262944022	Character as a Latent Variable in Large Language Models: A Mechanistic Account of Emergent Misalignment and Conditional Safety Failures	2026	EXCLUDE	TIER_3	2	0		M07	S15	0.131143	0.103561
+audited	tfidf	w_d8d988a779b74559	Characterization of the Neuronal and Network Dynamics of Liquid State Machines	2023	EXCLUDE		1	0		M10	S22	-0.00409	-0.013684
+audited	tfidf	w_8d4fdc1ea9b8170d	CheckersGPT: Learning World Models through Language Modeling	2024	EXCLUDE	TIER_3	2	0		M10	S21	-0.035484	-0.037325
+audited	tfidf	w_584c8d983c92b47f	Circuit Synchronization Precedes Generalization: A Causal Precursor to Grokking	2026	INCLUDE	TIER_2	3	2	SCALING,NOVEL_BASIS	M01	S03	0.015295	-0.006178
+audited	tfidf	w_c569341f9f7b5f6f	Complexity of Linear Regions in Self-supervised Deep ReLU Networks	2026	EXCLUDE	TIER_3	1	0		M02	S05	0.00572	0.016943
+audited	tfidf	w_83b81c26c357f6b1	Compositional Generalization from Learned Skills via CoT Training: A Theoretical and Structural Analysis for Reasoning	2025	EXCLUDE	TIER_3	2	1	SCALING	M10	S20	-0.027696	-0.005225
+audited	tfidf	w_2f8927f68568913d	Computational mechanisms for temporal integration in the anterior claustrum	2026	EXCLUDE	TIER_3	2	1	NOVEL_BASIS	M05	S10	0.037931	0.029261
+audited	tfidf	w_1729badd7318419a	Context and Diversity Matter: The Emergence of In-Context Learning in World Models	2025	EXCLUDE	TIER_3	1	1	SCALING	M06	S14	0.019011	0.015546
+audited	tfidf	w_679c49d202c94f8e	Control of criticality and computation in spiking neuromorphic networks with plasticity	2019	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M03	S06	0.215254	0.212605
+audited	tfidf	w_c05e2ba02fa11716	Controlling Grokking with Nonlinearity and Data Symmetry	2024	EXCLUDE	TIER_3	1	0		M01	S03	0.028451	0.007737
+audited	tfidf	w_0f9196b38bcf5602	Cortical Circuits from Scratch: A Metaplastic Architecture for the Emergence of Lognormal Firing Rates and Realistic Topology	2017	EXCLUDE	TIER_3	0	1	NOVEL_BASIS	M05	S11	0.023167	0.028152
+audited	tfidf	w_042e2240de24720b	Counterfactual reasoning: an analysis of in-context emergence	2025	EXCLUDE	TIER_3	1	1	NOVEL_BASIS	M06	S13	0.01969	0.011153
+audited	tfidf	w_3a9d20d4ea381a66	Critical dynamics in associative memory networks	2013	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M03	S06	0.17568	0.160353
+audited	tfidf	w_d18730b289f06c03	Critical dynamics in homeostatic memory networks	2011	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M03	S06	0.165021	0.144532
+audited	tfidf	w_e44f0fcfe85badcc	Critical Windows of Complexity Control: When Transformers Decide to Reason or Memorize	2026	EXCLUDE	TIER_3	3	1	SCALING	M10	S20	-0.016119	-0.011494
+audited	tfidf	w_ba81662b1200a880	Criticality meets learning: Criticality signatures in a self-organizing recurrent neural network	2017	EXCLUDE	TIER_3	2	1	SCALING	M05	S11	-0.003939	-0.016886
+audited	tfidf	w_a68b84330ed82b99	CrystaL: Spontaneous Emergence of Visual Latents in MLLMs	2026	EXCLUDE	TIER_3	2	0		M10	S19	0.007322	0.02526
+audited	tfidf	w_ae520d3640f2a268	Data Attribution of Emergent Misalignment with Persona Features	2026	EXCLUDE	TIER_3	3	0		M07	S15	0.120043	0.083711
+audited	tfidf	w_33d1c931feca94ec	Decentralized Collective World Model for Emergent Communication and Coordination	2025	EXCLUDE	TIER_3	3	0		M04	S08	-0.004983	-0.008171
+audited	tfidf	w_4dde14dbe58ab00c	Decoupling Dynamical Richness from Representation Learning: Towards Practical Measurement	2024	EXCLUDE	TIER_3	1	0		M10	S25	-0.010753	-0.011027
+audited	tfidf	w_00352f2c07e55403	Deep Grokking: Would Deep Neural Networks Generalize Better?	2024	EXCLUDE	TIER_3	2	0		M01	S03	0.035609	-0.030598
+audited	tfidf	w_811a8cd021958e82	Deep Networks Always Grok and Here is Why	2024	INCLUDE	TIER_2	2	3	SCALING,CRITICALITY,NOVEL_BASIS	M02	S05	0.0091	-0.006649
+audited	tfidf	w_3be7feda647d0399	Deficits in Prediction Ability Trigger Asymmetries in Behavior and Internal Representation	2020	EXCLUDE	TIER_3	1	0		M04	S08	0.026581	-0.013916
+audited	tfidf	w_b0c3a03ae75a81b6	Different timescales of neural activities introduce different representations of task-relevant information	2024	EXCLUDE	TIER_3	1	0		M05	S10	0.016695	-0.003417
+audited	tfidf	w_a6027fec6ac3ab9a	Differential learning kinetics govern the transition from memorization to generalization during in-context learning	2024	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M06	S14	-0.006504	0.047703
+audited	tfidf	w_c07a59665ec95bc8	Discovery of a Hematopoietic Manifold in scGPT Yields a Method for Extracting Performant Algorithms from Biological Foundation Model Internals	2026	EXCLUDE	TIER_3	4	1	COMPRESSION	M10	S22	-0.020301	-0.031981
+audited	tfidf	w_8af770f5f86d5ac0	Distinct mechanisms underlying in-context learning in transformers	2026	INCLUDE	TIER_1	3	3	SCALING,CRITICALITY,NOVEL_BASIS	M06	S14	0.044243	0.056501
+audited	tfidf	w_fc836b91e5d6562b	Early-Warning Signals of Grokking via Loss-Landscape Geometry	2026	EXCLUDE	TIER_3	5	0		M01	S01	0.033935	0.065458
+audited	tfidf	w_848983c423304f71	Emergence and Effectiveness of Task Vectors in In-Context Learning: An Encoder Decoder Perspective	2024	INCLUDE	TIER_2	1	2	SCALING,COMPRESSION	M06	S13	0.049693	-0.063091
+audited	tfidf	w_3e38a37eef49442d	Emergence and Evolution of Interpretable Concepts in Diffusion Models	2025	EXCLUDE	TIER_3	2	0		M09	S17	0.036891	0.132134
+audited	tfidf	w_a68de8b27948098c	Emergence and Function of Abstract Representations in Self-Supervised Transformers	2023	INCLUDE	TIER_2	3	2	COMPRESSION,NOVEL_BASIS	M10	S21	-0.023227	-0.036665
+audited	tfidf	w_982bda5c1d37d537	Emergence and Localisation of Semantic Role Circuits in LLMs	2025	EXCLUDE	TIER_3	4	1	SCALING	M10	S19	-0.003045	0.026911
+audited	tfidf	w_13098e9f9412a76e	Emergence and reconfiguration of modular structure for artificial neural networks during continual familiarity detection	2024	EXCLUDE		0	0		M05	S11	0.023164	-0.043732
+audited	tfidf	w_44f0475d18d1ae59	Emergence of Abstract State Representations in Embodied Sequence Modeling	2023	EXCLUDE	TIER_3	2	0		M09	S18	0.016303	0.011333
+audited	tfidf	w_78fdd214482004dc	Emergence of Complex Computational Structures From Chaotic Neural Networks Through Reward-Modulated Hebbian Learning	2012	EXCLUDE		1	0		M05	S11	-0.008174	0.022128
+audited	tfidf	w_bc4f45853b89dbdc	Emergence of Computational Structure in a Neural Network Physics Simulator	2025	EXCLUDE	TIER_3	3	1	SCALING	M10	S20	0.005443	0.004772
+audited	tfidf	w_8d615b510d4fdfec	Emergence Of Emotion Selectivity in A Deep Neural Network Trained to Recognize Visual Objects	2023	EXCLUDE	TIER_3	1	1	NOVEL_BASIS	M10	S25	-0.008876	0.009866
+audited	tfidf	w_a87063a6344e999f	Emergence of Episodic Memory in Transformers: Characterizing Changes in Temporal Structure of Attention Scores During Training	2025	EXCLUDE	TIER_3	1	0		M10	S20	-0.008873	0.00553
+audited	tfidf	w_a6ec62ef7863cd72	Emergence of Foveal Image Sampling from Learning to Attend in Visual Scenes	2017	INCLUDE	TIER_2	3	2	COMPRESSION,NOVEL_BASIS	M10	S21	-0.014418	-0.041773
+audited	tfidf	w_fa8cd24377d5c54b	Emergence of Frontier Superposition: Möbius attractor and Cascade Supervision	2026	EXCLUDE	TIER_3	2	1	COMPRESSION	M10	S22	-0.00483	-0.003762
+audited	tfidf	w_ab07437d78318352	Emergence of functional and structural properties of the head direction system by optimization of recurrent neural networks	2019	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M05	S10	-0.006266	0.000747
+audited	tfidf	w_b16a0b414fee96f6	Emergence of Functional Hierarchy in a Multiple Timescale Neural Network Model: A Humanoid Robot Experiment	2008	EXCLUDE	TIER_3	0	1	NOVEL_BASIS	M05	S11	0.026132	-0.001903
+audited	tfidf	w_f1324a7120d5d1bd	Emergence of grid-like representations by training recurrent neural networks to perform spatial localization	2018	EXCLUDE	TIER_3	1	0		M05	S10	0.037312	0.052886
+audited	tfidf	w_4fb0e43097e56826	Emergence of Hierarchical Emotion Organization in Large Language Models	2025	EXCLUDE	TIER_3	2	0		M10	S25	-0.004433	-0.043692
+audited	tfidf	w_aaa017a83700f80c	Emergence of Invariance and Disentanglement in Deep Representations	2017	INCLUDE	TIER_2	4	2	COMPRESSION,CRITICALITY	M02	S04	0.006484	-0.012582
+audited	tfidf	w_ef661d9c28381b11	Emergence of Minimal Circuits for Indirect Object Identification in Attention-Only Transformers	2025	EXCLUDE	TIER_3	3	1	NOVEL_BASIS	M10	S19	-0.003567	0.018424
+audited	tfidf	w_4ae4e61584b523a8	Emergence of Network Motifs in Deep Neural Networks	2020	EXCLUDE		1	0		M10	S25	-0.002879	0.007529
+audited	tfidf	w_b2e7ff70b4aa448d	Emergence of prefrontal neuron maturation properties by training recurrent neural networks in cognitive tasks	2020	EXCLUDE	TIER_3	1	0		M05	S10	0.036529	0.052424
+audited	tfidf	w_28a1f31e8ca599b0	Emergence of slow ramping prior to spontaneous decision states in a brain-constrained neural network model	2025	EXCLUDE		2	0		M10	S25	-0.015365	-0.003981
+audited	tfidf	w_fb96317e98530db8	Emergence of Superposition: Unveiling the Training Dynamics of Chain of Continuous Thought	2025	EXCLUDE	TIER_3	1	1	SCALING	M10	S22	0.000263	0.008527
+audited	tfidf	w_6b6ef9dd4b6a2923	Emergence of V1 connectivity pattern and Hebbian rule in a performance-optimized artificial neural network	2018	EXCLUDE	TIER_3	1	0		M05	S11	0.044905	0.025615
+audited	tfidf	w_17af690426c77e5f	Emergent Analogical Reasoning in Transformers	2026	EXCLUDE	TIER_3	2	1	SCALING	M10	S22	-0.026914	-0.018602
+audited	tfidf	w_4dbf08f598cd567b	Emergent behavior and neural dynamics in artificial agents tracking turbulent plumes	2022	EXCLUDE	TIER_3	2	0		M05	S09	0.040112	0.638277
+audited	tfidf	w_784ebe5b0f073f56	Emergent behaviour and neural dynamics in artificial agents tracking odour plumes	2023	EXCLUDE	TIER_3	1	0		M05	S09	0.03208	0.647623
+audited	tfidf	w_7209270e01aef2a8	Emergent Capabilities Arise Randomly from Learning Sparse Attention Patterns	2026	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M10	S25	-0.015611	-0.009241
+audited	tfidf	w_76ba52abd948ee75	Emergent Communication via Causal Temporal Graph Networks: A Novel Framework for Decentralized Multi-Robot Coordination Without Explicit Message Passing	2026	EXCLUDE	TIER_3	3	0		M04	S08	-0.005463	0.003695
+audited	tfidf	w_65f428d0eb05342f	Emergent Depthwise Activation Structure in Transformer Language Models The Hau Curve and Its Early-Training Attractor Pattern	2026	EXCLUDE	TIER_3	2	0		M10	S19	-0.011179	-0.005918
+audited	tfidf	w_dcf16633f7a33b13	Emergent Entrainment and Predictive Dynamics in Bio-Inspired Spiking Neural Networks	2026	EXCLUDE	TIER_3	1	0		M04	S08	-0.020949	-0.015485
+audited	tfidf	w_4ea8cb6a3b5fed46	Emergent Generalization by Representation Learning in Artificial Neural Networks	2026	INCLUDE	TIER_2	4	2	SCALING,COMPRESSION	M04	S08	-0.005698	0.003338
+audited	tfidf	w_f0e2a64299044bb4	Emergent Latent-State Computation under Stochastic Volatility	2026	EXCLUDE	TIER_3	1	1	SCALING	M10	S21	-0.036676	-0.037223
+audited	tfidf	w_03d844719fb9df34	Emergent Lexical Synthesis Through Contextual Feedback Mechanisms in Large Language Models	2024	EXCLUDE	TIER_3	3	0		M10	S19	-0.001671	0.029152
+audited	tfidf	w_66063956acd1233b	Emergent Linear Representations in World Models of Self-Supervised Sequence Models	2023	EXCLUDE	TIER_3	2	1	COMPRESSION	M09	S18	0.047374	0.047886
+audited	tfidf	w_dd1317747d73d644	Emergent linguistic structure in artificial neural networks trained by self-supervision	2020	EXCLUDE		1	0		M05	S11	0.02794	-0.041315
+audited	tfidf	w_f6a044308e277e6f	Emergent mechanisms for long timescales depend on training curriculum and affect performance in memory tasks	2023	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M05	S11	0.018561	0.002857
+audited	tfidf	w_0d3dcf550d7f718e	Emergent Misalignment Can Be Induced by Sycophancy and Reversed via Alignment Gating	2026	EXCLUDE	TIER_3	1	0		M07	S15	0.14085	0.131493
+audited	tfidf	w_308c48dc4aaa9e3f	Emergent modularity in large language models: Insights from aphasia simulations	2025	EXCLUDE	TIER_3	0	0		M10	S19	-0.001125	-0.02839
+audited	tfidf	w_18bd4894e38b3c30	Emergent Modularity in Pre-trained Transformers	2023	EXCLUDE	TIER_3	1	1	SCALING	M10	S24	-0.006429	0.385252
+audited	tfidf	w_f929db1156ad72b9	Emergent Moral Representations in Large Language Models Aligns with Human Conceptual, Neural, and Behavioral Moral Structure	2025	EXCLUDE	TIER_3	1	0		M10	S21	-0.00544	-0.006766
+audited	tfidf	w_b9bc4d3bac625b6d	Emergent Ordinal Geometry in Transformers Trained on Local Comparisons	2026	EXCLUDE	TIER_3	4	0		M10	S25	-0.005691	0.003396
+audited	tfidf	w_cfed60f0df988968	Emergent Outlier View Rejection in Visual Geometry Grounded Transformers	2025	EXCLUDE	TIER_3	2	1	NOVEL_BASIS	M10	S25	-0.000249	0.007258
+audited	tfidf	w_a78497f1c2544ef9	Emergent Representations of Program Semantics in Language Models Trained on Programs	2023	EXCLUDE	TIER_3	1	0		M10	S21	-0.006037	0.011761
+audited	tfidf	w_a102e93eb2f0b4fe	Emergent Search and Backtracking in Latent Reasoning Models	2026	EXCLUDE	TIER_3	1	0		M10	S22	-0.014215	-0.004399
+audited	tfidf	w_b7c2381a27c702c4	Emergent Stack Representations in Modeling Counter Languages Using Transformers	2025	EXCLUDE	TIER_3	1	0		M10	S25	-0.015825	-0.016816
+audited	tfidf	w_31d5e4082601879a	Emergent Structured Representations Support Flexible In-Context Inference in Large Language Models	2026	EXCLUDE	TIER_3	1	1	COMPRESSION	M10	S21	-0.009324	-0.019616
+audited	tfidf	w_196fc85332b551c5	Emergent Structures and Training Dynamics in Large Language Models	2022	EXCLUDE	TIER_3	1	0		M10	S19	-0.003396	0.032925
+audited	tfidf	w_e219fcd05aa4ac72	Emergent Symbol-like Number Variables in Artificial Neural Networks	2025	INCLUDE	TIER_2	3	2	SCALING,NOVEL_BASIS	M10	S20	-0.032379	-0.024358
+audited	tfidf	w_cb00fb1bab7f3b7f	Emergent Symbolic Mechanisms Support Abstract Reasoning in Large Language Models	2025	INCLUDE	TIER_1	1	3	COMPRESSION,NOVEL_BASIS,GENERALISATION	M10	S20	-0.002023	0.006696
+audited	tfidf	w_3e42f09a386d12e1	Emergent temporal abstractions in autoregressive models enable hierarchical reinforcement learning	2025	EXCLUDE	TIER_3	4	1	COMPRESSION	M04	S08	-0.004965	-0.013068
+audited	tfidf	w_183237c2b47ef789	Emergent Vector Embedding Shaping in Large Language Models Through Novel Multi-Path Neural Architectures	2024	EXCLUDE	TIER_3	4	0		M10	S19	-0.005004	0.003213
+audited	tfidf	w_47bf4f8fc88f3cb8	Emergent World Beliefs: Exploring Transformers in Stochastic Games	2025	EXCLUDE	TIER_3	2	0		M09	S17	0.056649	-0.015052
+audited	tfidf	w_6b8b0f146292001a	Emergent World Models and Latent Variable Estimation in Chess-Playing Language Models	2024	EXCLUDE	TIER_3	3	0		M02	S05	-0.011664	-0.030225
+audited	tfidf	w_ae5660e37ed8d376	Emergent World Representations: Exploring a Sequence Model Trained on a Synthetic Task	2022	EXCLUDE	TIER_3	1	0		M09	S18	0.06709	0.059638
+audited	tfidf	w_afd5289886580185	Emergent World Representations in OpenVLA	2025	EXCLUDE	TIER_3	3	0		M09	S17	0.066448	0.050209
+audited	tfidf	w_06e9a506745ea5b3	Evidence of Phase Transitions in Small Transformer-Based Language Models	2025	EXCLUDE	TIER_3	2	1	SCALING	M10	S22	-0.001013	-0.024371
+audited	tfidf	w_63d2efb7962dd788	Evolving reservoir computers reveal bidirectional coupling between predictive power and emergent dynamics	2026	INCLUDE	TIER_2	1	2	SCALING,COMPRESSION	M04	S08	-0.003952	-0.004575
+audited	tfidf	w_5dad8438d08739da	Exact Learning Dynamics of In-Context Learning in Linear Transformers and Its Application to Non-Linear Transformers	2025	EXCLUDE	TIER_3	4	0		M06	S13	0.0246	0.058599
+audited	tfidf	w_0daa43451a63b0d5	Excitatory-inhibitory recurrent dynamics produce robust visual grids and stable attractors	2022	INCLUDE	TIER_2	3	2	COMPRESSION,NOVEL_BASIS	M05	S10	-0.001664	-0.013564
+audited	tfidf	w_928be1de7f678ed8	ExPLAIND: Unifying Model, Data, and Training Attribution to Study Model Behavior	2025	EXCLUDE	TIER_3	1	0		M10	S22	-0.019074	-0.012852
+audited	tfidf	w_cddfb17d263e3744	Explaining Grokking and Information Bottleneck through Neural Collapse Emergence	2025	INCLUDE	TIER_2	4	2	SCALING,COMPRESSION	M02	S05	-0.009816	-0.029256
+audited	tfidf	w_2c0c064d65d2971a	Explaining Grokking in Transformers through the Lens of Inductive Bias	2026	EXCLUDE	TIER_3	2	1	SCALING	M01	S03	0.016112	0.007534
+audited	tfidf	w_a98ab65706b90112	Explaining grokking through circuit efficiency	2023	EXCLUDE	TIER_3	2	0		M01	S03	0.01499	0.011923
+audited	tfidf	w_9977306cc3994536	Exploring Grokking: Experimental and Mechanistic Investigations	2024	EXCLUDE	TIER_3	2	0		M10	S22	-0.031074	-0.020263
+audited	tfidf	w_45a112f0ccfe5c13	Feature emergence via margin maximization: case studies in algebraic tasks	2023	INCLUDE	TIER_1	2	3	SCALING,COMPRESSION,NOVEL_BASIS	M02	S05	0.010655	0.015736
+audited	tfidf	w_c14141577a386c75	Feature Identification via the Empirical NTK	2025	EXCLUDE	TIER_3	2	0		M02	S05	0.001596	-0.005098
+audited	tfidf	w_50a8d749e31274a5	Feature Lottery? A Bifurcation Theory of Concept Emergence	2026	EXCLUDE	TIER_3	4	0		M10	S22	-0.012793	-0.009792
+audited	tfidf	w_324dfcccfb988427	Features Emerge as Discrete States: The First Application of SAEs to 3D Representations	2025	EXCLUDE	TIER_3	2	0		M09	S17	0.032641	0.105188
+audited	tfidf	w_6bc585648f75a51c	Fine-Tuning Enhances Existing Mechanisms: A Case Study on Entity Tracking	2024	EXCLUDE	TIER_3	0	0		M10	S21	-0.041237	-0.030314
+audited	tfidf	w_9f73d3436486bd59	Flatness is Necessary, Neural Collapse is Not: Rethinking Generalization via Grokking	2025	EXCLUDE	TIER_3	1	0		M10	S25	-0.020779	0.002381
+audited	tfidf	w_a1ccd9bf44a17fd9	From Compression to Expression: A Layerwise Analysis of In-Context Learning	2025	EXCLUDE	TIER_3	3	1	COMPRESSION	M06	S13	0.042885	0.052774
+audited	tfidf	w_c8a949e793b32b4d	From Condensation to Rank Collapse: A Two-Stage Analysis of Transformer Training Dynamics	2025	EXCLUDE	TIER_3	1	1	SCALING	M02	S05	-0.007897	-0.020629
+audited	tfidf	w_87462cebc24e3c1e	From movement to cognitive maps: recurrent neural networks reveal how locomotor development shapes hippocampal spatial coding	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M04	S07	0.036179	0.087519
+audited	tfidf	w_09f63ee8fae242b4	From Texts to Scores: Tracing the Emergence of Essay Quality Representations in Large Language Models	2026	EXCLUDE	TIER_3	1	0		M10	S21	-0.01519	-0.008839
+audited	tfidf	w_39ca6ff1e5e8821c	Function Vectors in Large Language Models	2024	EXCLUDE	TIER_3	3	1	COMPRESSION	M06	S12	0.038106	0.322317
+audited	tfidf	w_706a559e41355dab	Get rich quick: exact solutions reveal how unbalanced initializations promote rapid feature learning	2024	EXCLUDE	TIER_3	3	0		M01	S03	-0.002517	0.001869
+audited	tfidf	w_02b805ef4183bf30	Global Low-Rank, Local Full-Rank: The Holographic Encoding of Learned Algorithms	2026	EXCLUDE	TIER_3	4	1	SCALING	M01	S01	0.021728	0.070261
+audited	tfidf	w_27f0a0911b68ee3a	Gradient-based learning drives robust representations in recurrent neural networks by balancing compression and expansion	2022	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M05	S10	-0.001486	0.006055
+audited	tfidf	w_0c4ffd6cc3a55132	GrokAlign: Geometric Characterisation and Acceleration of Grokking	2025	EXCLUDE	TIER_3	2	1	SCALING	M02	S05	-0.004648	-0.000515
+audited	tfidf	w_2dc38e0d59add635	Grokfast: Accelerated Grokking by Amplifying Slow Gradients	2026	EXCLUDE	TIER_3	2	0		M01	S03	0.035048	0.014506
+audited	tfidf	w_afad86afa06c34cd	Grokked Models are Better Unlearners	2025	EXCLUDE	TIER_3	2	0		M02	S05	-0.006852	-0.005325
+audited	tfidf	w_5230ec460b7adaac	Grokked Transformers are Implicit Reasoners: A Mechanistic Journey to the Edge of Generalization	2024	EXCLUDE	TIER_3	2	1	SCALING	M08	S16	0.763602	0.762932
+audited	tfidf	w_35bf58ca4093d76e	Grokking and epoch-wise double descent in quantum neural networks	2026	INCLUDE	TIER_2	4	3	SCALING,COMPRESSION,CRITICALITY	M02	S04	0.010022	0.027716
+audited	tfidf	w_9db7d6568bb89686	Grokking as a First Order Phase Transition in Two Layer Networks	2023	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M02	S04	-0.030725	0.007981
+audited	tfidf	w_8a9381903c1dcd61	Grokking as an entanglement transition in tensor network machine learning	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M02	S04	-0.037525	-0.023503
+audited	tfidf	w_445558f210a709ae	Grokking as Dimensional Phase Transition in Neural Networks	2026	EXCLUDE	TIER_3	3	1	SCALING	M01	S02	-0.026878	0.020276
+audited	tfidf	w_2b77293cdef4c93f	Grokking as Structural Inference: Transformers Need Bayesian Lottery Tickets	2026	INCLUDE	TIER_2	3	2	SCALING,NOVEL_BASIS	M01	S03	0.009094	-0.001107
+audited	tfidf	w_7d49d4691f9f672f	Grokking as the Transition from Lazy to Rich Training Dynamics	2023	EXCLUDE	TIER_3	2	1	SCALING	M01	S03	0.014052	0.001521
+audited	tfidf	w_adc88773b79a9aaa	Grokking Beyond Addition: Circuit-Level Analysis of Algebraic Learning in Transformers	2026	EXCLUDE	TIER_3	1	0		M01	S03	-0.008572	0.002812
+audited	tfidf	w_055282d4fa8fa8da	Grokking Beyond the Euclidean Norm of Model Parameters	2025	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M02	S04	-0.016579	-0.015298
+audited	tfidf	w_81d6e36f6ecc9ed2	Grokking Finite-Dimensional Algebra	2026	EXCLUDE	TIER_3	2	0		M01	S03	0.051432	-0.042725
+audited	tfidf	w_1dc233460f682f8e	Grokking Group Multiplication with Cosets	2023	EXCLUDE	TIER_3	1	0		M10	S25	-0.018774	-0.00869
+audited	tfidf	w_4c3b5856ae66ad33	Grokking in Linear Models for Logistic Regression	2026	EXCLUDE	TIER_3	1	0		M10	S25	-0.046905	-0.032145
+audited	tfidf	w_d12533ac9aa3bdae	Grokking in LLM Pretraining? Monitor Memorization-to-Generalization without Test	2025	EXCLUDE	TIER_3	2	0		M01	S01	0.034494	0.04032
+audited	tfidf	w_27942ed36ff06a48	Grokking in the Ising model	2026	EXCLUDE	TIER_3	2	1	SCALING	M01	S03	0.018818	0.016655
+audited	tfidf	w_7636520e4c22ae54	Grokking in the Wild: Data Augmentation for Real-World Multi-Hop Reasoning with Transformers	2025	EXCLUDE	TIER_3	3	0		M10	S22	-0.070445	-0.067236
+audited	tfidf	w_9db09dfae393db2b	Grokking Modular Polynomials	2024	EXCLUDE	TIER_3	1	0		M02	S04	-0.016872	-0.029651
+audited	tfidf	w_9060ed95d2a7d552	Grokking of Implicit Reasoning in Transformers: A Mechanistic Journey to the Edge of Generalization	2024	EXCLUDE		2	0		M08	S16	0.76657	0.764213
+audited	tfidf	w_0299d6e9ee8584a8	Grokking via Implicit Path Norm Minimization: A Theoretical Mechanism	2026	EXCLUDE	TIER_3	2	0		M01	S03	0.014662	0.005291
+audited	tfidf	w_693b9d7d5ee66702	Guiding Grokking: How Curriculum Learning Shapes Algorithmic Understanding in Neural Networks	2025	EXCLUDE		3	0		M01	S03	0.024617	-0.008252
+audited	tfidf	w_97e9a7de7a56a516	Harmonic Loss Trains Interpretable AI Models	2025	EXCLUDE	TIER_3	1	0		M10	S23	-0.013039	0.400553
+audited	tfidf	w_06d338196c012d5f	Hierarchical Latent Structures in Data Generation Process Unify Mechanistic Phenomena across Scale	2026	EXCLUDE	TIER_3	1	0		M10	S22	-0.019005	-0.013471
+audited	tfidf	w_a3b0abb58a5c08a7	Higher Embedding Dimension Creates a Stronger World Model for a Simple Sorting Task	2025	EXCLUDE	TIER_3	2	1	SCALING	M09	S18	0.039705	0.042371
+audited	tfidf	w_cbbadc97bc1c553c	Hippocampal representations emerge when training recurrent neural networks on a memory dependent maze navigation task	2020	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M04	S07	0.026452	0.054679
+audited	tfidf	w_040112c409ede931	Holographic Knowledge Manifolds: A Novel Pipeline for Continual Learning Without Catastrophic Forgetting in Large Language Models	2025	EXCLUDE	TIER_3	3	0		M10	S25	-0.001314	-0.031097
+audited	tfidf	w_92e7bb6a674a7aa3	How Attention Sinks Emerge in Large Language Models: An Interpretability Perspective	2026	EXCLUDE	TIER_3	2	1	SCALING	M10	S21	-0.00501	-0.017686
+audited	tfidf	w_8d71fca6fabfe6c0	How do language models learn facts? Dynamics, curricula and hallucinations	2025	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M10	S20	-0.015479	-0.009025
+audited	tfidf	w_83ff2605b95d13cd	How Do LLMs Acquire New Knowledge? A Knowledge Circuits Perspective on Continual Pre-Training	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M10	S20	-0.020593	-0.011937
+audited	tfidf	w_988674ea0e8c1cb7	How Does Controllability Emerge In Language Models During Pretraining?	2025	INCLUDE	TIER_2	1	2	SCALING,COMPRESSION	M02	S05	0.015106	0.012185
+audited	tfidf	w_6d9aedbcf0365751	How Does Unfaithful Reasoning Emerge from Autoregressive Training? A Study of Synthetic Experiments	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M02	S04	-0.04857	-0.041424
+audited	tfidf	w_c0722915b2be1f88	How to Tame Grokking: Representation Geometry as a Control Signal	2026	INCLUDE	TIER_1	2	3	SCALING,COMPRESSION,CRITICALITY	M02	S04	0.002925	0.002716
+audited	tfidf	w_e93a08062ac7d030	How Transformers Learn Causal Structure with Gradient Descent	2024	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M10	S20	-0.015918	-0.000407
+audited	tfidf	w_e929aef5f663e086	How Transformers Learn Regular Language Recognition: A Theoretical Study on Training Dynamics and Implicit Bias	2025	EXCLUDE	TIER_3	1	1	SCALING	M10	S20	-0.039362	-0.018868
+audited	tfidf	w_3addefc2ae588ee1	How Transformers Learn to Plan via Multi-Token Prediction	2026	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M10	S20	-0.02141	0.005685
+audited	tfidf	w_6fc4c4ab9c9916f7	Hysteresis, neural avalanches, and critical behavior near a first-order transition of a spiking neural network	2018	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M03	S06	0.169184	0.145803
+audited	tfidf	w_4c4c957af0f57b2d	Identifying Semantic Induction Heads to Understand In-Context Learning	2024	EXCLUDE	TIER_3	0	0		M10	S19	-0.04207	-0.011373
+audited	tfidf	w_86f10686a7226020	ILDR: Geometric Early Detection of Grokking	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M02	S04	0.00299	-0.015451
+audited	tfidf	w_27485161163b4c42	Information-Theoretic Progress Measures reveal Grokking is an Emergent Phase Transition	2024	EXCLUDE	TIER_3	2	1	SCALING	M01	S02	0.032854	0.086865
+audited	tfidf	w_0f0102a18c705ec7	Interpreting Emergent Features in Deep Learning-based Side-channel Analysis	2025	EXCLUDE	TIER_3	3	1	SCALING	M09	S17	0.014956	0.025588
+audited	tfidf	w_ad515c0bfb86662d	Interpreting Emergent Planning in Model-Free Reinforcement Learning	2025	EXCLUDE	TIER_3	1	1	COMPRESSION	M10	S21	-0.019532	-0.037006
+audited	tfidf	w_4c22283998c8f0ca	Interpreting Physics in Video World Models	2026	EXCLUDE	TIER_3	4	0		M10	S21	-0.031106	-0.024029
+audited	tfidf	w_529fa77099ab7d4e	Intrinsic excitability mechanisms of neuronal ensemble formation	2020	EXCLUDE	TIER_3	1	0		M10	S22	-0.005353	-0.012702
+audited	tfidf	w_24c53f7838cefa65	Intrinsic Guardrails: How Semantic Geometry of Personality Interacts with Emergent Misalignment in LLMs	2026	EXCLUDE	TIER_3	2	0		M07	S15	0.081134	0.050726
+audited	tfidf	w_667c790db241c1aa	Intrinsic Task Symmetry Drives Generalization in Algorithmic Tasks	2026	EXCLUDE	TIER_3	4	1	SCALING	M01	S01	0.026531	0.049118
+audited	tfidf	w_c220d86171080ff7	Investigating the impact of low to moderate level label noise on Neural Network grokking dynamics	2025	EXCLUDE	TIER_3	2	0		M01	S03	0.003414	0.007183
+audited	tfidf	w_7ff07b360090f82a	Is Grokking Worthwhile? Functional Analysis and Transferability of Generalization Circuits in Transformers	2026	EXCLUDE	TIER_3	3	0		M01	S03	-0.049004	-0.046773
+audited	tfidf	w_c053dda032e0c8cc	Is Random Attention Sufficient for Sequence Modeling? Disentangling Trainable Components in the Transformer	2025	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M10	S20	-0.027351	0.008164
+audited	tfidf	w_28c10566bff3c19f	Language Models Grow Less Humanlike beyond Phase Transition	2025	EXCLUDE	TIER_3	2	1	SCALING	M01	S02	-0.00365	0.01897
+audited	tfidf	w_9cb7d6dc1b5717cd	Late-Stage Generalization Collapse in Grokking: Detecting anti-grokking with Weightwatcher	2026	EXCLUDE	TIER_3	1	0		M01	S03	0.036623	0.008278
+audited	tfidf	w_01e15d37549ba1fc	Latent Algorithmic Structure Precedes Grokking: A Mechanistic Study of ReLU MLPs on Modular Arithmetic	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M01	S03	0.02677	0.00733
+audited	tfidf	w_803c8143ecd499c2	Latent Feature Transformation for Emergent Task Performance in Large Language Models	2024	EXCLUDE		3	0		M10	S19	-0.01194	0.011063
+audited	tfidf	w_f02966985885da33	Latent State Models of Training Dynamics	2023	EXCLUDE	TIER_3	3	0		M10	S22	-0.018688	-0.012449
+audited	tfidf	w_b9374a286a73fd88	Layer Specialization Underlying Compositional Reasoning in Transformers	2025	EXCLUDE	TIER_3	2	0		M06	S13	-0.058397	-0.042712
+audited	tfidf	w_500a287f07071ec8	Learning Modular Exponentiation with Transformers	2025	EXCLUDE	TIER_3	2	0		M10	S21	-0.017607	-0.031816
+audited	tfidf	w_d930a0988351d6a9	Learning stochastic dynamics and predicting emergent behavior using transformers	2024	EXCLUDE	TIER_3	2	0		M01	S02	0.006033	0.038864
+audited	tfidf	w_1414f43f732405e6	Learning through atypical phase transitions in overparameterized neural networks	2022	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M02	S04	-0.00785	0.020591
+audited	tfidf	w_6408d8e4b06627c9	Learning to grok: Emergence of in-context learning and skill composition in modular arithmetic tasks	2024	EXCLUDE	TIER_3	2	1	SCALING	M06	S13	0.004352	0.02111
+audited	tfidf	w_87dd30b387a36df9	Learning to select computations in recurrent neural circuits	2026	EXCLUDE		1	0		M05	S10	0.044762	0.028139
+audited	tfidf	w_8ab30e3889d447fc	Learning Towards Emergence: Paving the Way to Induce Emergence by Inhibiting Monosemantic Neurons on Pre-trained Models	2025	EXCLUDE	TIER_3	2	1	SCALING	M10	S25	0.004422	-0.05377
+audited	tfidf	w_22e0f6e0ecd808ae	Learning words in groups: fusion algebras, tensor ranks and grokking	2025	EXCLUDE	TIER_3	0	0		M10	S25	-0.013134	-0.011918
+audited	tfidf	w_035e7977c618391e	LieTrunc-QNN: Lie Algebra Truncation and Quantum Expressivity Phase Transition from LiePrune to Provably Stable Quantum Neural Networks	2026	EXCLUDE	TIER_3	4	0		M02	S04	0.001117	-0.009138
+audited	tfidf	w_dee1d8642fb8ec4d	Linear Latent World Models in Simple Transformers: A Case Study on Othello-GPT	2023	EXCLUDE	TIER_3	2	1	COMPRESSION	M09	S18	0.056403	0.042755
+audited	tfidf	w_e7fededba00d2282	Linear Spatial World Models Emerge in Large Language Models	2025	EXCLUDE	TIER_3	2	1	COMPRESSION	M02	S05	-0.005356	-0.023575
+audited	tfidf	w_9f65ba32c1a08d74	Low-Dimensional and Transversely Curved Optimization Dynamics in Grokking	2026	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M01	S01	0.013651	0.050849
+audited	tfidf	w_f4d58aaa5b0434b2	Low-dimensional intrinsic dimension reveals a phase transition in gradient-based learning of deep neural networks	2024	EXCLUDE	TIER_3	3	0		M04	S08	-0.007259	-0.031054
+audited	tfidf	w_3a2ad5f9386e827d	Mechanism and Emergence of Stacked Attention Heads in Multi-Layer Transformers	2024	EXCLUDE	TIER_3	2	1	SCALING	M10	S20	-0.014309	-0.001049
+audited	tfidf	w_5d1e32d2e724c9ae	Mechanistic Data Attribution: Tracing the Training Origins of Interpretable LLM Units	2026	EXCLUDE	TIER_3	1	0		M10	S22	-0.025885	-0.02615
+audited	tfidf	w_f5760f8154c234f6	Mechanistic Insights into Grokking from the Embedding Layer	2025	EXCLUDE	TIER_3	2	0		M01	S01	0.022202	0.011571
+audited	tfidf	w_e4f4c4e47cf2bb24	Memorization, Emergence, and Explaining Reversal Failures: A Controlled Study of Relational Semantics in LLMs	2026	EXCLUDE	TIER_3	2	1	SCALING	M10	S21	-0.003959	-0.011223
+audited	tfidf	w_de53e52135814667	Modeling Transformers as complex networks to analyze learning dynamics	2025	EXCLUDE	TIER_3	1	0		M06	S13	-0.014241	-0.026869
+audited	tfidf	w_2848c4070ebd2893	Monotonic Representation of Numeric Attributes in Language Models	2024	EXCLUDE	TIER_3	0	1	COMPRESSION	M10	S21	-0.015498	-0.020702
+audited	tfidf	w_b034caed584efd9c	Multimodal Function Vectors for Visual Relations	2026	EXCLUDE	TIER_3	3	1	COMPRESSION	M06	S12	0.023011	0.292699
+audited	tfidf	w_5cfae990f2e4ea0e	Multiple-Timescale Neural Networks: Generation of History-Dependent Sequences and Inference Through Autonomous Bifurcations	2021	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M02	S04	-0.020098	-0.023043
+audited	tfidf	w_d68d0884ffdb9426	Neural Collapse Dynamics: Depth, Activation, Regularisation, and Feature Norm Threshold	2026	EXCLUDE	TIER_3	2	1	SCALING	M10	S25	-0.012853	-0.001933
+audited	tfidf	w_0a81fc2513bfcc09	New Skills or Sharper Primitives? A Probabilistic Perspective on the Emergence of Reasoning in RLVR	2026	EXCLUDE	TIER_3	2	0		M10	S19	-0.000902	0.016763
+audited	tfidf	w_c31a237682405c3b	Noise-Driven Escape from Metastable Phases explains Grokking in Deep Neural Networks	2026	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M02	S04	0.003729	0.016639
+audited	tfidf	w_c630442fbffca0c4	Not Emergent by Accident: The Implicit Global Workspace as a Consequence of Transformer Optimization	2026	EXCLUDE		3	0		M10	S20	-0.048855	-0.037238
+audited	tfidf	w_f15bfc4589f93e42	Number detectors spontaneously emerge in a deep neural network designed for visual object recognition	2019	EXCLUDE	TIER_3	1	1	COMPRESSION	M10	S25	-0.008186	0.01422
+audited	tfidf	w_702044b6725a459d	On Mesa-Optimization in Autoregressively Trained Transformers: Emergence and Capability	2024	EXCLUDE	TIER_3	1	1	NOVEL_BASIS	M10	S25	-0.02587	-0.034348
+audited	tfidf	w_0308d55890a5b9c6	On the Emergence of Induction Heads for In-Context Learning	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M06	S14	0.047135	0.063263
+audited	tfidf	w_25ba5099b834e43a	On the Mechanism and Dynamics of Modular Addition: Fourier Features, Lottery Ticket, and Grokking	2026	INCLUDE	TIER_1	1	3	SCALING,COMPRESSION,NOVEL_BASIS	M02	S05	-0.012443	-0.001562
+audited	tfidf	w_6ffbda57ab6a27ae	Optimal reinforcement learning near the edge of a synchronization transition	2022	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M03	S06	0.150254	0.128197
+audited	tfidf	w_ce9d14ed68420ed6	Outliers with Opposing Signals Have an Outsized Effect on Neural Network Optimization	2023	EXCLUDE	TIER_3	2	0		M10	S21	-0.012304	-0.01293
+audited	tfidf	w_1ab7ec580940888c	Path Integration and Object-Location Binding Emerge in an Action-Conditioned Predictive Sequence Network	2026	EXCLUDE	TIER_3	4	1	NOVEL_BASIS	M10	S21	-0.038067	-0.044992
+audited	tfidf	w_491d54e45fee4c6c	Persona Features Control Emergent Misalignment	2025	EXCLUDE	TIER_3	2	0		M07	S15	0.136003	0.095503
+audited	tfidf	w_dff3d1da5e63f8e0	Phase Transitions in Attention: A Bayesian Theory of Copy Head Emergence	2026	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M02	S04	-0.022755	-0.034253
+audited	tfidf	w_e290bc51cfc6cc89	Phase transitions reveal hierarchical structure in deep neural networks	2025	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M02	S04	0.002892	0.017703
+audited	tfidf	w_703971b3ad96268c	Place cells may simply be memory cells: Memory compression leads to spatial tuning and history dependence	2021	EXCLUDE		1	0		M04	S07	0.002311	0.034811
+audited	tfidf	w_3649951b25d89fe3	Plasticity and language in the anaesthetized human hippocampus	2026	EXCLUDE	TIER_3	0	1	SCALING	M05	S11	0.007603	0.008847
+audited	tfidf	w_b19041cd869bacfa	Post-Grokking Collapse at the Representation-Readout Interface in Muon-Trained Transformers	2026	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M02	S05	0.006379	0.002777
+audited	tfidf	w_e3daf00bfe8e1caf	Predicting Emergent Abilities with Infinite Resolution Evaluation	2023	EXCLUDE	TIER_3	2	0		M10	S19	-0.002136	0.04391
+audited	tfidf	w_85b812c5c78e647c	Predicting the Emergence of Induction Heads in Language Model Pretraining	2025	INCLUDE	TIER_2	1	2	SCALING,CRITICALITY	M06	S14	0.00902	0.043223
+audited	tfidf	w_d27b97e00fa37f8b	Prediction horizon shapes representations in predictive learning	2025	INCLUDE	TIER_2	4	3	SCALING,COMPRESSION,NOVEL_BASIS	M04	S08	0.040161	0.008776
+audited	tfidf	w_0c85822618800428	Predictive learning as a network mechanism for extracting low-dimensional latent space representations	2021	INCLUDE	TIER_1	2	3	SCALING,COMPRESSION,NOVEL_BASIS	M04	S08	0.063144	0.015184
+audited	tfidf	w_cf357442f5aa7893	Predictive pursuit emerges in high-dimensional recurrent neural networks	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M04	S08	0.01775	-0.048459
+audited	tfidf	w_e1dd76d318faa330	Predictive sequence learning in the hippocampal formation	2024	INCLUDE	TIER_2	1	3	SCALING,COMPRESSION,NOVEL_BASIS	M04	S07	0.021843	0.075185
+audited	tfidf	w_8dc658fd6956f31c	Predictive Statistics Shape Emergent World Representations of Grid Walkers	2026	EXCLUDE	TIER_3	3	1	COMPRESSION	M09	S18	0.013796	0.026076
+audited	tfidf	w_92e74bd4c6d552b0	Pretraining task diversity and the emergence of non-Bayesian in-context learning for regression	2023	EXCLUDE	TIER_3	3	0		M06	S14	0.049037	0.008855
+audited	tfidf	w_ee8ec07c31be9d3c	Progress Measures for Grokking on Real-world Tasks	2024	EXCLUDE	TIER_3	0	0		M01	S02	0.037323	0.038638
+audited	tfidf	w_f3172e652cebe4b6	Progress Measures for Grokking via Mechanistic Interpretability	2023	INCLUDE	TIER_1	5	4	SCALING,CRITICALITY,COMPRESSION,NOVEL_BASIS	M02	S05	0.000496	0.012376
+audited	tfidf	w_256904d2b1ec4eea	Provable In-Context Learning of Nonlinear Regression with Transformers	2025	EXCLUDE	TIER_3	3	1	SCALING	M10	S22	-0.042385	-0.043292
+audited	tfidf	w_248da8719a3b92f1	Quantum-data-driven dynamical transition in quantum learning	2024	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M02	S04	-0.029782	-0.000353
+audited	tfidf	w_3f93613f81a9c243	Quiet Feature Learning in Algorithmic Tasks	2025	EXCLUDE	TIER_3	2	1	SCALING	M10	S22	-0.001762	-0.000521
+audited	tfidf	w_34505df745b929e9	Random noise promotes slow heterogeneous synaptic dynamics important for robust working memory computation	2025	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M05	S11	-0.015139	0.008503
+audited	tfidf	w_3f4213b6cde6e5f0	Reasoning Circuits in Language Models: A Mechanistic Interpretation of Syllogistic Inference	2024	EXCLUDE	TIER_3	2	1	COMPRESSION	M10	S21	-0.009011	-0.017052
+audited	tfidf	w_4c59d2e23a4fc16d	Recurrent Information Optimization with Local, Metaplastic Synaptic Dynamics	2017	EXCLUDE		1	0		M05	S11	-0.006978	0.007138
+audited	tfidf	w_ca22559e045ae009	Recurrent neural network models for working memory of continuous variables: activity manifolds, connectivity patterns, and dynamic codes	2021	EXCLUDE	TIER_3	3	1	SCALING	M05	S10	0.03909	0.047798
+audited	tfidf	w_71088ab66e735f6d	Recurrent Neural Networks Learn to Store and Generate Sequences using Non-Linear Representations	2024	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M02	S05	-0.011712	-0.018106
+audited	tfidf	w_67833e8bc8bb92f5	Redundant representations help generalization in wide neural networks * , †	2023	INCLUDE	TIER_2	2	3	SCALING,COMPRESSION,CRITICALITY	M02	S04	0.004892	0.018498
+audited	tfidf	w_f1b4b88248a84fdc	Reinforcement Learning for Reasoning in Large Language Models with One Training Example	2025	EXCLUDE	TIER_3	2	0		M10	S19	0.00267	0.018821
+audited	tfidf	w_6a9409d4892f5b2e	Relational Schemata in BERT Are Inducible, Not Emergent: A Study of Performance vs. Competence in Language Models	2025	EXCLUDE	TIER_3	1	0		M10	S21	-0.01152	-0.019759
+audited	tfidf	w_a11738764f341243	Representations in the hippocampal-entorhinal system emerge from learning sensory predictions	2025	EXCLUDE	TIER_3	1	0		M10	S21	-0.024367	-0.020962
+audited	tfidf	w_a03de8e37b580793	Rethinking the Harmonic Loss via Non-Euclidean Distance Layers	2026	EXCLUDE	TIER_3	2	0		M10	S23	-0.017331	0.398128
+audited	tfidf	w_a9cb982ac7d47107	Revealing Algorithmic Deductive Circuits for Logical Reasoning	2026	EXCLUDE	TIER_3	2	1	COMPRESSION	M10	S19	-0.002133	0.032743
+audited	tfidf	w_c6f5b81db8e0569b	Scan and Snap: Understanding Training Dynamics and Token Composition in 1-layer Transformer	2023	EXCLUDE	TIER_3	2	1	SCALING	M04	S08	-0.00818	-0.024583
+audited	tfidf	w_83e64ad84caa32d8	Schema-learning and rebinding as mechanisms of in-context learning and emergence	2023	EXCLUDE	TIER_3	0	0		M06	S13	0.042047	0.023232
+audited	tfidf	w_82bddad1cc78d3a0	Self-Supervised Learning of Representations for Space Generates Multi-Modular Grid Cells	2023	EXCLUDE	TIER_3	1	1	NOVEL_BASIS	M05	S10	-0.014749	-0.018487
+audited	tfidf	w_89fd2479381ba2a1	Semantic representations emerge in biologically inspired ensembles of cross-supervising neural networks	2025	EXCLUDE	TIER_3	3	1	COMPRESSION	M04	S08	0.011232	0.018709
+audited	tfidf	w_de78b34865a33cc1	Sequential predictive learning is a unifying theory for hippocampal representation and replay	2024	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M04	S07	0.038511	0.107372
+audited	tfidf	w_7a781449242321ca	Single-unit activations confer inductive biases for emergent circuit solutions to cognitive tasks	2024	EXCLUDE		3	0		M05	S10	0.027166	-0.004597
+audited	tfidf	w_daee53647d83a6c7	Social-JEPA: Emergent Geometric Isomorphism	2026	EXCLUDE	TIER_3	3	1	COMPRESSION	M04	S08	0.014381	0.010557
+audited	tfidf	w_38e23f5995c71d9b	Spatial reasoning via recurrent neural dynamics in mouse retrosplenial cortex	2025	INCLUDE	TIER_2	2	3	SCALING,COMPRESSION,NOVEL_BASIS	M05	S10	-0.010732	-0.02754
+audited	tfidf	w_b1a722c7add3a18c	Specialization of softmax attention heads: insights from the high-dimensional single-location model	2026	INCLUDE	TIER_2	1	2	SCALING,CRITICALITY	M10	S20	-0.025074	-0.023251
+audited	tfidf	w_a124ea491b1e38a3	Spectral Entropy Collapse as a Phase Transition in Delayed Generalisation: An Interventional and Predictive Framework for Grokkin	2026	INCLUDE	TIER_2	4	2	SCALING,COMPRESSION	M01	S02	0.016827	0.022747
+audited	tfidf	w_8c5442dfb760aae0	Spectral phase transitions and trainability in neural network learning dynamics	2026	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M02	S04	-0.019183	-0.004841
+audited	tfidf	w_dd8fdb677c189adf	Spontaneous emergence of music detectors in a deep neural network	2021	EXCLUDE	TIER_3	3	0		M05	S10	0.012679	-0.003006
+audited	tfidf	w_4cc49e7d299cfe8c	Spontaneous emergence of topographic organization in a multistream convolutional neural network	2026	EXCLUDE	TIER_3	2	0		M05	S11	0.015768	-0.001046
+audited	tfidf	w_6ab1d89d9c4e7dd2	Stability control of metastable states as a unified mechanism for flexible temporal modulation in cognitive processing	2025	EXCLUDE	TIER_3	1	1	SCALING	M05	S11	0.02805	0.029887
+audited	tfidf	w_0434419d04af1ffa	State space models, emergence, and ergodicity: How many parameters are needed for stable predictions?	2024	EXCLUDE	TIER_3	2	0		M10	S19	0.00578	-0.020621
+audited	tfidf	w_8bb54bfea1acc1db	State Stream Transformer (SST) : Emergent Metacognitive Behaviours Through Latent State Persistence	2025	EXCLUDE	TIER_3	0	0		M10	S19	-0.009312	0.023203
+audited	tfidf	w_be7a6d5176757697	States Hidden in Hidden States: LLMs Emerge Discrete State Representations Implicitly	2024	EXCLUDE	TIER_3	1	1	COMPRESSION	M10	S19	-0.021163	-0.004907
+audited	tfidf	w_cf6cf36d9750b226	Strategy Coopetition Explains the Emergence and Transience of In-Context Learning	2025	EXCLUDE	TIER_3	2	1	SCALING	M06	S13	0.014715	0.009402
+audited	tfidf	w_6ab9ecac32c07a9d	Structure Before Collapse: Transient semantic geometry in next-token prediction	2026	EXCLUDE	TIER_3	3	0		M10	S22	-0.014954	-0.026216
+audited	tfidf	w_4ec0813caf380920	Structure-Specific Representational Priors Causally Control the Grokking Delay	2026	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M02	S05	0.009363	0.00038
+audited	tfidf	w_20e6e75b99ee90d7	Structured World Representations in Maze-Solving Transformers	2023	EXCLUDE	TIER_3	0	0		M09	S18	0.037483	0.033726
+audited	tfidf	w_216dc523ea90641f	Symmetric Pruning in Quantum Neural Networks	2022	EXCLUDE	TIER_3	1	1	SCALING	M02	S04	-0.013633	0.00367
+audited	tfidf	w_836f9ea39dbbe203	Symmetry in language statistics shapes the geometry of model representations	2026	EXCLUDE	TIER_3	1	0		M10	S21	-0.004011	-0.003706
+audited	tfidf	w_5c54f66764cf4f97	Temporal hierarchy in spiking neural networks	2024	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M05	S11	-0.044208	-0.028265
+audited	tfidf	w_820056212d8d8746	The Agnostic Meaning Substrate: A Theoretical Framework for Emergent Meaning in Large Language Models	2026	EXCLUDE	TIER_3	2	0		M10	S21	-0.0045	-0.042022
+audited	tfidf	w_4ed5458b1772d1f2	The Birth of Knowledge: Emergent Features across Time, Space, and Scale in Large Language Models	2025	EXCLUDE	TIER_3	3	0		M09	S17	0.006441	0.049034
+audited	tfidf	w_dbd268417dd9318a	The Complexity Dynamics of Grokking	2024	EXCLUDE	TIER_3	3	0		M01	S02	0.045776	0.064449
+audited	tfidf	w_217259c652559d80	The Emergence of Abstract Thought in Large Language Models Beyond Any Language	2025	EXCLUDE	TIER_3	3	0		M10	S22	-0.004076	-0.049187
+audited	tfidf	w_ce559350ab146c7f	The emergence of sparse attention: impact of data distribution and benefits of repetition	2025	EXCLUDE	TIER_3	3	0		M10	S25	-0.005642	-0.034426
+audited	tfidf	w_49fbb6adb4c71e00	The Features at Convergence Theorem: a first-principles alternative to the Neural Feature Ansatz for how networks learn representations	2025	EXCLUDE	TIER_3	3	0		M10	S22	-0.022943	-0.014946
+audited	tfidf	w_d59f0794873b2140	The Geometric Inductive Bias of Grokking: Bypassing Phase Transitions via Architectural Topology	2026	EXCLUDE	TIER_3	2	1	SCALING	M01	S03	0.029361	0.002203
+audited	tfidf	w_dc093e37a5dc7bb6	The Geometry of Grokking: Norm Minimization on the Zero-Loss Manifold	2025	EXCLUDE	TIER_3	2	1	SCALING	M01	S03	0.031637	-0.006688
+audited	tfidf	w_f05eeedb3d84fbb7	The Geometry of Multi-Task Grokking: Transverse Instability, Superposition, and Weight Decay Phase Structure	2026	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M01	S01	0.027577	0.108935
+audited	tfidf	w_125db4c2cf79214e	The Geometry of Thought: How Scale Restructures Reasoning In Large Language Models	2026	EXCLUDE	TIER_3	3	1	SCALING	M10	S22	0.004574	-0.007264
+audited	tfidf	w_6dca211542b22757	The Geometry of Truth: Emergent Linear Structure in Large Language Model Representations of True/False Datasets	2023	EXCLUDE	TIER_3	3	1	COMPRESSION	M02	S05	-0.030798	-0.033149
+audited	tfidf	w_d3fbcea1a7016c21	The Grokked Illusion: True Equilibrium Mitigates Catastrophic Forgetting	2026	EXCLUDE	TIER_3	1	0		M10	S25	-0.042174	-0.03615
+audited	tfidf	w_fd9f2541bd4039ab	The Hydra Effect: Emergent Self-repair in Language Model Computations	2023	EXCLUDE	TIER_3	1	0		M10	S22	0.004539	-0.006155
+audited	tfidf	w_aef0b7ca715aca7b	The Kinetics of Reasoning: How Chain-of-Thought Shapes Learning in Transformers?	2025	EXCLUDE	TIER_3	2	0		M10	S22	-0.043248	-0.028215
+audited	tfidf	w_e0964d9cc077c1f7	The Kinetics of Training: A Driven-Nucleation Rate Law for Emergence, Plasticity Loss, and Circuit Control in Language Models	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M10	S25	-0.034821	-0.03318
+audited	tfidf	w_bb266301f50d20fd	The Long Delay to Arithmetic Generalization: When Learned Representations Outrun Behavior	2026	EXCLUDE	TIER_3	3	1	SCALING	M02	S05	-0.014879	-0.023822
+audited	tfidf	w_4ae2e575bb61224a	The mechanistic basis of data dependence and abrupt learning in an in-context classification task	2023	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M06	S14	0.05744	0.039404
+audited	tfidf	w_9eb59bc5a9947867	The Mechanistic Emergence of Symbol Grounding in Language Models	2025	EXCLUDE	TIER_3	1	1	NOVEL_BASIS	M10	S20	-0.007184	-0.026116
+audited	tfidf	w_b0bbf9007eb97544	The semantic landscape paradigm for neural networks	2023	EXCLUDE	TIER_3	1	0		M10	S25	-0.001578	0.007205
+audited	tfidf	w_008eb0f516b85fd6	The Transient Nature of Emergent In-Context Learning in Transformers	2023	EXCLUDE	TIER_3	2	0		M06	S13	0.04588	0.027405
+audited	tfidf	w_cb13b05644b72dd1	Thermodynamic Weight Decay: Exploring Grokking Acceleration via Attention Specific Heat	2026	EXCLUDE	TIER_3	2	0		M01	S01	0.038411	0.029467
+audited	tfidf	w_97808c92883566a2	Thinking Sparks!: Emergent Attention Heads in Reasoning Models During Post Training	2025	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M10	S20	-0.014931	-0.015851
+audited	tfidf	w_8da6fd53fb3f9060	To grok or not to grok: Disentangling generalization and memorization on corrupted algorithmic datasets	2023	EXCLUDE	TIER_3	2	0		M01	S03	0.0298	-0.029139
+audited	tfidf	w_6cff01a295cd62bc	Topological Signatures of Grokking	2026	EXCLUDE	TIER_3	2	1	SCALING	M01	S03	0.019347	0.015473
+audited	tfidf	w_5fc248e95ef96553	Towards Empirical Interpretation of Internal Circuits and Properties in Grokked Transformers on Modular Polynomials	2024	INCLUDE	TIER_2	1	2	SCALING,COMPRESSION	M02	S05	-0.000927	-0.010457
+audited	tfidf	w_df6db03591377b6c	Towards Understanding Grokking: An Effective Theory of Representation Learning	2022	EXCLUDE	TIER_3	1	1	SCALING	M01	S02	0.027955	0.065094
+audited	tfidf	w_9452d90c60267b86	TRACE for Tracking the Emergence of Semantic Representations in Transformers	2025	EXCLUDE	TIER_3	3	1	SCALING	M10	S22	-0.006031	-0.007831
+audited	tfidf	w_78af69834e46633e	Trait-space Monitoring for Emergent Misalignment During Supervised Finetuning	2026	EXCLUDE	TIER_3	2	0		M02	S05	-0.061275	-0.048364
+audited	tfidf	w_e13ee6a2cef1e035	Transformers Can Learn Rules They've Never Seen: Proof of Computation Beyond Interpolation	2026	EXCLUDE	TIER_3	2	1	NOVEL_BASIS	M10	S21	-0.007854	-0.004263
+audited	tfidf	w_b7f8f8cdd2e2b20c	Transformers converge to invariant algorithmic cores	2026	EXCLUDE	TIER_3	2	1	COMPRESSION	M01	S01	0.018743	0.040453
+audited	tfidf	w_29ea95f17f21c7ac	Transformers for dynamical systems learn transfer operators in-context	2026	INCLUDE	TIER_2	4	2	NOVEL_BASIS,GENERALISATION	M04	S08	-0.007733	-0.008194
+audited	tfidf	w_71b6d6ab5f4c7549	Transformers Linearly Represent Highly Structured World Models	2026	EXCLUDE	TIER_3	3	0		M09	S18	0.038902	0.026436
+audited	tfidf	w_943e3e1497c6a620	Transformers Struggle to Use Their Emergent World Models: Revisiting the Tower of Hanoi, and the Illusion of Thinking	2026	EXCLUDE	TIER_3	2	0		M09	S18	0.04915	0.05526
+audited	tfidf	w_abf120cd18b386a4	Transformers Use Causal World Models in Maze-Solving Tasks	2024	EXCLUDE	TIER_3	3	1	COMPRESSION	M09	S18	0.06422	-0.047174
+audited	tfidf	w_c4c37ad693a0f63e	Triple Phase Transitions: Understanding the Learning Dynamics of Large Language Models from a Neuroscience Perspective	2025	EXCLUDE	TIER_3	2	1	SCALING	M10	S19	-0.002557	0.048067
+audited	tfidf	w_96f6c1c0e6b85513	Two Speeds of Learning: A Representation-Readout Decomposition of Grokking and Double Descent	2026	EXCLUDE	TIER_3	3	1	SCALING	M02	S05	-0.00376	-0.008439
+audited	tfidf	w_892700b85dd7550d	Uncovering Emergent Physics Representations Learned In-Context by Large Language Models	2025	EXCLUDE	TIER_3	2	0		M09	S17	0.033604	0.10527
+audited	tfidf	w_3d849b1308457c8a	Uncovering Intermediate Variables in Transformers using Circuit Probing	2023	EXCLUDE	TIER_3	1	1	SCALING	M10	S21	-0.008179	-0.009263
+audited	tfidf	w_b73fd2a4553849d2	Understanding Contextual Recall in Transformers: How Finetuning Enables In-Context Reasoning over Pretraining Knowledge	2026	EXCLUDE	TIER_3	3	0		M06	S13	0.027578	0.058521
+audited	tfidf	w_a895d12c14921630	Understanding the Emergence of Seemingly Useless Features in Next-Token Predictors	2026	EXCLUDE	TIER_3	2	0		M10	S21	-0.027496	-0.019066
+audited	tfidf	w_4450b32daf450669	Understanding the Staged Dynamics of Transformers in Learning Latent Structure	2025	EXCLUDE	TIER_3	1	0		M10	S22	-0.001435	0.004215
+audited	tfidf	w_67e8416e326083ff	Understanding Training Behaviour during Transfer Learning by drawing parallels to Grokking	2024	EXCLUDE		2	0		M10	S21	-0.021724	-0.019101
+audited	tfidf	w_51bb6c4d6e676885	Unifying Attention Heads and Task Vectors via Hidden State Geometry in In-Context Learning	2025	EXCLUDE	TIER_3	3	1	COMPRESSION	M02	S05	-0.01345	-0.044895
+audited	tfidf	w_e117d573dbd1bc5f	Unlocking Emergent Modularity in Large Language Models	2023	EXCLUDE	TIER_3	1	0		M10	S24	-0.019772	0.370225
+audited	tfidf	w_024427dec8189e9e	Unveiling the Dynamics of Information Interplay in Supervised Learning	2024	EXCLUDE	TIER_3	1	0		M10	S22	-0.004997	-0.022177
+audited	tfidf	w_7478c4587d99ea18	Unveiling Transformers with LEGO: a synthetic reasoning task	2022	INCLUDE	TIER_2	1	3	SCALING,NOVEL_BASIS,GENERALISATION	M10	S20	-0.013022	0.017062
+audited	tfidf	w_2da86842e38bab70	Using physics-inspired Singular Learning Theory to understand grokking & other phase transitions in modern neural networks	2025	EXCLUDE	TIER_3	3	0		M01	S02	0.021915	0.064246
+audited	tfidf	w_b5ca64f35ddf125e	Weight Decay as a Necessary Condition for Grokking: Hierarchical Structure Learning in Group Multiplication Tasks	2026	EXCLUDE		3	0		M01	S01	0.049723	0.025949
+audited	tfidf	w_f5f5600670f31041	Weight Decay Regimes in Grokking Transformers: Cheap Online Diagnostics	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M01	S01	-0.011316	0.04851
+audited	tfidf	w_04b9b5a3d5792aa4	What Can Grokking Teach Us About Learning Under Nonstationarity?	2025	EXCLUDE	TIER_3	1	0		M01	S03	0.036605	0.00904
+audited	tfidf	w_088b931ffe5cee0f	What do Language Models Learn and When? The Implicit Curriculum Hypothesis	2026	EXCLUDE	TIER_3	2	1	SCALING	M10	S21	-0.006109	-0.019512
+audited	tfidf	w_dd6e6d084bbc1493	What Happens Inside Agent Memory? Circuit Analysis from Emergence to Diagnosis	2026	EXCLUDE	TIER_3	2	1	SCALING	M10	S21	-0.006803	-0.004217
+audited	tfidf	w_7afa59979906b85f	What Needs to Go Right for an Induction Head? A Mechanistic Study of In-Context Learning Circuits and Their Formation	2024	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M06	S14	0.04117	0.022802
+audited	tfidf	w_33b529766cc60dd2	What One Cannot, Two Can: Two-Layer Transformers Provably Represent Induction Heads on Any-Order Markov Chains	2025	INCLUDE	TIER_2	3	2	COMPRESSION,SCALING	M10	S21	-0.028159	-0.055061
+audited	tfidf	w_5362be8fefcfa6c2	When and Where: A Model Hippocampal Network Unifies Formation of Time Cells and Place Cells	2026	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M04	S07	0.039718	0.114311
+audited	tfidf	w_0b1eb64b020ee8c4	When Do Attention Circuits Form? Developmental Trajectories of Capability and Attention-Sink Emergence Across Three 1B-Class Architectures	2026	EXCLUDE	TIER_3	3	1	SCALING	M06	S14	0.014573	0.022648
+audited	tfidf	w_b1b2841abfaf8ef2	Which Attention Heads Matter for In-Context Learning?	2025	INCLUDE	TIER_2	5	2	SCALING,COMPRESSION	M06	S12	0.069198	0.161578
+audited	tfidf	w_e5708a67b277cfbd	Why Do You Grok? A Theoretical Analysis of Grokking Modular Addition	2024	EXCLUDE	TIER_3	1	0		M01	S03	0.029331	0.035345
+audited	tfidf	w_9f42a69c53e47f06	Why the Brain Consolidates: Predictive Forgetting for Optimal Generalisation	2026	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M04	S08	0.010378	-0.001565
+audited	tfidf	w_662491c7dd0e3662	Word class representations spontaneously emerge in a deep neural network trained on next word prediction	2023	EXCLUDE	TIER_3	2	0		M10	S25	-0.005441	0.00402
+audited	semantic	w_7ced2a0538a6bf26	A Bayesian Perspective on the Role of Epistemic Uncertainty for Delayed Generalization in In-Context Learning	2026	EXCLUDE	TIER_3	3	0		M09	S22	-0.035794	-0.059938
+audited	semantic	w_094c3309bf13cd4c	A Critical Period for Compositional Visual Grounding? Controlled Block Order and Causal Attention Interventions in a Small Vision–Language Transformer	2026	EXCLUDE	TIER_3	3	0		M02	S04	-0.012196	0.083958
+audited	semantic	w_c05624cc0be4c2cb	A jamming transition from under- to over-parametrization affects generalization in deep learning	2018	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M07	S17	0.028682	0.084139
+audited	semantic	w_f94f564014be4c25	A Mechanistic Analysis of Transformers for Dynamical Systems	2025	INCLUDE	TIER_2	0	2	SCALING,COMPRESSION	M02	S03	0.043754	0.079814
+audited	semantic	w_3f7299052e18118d	A Neural Network Model of Free Recall Learns Multiple Memory Strategies	2026	INCLUDE	TIER_2	3	2	COMPRESSION,NOVEL_BASIS	M09	S22	0.073008	0.001691
+audited	semantic	w_07d5eb02f4e65497	A phase transition between positional and semantic learning in a solvable model of dot-product attention	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M09	S23	0.137179	0.061542
+audited	semantic	w_a5e46f75ed09651c	A Rationale from a Frequency Perspective for Grokking in Training Neural Networks	2026	EXCLUDE		1	0		M06	S12	0.18178	0.038251
+audited	semantic	w_ee7cdd8c7d281656	A simple model of co-emergence of grid and place fields	2026	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M10	S25	0.22206	0.272011
+audited	semantic	w_c8aa82534e05dc80	Acceleration of Grokking in Learning Arithmetic Operations Via Kolmogorov-Arnold Representation	2024	EXCLUDE	TIER_3	1	0		M06	S13	0.181802	0.190529
+audited	semantic	w_8e2c23b49bc4d436	Actionable Activation Directions for Detecting and Mitigating Emergent Misalignment Across Language Model Families	2026	EXCLUDE	TIER_3	1	1	COMPRESSION	M04	S07	0.263491	0.25674
+audited	semantic	w_9b4cd178ad4adfab	Adaptive time scales in recurrent neural networks	2019	EXCLUDE	TIER_3	1	1	SCALING	M08	S21	0.095257	0.0035
+audited	semantic	w_66f94b2437b7dc7a	Algebraic Representability as the Limiting Regime of Grokking: An Exactly Solvable Model with Holomorphic Activations	2026	EXCLUDE	TIER_3	2	0		M06	S13	0.138431	0.148003
+audited	semantic	w_16cd2ac0aa2264b5	Algorithmic Phase Transitions in Language Models: A Mechanistic Case Study of Arithmetic	2024	EXCLUDE	TIER_3	2	0		M02	S04	0.032974	0.030234
+audited	semantic	w_69468026d902ba92	An Emergent Mirage: Is Emergent Misalignment and Realignment Indeed a Robust Phenomenon?	2026	EXCLUDE	TIER_3	2	0		M04	S07	0.430347	0.401164
+audited	semantic	w_ed2497928c30d699	Anchored Intrinsic Coordinates for Grokking: Curvature, Predictive Reducibility, and Boundary Cases	2026	EXCLUDE		4	0		M06	S14	0.083	-0.02625
+audited	semantic	w_310671f6b2320a54	Are Your Reasoning Models Reasoning or Guessing? A Mechanistic Analysis of Hierarchical Reasoning Models	2026	EXCLUDE	TIER_3	2	0		M03	S05	-0.029076	-0.118396
+audited	semantic	w_8686cbb9af9f8fa5	Arithmetic Pedagogy for Language Models	2026	EXCLUDE	TIER_3	1	1	SCALING	M05	S10	-0.098827	-0.1165
+audited	semantic	w_8bf24f4dbe9ac287	Arithmetic with language models: From memorization to computation	2024	EXCLUDE	TIER_3	1	0		M05	S10	-0.036979	0.107908
+audited	semantic	w_92e78fbf258ed40a	Assign and Add: A Mechanistic Study of Compositional Arithmetic	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M01	S02	0.175496	-0.030668
+audited	semantic	w_7642d8c74152ab9f	Attention-Head Binding as a Term-Conditioned Mechanistic Marker of Accessibility Concept Emergence in Language Models	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M09	S23	0.098266	0.028333
+audited	semantic	w_4d72f64019a5d816	Attention to Order: Transformers Discover Phase Transitions via Learnability	2025	EXCLUDE	TIER_3	3	0		M02	S03	0.033967	-0.010463
+audited	semantic	w_3d415e237f7c4f65	Autocorrelations from emergent bistability in homeostatic spiking neural networks on neuromorphic hardware	2022	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M08	S21	0.10573	0.147395
+audited	semantic	w_3144bdd83cd17ac0	Automated construction of cognitive maps with visual predictive coding	2024	INCLUDE	TIER_2	1	2	COMPRESSION,NOVEL_BASIS	M10	S24	0.202147	-0.000568
+audited	semantic	w_0ff86e6a31e1d145	Balancing Stability and Flow in Hippocampal Networks via Inductive Bias and Learned Symmetry Breaking	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M08	S20	-0.019601	-0.075345
+audited	semantic	w_15e8cda2ffdcc159	Benign Overfitting and Grokking in ReLU Networks for XOR Cluster Data	2023	EXCLUDE	TIER_3	1	0		M06	S14	0.094034	-0.04266
+audited	semantic	w_47f0ccb3e2ec3eac	Beyond Induction Heads: In-Context Meta Learning Induces Multi-Phase Circuit Emergence	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M09	S23	0.06641	0.048948
+audited	semantic	w_63db75cd5e03c2b8	Bridging Lottery Ticket and Grokking: Understanding Grokking from Inner Structure of Networks	2023	INCLUDE	TIER_1	2	3	SCALING,CRITICALITY,NOVEL_BASIS	M09	S22	-0.158063	0.035469
+audited	semantic	w_2715496262944022	Character as a Latent Variable in Large Language Models: A Mechanistic Account of Emergent Misalignment and Conditional Safety Failures	2026	EXCLUDE	TIER_3	2	0		M04	S07	0.314668	0.267833
+audited	semantic	w_d8d988a779b74559	Characterization of the Neuronal and Network Dynamics of Liquid State Machines	2023	EXCLUDE		1	0		M08	S21	0.031114	0.031192
+audited	semantic	w_8d4fdc1ea9b8170d	CheckersGPT: Learning World Models through Language Modeling	2024	EXCLUDE	TIER_3	2	0		M05	S10	0.087692	0.079811
+audited	semantic	w_584c8d983c92b47f	Circuit Synchronization Precedes Generalization: A Causal Precursor to Grokking	2026	INCLUDE	TIER_2	3	2	SCALING,NOVEL_BASIS	M06	S13	0.208422	0.154275
+audited	semantic	w_c569341f9f7b5f6f	Complexity of Linear Regions in Self-supervised Deep ReLU Networks	2026	EXCLUDE	TIER_3	1	0		M08	S20	-0.110996	-0.076147
+audited	semantic	w_83b81c26c357f6b1	Compositional Generalization from Learned Skills via CoT Training: A Theoretical and Structural Analysis for Reasoning	2025	EXCLUDE	TIER_3	2	1	SCALING	M01	S01	0.076044	0.187575
+audited	semantic	w_2f8927f68568913d	Computational mechanisms for temporal integration in the anterior claustrum	2026	EXCLUDE	TIER_3	2	1	NOVEL_BASIS	M08	S20	-0.006234	-0.078253
+audited	semantic	w_1729badd7318419a	Context and Diversity Matter: The Emergence of In-Context Learning in World Models	2025	EXCLUDE	TIER_3	1	1	SCALING	M09	S23	0.039342	0.024448
+audited	semantic	w_679c49d202c94f8e	Control of criticality and computation in spiking neuromorphic networks with plasticity	2019	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M08	S21	0.087624	0.106176
+audited	semantic	w_c05e2ba02fa11716	Controlling Grokking with Nonlinearity and Data Symmetry	2024	EXCLUDE	TIER_3	1	0		M06	S13	0.227214	0.183917
+audited	semantic	w_0f9196b38bcf5602	Cortical Circuits from Scratch: A Metaplastic Architecture for the Emergence of Lognormal Firing Rates and Realistic Topology	2017	EXCLUDE	TIER_3	0	1	NOVEL_BASIS	M08	S21	0.082281	0.026353
+audited	semantic	w_042e2240de24720b	Counterfactual reasoning: an analysis of in-context emergence	2025	EXCLUDE	TIER_3	1	1	NOVEL_BASIS	M05	S11	0.070845	-0.015018
+audited	semantic	w_3a9d20d4ea381a66	Critical dynamics in associative memory networks	2013	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M08	S21	0.014677	0.00849
+audited	semantic	w_d18730b289f06c03	Critical dynamics in homeostatic memory networks	2011	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M08	S21	0.119079	0.112773
+audited	semantic	w_e44f0fcfe85badcc	Critical Windows of Complexity Control: When Transformers Decide to Reason or Memorize	2026	EXCLUDE	TIER_3	3	1	SCALING	M02	S04	0.008451	0.045329
+audited	semantic	w_ba81662b1200a880	Criticality meets learning: Criticality signatures in a self-organizing recurrent neural network	2017	EXCLUDE	TIER_3	2	1	SCALING	M08	S20	-0.007141	-0.041118
+audited	semantic	w_a68b84330ed82b99	CrystaL: Spontaneous Emergence of Visual Latents in MLLMs	2026	EXCLUDE	TIER_3	2	0		M05	S11	0.033315	0.034182
+audited	semantic	w_ae520d3640f2a268	Data Attribution of Emergent Misalignment with Persona Features	2026	EXCLUDE	TIER_3	3	0		M04	S07	0.347039	0.309338
+audited	semantic	w_33d1c931feca94ec	Decentralized Collective World Model for Emergent Communication and Coordination	2025	EXCLUDE	TIER_3	3	0		M03	S05	0.013453	0.100953
+audited	semantic	w_4dde14dbe58ab00c	Decoupling Dynamical Richness from Representation Learning: Towards Practical Measurement	2024	EXCLUDE	TIER_3	1	0		M07	S17	0.021999	0.108452
+audited	semantic	w_00352f2c07e55403	Deep Grokking: Would Deep Neural Networks Generalize Better?	2024	EXCLUDE	TIER_3	2	0		M06	S12	0.247829	0.201706
+audited	semantic	w_811a8cd021958e82	Deep Networks Always Grok and Here is Why	2024	INCLUDE	TIER_2	2	3	SCALING,CRITICALITY,NOVEL_BASIS	M07	S17	0.048374	0.127218
+audited	semantic	w_3be7feda647d0399	Deficits in Prediction Ability Trigger Asymmetries in Behavior and Internal Representation	2020	EXCLUDE	TIER_3	1	0		M09	S23	-0.013186	-0.059056
+audited	semantic	w_b0c3a03ae75a81b6	Different timescales of neural activities introduce different representations of task-relevant information	2024	EXCLUDE	TIER_3	1	0		M08	S21	-0.042108	-0.02577
+audited	semantic	w_a6027fec6ac3ab9a	Differential learning kinetics govern the transition from memorization to generalization during in-context learning	2024	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M09	S23	0.181175	0.003344
+audited	semantic	w_c07a59665ec95bc8	Discovery of a Hematopoietic Manifold in scGPT Yields a Method for Extracting Performant Algorithms from Biological Foundation Model Internals	2026	EXCLUDE	TIER_3	4	1	COMPRESSION	M03	S06	-0.063977	-0.07851
+audited	semantic	w_8af770f5f86d5ac0	Distinct mechanisms underlying in-context learning in transformers	2026	INCLUDE	TIER_1	3	3	SCALING,CRITICALITY,NOVEL_BASIS	M09	S23	-0.021919	-0.050035
+audited	semantic	w_fc836b91e5d6562b	Early-Warning Signals of Grokking via Loss-Landscape Geometry	2026	EXCLUDE	TIER_3	5	0		M06	S14	0.203283	0.013245
+audited	semantic	w_848983c423304f71	Emergence and Effectiveness of Task Vectors in In-Context Learning: An Encoder Decoder Perspective	2024	INCLUDE	TIER_2	1	2	SCALING,COMPRESSION	M05	S08	-0.086205	0.152248
+audited	semantic	w_3e38a37eef49442d	Emergence and Evolution of Interpretable Concepts in Diffusion Models	2025	EXCLUDE	TIER_3	2	0		M03	S06	-0.008044	0.08067
+audited	semantic	w_a68de8b27948098c	Emergence and Function of Abstract Representations in Self-Supervised Transformers	2023	INCLUDE	TIER_2	3	2	COMPRESSION,NOVEL_BASIS	M05	S11	-0.180552	-0.190015
+audited	semantic	w_982bda5c1d37d537	Emergence and Localisation of Semantic Role Circuits in LLMs	2025	EXCLUDE	TIER_3	4	1	SCALING	M05	S11	0.027008	0.093493
+audited	semantic	w_13098e9f9412a76e	Emergence and reconfiguration of modular structure for artificial neural networks during continual familiarity detection	2024	EXCLUDE		0	0		M08	S20	-0.042902	0.012476
+audited	semantic	w_44f0475d18d1ae59	Emergence of Abstract State Representations in Embodied Sequence Modeling	2023	EXCLUDE	TIER_3	2	0		M05	S09	-0.018799	0.027942
+audited	semantic	w_78fdd214482004dc	Emergence of Complex Computational Structures From Chaotic Neural Networks Through Reward-Modulated Hebbian Learning	2012	EXCLUDE		1	0		M08	S20	0.098695	0.053894
+audited	semantic	w_bc4f45853b89dbdc	Emergence of Computational Structure in a Neural Network Physics Simulator	2025	EXCLUDE	TIER_3	3	1	SCALING	M02	S03	0.104465	-0.005195
+audited	semantic	w_8d615b510d4fdfec	Emergence Of Emotion Selectivity in A Deep Neural Network Trained to Recognize Visual Objects	2023	EXCLUDE	TIER_3	1	1	NOVEL_BASIS	M08	S19	0.024762	0.10604
+audited	semantic	w_a87063a6344e999f	Emergence of Episodic Memory in Transformers: Characterizing Changes in Temporal Structure of Attention Scores During Training	2025	EXCLUDE	TIER_3	1	0		M02	S04	0.039034	0.046159
+audited	semantic	w_a6ec62ef7863cd72	Emergence of Foveal Image Sampling from Learning to Attend in Visual Scenes	2017	INCLUDE	TIER_2	3	2	COMPRESSION,NOVEL_BASIS	M10	S24	0.083079	-0.054939
+audited	semantic	w_fa8cd24377d5c54b	Emergence of Frontier Superposition: Möbius attractor and Cascade Supervision	2026	EXCLUDE	TIER_3	2	1	COMPRESSION	M03	S05	-0.045962	-0.05478
+audited	semantic	w_ab07437d78318352	Emergence of functional and structural properties of the head direction system by optimization of recurrent neural networks	2019	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M10	S25	0.041936	0.035281
+audited	semantic	w_b16a0b414fee96f6	Emergence of Functional Hierarchy in a Multiple Timescale Neural Network Model: A Humanoid Robot Experiment	2008	EXCLUDE	TIER_3	0	1	NOVEL_BASIS	M08	S21	0.04516	0.050035
+audited	semantic	w_f1324a7120d5d1bd	Emergence of grid-like representations by training recurrent neural networks to perform spatial localization	2018	EXCLUDE	TIER_3	1	0		M10	S25	0.137477	0.142462
+audited	semantic	w_4fb0e43097e56826	Emergence of Hierarchical Emotion Organization in Large Language Models	2025	EXCLUDE	TIER_3	2	0		M05	S11	0.067723	0.064125
+audited	semantic	w_aaa017a83700f80c	Emergence of Invariance and Disentanglement in Deep Representations	2017	INCLUDE	TIER_2	4	2	COMPRESSION,CRITICALITY	M07	S17	0.150978	0.181318
+audited	semantic	w_ef661d9c28381b11	Emergence of Minimal Circuits for Indirect Object Identification in Attention-Only Transformers	2025	EXCLUDE	TIER_3	3	1	NOVEL_BASIS	M01	S02	0.092955	0.04378
+audited	semantic	w_4ae4e61584b523a8	Emergence of Network Motifs in Deep Neural Networks	2020	EXCLUDE		1	0		M08	S19	-0.036818	-0.004025
+audited	semantic	w_b2e7ff70b4aa448d	Emergence of prefrontal neuron maturation properties by training recurrent neural networks in cognitive tasks	2020	EXCLUDE	TIER_3	1	0		M08	S21	0.061429	0.011964
+audited	semantic	w_28a1f31e8ca599b0	Emergence of slow ramping prior to spontaneous decision states in a brain-constrained neural network model	2025	EXCLUDE		2	0		M08	S21	0.037172	0.045261
+audited	semantic	w_fb96317e98530db8	Emergence of Superposition: Unveiling the Training Dynamics of Chain of Continuous Thought	2025	EXCLUDE	TIER_3	1	1	SCALING	M03	S05	-0.084551	-0.050543
+audited	semantic	w_6b6ef9dd4b6a2923	Emergence of V1 connectivity pattern and Hebbian rule in a performance-optimized artificial neural network	2018	EXCLUDE	TIER_3	1	0		M08	S20	0.036645	0.026144
+audited	semantic	w_17af690426c77e5f	Emergent Analogical Reasoning in Transformers	2026	EXCLUDE	TIER_3	2	1	SCALING	M01	S01	0.135107	0.213318
+audited	semantic	w_4dbf08f598cd567b	Emergent behavior and neural dynamics in artificial agents tracking turbulent plumes	2022	EXCLUDE	TIER_3	2	0		M08	S18	0.050296	0.339178
+audited	semantic	w_784ebe5b0f073f56	Emergent behaviour and neural dynamics in artificial agents tracking odour plumes	2023	EXCLUDE	TIER_3	1	0		M08	S18	-0.015481	0.536793
+audited	semantic	w_7209270e01aef2a8	Emergent Capabilities Arise Randomly from Learning Sparse Attention Patterns	2026	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M02	S04	-0.016248	0.048909
+audited	semantic	w_76ba52abd948ee75	Emergent Communication via Causal Temporal Graph Networks: A Novel Framework for Decentralized Multi-Robot Coordination Without Explicit Message Passing	2026	EXCLUDE	TIER_3	3	0		M03	S05	0.074284	0.124289
+audited	semantic	w_65f428d0eb05342f	Emergent Depthwise Activation Structure in Transformer Language Models The Hau Curve and Its Early-Training Attractor Pattern	2026	EXCLUDE	TIER_3	2	0		M02	S04	0.018004	0.007129
+audited	semantic	w_dcf16633f7a33b13	Emergent Entrainment and Predictive Dynamics in Bio-Inspired Spiking Neural Networks	2026	EXCLUDE	TIER_3	1	0		M08	S21	0.145177	0.046312
+audited	semantic	w_4ea8cb6a3b5fed46	Emergent Generalization by Representation Learning in Artificial Neural Networks	2026	INCLUDE	TIER_2	4	2	SCALING,COMPRESSION	M07	S17	0.083474	0.081632
+audited	semantic	w_f0e2a64299044bb4	Emergent Latent-State Computation under Stochastic Volatility	2026	EXCLUDE	TIER_3	1	1	SCALING	M03	S06	-0.03835	-0.129897
+audited	semantic	w_03d844719fb9df34	Emergent Lexical Synthesis Through Contextual Feedback Mechanisms in Large Language Models	2024	EXCLUDE	TIER_3	3	0		M05	S08	0.114999	0.139187
+audited	semantic	w_66063956acd1233b	Emergent Linear Representations in World Models of Self-Supervised Sequence Models	2023	EXCLUDE	TIER_3	2	1	COMPRESSION	M05	S11	0.068137	-0.078297
+audited	semantic	w_dd1317747d73d644	Emergent linguistic structure in artificial neural networks trained by self-supervision	2020	EXCLUDE		1	0		M05	S09	0.03574	0.085765
+audited	semantic	w_f6a044308e277e6f	Emergent mechanisms for long timescales depend on training curriculum and affect performance in memory tasks	2023	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M08	S21	0.00335	0.090699
+audited	semantic	w_0d3dcf550d7f718e	Emergent Misalignment Can Be Induced by Sycophancy and Reversed via Alignment Gating	2026	EXCLUDE	TIER_3	1	0		M04	S07	0.355878	0.326695
+audited	semantic	w_308c48dc4aaa9e3f	Emergent modularity in large language models: Insights from aphasia simulations	2025	EXCLUDE	TIER_3	0	0		M09	S23	-0.031288	-0.083821
+audited	semantic	w_18bd4894e38b3c30	Emergent Modularity in Pre-trained Transformers	2023	EXCLUDE	TIER_3	1	1	SCALING	M05	S09	-0.175576	0.001165
+audited	semantic	w_f929db1156ad72b9	Emergent Moral Representations in Large Language Models Aligns with Human Conceptual, Neural, and Behavioral Moral Structure	2025	EXCLUDE	TIER_3	1	0		M05	S11	0.046878	0.07027
+audited	semantic	w_b9bc4d3bac625b6d	Emergent Ordinal Geometry in Transformers Trained on Local Comparisons	2026	EXCLUDE	TIER_3	4	0		M01	S01	0.120496	0.129018
+audited	semantic	w_cfed60f0df988968	Emergent Outlier View Rejection in Visual Geometry Grounded Transformers	2025	EXCLUDE	TIER_3	2	1	NOVEL_BASIS	M10	S24	-0.098606	0.057133
+audited	semantic	w_a78497f1c2544ef9	Emergent Representations of Program Semantics in Language Models Trained on Programs	2023	EXCLUDE	TIER_3	1	0		M05	S09	0.147057	0.100031
+audited	semantic	w_a102e93eb2f0b4fe	Emergent Search and Backtracking in Latent Reasoning Models	2026	EXCLUDE	TIER_3	1	0		M03	S05	0.025918	0.081159
+audited	semantic	w_b7c2381a27c702c4	Emergent Stack Representations in Modeling Counter Languages Using Transformers	2025	EXCLUDE	TIER_3	1	0		M05	S09	-0.106144	-0.025191
+audited	semantic	w_31d5e4082601879a	Emergent Structured Representations Support Flexible In-Context Inference in Large Language Models	2026	EXCLUDE	TIER_3	1	1	COMPRESSION	M05	S11	0.137521	0.0102
+audited	semantic	w_196fc85332b551c5	Emergent Structures and Training Dynamics in Large Language Models	2022	EXCLUDE	TIER_3	1	0		M05	S09	0.000273	0.111608
+audited	semantic	w_e219fcd05aa4ac72	Emergent Symbol-like Number Variables in Artificial Neural Networks	2025	INCLUDE	TIER_2	3	2	SCALING,NOVEL_BASIS	M08	S20	-0.041238	0.002072
+audited	semantic	w_cb00fb1bab7f3b7f	Emergent Symbolic Mechanisms Support Abstract Reasoning in Large Language Models	2025	INCLUDE	TIER_1	1	3	COMPRESSION,NOVEL_BASIS,GENERALISATION	M01	S01	-0.0368	0.06333
+audited	semantic	w_3e42f09a386d12e1	Emergent temporal abstractions in autoregressive models enable hierarchical reinforcement learning	2025	EXCLUDE	TIER_3	4	1	COMPRESSION	M03	S05	0.031842	0.099261
+audited	semantic	w_183237c2b47ef789	Emergent Vector Embedding Shaping in Large Language Models Through Novel Multi-Path Neural Architectures	2024	EXCLUDE	TIER_3	4	0		M05	S08	0.082852	0.130175
+audited	semantic	w_47bf4f8fc88f3cb8	Emergent World Beliefs: Exploring Transformers in Stochastic Games	2025	EXCLUDE	TIER_3	2	0		M03	S05	0.087289	0.166962
+audited	semantic	w_6b8b0f146292001a	Emergent World Models and Latent Variable Estimation in Chess-Playing Language Models	2024	EXCLUDE	TIER_3	3	0		M03	S05	-0.051902	0.062592
+audited	semantic	w_ae5660e37ed8d376	Emergent World Representations: Exploring a Sequence Model Trained on a Synthetic Task	2022	EXCLUDE	TIER_3	1	0		M05	S09	0.047881	0.128868
+audited	semantic	w_afd5289886580185	Emergent World Representations in OpenVLA	2025	EXCLUDE	TIER_3	3	0		M03	S05	-0.004906	-0.002406
+audited	semantic	w_06e9a506745ea5b3	Evidence of Phase Transitions in Small Transformer-Based Language Models	2025	EXCLUDE	TIER_3	2	1	SCALING	M02	S04	0.213246	0.121495
+audited	semantic	w_63d2efb7962dd788	Evolving reservoir computers reveal bidirectional coupling between predictive power and emergent dynamics	2026	INCLUDE	TIER_2	1	2	SCALING,COMPRESSION	M08	S20	-0.018878	-0.027001
+audited	semantic	w_5dad8438d08739da	Exact Learning Dynamics of In-Context Learning in Linear Transformers and Its Application to Non-Linear Transformers	2025	EXCLUDE	TIER_3	4	0		M02	S03	0.047784	0.074723
+audited	semantic	w_0daa43451a63b0d5	Excitatory-inhibitory recurrent dynamics produce robust visual grids and stable attractors	2022	INCLUDE	TIER_2	3	2	COMPRESSION,NOVEL_BASIS	M08	S20	-0.087883	-0.067123
+audited	semantic	w_928be1de7f678ed8	ExPLAIND: Unifying Model, Data, and Training Attribution to Study Model Behavior	2025	EXCLUDE	TIER_3	1	0		M03	S06	-0.170891	-0.16773
+audited	semantic	w_cddfb17d263e3744	Explaining Grokking and Information Bottleneck through Neural Collapse Emergence	2025	INCLUDE	TIER_2	4	2	SCALING,COMPRESSION	M07	S17	-0.104527	-0.013262
+audited	semantic	w_2c0c064d65d2971a	Explaining Grokking in Transformers through the Lens of Inductive Bias	2026	EXCLUDE	TIER_3	2	1	SCALING	M06	S12	0.042742	-0.083235
+audited	semantic	w_a98ab65706b90112	Explaining grokking through circuit efficiency	2023	EXCLUDE	TIER_3	2	0		M06	S12	0.1832	-0.007129
+audited	semantic	w_9977306cc3994536	Exploring Grokking: Experimental and Mechanistic Investigations	2024	EXCLUDE	TIER_3	2	0		M06	S12	0.162445	0.001916
+audited	semantic	w_45a112f0ccfe5c13	Feature emergence via margin maximization: case studies in algebraic tasks	2023	INCLUDE	TIER_1	2	3	SCALING,COMPRESSION,NOVEL_BASIS	M07	S17	0.043238	0.0289
+audited	semantic	w_c14141577a386c75	Feature Identification via the Empirical NTK	2025	EXCLUDE	TIER_3	2	0		M05	S10	-0.092568	-0.090122
+audited	semantic	w_50a8d749e31274a5	Feature Lottery? A Bifurcation Theory of Concept Emergence	2026	EXCLUDE	TIER_3	4	0		M07	S17	0.074156	0.137494
+audited	semantic	w_324dfcccfb988427	Features Emerge as Discrete States: The First Application of SAEs to 3D Representations	2025	EXCLUDE	TIER_3	2	0		M03	S06	-0.037792	-0.048313
+audited	semantic	w_6bc585648f75a51c	Fine-Tuning Enhances Existing Mechanisms: A Case Study on Entity Tracking	2024	EXCLUDE	TIER_3	0	0		M05	S08	-0.016622	0.135024
+audited	semantic	w_9f73d3436486bd59	Flatness is Necessary, Neural Collapse is Not: Rethinking Generalization via Grokking	2025	EXCLUDE	TIER_3	1	0		M06	S12	0.128434	0.047049
+audited	semantic	w_a1ccd9bf44a17fd9	From Compression to Expression: A Layerwise Analysis of In-Context Learning	2025	EXCLUDE	TIER_3	3	1	COMPRESSION	M05	S08	0.009128	0.236512
+audited	semantic	w_c8a949e793b32b4d	From Condensation to Rank Collapse: A Two-Stage Analysis of Transformer Training Dynamics	2025	EXCLUDE	TIER_3	1	1	SCALING	M02	S03	0.105158	0.095799
+audited	semantic	w_87462cebc24e3c1e	From movement to cognitive maps: recurrent neural networks reveal how locomotor development shapes hippocampal spatial coding	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M10	S25	0.264542	0.325664
+audited	semantic	w_09f63ee8fae242b4	From Texts to Scores: Tracing the Emergence of Essay Quality Representations in Large Language Models	2026	EXCLUDE	TIER_3	1	0		M05	S11	0.078642	0.001608
+audited	semantic	w_39ca6ff1e5e8821c	Function Vectors in Large Language Models	2024	EXCLUDE	TIER_3	3	1	COMPRESSION	M05	S08	0.016549	0.197573
+audited	semantic	w_706a559e41355dab	Get rich quick: exact solutions reveal how unbalanced initializations promote rapid feature learning	2024	EXCLUDE	TIER_3	3	0		M07	S17	0.038754	0.152803
+audited	semantic	w_02b805ef4183bf30	Global Low-Rank, Local Full-Rank: The Holographic Encoding of Learned Algorithms	2026	EXCLUDE	TIER_3	4	1	SCALING	M06	S14	0.164978	0.045248
+audited	semantic	w_27f0a0911b68ee3a	Gradient-based learning drives robust representations in recurrent neural networks by balancing compression and expansion	2022	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M08	S20	-0.038766	0.037381
+audited	semantic	w_0c4ffd6cc3a55132	GrokAlign: Geometric Characterisation and Acceleration of Grokking	2025	EXCLUDE	TIER_3	2	1	SCALING	M06	S12	0.15781	0.006549
+audited	semantic	w_2dc38e0d59add635	Grokfast: Accelerated Grokking by Amplifying Slow Gradients	2026	EXCLUDE	TIER_3	2	0		M06	S12	0.251157	0.127431
+audited	semantic	w_afad86afa06c34cd	Grokked Models are Better Unlearners	2025	EXCLUDE	TIER_3	2	0		M06	S12	0.223162	0.070075
+audited	semantic	w_5230ec460b7adaac	Grokked Transformers are Implicit Reasoners: A Mechanistic Journey to the Edge of Generalization	2024	EXCLUDE	TIER_3	2	1	SCALING	M01	S01	0.200793	0.28377
+audited	semantic	w_35bf58ca4093d76e	Grokking and epoch-wise double descent in quantum neural networks	2026	INCLUDE	TIER_2	4	3	SCALING,COMPRESSION,CRITICALITY	M07	S15	0.039899	0.258849
+audited	semantic	w_9db7d6568bb89686	Grokking as a First Order Phase Transition in Two Layer Networks	2023	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M06	S12	0.114244	-0.10821
+audited	semantic	w_8a9381903c1dcd61	Grokking as an entanglement transition in tensor network machine learning	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M06	S14	-0.017505	-0.120886
+audited	semantic	w_445558f210a709ae	Grokking as Dimensional Phase Transition in Neural Networks	2026	EXCLUDE	TIER_3	3	1	SCALING	M06	S14	0.07991	0.026702
+audited	semantic	w_2b77293cdef4c93f	Grokking as Structural Inference: Transformers Need Bayesian Lottery Tickets	2026	INCLUDE	TIER_2	3	2	SCALING,NOVEL_BASIS	M09	S22	-0.001277	0.09257
+audited	semantic	w_7d49d4691f9f672f	Grokking as the Transition from Lazy to Rich Training Dynamics	2023	EXCLUDE	TIER_3	2	1	SCALING	M06	S12	0.167659	0.054894
+audited	semantic	w_adc88773b79a9aaa	Grokking Beyond Addition: Circuit-Level Analysis of Algebraic Learning in Transformers	2026	EXCLUDE	TIER_3	1	0		M06	S13	0.098604	0.275915
+audited	semantic	w_055282d4fa8fa8da	Grokking Beyond the Euclidean Norm of Model Parameters	2025	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M06	S14	0.177766	-0.003315
+audited	semantic	w_81d6e36f6ecc9ed2	Grokking Finite-Dimensional Algebra	2026	EXCLUDE	TIER_3	2	0		M06	S12	0.238189	0.00162
+audited	semantic	w_1dc233460f682f8e	Grokking Group Multiplication with Cosets	2023	EXCLUDE	TIER_3	1	0		M06	S13	0.116252	0.175969
+audited	semantic	w_4c3b5856ae66ad33	Grokking in Linear Models for Logistic Regression	2026	EXCLUDE	TIER_3	1	0		M06	S12	0.223102	0.11228
+audited	semantic	w_d12533ac9aa3bdae	Grokking in LLM Pretraining? Monitor Memorization-to-Generalization without Test	2025	EXCLUDE	TIER_3	2	0		M06	S12	0.192002	0.128613
+audited	semantic	w_27942ed36ff06a48	Grokking in the Ising model	2026	EXCLUDE	TIER_3	2	1	SCALING	M06	S12	0.231048	0.123367
+audited	semantic	w_7636520e4c22ae54	Grokking in the Wild: Data Augmentation for Real-World Multi-Hop Reasoning with Transformers	2025	EXCLUDE	TIER_3	3	0		M01	S01	0.143209	0.208359
+audited	semantic	w_9db09dfae393db2b	Grokking Modular Polynomials	2024	EXCLUDE	TIER_3	1	0		M06	S13	0.178526	0.218437
+audited	semantic	w_9060ed95d2a7d552	Grokking of Implicit Reasoning in Transformers: A Mechanistic Journey to the Edge of Generalization	2024	EXCLUDE		2	0		M01	S01	0.098488	0.167218
+audited	semantic	w_0299d6e9ee8584a8	Grokking via Implicit Path Norm Minimization: A Theoretical Mechanism	2026	EXCLUDE	TIER_3	2	0		M06	S14	0.209228	0.005304
+audited	semantic	w_693b9d7d5ee66702	Guiding Grokking: How Curriculum Learning Shapes Algorithmic Understanding in Neural Networks	2025	EXCLUDE		3	0		M06	S12	0.27326	-0.001256
+audited	semantic	w_97e9a7de7a56a516	Harmonic Loss Trains Interpretable AI Models	2025	EXCLUDE	TIER_3	1	0		M07	S16	-0.013297	0.454455
+audited	semantic	w_06d338196c012d5f	Hierarchical Latent Structures in Data Generation Process Unify Mechanistic Phenomena across Scale	2026	EXCLUDE	TIER_3	1	0		M03	S06	-0.025641	-0.035898
+audited	semantic	w_a3b0abb58a5c08a7	Higher Embedding Dimension Creates a Stronger World Model for a Simple Sorting Task	2025	EXCLUDE	TIER_3	2	1	SCALING	M01	S02	0.101157	-0.000391
+audited	semantic	w_cbbadc97bc1c553c	Hippocampal representations emerge when training recurrent neural networks on a memory dependent maze navigation task	2020	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M10	S25	0.216185	0.27713
+audited	semantic	w_040112c409ede931	Holographic Knowledge Manifolds: A Novel Pipeline for Continual Learning Without Catastrophic Forgetting in Large Language Models	2025	EXCLUDE	TIER_3	3	0		M05	S11	-0.012666	-0.06223
+audited	semantic	w_92e7bb6a674a7aa3	How Attention Sinks Emerge in Large Language Models: An Interpretability Perspective	2026	EXCLUDE	TIER_3	2	1	SCALING	M02	S04	0.020847	0.108413
+audited	semantic	w_8d71fca6fabfe6c0	How do language models learn facts? Dynamics, curricula and hallucinations	2025	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M09	S23	0.060595	0.018653
+audited	semantic	w_83ff2605b95d13cd	How Do LLMs Acquire New Knowledge? A Knowledge Circuits Perspective on Continual Pre-Training	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M09	S23	0.140423	0.096608
+audited	semantic	w_988674ea0e8c1cb7	How Does Controllability Emerge In Language Models During Pretraining?	2025	INCLUDE	TIER_2	1	2	SCALING,COMPRESSION	M09	S23	-0.001609	-0.020471
+audited	semantic	w_6d9aedbcf0365751	How Does Unfaithful Reasoning Emerge from Autoregressive Training? A Study of Synthetic Experiments	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M03	S05	-0.089278	-0.086857
+audited	semantic	w_c0722915b2be1f88	How to Tame Grokking: Representation Geometry as a Control Signal	2026	INCLUDE	TIER_1	2	3	SCALING,COMPRESSION,CRITICALITY	M06	S14	0.138981	0.115654
+audited	semantic	w_e93a08062ac7d030	How Transformers Learn Causal Structure with Gradient Descent	2024	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M01	S02	0.077796	0.086006
+audited	semantic	w_e929aef5f663e086	How Transformers Learn Regular Language Recognition: A Theoretical Study on Training Dynamics and Implicit Bias	2025	EXCLUDE	TIER_3	1	1	SCALING	M02	S03	0.048772	-0.012084
+audited	semantic	w_3addefc2ae588ee1	How Transformers Learn to Plan via Multi-Token Prediction	2026	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M01	S02	0.172808	0.042966
+audited	semantic	w_6fc4c4ab9c9916f7	Hysteresis, neural avalanches, and critical behavior near a first-order transition of a spiking neural network	2018	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M08	S21	0.057166	0.130051
+audited	semantic	w_4c4c957af0f57b2d	Identifying Semantic Induction Heads to Understand In-Context Learning	2024	EXCLUDE	TIER_3	0	0		M05	S08	0.049901	0.168441
+audited	semantic	w_86f10686a7226020	ILDR: Geometric Early Detection of Grokking	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M06	S14	0.16293	0.006988
+audited	semantic	w_27485161163b4c42	Information-Theoretic Progress Measures reveal Grokking is an Emergent Phase Transition	2024	EXCLUDE	TIER_3	2	1	SCALING	M06	S14	0.149414	0.010435
+audited	semantic	w_0f0102a18c705ec7	Interpreting Emergent Features in Deep Learning-based Side-channel Analysis	2025	EXCLUDE	TIER_3	3	1	SCALING	M03	S06	-0.104113	-0.08112
+audited	semantic	w_ad515c0bfb86662d	Interpreting Emergent Planning in Model-Free Reinforcement Learning	2025	EXCLUDE	TIER_3	1	1	COMPRESSION	M03	S05	0.022033	0.095768
+audited	semantic	w_4c22283998c8f0ca	Interpreting Physics in Video World Models	2026	EXCLUDE	TIER_3	4	0		M10	S24	0.069768	0.152834
+audited	semantic	w_529fa77099ab7d4e	Intrinsic excitability mechanisms of neuronal ensemble formation	2020	EXCLUDE	TIER_3	1	0		M08	S21	0.093901	0.119175
+audited	semantic	w_24c53f7838cefa65	Intrinsic Guardrails: How Semantic Geometry of Personality Interacts with Emergent Misalignment in LLMs	2026	EXCLUDE	TIER_3	2	0		M05	S11	-0.170178	-0.096293
+audited	semantic	w_667c790db241c1aa	Intrinsic Task Symmetry Drives Generalization in Algorithmic Tasks	2026	EXCLUDE	TIER_3	4	1	SCALING	M06	S14	-0.004014	-0.124979
+audited	semantic	w_c220d86171080ff7	Investigating the impact of low to moderate level label noise on Neural Network grokking dynamics	2025	EXCLUDE	TIER_3	2	0		M06	S12	0.165113	0.067691
+audited	semantic	w_7ff07b360090f82a	Is Grokking Worthwhile? Functional Analysis and Transferability of Generalization Circuits in Transformers	2026	EXCLUDE	TIER_3	3	0		M06	S12	-0.066697	-0.137373
+audited	semantic	w_c053dda032e0c8cc	Is Random Attention Sufficient for Sequence Modeling? Disentangling Trainable Components in the Transformer	2025	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M01	S02	0.065475	0.085914
+audited	semantic	w_28c10566bff3c19f	Language Models Grow Less Humanlike beyond Phase Transition	2025	EXCLUDE	TIER_3	2	1	SCALING	M02	S04	0.052708	0.173135
+audited	semantic	w_9cb7d6dc1b5717cd	Late-Stage Generalization Collapse in Grokking: Detecting anti-grokking with Weightwatcher	2026	EXCLUDE	TIER_3	1	0		M06	S12	0.231993	0.140511
+audited	semantic	w_01e15d37549ba1fc	Latent Algorithmic Structure Precedes Grokking: A Mechanistic Study of ReLU MLPs on Modular Arithmetic	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M06	S13	0.204726	0.225841
+audited	semantic	w_803c8143ecd499c2	Latent Feature Transformation for Emergent Task Performance in Large Language Models	2024	EXCLUDE		3	0		M05	S08	0.053162	0.113418
+audited	semantic	w_f02966985885da33	Latent State Models of Training Dynamics	2023	EXCLUDE	TIER_3	3	0		M03	S06	-0.121803	-0.191958
+audited	semantic	w_b9374a286a73fd88	Layer Specialization Underlying Compositional Reasoning in Transformers	2025	EXCLUDE	TIER_3	2	0		M01	S02	0.169866	-0.086004
+audited	semantic	w_500a287f07071ec8	Learning Modular Exponentiation with Transformers	2025	EXCLUDE	TIER_3	2	0		M06	S13	-0.072449	0.210653
+audited	semantic	w_d930a0988351d6a9	Learning stochastic dynamics and predicting emergent behavior using transformers	2024	EXCLUDE	TIER_3	2	0		M02	S03	0.140274	0.114542
+audited	semantic	w_1414f43f732405e6	Learning through atypical phase transitions in overparameterized neural networks	2022	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M07	S17	0.129139	0.146691
+audited	semantic	w_6408d8e4b06627c9	Learning to grok: Emergence of in-context learning and skill composition in modular arithmetic tasks	2024	EXCLUDE	TIER_3	2	1	SCALING	M05	S11	-0.043931	-0.141725
+audited	semantic	w_87dd30b387a36df9	Learning to select computations in recurrent neural circuits	2026	EXCLUDE		1	0		M08	S20	0.060677	0.121275
+audited	semantic	w_8ab30e3889d447fc	Learning Towards Emergence: Paving the Way to Induce Emergence by Inhibiting Monosemantic Neurons on Pre-trained Models	2025	EXCLUDE	TIER_3	2	1	SCALING	M02	S04	-0.044514	0.008918
+audited	semantic	w_22e0f6e0ecd808ae	Learning words in groups: fusion algebras, tensor ranks and grokking	2025	EXCLUDE	TIER_3	0	0		M06	S14	0.039283	-0.06152
+audited	semantic	w_035e7977c618391e	LieTrunc-QNN: Lie Algebra Truncation and Quantum Expressivity Phase Transition from LiePrune to Provably Stable Quantum Neural Networks	2026	EXCLUDE	TIER_3	4	0		M07	S15	0.16891	0.457081
+audited	semantic	w_dee1d8642fb8ec4d	Linear Latent World Models in Simple Transformers: A Case Study on Othello-GPT	2023	EXCLUDE	TIER_3	2	1	COMPRESSION	M03	S05	-0.150445	-0.06032
+audited	semantic	w_e7fededba00d2282	Linear Spatial World Models Emerge in Large Language Models	2025	EXCLUDE	TIER_3	2	1	COMPRESSION	M05	S11	0.013321	0.038106
+audited	semantic	w_9f65ba32c1a08d74	Low-Dimensional and Transversely Curved Optimization Dynamics in Grokking	2026	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M06	S14	0.124397	0.165107
+audited	semantic	w_f4d58aaa5b0434b2	Low-dimensional intrinsic dimension reveals a phase transition in gradient-based learning of deep neural networks	2024	EXCLUDE	TIER_3	3	0		M07	S17	0.096051	0.166341
+audited	semantic	w_3a2ad5f9386e827d	Mechanism and Emergence of Stacked Attention Heads in Multi-Layer Transformers	2024	EXCLUDE	TIER_3	2	1	SCALING	M01	S02	0.159619	0.168337
+audited	semantic	w_5d1e32d2e724c9ae	Mechanistic Data Attribution: Tracing the Training Origins of Interpretable LLM Units	2026	EXCLUDE	TIER_3	1	0		M03	S06	0.009864	0.026502
+audited	semantic	w_f5760f8154c234f6	Mechanistic Insights into Grokking from the Embedding Layer	2025	EXCLUDE	TIER_3	2	0		M06	S12	0.212016	0.008217
+audited	semantic	w_e4f4c4e47cf2bb24	Memorization, Emergence, and Explaining Reversal Failures: A Controlled Study of Relational Semantics in LLMs	2026	EXCLUDE	TIER_3	2	1	SCALING	M05	S11	0.075844	0.029755
+audited	semantic	w_de53e52135814667	Modeling Transformers as complex networks to analyze learning dynamics	2025	EXCLUDE	TIER_3	1	0		M02	S04	0.119319	0.078732
+audited	semantic	w_2848c4070ebd2893	Monotonic Representation of Numeric Attributes in Language Models	2024	EXCLUDE	TIER_3	0	1	COMPRESSION	M05	S10	0.080566	0.037511
+audited	semantic	w_b034caed584efd9c	Multimodal Function Vectors for Visual Relations	2026	EXCLUDE	TIER_3	3	1	COMPRESSION	M05	S11	-0.062281	-0.046456
+audited	semantic	w_5cfae990f2e4ea0e	Multiple-Timescale Neural Networks: Generation of History-Dependent Sequences and Inference Through Autonomous Bifurcations	2021	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M08	S21	0.054779	0.026505
+audited	semantic	w_d68d0884ffdb9426	Neural Collapse Dynamics: Depth, Activation, Regularisation, and Feature Norm Threshold	2026	EXCLUDE	TIER_3	2	1	SCALING	M07	S17	0.08982	0.162629
+audited	semantic	w_0a81fc2513bfcc09	New Skills or Sharper Primitives? A Probabilistic Perspective on the Emergence of Reasoning in RLVR	2026	EXCLUDE	TIER_3	2	0		M03	S05	0.013261	0.038849
+audited	semantic	w_c31a237682405c3b	Noise-Driven Escape from Metastable Phases explains Grokking in Deep Neural Networks	2026	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M06	S14	0.015006	0.027278
+audited	semantic	w_c630442fbffca0c4	Not Emergent by Accident: The Implicit Global Workspace as a Consequence of Transformer Optimization	2026	EXCLUDE		3	0		M02	S03	0.009521	0.048965
+audited	semantic	w_f15bfc4589f93e42	Number detectors spontaneously emerge in a deep neural network designed for visual object recognition	2019	EXCLUDE	TIER_3	1	1	COMPRESSION	M08	S19	0.036673	0.14629
+audited	semantic	w_702044b6725a459d	On Mesa-Optimization in Autoregressively Trained Transformers: Emergence and Capability	2024	EXCLUDE	TIER_3	1	1	NOVEL_BASIS	M02	S03	-0.067874	-0.06505
+audited	semantic	w_0308d55890a5b9c6	On the Emergence of Induction Heads for In-Context Learning	2025	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M09	S23	0.064226	0.055598
+audited	semantic	w_25ba5099b834e43a	On the Mechanism and Dynamics of Modular Addition: Fourier Features, Lottery Ticket, and Grokking	2026	INCLUDE	TIER_1	1	3	SCALING,COMPRESSION,NOVEL_BASIS	M07	S17	0.02598	-0.134718
+audited	semantic	w_6ffbda57ab6a27ae	Optimal reinforcement learning near the edge of a synchronization transition	2022	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M08	S21	0.039472	0.111584
+audited	semantic	w_ce9d14ed68420ed6	Outliers with Opposing Signals Have an Outsized Effect on Neural Network Optimization	2023	EXCLUDE	TIER_3	2	0		M06	S14	-0.014116	-0.089061
+audited	semantic	w_1ab7ec580940888c	Path Integration and Object-Location Binding Emerge in an Action-Conditioned Predictive Sequence Network	2026	EXCLUDE	TIER_3	4	1	NOVEL_BASIS	M09	S23	-0.011134	-0.066848
+audited	semantic	w_491d54e45fee4c6c	Persona Features Control Emergent Misalignment	2025	EXCLUDE	TIER_3	2	0		M04	S07	0.376206	0.358171
+audited	semantic	w_dff3d1da5e63f8e0	Phase Transitions in Attention: A Bayesian Theory of Copy Head Emergence	2026	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M09	S23	0.060771	-0.040861
+audited	semantic	w_e290bc51cfc6cc89	Phase transitions reveal hierarchical structure in deep neural networks	2025	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M07	S17	0.164464	0.139711
+audited	semantic	w_703971b3ad96268c	Place cells may simply be memory cells: Memory compression leads to spatial tuning and history dependence	2021	EXCLUDE		1	0		M10	S25	0.051604	0.140879
+audited	semantic	w_3649951b25d89fe3	Plasticity and language in the anaesthetized human hippocampus	2026	EXCLUDE	TIER_3	0	1	SCALING	M09	S23	0.042713	-0.090646
+audited	semantic	w_b19041cd869bacfa	Post-Grokking Collapse at the Representation-Readout Interface in Muon-Trained Transformers	2026	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M06	S14	0.079638	-0.11303
+audited	semantic	w_e3daf00bfe8e1caf	Predicting Emergent Abilities with Infinite Resolution Evaluation	2023	EXCLUDE	TIER_3	2	0		M05	S11	0.061054	0.006021
+audited	semantic	w_85b812c5c78e647c	Predicting the Emergence of Induction Heads in Language Model Pretraining	2025	INCLUDE	TIER_2	1	2	SCALING,CRITICALITY	M09	S23	0.072287	0.069688
+audited	semantic	w_d27b97e00fa37f8b	Prediction horizon shapes representations in predictive learning	2025	INCLUDE	TIER_2	4	3	SCALING,COMPRESSION,NOVEL_BASIS	M10	S24	0.042049	0.000714
+audited	semantic	w_0c85822618800428	Predictive learning as a network mechanism for extracting low-dimensional latent space representations	2021	INCLUDE	TIER_1	2	3	SCALING,COMPRESSION,NOVEL_BASIS	M10	S24	0.177537	0.059675
+audited	semantic	w_cf357442f5aa7893	Predictive pursuit emerges in high-dimensional recurrent neural networks	2026	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M10	S25	0.125609	0.138436
+audited	semantic	w_e1dd76d318faa330	Predictive sequence learning in the hippocampal formation	2024	INCLUDE	TIER_2	1	3	SCALING,COMPRESSION,NOVEL_BASIS	M10	S25	0.155375	0.20129
+audited	semantic	w_8dc658fd6956f31c	Predictive Statistics Shape Emergent World Representations of Grid Walkers	2026	EXCLUDE	TIER_3	3	1	COMPRESSION	M10	S24	0.150248	0.056595
+audited	semantic	w_92e74bd4c6d552b0	Pretraining task diversity and the emergence of non-Bayesian in-context learning for regression	2023	EXCLUDE	TIER_3	3	0		M05	S08	-0.109347	0.100893
+audited	semantic	w_ee8ec07c31be9d3c	Progress Measures for Grokking on Real-world Tasks	2024	EXCLUDE	TIER_3	0	0		M06	S14	0.212467	0.02263
+audited	semantic	w_f3172e652cebe4b6	Progress Measures for Grokking via Mechanistic Interpretability	2023	INCLUDE	TIER_1	5	4	SCALING,CRITICALITY,COMPRESSION,NOVEL_BASIS	M06	S13	0.19981	0.224909
+audited	semantic	w_256904d2b1ec4eea	Provable In-Context Learning of Nonlinear Regression with Transformers	2025	EXCLUDE	TIER_3	3	1	SCALING	M02	S03	0.074116	0.081312
+audited	semantic	w_248da8719a3b92f1	Quantum-data-driven dynamical transition in quantum learning	2024	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M07	S15	0.155872	0.40765
+audited	semantic	w_3f93613f81a9c243	Quiet Feature Learning in Algorithmic Tasks	2025	EXCLUDE	TIER_3	2	1	SCALING	M02	S04	0.087572	0.093903
+audited	semantic	w_34505df745b929e9	Random noise promotes slow heterogeneous synaptic dynamics important for robust working memory computation	2025	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M08	S21	0.025732	0.080609
+audited	semantic	w_3f4213b6cde6e5f0	Reasoning Circuits in Language Models: A Mechanistic Interpretation of Syllogistic Inference	2024	EXCLUDE	TIER_3	2	1	COMPRESSION	M05	S11	-0.043665	-0.138998
+audited	semantic	w_4c59d2e23a4fc16d	Recurrent Information Optimization with Local, Metaplastic Synaptic Dynamics	2017	EXCLUDE		1	0		M08	S20	-0.002965	0.030503
+audited	semantic	w_ca22559e045ae009	Recurrent neural network models for working memory of continuous variables: activity manifolds, connectivity patterns, and dynamic codes	2021	EXCLUDE	TIER_3	3	1	SCALING	M08	S20	-0.071478	-0.006334
+audited	semantic	w_71088ab66e735f6d	Recurrent Neural Networks Learn to Store and Generate Sequences using Non-Linear Representations	2024	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M08	S20	-0.064385	0.068168
+audited	semantic	w_67833e8bc8bb92f5	Redundant representations help generalization in wide neural networks * , †	2023	INCLUDE	TIER_2	2	3	SCALING,COMPRESSION,CRITICALITY	M08	S20	-0.12808	-0.11125
+audited	semantic	w_f1b4b88248a84fdc	Reinforcement Learning for Reasoning in Large Language Models with One Training Example	2025	EXCLUDE	TIER_3	2	0		M03	S05	-0.060342	-0.012424
+audited	semantic	w_6a9409d4892f5b2e	Relational Schemata in BERT Are Inducible, Not Emergent: A Study of Performance vs. Competence in Language Models	2025	EXCLUDE	TIER_3	1	0		M05	S11	0.008593	-0.061222
+audited	semantic	w_a11738764f341243	Representations in the hippocampal-entorhinal system emerge from learning sensory predictions	2025	EXCLUDE	TIER_3	1	0		M10	S25	0.15514	0.232948
+audited	semantic	w_a03de8e37b580793	Rethinking the Harmonic Loss via Non-Euclidean Distance Layers	2026	EXCLUDE	TIER_3	2	0		M07	S16	0.038213	0.401231
+audited	semantic	w_a9cb982ac7d47107	Revealing Algorithmic Deductive Circuits for Logical Reasoning	2026	EXCLUDE	TIER_3	2	1	COMPRESSION	M05	S11	-0.100823	-0.180705
+audited	semantic	w_c6f5b81db8e0569b	Scan and Snap: Understanding Training Dynamics and Token Composition in 1-layer Transformer	2023	EXCLUDE	TIER_3	2	1	SCALING	M01	S02	0.033477	0.06144
+audited	semantic	w_83e64ad84caa32d8	Schema-learning and rebinding as mechanisms of in-context learning and emergence	2023	EXCLUDE	TIER_3	0	0		M05	S08	0.015933	0.216099
+audited	semantic	w_82bddad1cc78d3a0	Self-Supervised Learning of Representations for Space Generates Multi-Modular Grid Cells	2023	EXCLUDE	TIER_3	1	1	NOVEL_BASIS	M10	S25	0.20395	0.226008
+audited	semantic	w_89fd2479381ba2a1	Semantic representations emerge in biologically inspired ensembles of cross-supervising neural networks	2025	EXCLUDE	TIER_3	3	1	COMPRESSION	M08	S19	-0.058567	-0.111971
+audited	semantic	w_de78b34865a33cc1	Sequential predictive learning is a unifying theory for hippocampal representation and replay	2024	INCLUDE	TIER_2	2	2	SCALING,NOVEL_BASIS	M10	S25	0.199631	0.271427
+audited	semantic	w_7a781449242321ca	Single-unit activations confer inductive biases for emergent circuit solutions to cognitive tasks	2024	EXCLUDE		3	0		M08	S20	0.060923	0.076532
+audited	semantic	w_daee53647d83a6c7	Social-JEPA: Emergent Geometric Isomorphism	2026	EXCLUDE	TIER_3	3	1	COMPRESSION	M10	S24	0.111039	0.089928
+audited	semantic	w_38e23f5995c71d9b	Spatial reasoning via recurrent neural dynamics in mouse retrosplenial cortex	2025	INCLUDE	TIER_2	2	3	SCALING,COMPRESSION,NOVEL_BASIS	M10	S25	0.196943	0.237784
+audited	semantic	w_b1a722c7add3a18c	Specialization of softmax attention heads: insights from the high-dimensional single-location model	2026	INCLUDE	TIER_2	1	2	SCALING,CRITICALITY	M09	S23	0.060517	-0.065468
+audited	semantic	w_a124ea491b1e38a3	Spectral Entropy Collapse as a Phase Transition in Delayed Generalisation: An Interventional and Predictive Framework for Grokkin	2026	INCLUDE	TIER_2	4	2	SCALING,COMPRESSION	M09	S22	-0.144832	0.00736
+audited	semantic	w_8c5442dfb760aae0	Spectral phase transitions and trainability in neural network learning dynamics	2026	INCLUDE	TIER_2	3	2	SCALING,CRITICALITY	M07	S17	0.159681	0.124697
+audited	semantic	w_dd8fdb677c189adf	Spontaneous emergence of music detectors in a deep neural network	2021	EXCLUDE	TIER_3	3	0		M08	S19	0.033909	0.010483
+audited	semantic	w_4cc49e7d299cfe8c	Spontaneous emergence of topographic organization in a multistream convolutional neural network	2026	EXCLUDE	TIER_3	2	0		M08	S19	0.019706	-0.047297
+audited	semantic	w_6ab1d89d9c4e7dd2	Stability control of metastable states as a unified mechanism for flexible temporal modulation in cognitive processing	2025	EXCLUDE	TIER_3	1	1	SCALING	M08	S21	0.060015	0.097184
+audited	semantic	w_0434419d04af1ffa	State space models, emergence, and ergodicity: How many parameters are needed for stable predictions?	2024	EXCLUDE	TIER_3	2	0		M05	S09	-0.106609	0.00065
+audited	semantic	w_8bb54bfea1acc1db	State Stream Transformer (SST) : Emergent Metacognitive Behaviours Through Latent State Persistence	2025	EXCLUDE	TIER_3	0	0		M03	S05	-0.115937	-0.091082
+audited	semantic	w_be7a6d5176757697	States Hidden in Hidden States: LLMs Emerge Discrete State Representations Implicitly	2024	EXCLUDE	TIER_3	1	1	COMPRESSION	M03	S06	-7.5e-05	-0.108565
+audited	semantic	w_cf6cf36d9750b226	Strategy Coopetition Explains the Emergence and Transience of In-Context Learning	2025	EXCLUDE	TIER_3	2	1	SCALING	M09	S23	0.115402	0.017473
+audited	semantic	w_6ab9ecac32c07a9d	Structure Before Collapse: Transient semantic geometry in next-token prediction	2026	EXCLUDE	TIER_3	3	0		M05	S10	0.061191	0.04332
+audited	semantic	w_4ec0813caf380920	Structure-Specific Representational Priors Causally Control the Grokking Delay	2026	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M09	S22	0.016831	0.118273
+audited	semantic	w_20e6e75b99ee90d7	Structured World Representations in Maze-Solving Transformers	2023	EXCLUDE	TIER_3	0	0		M01	S02	0.202048	0.104418
+audited	semantic	w_216dc523ea90641f	Symmetric Pruning in Quantum Neural Networks	2022	EXCLUDE	TIER_3	1	1	SCALING	M07	S15	0.09108	0.351904
+audited	semantic	w_836f9ea39dbbe203	Symmetry in language statistics shapes the geometry of model representations	2026	EXCLUDE	TIER_3	1	0		M05	S10	0.060143	0.108407
+audited	semantic	w_5c54f66764cf4f97	Temporal hierarchy in spiking neural networks	2024	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M08	S21	0.123733	0.118664
+audited	semantic	w_820056212d8d8746	The Agnostic Meaning Substrate: A Theoretical Framework for Emergent Meaning in Large Language Models	2026	EXCLUDE	TIER_3	2	0		M05	S11	0.122291	0.093248
+audited	semantic	w_4ed5458b1772d1f2	The Birth of Knowledge: Emergent Features across Time, Space, and Scale in Large Language Models	2025	EXCLUDE	TIER_3	3	0		M05	S11	0.081778	0.060151
+audited	semantic	w_dbd268417dd9318a	The Complexity Dynamics of Grokking	2024	EXCLUDE	TIER_3	3	0		M06	S14	0.086602	-0.020781
+audited	semantic	w_217259c652559d80	The Emergence of Abstract Thought in Large Language Models Beyond Any Language	2025	EXCLUDE	TIER_3	3	0		M05	S11	0.002606	-0.031271
+audited	semantic	w_ce559350ab146c7f	The emergence of sparse attention: impact of data distribution and benefits of repetition	2025	EXCLUDE	TIER_3	3	0		M02	S04	0.081869	0.144597
+audited	semantic	w_49fbb6adb4c71e00	The Features at Convergence Theorem: a first-principles alternative to the Neural Feature Ansatz for how networks learn representations	2025	EXCLUDE	TIER_3	3	0		M07	S17	-0.003592	0.030388
+audited	semantic	w_d59f0794873b2140	The Geometric Inductive Bias of Grokking: Bypassing Phase Transitions via Architectural Topology	2026	EXCLUDE	TIER_3	2	1	SCALING	M06	S13	0.162853	0.064693
+audited	semantic	w_dc093e37a5dc7bb6	The Geometry of Grokking: Norm Minimization on the Zero-Loss Manifold	2025	EXCLUDE	TIER_3	2	1	SCALING	M06	S14	0.145058	0.097346
+audited	semantic	w_f05eeedb3d84fbb7	The Geometry of Multi-Task Grokking: Transverse Instability, Superposition, and Weight Decay Phase Structure	2026	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M06	S14	0.109438	0.082084
+audited	semantic	w_125db4c2cf79214e	The Geometry of Thought: How Scale Restructures Reasoning In Large Language Models	2026	EXCLUDE	TIER_3	3	1	SCALING	M05	S11	-0.025747	-0.023432
+audited	semantic	w_6dca211542b22757	The Geometry of Truth: Emergent Linear Structure in Large Language Model Representations of True/False Datasets	2023	EXCLUDE	TIER_3	3	1	COMPRESSION	M05	S11	0.070623	0.082151
+audited	semantic	w_d3fbcea1a7016c21	The Grokked Illusion: True Equilibrium Mitigates Catastrophic Forgetting	2026	EXCLUDE	TIER_3	1	0		M09	S22	-0.106753	0.036142
+audited	semantic	w_fd9f2541bd4039ab	The Hydra Effect: Emergent Self-repair in Language Model Computations	2023	EXCLUDE	TIER_3	1	0		M02	S04	0.038322	0.093702
+audited	semantic	w_aef0b7ca715aca7b	The Kinetics of Reasoning: How Chain-of-Thought Shapes Learning in Transformers?	2025	EXCLUDE	TIER_3	2	0		M01	S01	0.188809	0.223989
+audited	semantic	w_e0964d9cc077c1f7	The Kinetics of Training: A Driven-Nucleation Rate Law for Emergence, Plasticity Loss, and Circuit Control in Language Models	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M09	S23	0.04205	0.006926
+audited	semantic	w_bb266301f50d20fd	The Long Delay to Arithmetic Generalization: When Learned Representations Outrun Behavior	2026	EXCLUDE	TIER_3	3	1	SCALING	M01	S02	0.040754	-0.077453
+audited	semantic	w_4ae2e575bb61224a	The mechanistic basis of data dependence and abrupt learning in an in-context classification task	2023	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M09	S23	0.195837	0.059184
+audited	semantic	w_9eb59bc5a9947867	The Mechanistic Emergence of Symbol Grounding in Language Models	2025	EXCLUDE	TIER_3	1	1	NOVEL_BASIS	M05	S11	0.07577	0.037433
+audited	semantic	w_b0bbf9007eb97544	The semantic landscape paradigm for neural networks	2023	EXCLUDE	TIER_3	1	0		M08	S19	-0.062827	-0.043887
+audited	semantic	w_008eb0f516b85fd6	The Transient Nature of Emergent In-Context Learning in Transformers	2023	EXCLUDE	TIER_3	2	0		M02	S03	0.004288	-0.001495
+audited	semantic	w_cb13b05644b72dd1	Thermodynamic Weight Decay: Exploring Grokking Acceleration via Attention Specific Heat	2026	EXCLUDE	TIER_3	2	0		M06	S14	0.098759	0.067084
+audited	semantic	w_97808c92883566a2	Thinking Sparks!: Emergent Attention Heads in Reasoning Models During Post Training	2025	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M09	S23	0.1116	0.015557
+audited	semantic	w_8da6fd53fb3f9060	To grok or not to grok: Disentangling generalization and memorization on corrupted algorithmic datasets	2023	EXCLUDE	TIER_3	2	0		M06	S14	0.158043	-0.006953
+audited	semantic	w_6cff01a295cd62bc	Topological Signatures of Grokking	2026	EXCLUDE	TIER_3	2	1	SCALING	M06	S14	0.12034	-0.006564
+audited	semantic	w_5fc248e95ef96553	Towards Empirical Interpretation of Internal Circuits and Properties in Grokked Transformers on Modular Polynomials	2024	INCLUDE	TIER_2	1	2	SCALING,COMPRESSION	M06	S13	0.112362	0.325226
+audited	semantic	w_df6db03591377b6c	Towards Understanding Grokking: An Effective Theory of Representation Learning	2022	EXCLUDE	TIER_3	1	1	SCALING	M06	S12	0.264418	0.034698
+audited	semantic	w_9452d90c60267b86	TRACE for Tracking the Emergence of Semantic Representations in Transformers	2025	EXCLUDE	TIER_3	3	1	SCALING	M02	S04	0.056493	0.104245
+audited	semantic	w_78af69834e46633e	Trait-space Monitoring for Emergent Misalignment During Supervised Finetuning	2026	EXCLUDE	TIER_3	2	0		M04	S07	0.230907	0.209694
+audited	semantic	w_e13ee6a2cef1e035	Transformers Can Learn Rules They've Never Seen: Proof of Computation Beyond Interpolation	2026	EXCLUDE	TIER_3	2	1	NOVEL_BASIS	M01	S02	0.133811	0.109071
+audited	semantic	w_b7f8f8cdd2e2b20c	Transformers converge to invariant algorithmic cores	2026	EXCLUDE	TIER_3	2	1	COMPRESSION	M01	S02	0.101307	0.10442
+audited	semantic	w_29ea95f17f21c7ac	Transformers for dynamical systems learn transfer operators in-context	2026	INCLUDE	TIER_2	4	2	NOVEL_BASIS,GENERALISATION	M02	S03	0.0529	0.131761
+audited	semantic	w_71b6d6ab5f4c7549	Transformers Linearly Represent Highly Structured World Models	2026	EXCLUDE	TIER_3	3	0		M01	S02	0.080415	0.053817
+audited	semantic	w_943e3e1497c6a620	Transformers Struggle to Use Their Emergent World Models: Revisiting the Tower of Hanoi, and the Illusion of Thinking	2026	EXCLUDE	TIER_3	2	0		M01	S01	0.163579	0.007549
+audited	semantic	w_abf120cd18b386a4	Transformers Use Causal World Models in Maze-Solving Tasks	2024	EXCLUDE	TIER_3	3	1	COMPRESSION	M01	S02	0.153844	0.096101
+audited	semantic	w_c4c37ad693a0f63e	Triple Phase Transitions: Understanding the Learning Dynamics of Large Language Models from a Neuroscience Perspective	2025	EXCLUDE	TIER_3	2	1	SCALING	M02	S04	0.078317	0.176857
+audited	semantic	w_96f6c1c0e6b85513	Two Speeds of Learning: A Representation-Readout Decomposition of Grokking and Double Descent	2026	EXCLUDE	TIER_3	3	1	SCALING	M06	S14	0.163448	0.030661
+audited	semantic	w_892700b85dd7550d	Uncovering Emergent Physics Representations Learned In-Context by Large Language Models	2025	EXCLUDE	TIER_3	2	0		M03	S06	-0.050909	-0.038631
+audited	semantic	w_3d849b1308457c8a	Uncovering Intermediate Variables in Transformers using Circuit Probing	2023	EXCLUDE	TIER_3	1	1	SCALING	M01	S02	0.132866	-0.055672
+audited	semantic	w_b73fd2a4553849d2	Understanding Contextual Recall in Transformers: How Finetuning Enables In-Context Reasoning over Pretraining Knowledge	2026	EXCLUDE	TIER_3	3	0		M05	S08	-0.114944	0.104595
+audited	semantic	w_a895d12c14921630	Understanding the Emergence of Seemingly Useless Features in Next-Token Predictors	2026	EXCLUDE	TIER_3	2	0		M05	S10	-0.078538	-0.077055
+audited	semantic	w_4450b32daf450669	Understanding the Staged Dynamics of Transformers in Learning Latent Structure	2025	EXCLUDE	TIER_3	1	0		M02	S03	0.110941	0.080229
+audited	semantic	w_67e8416e326083ff	Understanding Training Behaviour during Transfer Learning by drawing parallels to Grokking	2024	EXCLUDE		2	0		M06	S12	0.084849	0.101772
+audited	semantic	w_51bb6c4d6e676885	Unifying Attention Heads and Task Vectors via Hidden State Geometry in In-Context Learning	2025	EXCLUDE	TIER_3	3	1	COMPRESSION	M09	S23	0.066472	-0.087789
+audited	semantic	w_e117d573dbd1bc5f	Unlocking Emergent Modularity in Large Language Models	2023	EXCLUDE	TIER_3	1	0		M05	S09	-0.027047	0.122202
+audited	semantic	w_024427dec8189e9e	Unveiling the Dynamics of Information Interplay in Supervised Learning	2024	EXCLUDE	TIER_3	1	0		M03	S06	-0.108645	-0.142058
+audited	semantic	w_7478c4587d99ea18	Unveiling Transformers with LEGO: a synthetic reasoning task	2022	INCLUDE	TIER_2	1	3	SCALING,NOVEL_BASIS,GENERALISATION	M01	S01	0.155778	0.201931
+audited	semantic	w_2da86842e38bab70	Using physics-inspired Singular Learning Theory to understand grokking & other phase transitions in modern neural networks	2025	EXCLUDE	TIER_3	3	0		M06	S14	0.064603	0.019514
+audited	semantic	w_b5ca64f35ddf125e	Weight Decay as a Necessary Condition for Grokking: Hierarchical Structure Learning in Group Multiplication Tasks	2026	EXCLUDE		3	0		M06	S14	0.168739	-0.040003
+audited	semantic	w_f5f5600670f31041	Weight Decay Regimes in Grokking Transformers: Cheap Online Diagnostics	2026	INCLUDE	TIER_2	2	2	SCALING,CRITICALITY	M06	S14	0.031824	0.01724
+audited	semantic	w_04b9b5a3d5792aa4	What Can Grokking Teach Us About Learning Under Nonstationarity?	2025	EXCLUDE	TIER_3	1	0		M06	S12	0.177839	0.171248
+audited	semantic	w_088b931ffe5cee0f	What do Language Models Learn and When? The Implicit Curriculum Hypothesis	2026	EXCLUDE	TIER_3	2	1	SCALING	M05	S11	-0.005544	-0.093996
+audited	semantic	w_dd6e6d084bbc1493	What Happens Inside Agent Memory? Circuit Analysis from Emergence to Diagnosis	2026	EXCLUDE	TIER_3	2	1	SCALING	M03	S06	-0.027494	-0.087916
+audited	semantic	w_7afa59979906b85f	What Needs to Go Right for an Induction Head? A Mechanistic Study of In-Context Learning Circuits and Their Formation	2024	INCLUDE	TIER_2	4	2	SCALING,CRITICALITY	M09	S23	0.127408	0.104411
+audited	semantic	w_33b529766cc60dd2	What One Cannot, Two Can: Two-Layer Transformers Provably Represent Induction Heads on Any-Order Markov Chains	2025	INCLUDE	TIER_2	3	2	COMPRESSION,SCALING	M01	S02	0.159458	0.101359
+audited	semantic	w_5362be8fefcfa6c2	When and Where: A Model Hippocampal Network Unifies Formation of Time Cells and Place Cells	2026	INCLUDE	TIER_2	1	2	SCALING,NOVEL_BASIS	M10	S25	0.163222	0.222785
+audited	semantic	w_0b1eb64b020ee8c4	When Do Attention Circuits Form? Developmental Trajectories of Capability and Attention-Sink Emergence Across Three 1B-Class Architectures	2026	EXCLUDE	TIER_3	3	1	SCALING	M09	S23	0.148018	0.109531
+audited	semantic	w_b1b2841abfaf8ef2	Which Attention Heads Matter for In-Context Learning?	2025	INCLUDE	TIER_2	5	2	SCALING,COMPRESSION	M05	S08	-0.201148	-0.026124
+audited	semantic	w_e5708a67b277cfbd	Why Do You Grok? A Theoretical Analysis of Grokking Modular Addition	2024	EXCLUDE	TIER_3	1	0		M06	S12	0.255557	0.005832
+audited	semantic	w_9f42a69c53e47f06	Why the Brain Consolidates: Predictive Forgetting for Optimal Generalisation	2026	INCLUDE	TIER_2	2	2	SCALING,COMPRESSION	M09	S22	0.051032	0.073657
+audited	semantic	w_662491c7dd0e3662	Word class representations spontaneously emerge in a deep neural network trained on next word prediction	2023	EXCLUDE	TIER_3	2	0		M08	S19	-0.119324	-0.070051
